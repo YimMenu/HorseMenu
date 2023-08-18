@@ -19,7 +19,7 @@ namespace YimMenu
 
 		auto scanner = PatternScanner(gta5);
 
-		constexpr auto swapchainPtrn = Pattern<"48 8B 0D ? ? ? ? 48 8B 01 44 8D 43 01 33 D2 FF 50 40 8B C8">("IDXGISwapChain");
+		constexpr auto swapchainPtrn = Pattern<"48 8B 0D ? ? ? ? 45 8B C7 8B 53 08">("IDXGISwapChain");
 		scanner.Add(swapchainPtrn, [this](PointerCalculator ptr) {
 			SwapChain = ptr.Add(3).Rip().As<IDXGISwapChain**>();
 		});
