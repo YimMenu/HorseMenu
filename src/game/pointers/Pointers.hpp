@@ -1,6 +1,6 @@
 #pragma once
-#include <d3d11.h>
 #include <windows.h>
+#include <dxgi1_2.h>
 
 namespace YimMenu
 {
@@ -11,7 +11,7 @@ namespace YimMenu
 
 	struct PointerData
 	{
-		IDXGISwapChain** SwapChain;
+		IDXGISwapChain1** SwapChain;
 		HWND Hwnd;
 		WNDPROC WndProc;
 		std::int64_t** ScriptGlobals;
