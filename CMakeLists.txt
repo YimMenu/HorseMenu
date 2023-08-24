@@ -7,7 +7,6 @@ include(cmake/async-logger.cmake)
 include(cmake/imgui.cmake)
 include(cmake/json.cmake)
 include(cmake/minhook.cmake)
-include(cmake/gtav-classes.cmake)
 
 # source
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
