@@ -71,6 +71,20 @@ namespace YimMenu
 			return false;
 		}
 
+		if (const auto result = m_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void**)m_Fence.GetAddressOf()); result < 0)
+		{
+			LOG(WARNING) << "Failed to create Fence with result: [" << result << "]";
+
+			return false;
+		}
+
+		if (const auto result = m_FenceEvent = CreateEventA(nullptr, FALSE, FALSE, nullptr); !result)
+		{
+			LOG(WARNING) << "Failed to create Fence Event!";
+
+			return false;
+		}
+
 		m_FrameContext.reserve(m_SwapChainDesc.BufferCount);
 
 		D3D12_DESCRIPTOR_HEAP_DESC DescriptorDesc{ D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE };
