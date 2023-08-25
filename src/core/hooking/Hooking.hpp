@@ -4,7 +4,7 @@
 namespace YimMenu
 {
 	template <typename T>
-	void* GetVF(T ptr, uint64_t index)
+	inline void* GetVF(T ptr, uint64_t index)
 	{
 		void** VFT{ *reinterpret_cast<void***>(ptr) };
 		return VFT[index];
