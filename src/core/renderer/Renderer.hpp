@@ -21,6 +21,7 @@ namespace YimMenu
 		ID3D12CommandAllocator* CommandAllocator;
 		ID3D12Resource* Resource;
 		D3D12_CPU_DESCRIPTOR_HANDLE Descriptor;
+		UINT64 FenceValue;
 	};
 
 	class Renderer final
@@ -78,6 +79,8 @@ namespace YimMenu
 		}
 
 		static void WaitForLastFrame();
+		static void WaitForNextFrame();
+
 		static void PreResize();
 		static void PostResize();
 		
@@ -121,6 +124,12 @@ namespace YimMenu
 		ComPtr<ID3D12GraphicsCommandList> m_CommandList;
 		ComPtr<ID3D12DescriptorHeap> m_BackbufferDescriptorHeap;
 		ComPtr<ID3D12DescriptorHeap> m_DescriptorHeap;
+
+		ComPtr<ID3D12Fence> m_Fence;
+		HANDLE m_FenceEvent;
+		UINT64 m_FenceLastSignaledValue;
+		HANDLE m_SwapchainWaitableObject;
+		UINT64 m_FrameIndex;
 
 		std::map<joaat_t, DXCallback> m_DXCallbacks;
 		std::vector<WindowProcedureCallback> m_WindowProcedureCallbacks;
