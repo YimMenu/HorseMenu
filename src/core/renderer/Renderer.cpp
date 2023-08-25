@@ -71,6 +71,20 @@ namespace YimMenu
 			return false;
 		}
 
+		if (const auto result = m_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void**)m_Fence.GetAddressOf()); result < 0)
+		{
+			LOG(WARNING) << "Failed to create Fence with result: [" << result << "]";
+
+			return false;
+		}
+
+		if (const auto result = m_FenceEvent = CreateEventA(nullptr, FALSE, FALSE, nullptr); !result)
+		{
+			LOG(WARNING) << "Failed to create Fence Event!";
+
+			return false;
+		}
+
 		m_FrameContext.reserve(m_SwapChainDesc.BufferCount);
 
 		D3D12_DESCRIPTOR_HEAP_DESC DescriptorDesc{ D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE };
@@ -164,12 +178,48 @@ namespace YimMenu
 		return ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam);
 	}
 
-	//This is needed because of how DX12 resizing works. It waits for the last frame to finish then invalidates objects. We would use fence for that.
-	//	However, it requires alot of logic and when I attempted it, it would cause crashes. In all of my testing, just simply waiting a bit works.
-	//Definitely needs improvement
 	void Renderer::WaitForLastFrame()
 	{
-		std::this_thread::sleep_for(200ms);
+		FrameContext FrameCtx = GetInstance().m_FrameContext[GetInstance().m_FrameIndex % GetInstance().m_SwapChainDesc.BufferCount];
+
+		UINT64 FenceValue = FrameCtx.FenceValue;
+
+		if (FenceValue == 0)
+		{
+			return;
+		}
+
+		FrameCtx.FenceValue = 0;
+
+		if (GetInstance().m_Fence->GetCompletedValue() >= FenceValue)
+		{
+			return;
+		}
+
+		GetInstance().m_Fence->SetEventOnCompletion(FenceValue, GetInstance().m_FenceEvent);
+
+		WaitForSingleObject(GetInstance().m_FenceEvent, INFINITE);
+	}
+
+	void Renderer::WaitForNextFrame()
+	{
+		UINT NextFrameIndex = GetInstance().m_FrameIndex + 1;
+		GetInstance().m_FrameIndex = NextFrameIndex;
+
+		HANDLE WaitableObjects[]   = { GetInstance().m_SwapchainWaitableObject, nullptr};
+		DWORD NumWaitableObjets = 1;
+
+		FrameContext FrameCtx = GetInstance().m_FrameContext[NextFrameIndex % GetInstance().m_SwapChainDesc.BufferCount];
+		UINT64 FenceValue      = FrameCtx.FenceValue;
+		if (FenceValue != 0) // means no fence was signaled
+		{
+			FrameCtx.FenceValue = 0;
+			GetInstance().m_Fence->SetEventOnCompletion(FenceValue, GetInstance().m_FenceEvent);
+			WaitableObjects[1]  = GetInstance().m_FenceEvent;
+			NumWaitableObjets = 2;
+		}
+
+		WaitForMultipleObjects(NumWaitableObjets, WaitableObjects, TRUE, INFINITE);
 	}
 
 	void Renderer::PreResize()
@@ -227,6 +277,12 @@ namespace YimMenu
 	void Renderer::EndFrame()
 	{
 		ImGui::EndFrame();
+
+		UINT NextFrameIndex = GetInstance().m_FrameIndex + 1;
+		GetInstance().m_FrameIndex      = NextFrameIndex;
+
+		WaitForNextFrame();
+
 		FrameContext& CurrentFrameContext{ GetInstance().m_FrameContext[GetInstance().m_SwapChain->GetCurrentBackBufferIndex()] };
 		CurrentFrameContext.CommandAllocator->Reset();
 
@@ -246,5 +302,10 @@ namespace YimMenu
 
 		ID3D12CommandList* CommandLists[]{ GetInstance().m_CommandList.Get() };
 		GetInstance().m_CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
+
+		UINT64 FenceValue = GetInstance().m_FenceLastSignaledValue + 1;
+		GetInstance().m_CommandQueue->Signal(GetInstance().m_Fence.Get(), FenceValue);
+		GetInstance().m_FenceLastSignaledValue = FenceValue;
+		CurrentFrameContext.FenceValue = FenceValue;
 	}
 }

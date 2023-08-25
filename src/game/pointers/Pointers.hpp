@@ -19,6 +19,7 @@ namespace YimMenu
 		HWND Hwnd;
 		std::int64_t** ScriptGlobals;
 		void* NativeRegistrationTable;
+		PVOID WndProc;
 	};
 
 	struct Pointers : PointerData
