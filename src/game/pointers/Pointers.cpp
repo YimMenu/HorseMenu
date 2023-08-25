@@ -19,15 +19,20 @@ namespace YimMenu
 
 		auto scanner = PatternScanner(rdr2);
 
-		constexpr auto swapchainPtrn = Pattern<"48 8B 0D ? ? ? ? 45 8B C7 8B 53 08">("IDXGISwapChain1");
+		constexpr auto swapchainPtrn = Pattern<"48 8B 58 60 48 8B 0D">("IDXGISwapChain1");
 		scanner.Add(swapchainPtrn, [this](PointerCalculator ptr) {
-			SwapChain = ptr.Add(3).Rip().As<IDXGISwapChain1**>();
+			SwapChain = ptr.Add(4).Add(3).Rip().As<IDXGISwapChain1**>();
 		});
 
-		// constexpr auto wndProcPtrn = Pattern<"48 8B C4 48 89 58 08 4C 89 48 20 55 56 57 41 54 41 55 41 56 41 57 48 8D 68 A1 48 81 EC F0">("WNDPROC");
-		// scanner.Add(wndProcPtrn, [this](PointerCalculator ptr) {
-		// 	WndProc = ptr.As<WNDPROC>();
-		// });
+		constexpr auto commandQueuePtrn = Pattern<"FF 50 10 48 8B 0D ? ? ? ? 48 8B 01">("ID3D12CommandQueue");
+		scanner.Add(commandQueuePtrn, [this](PointerCalculator ptr) {
+			CommandQueue = ptr.Add(3).Add(3).Rip().As<ID3D12CommandQueue**>();
+		});
+
+		constexpr auto getRendererInfoPtrn = Pattern<"E8 ? ? ? ? 38 58 09">("GetRendererInfo");
+		scanner.Add(getRendererInfoPtrn, [this](PointerCalculator ptr) {
+			GetRendererInfo = ptr.Add(1).Rip().As<Functions::GetRendererInfo>();
+		});
 
 		if (!scanner.Scan())
 		{
@@ -36,11 +41,37 @@ namespace YimMenu
 			return false;
 		}
 
-		if (Hwnd = FindWindowA(0,"Red Dead Redemption 2"); !Hwnd)
+		if (!GetRendererInfo)
 		{
-			LOG(FATAL) << "Failed to grab game window, unloading.";
+			LOG(FATAL) << "Failed to get rendering info, unloading.";
 
 			return false;
+		}
+		else
+		{
+			RenderingInfo* info{ GetRendererInfo() };
+			if (!info->is_rendering_type(eRenderingType::DX12))
+			{
+				LOG(FATAL) << "Unsupported rendering type, unloading.";
+
+				return false;
+			}
+		}
+
+		if (auto swapchain = *SwapChain)
+		{
+			if (auto result = swapchain->GetHwnd(&Hwnd); result < 0)
+			{
+				LOG(FATAL) << "Failed to grab game window from swapchain [" << result << "], unloading.";
+
+				return false;
+			}
+			else if (!Hwnd)
+			{
+				LOG(FATAL) << "Game window is invalid, unloading.";
+
+				return false;
+			}
 		}
 
 		return true;

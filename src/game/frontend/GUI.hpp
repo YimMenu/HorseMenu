@@ -26,6 +26,11 @@ namespace YimMenu
 			return GetInstance().m_IsOpen;
 		}
 
+		static void Toggle()
+		{
+			GetInstance().m_IsOpen ^= true;
+		}
+
 	private:
 		void WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 

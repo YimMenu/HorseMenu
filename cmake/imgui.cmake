@@ -19,7 +19,7 @@ if(NOT imgui_POPULATED)
         "${imgui_SOURCE_DIR}/*.cpp"
         "${imgui_SOURCE_DIR}/*.h"
         "${imgui_SOURCE_DIR}/backends/imgui_impl_win32.*"
-        "${imgui_SOURCE_DIR}/backends/imgui_impl_dx11.*"
+        "${imgui_SOURCE_DIR}/backends/imgui_impl_dx12.*"
         "${imgui_SOURCE_DIR}/misc/cpp/imgui_stdlib.*"
     )
 
