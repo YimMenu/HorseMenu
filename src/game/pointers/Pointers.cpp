@@ -34,6 +34,11 @@ namespace YimMenu
 			GetRendererInfo = ptr.Add(1).Rip().As<Functions::GetRendererInfo>();
 		});
 
+		constexpr auto getNativeAddressPtrn = Pattern<"E8 ? ? ? ? 42 8B 9C FE">("GetRendererInfo");
+		scanner.Add(getNativeAddressPtrn, [this](PointerCalculator ptr) {
+			GetNativeAddress = ptr.Add(1).Rip().As<Functions::GetNativeAddress>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
