@@ -71,6 +71,7 @@ namespace YimMenu
 		{
 			GetInstance().OnPresentImpl();
 		}
+
 		static LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		{
 			return GetInstance().WndProcImpl(hwnd, msg, wparam, lparam);
@@ -79,6 +80,11 @@ namespace YimMenu
 		static void WaitForLastFrame();
 		static void PreResize();
 		static void PostResize();
+		
+		static bool IsResizing()
+		{
+			return GetInstance().m_Resizing;
+		}
 
 	private:
 		static void NewFrame();
@@ -102,6 +108,8 @@ namespace YimMenu
 		}
 
 	private:
+		bool m_Resizing;
+
 		std::vector<FrameContext> m_FrameContext;
 
 		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;

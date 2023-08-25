@@ -7,7 +7,7 @@ namespace YimMenu
 {
 	HRESULT SwapChain::Present(IDXGISwapChain1* that, UINT syncInterval, UINT flags)
 	{
-		if (g_Running)
+		if (g_Running && !Renderer::IsResizing())
 		{
 			Renderer::OnPresent();
 		}

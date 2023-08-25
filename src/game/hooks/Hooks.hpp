@@ -16,5 +16,6 @@ namespace YimMenu
 	{
 		inline WNDPROC OriginalWndProc;
 		extern LRESULT WndProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
+		extern BOOL SetCursorPos(int x, int y);
 	}
 }

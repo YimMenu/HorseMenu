@@ -1,6 +1,7 @@
 #include "Renderer.hpp"
 
 #include "game/pointers/Pointers.hpp"
+#include "game/frontend/GUI.hpp"
 
 #include <backends/imgui_impl_dx12.h>
 #include <backends/imgui_impl_win32.h>
@@ -18,12 +19,9 @@ namespace YimMenu
 
 	void Renderer::DestroyImpl()
 	{
-		if (m_SwapChain && m_Device)
-		{
-			ImGui_ImplWin32_Shutdown();
-			ImGui_ImplDX12_Shutdown();
-			ImGui::DestroyContext();
-		}
+		ImGui_ImplWin32_Shutdown();
+		ImGui_ImplDX12_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 	bool Renderer::InitImpl()
@@ -168,12 +166,15 @@ namespace YimMenu
 
 	void Renderer::WaitForLastFrame()
 	{
-		std::this_thread::sleep_for(150ms);
+		std::this_thread::sleep_for(200ms);
 	}
 
 	void Renderer::PreResize()
 	{
+		GetInstance().m_Resizing = true;
 		WaitForLastFrame();
+
+        ImGui_ImplDX12_InvalidateDeviceObjects();
 
 		for (size_t i{}; i != GetInstance().m_SwapChainDesc.BufferCount; ++i)
 		{
@@ -183,6 +184,15 @@ namespace YimMenu
 
 	void Renderer::PostResize()
 	{
+		bool WasGUIOpen{ GUI::IsOpen() };
+		//SetCursorPos is returning true while open, this is to ensure we sync them. When the GUI is open and we resize buffers, the cursor changes pos and likes to cause a issue.
+		if (WasGUIOpen)
+		{
+			GUI::Toggle();
+		}
+
+		//Recreate our pointers and ImGui's
+        ImGui_ImplDX12_CreateDeviceObjects();
 		const auto RTVDescriptorSize{ GetInstance().m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV) };
 		D3D12_CPU_DESCRIPTOR_HANDLE RTVHandle{ GetInstance().m_BackbufferDescriptorHeap->GetCPUDescriptorHandleForHeapStart() };
 		for (size_t i{}; i != GetInstance().m_SwapChainDesc.BufferCount; ++i)
@@ -194,6 +204,14 @@ namespace YimMenu
 			GetInstance().m_FrameContext[i].Resource = BackBuffer.Get();
 			RTVHandle.ptr += RTVDescriptorSize;
 		}
+
+		//Reopen our GUI if it was open
+		if (WasGUIOpen)
+		{
+			GUI::Toggle();
+		}
+
+		GetInstance().m_Resizing = false;
 	}
 
 	void Renderer::NewFrame()
