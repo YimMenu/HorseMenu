@@ -1,5 +1,6 @@
 #pragma once
-#include <d3d11.h>
+#include <dxgi1_4.h>
+#include <D3D12.h>
 
 namespace YimMenu
 {
@@ -7,13 +8,13 @@ namespace YimMenu
 	{
 		constexpr auto VMTPresentIdx       = 8;
 		constexpr auto VMTResizeBuffersIdx = 13;
-		constexpr auto VMTSize             = 19;
-		extern HRESULT Present(IDXGISwapChain* that, UINT syncInterval, UINT flags);
-		extern HRESULT ResizeBuffers(IDXGISwapChain* that, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT newFormat, UINT swapChainFlags);
+		extern HRESULT Present(IDXGISwapChain1* that, UINT syncInterval, UINT flags);
+		extern HRESULT ResizeBuffers(IDXGISwapChain1* that, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT newFormat, UINT swapChainFlags);
 	}
 
 	namespace Window
 	{
+		inline WNDPROC OriginalWndProc;
 		extern LRESULT WndProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 	}
 }

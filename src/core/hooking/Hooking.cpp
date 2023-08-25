@@ -10,12 +10,9 @@ namespace YimMenu
 {
 	Hooking::Hooking()
 	{
-		BaseHook::Add<Window::WndProc>(new DetourHook("WndProc", Pointers.WndProc, Window::WndProc));
-
-		auto swapchain = new VMTHook<SwapChain::VMTSize>("SwapChain", *Pointers.SwapChain);
-		swapchain->Hook(SwapChain::VMTPresentIdx, SwapChain::Present);
-		swapchain->Hook(SwapChain::VMTResizeBuffersIdx, SwapChain::ResizeBuffers);
-		BaseHook::Add<SwapChain::Present>(swapchain);
+		Window::OriginalWndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(Pointers.Hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(Window::WndProc)));
+		BaseHook::Add<SwapChain::Present>(new DetourHook("SwapChain::Present", GetVF(*Pointers.SwapChain, SwapChain::VMTPresentIdx), SwapChain::Present));
+		BaseHook::Add<SwapChain::ResizeBuffers>(new DetourHook("SwapChain::ResizeBuffers", GetVF(*Pointers.SwapChain, SwapChain::VMTResizeBuffersIdx), SwapChain::ResizeBuffers));
 	}
 
 	Hooking::~Hooking()
@@ -43,6 +40,7 @@ namespace YimMenu
 
 	void Hooking::DestroyImpl()
 	{
+		SetWindowLongPtrW(Pointers.Hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(Window::OriginalWndProc));
 		BaseHook::DisableAll();
 		m_MinHook.ApplyQueued();
 

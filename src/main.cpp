@@ -26,6 +26,8 @@ namespace YimMenu
 
 		while (g_Running)
 		{
+			if (GetAsyncKeyState(VK_F12))
+				g_Running = false;
 			std::this_thread::sleep_for(100ms);
 		}
 

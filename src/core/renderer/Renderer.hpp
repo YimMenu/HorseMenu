@@ -1,15 +1,27 @@
 #pragma once
 #include "util/Joaat.hpp"
 
-#include <d3d11.h>
+#include <dxgi1_4.h>
+#include <d3d12.h>
 #include <functional>
 #include <map>
 #include <windows.h>
+#include <wrl/client.h>
+#include <comdef.h>
+#define REL(o) o->Release(); if (o) { o = nullptr; }
 
 namespace YimMenu
 {
+	using namespace Microsoft::WRL;
 	using DXCallback              = std::function<void()>;
 	using WindowProcedureCallback = std::function<void(HWND, UINT, WPARAM, LPARAM)>;
+
+	struct FrameContext
+	{
+		ID3D12CommandAllocator* CommandAllocator;
+		ID3D12Resource* Resource;
+		D3D12_CPU_DESCRIPTOR_HANDLE Descriptor;
+	};
 
 	class Renderer final
 	{
@@ -64,6 +76,7 @@ namespace YimMenu
 			return GetInstance().WndProcImpl(hwnd, msg, wparam, lparam);
 		}
 
+		static void WaitForLastFrame();
 		static void PreResize();
 		static void PostResize();
 
@@ -89,9 +102,17 @@ namespace YimMenu
 		}
 
 	private:
-		ID3D11Device* m_Device;
-		ID3D11DeviceContext* m_DeviceContext;
-		IDXGISwapChain* m_SwapChain;
+		std::vector<FrameContext> m_FrameContext;
+
+		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;
+		ComPtr<IDXGISwapChain1> m_GameSwapChain;
+		ComPtr<IDXGISwapChain3> m_SwapChain;
+		ComPtr<ID3D12Device> m_Device;
+		ComPtr<ID3D12CommandQueue> m_CommandQueue;
+		ComPtr<ID3D12CommandAllocator> m_CommandAllocator;
+		ComPtr<ID3D12GraphicsCommandList> m_CommandList;
+		ComPtr<ID3D12DescriptorHeap> m_BackbufferDescriptorHeap;
+		ComPtr<ID3D12DescriptorHeap> m_DescriptorHeap;
 
 		std::map<joaat_t, DXCallback> m_DXCallbacks;
 		std::vector<WindowProcedureCallback> m_WindowProcedureCallbacks;
