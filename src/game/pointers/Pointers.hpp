@@ -3,12 +3,15 @@
 #include <dxgi1_4.h>
 #include <d3d12.h>
 #include "game/rdr/RenderingInfo.hpp"
+#include <script/scrNativeHandler.hpp>
 
 namespace YimMenu
 {
 	namespace Functions
 	{
 		using GetRendererInfo = RenderingInfo*(*)();
+		using GetNativeHandler = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
+		using FixVectors       = void (*)(rage::scrNativeCallContext* call_ctx);
 	}
 
 	struct PointerData
@@ -20,6 +23,8 @@ namespace YimMenu
 		std::int64_t** ScriptGlobals;
 		void* NativeRegistrationTable;
 		PVOID WndProc;
+		Functions::GetNativeHandler GetNativeHandler;
+		Functions::FixVectors FixVectors;
 	};
 
 	struct Pointers : PointerData
