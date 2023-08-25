@@ -5,7 +5,7 @@
 #include "VMTHook.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
-#include "../memory/ModuleMgr.hpp"
+#include "core/memory/ModuleMgr.hpp"
 
 namespace YimMenu
 {
@@ -15,6 +15,7 @@ namespace YimMenu
 	
 		BaseHook::Add<Window::SetCursorPos>(new DetourHook("SetCursorPos", ModuleMgr.Get("user32.dll")->GetExport<void*>("SetCursorPos"), Window::SetCursorPos));
 
+		//RDR2 would typically crash when using VMT hooks, something to look into in the future.
 		BaseHook::Add<SwapChain::Present>(new DetourHook("SwapChain::Present", GetVF(*Pointers.SwapChain, SwapChain::VMTPresentIdx), SwapChain::Present));
 		BaseHook::Add<SwapChain::ResizeBuffers>(new DetourHook("SwapChain::ResizeBuffers", GetVF(*Pointers.SwapChain, SwapChain::VMTResizeBuffersIdx), SwapChain::ResizeBuffers));
 	}

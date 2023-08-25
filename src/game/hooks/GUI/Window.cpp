@@ -15,6 +15,7 @@ namespace YimMenu
 
 		return CallWindowProcW(Window::OriginalWndProc, hwnd, umsg, wparam, lparam);
 	}
+	
 	BOOL Window::SetCursorPos(int x, int y)
 	{
 		if (GUI::IsOpen())
