@@ -165,7 +165,8 @@ namespace YimMenu
 	}
 
 	//This is needed because of how DX12 resizing works. It waits for the last frame to finish then invalidates objects. We would use fence for that.
-	//	However, it requires alot of work and logic, making it not worth it. In all of my testing, just simply waiting a bit works.
+	//	However, it requires alot of logic and when I attempted it, it would cause crashes. In all of my testing, just simply waiting a bit works.
+	//Definitely needs improvement
 	void Renderer::WaitForLastFrame()
 	{
 		std::this_thread::sleep_for(200ms);

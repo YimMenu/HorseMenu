@@ -11,6 +11,7 @@ namespace YimMenu
 		{
 			Renderer::OnPresent();
 		}
+
 		return BaseHook::Get<SwapChain::Present, DetourHook<decltype(&Present)>>()->Original()(that, syncInterval, flags);
 	}
 
@@ -23,6 +24,7 @@ namespace YimMenu
 			Renderer::PostResize();
 			return result;
 		}
+		
 		return BaseHook::Get<SwapChain::Present, DetourHook<decltype(&ResizeBuffers)>>()->Original()(that, bufferCount, width, height, newFormat, swapChainFlags);
 	}
 }
