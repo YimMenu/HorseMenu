@@ -34,6 +34,11 @@ namespace YimMenu
 			GetRendererInfo = ptr.Add(1).Rip().As<Functions::GetRendererInfo>();
 		});
 
+		constexpr auto wndProc = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
+		scanner.Add(wndProc, [this](PointerCalculator ptr) {
+			WndProc = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

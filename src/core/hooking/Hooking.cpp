@@ -11,8 +11,8 @@ namespace YimMenu
 {
 	Hooking::Hooking()
 	{
-		Window::OriginalWndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(Pointers.Hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(Window::WndProc)));
-	
+		BaseHook::Add<Window::WndProc>(new DetourHook("WndProc", Pointers.WndProc, Window::WndProc));
+
 		BaseHook::Add<Window::SetCursorPos>(new DetourHook("SetCursorPos", ModuleMgr.Get("user32.dll")->GetExport<void*>("SetCursorPos"), Window::SetCursorPos));
 
 		//RDR2 would typically crash or do nothing when using VMT hooks, something to look into in the future.
@@ -45,7 +45,6 @@ namespace YimMenu
 
 	void Hooking::DestroyImpl()
 	{
-		SetWindowLongPtrW(Pointers.Hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(Window::OriginalWndProc));
 		BaseHook::DisableAll();
 		m_MinHook.ApplyQueued();
 
