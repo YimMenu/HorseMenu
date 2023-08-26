@@ -2,7 +2,7 @@
 #include <dxgi1_4.h>
 #include <D3D12.h>
 
-namespace YimMenu
+namespace YimMenu::Hooks
 {
 	namespace SwapChain
 	{
@@ -16,5 +16,10 @@ namespace YimMenu
 	{
 		extern LRESULT WndProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 		extern BOOL SetCursorPos(int x, int y);
+	}
+
+	namespace Script
+	{
+		extern bool RunScriptThreads(void* threads, int unk);
 	}
 }

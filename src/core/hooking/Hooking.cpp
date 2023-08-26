@@ -11,13 +11,15 @@ namespace YimMenu
 {
 	Hooking::Hooking()
 	{
-		BaseHook::Add<Window::WndProc>(new DetourHook("WndProc", Pointers.WndProc, Window::WndProc));
+		BaseHook::Add<Hooks::Window::WndProc>(new DetourHook("WndProc", Pointers.WndProc, Hooks::Window::WndProc));
 
-		BaseHook::Add<Window::SetCursorPos>(new DetourHook("SetCursorPos", ModuleMgr.Get("user32.dll")->GetExport<void*>("SetCursorPos"), Window::SetCursorPos));
+		BaseHook::Add<Hooks::Window::SetCursorPos>(new DetourHook("SetCursorPos", ModuleMgr.Get("user32.dll")->GetExport<void*>("SetCursorPos"), Hooks::Window::SetCursorPos));
 
 		//RDR2 would typically crash or do nothing when using VMT hooks, something to look into in the future.
-		BaseHook::Add<SwapChain::Present>(new DetourHook("SwapChain::Present", GetVF(*Pointers.SwapChain, SwapChain::VMTPresentIdx), SwapChain::Present));
-		BaseHook::Add<SwapChain::ResizeBuffers>(new DetourHook("SwapChain::ResizeBuffers", GetVF(*Pointers.SwapChain, SwapChain::VMTResizeBuffersIdx), SwapChain::ResizeBuffers));
+		BaseHook::Add<Hooks::SwapChain::Present>(new DetourHook("SwapChain::Present", GetVF(*Pointers.SwapChain, Hooks::SwapChain::VMTPresentIdx), Hooks::SwapChain::Present));
+		BaseHook::Add<Hooks::SwapChain::ResizeBuffers>(new DetourHook("SwapChain::ResizeBuffers", GetVF(*Pointers.SwapChain, Hooks::SwapChain::VMTResizeBuffersIdx), Hooks::SwapChain::ResizeBuffers));
+
+		BaseHook::Add<Hooks::Script::RunScriptThreads>(new DetourHook("RunScriptThreads", Pointers.RunScriptThreads, Hooks::Script::RunScriptThreads));
 	}
 
 	Hooking::~Hooking()

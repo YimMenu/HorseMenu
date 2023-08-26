@@ -49,6 +49,17 @@ namespace YimMenu
 			FixVectors = ptr.As<Functions::FixVectors>();
 		});
 
+		constexpr auto scriptThreadsPtrn = Pattern<"48 8D 0D ? ? ? ? E8 ? ? ? ? EB 0B 8B 0D">("ScriptThreads&RunScriptThreads");
+		scanner.Add(scriptThreadsPtrn, [this](PointerCalculator ptr) {
+			ScriptThreads    = ptr.Add(3).Rip().As<rage::atArray<rage::scrThread*>*>();
+			RunScriptThreads = ptr.Add(8).Rip().As<PVOID>();
+		});
+
+		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread");
+		scanner.Add(currentScriptThreadPtrn, [this](PointerCalculator ptr) {
+			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

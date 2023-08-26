@@ -5,6 +5,8 @@
 #include "core/renderer/Renderer.hpp"
 #include "game/frontend/GUI.hpp"
 #include "game/pointers/Pointers.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/FiberPool.hpp"
 
 namespace YimMenu
 {
@@ -21,6 +23,10 @@ namespace YimMenu
 			goto unload;
 		if (!Renderer::Init())
 			goto unload;
+
+		ScriptMgr::Init();
+		FiberPool::Init(5);
+
 		GUI::Init();
 		Hooking::Init();
 
@@ -29,9 +35,13 @@ namespace YimMenu
 			std::this_thread::sleep_for(100ms);
 		}
 
+		FiberPool::Destroy();
+		ScriptMgr::Destroy();
+
 	unload:
 		Hooking::Destroy();
 		Renderer::Destroy();
+
 		LogHelper::Destroy();
 
 		CloseHandle(g_MainThread);

@@ -3,7 +3,7 @@
 #include "game/hooks/Hooks.hpp"
 #include "game/frontend/GUI.hpp"
 
-namespace YimMenu
+namespace YimMenu::Hooks
 {
 	LRESULT Window::WndProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 	{

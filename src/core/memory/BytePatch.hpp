@@ -14,9 +14,9 @@ namespace YimMenu
     class BytePatch
     {
     private:
-        byte* m_Address;
-        std::unique_ptr<byte[]> m_Patch;
-        std::unique_ptr<byte[]> m_Original;
+        std::byte* m_Address;
+        std::unique_ptr<std::byte[]> m_Patch;
+        std::unique_ptr<std::byte[]> m_Original;
         std::size_t m_Size;
 
     protected:
@@ -68,23 +68,23 @@ namespace YimMenu
     {
         m_Size = sizeof(std::remove_pointer_t<std::remove_reference_t<TAddr>>);
 
-        m_Original = std::make_unique<byte[]>(m_Size);
+        m_Original = std::make_unique<std::byte[]>(m_Size);
         std::copy_n(m_Address, m_Size, m_Original.get());
 
-        m_Patch = std::make_unique<byte[]>(m_Size);
+        m_Patch = std::make_unique<std::byte[]>(m_Size);
         std::copy_n(&value, m_Size, m_Patch.get());
     }
 
     template<typename TAddr, typename T, std::size_t N>
     inline BytePatch::BytePatch(TAddr addr, std::span<T, N> span) :
-        m_Address((byte*)addr)
+        m_Address((std::byte*)addr)
     {
         m_Size = span.size();
 
-        m_Original = std::make_unique<byte[]>(m_Size);
+        m_Original = std::make_unique<std::byte[]>(m_Size);
         std::copy_n(m_Address, m_Size, m_Original.get());
 
-        m_Patch = std::make_unique<byte[]>(m_Size);
+        m_Patch = std::make_unique<std::byte[]>(m_Size);
         std::copy(span.begin(), span.end(), m_Patch.get());
     }
 }
