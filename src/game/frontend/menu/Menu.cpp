@@ -18,9 +18,6 @@ namespace YimMenu
 			if (ImGui::Button("Suicide"))
 			{
 				auto player_ped = PLAYER::PLAYER_PED_ID();
-
-				LOG(INFO) << player_ped;
-
 				ENTITY::SET_ENTITY_HEALTH(player_ped, 0, 0);
 			}
 

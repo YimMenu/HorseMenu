@@ -23,7 +23,7 @@ namespace YimMenu
 
 	class NativeInvoker
 	{
-		static inline rage::scrNativeHandler m_Handlers[g_Crossmap.size()];
+		static inline std::array<rage::scrNativeHandler, g_Crossmap.size()> m_Handlers;
 		static inline bool m_AreHandlersCached{false};
 
 	public:
