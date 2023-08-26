@@ -1,26 +1,33 @@
+from enum import global_enum_repr
 import json
 
-crossmap = {}
 natives = {}
 current_idx = 0
-crossmap_hash_list = []
+hash_list = []
 
 class Arg:
     def __init__(self, name: str, type: str):
-        self.name = name
+        self.name = name.replace("...", "varargs")
         self.type = type.replace("BOOL", "bool").replace("Any*", "void*")
+
+        if (self.type == ""):
+            self.type = "void*"
 
     def __str__(self) -> str:
         return str(self.type) + " " + str(self.name)
 
 class NativeFunc:
     def __init__(self, namespace: str, name: str, hash: int, args: list[dict], return_type: str):
+        global current_idx, hash_list
+
         self.namespace = namespace
         self.name = name
         self.hash = hash
         self.args: list[Arg] = []
         self.return_type = return_type.replace("BOOL", "bool").replace("Any*", "void*")
-        self.native_index = -1
+        self.native_index = current_idx
+        current_idx += 1
+        hash_list.append(hash)
 
         for arg in args:
             self.args.append(Arg(arg["name"], arg["type"]))
@@ -38,20 +45,7 @@ class NativeFunc:
             param_pass = param_pass[:-2]
         
         return f"FORCEINLINE constexpr {self.return_type} {self.name}({param_decl}) {{ return YimMenu::NativeInvoker::Invoke<{self.native_index}, {self.return_type}>({param_pass}); }}"
-
-class CrossmapEntry:
-    def __init__(self, translated_hash: int):
-        self.hash = translated_hash
-        self.native_index = -1
-
-def load_crossmap_data():
-    global crossmap
-
-    data = open("crossmap.txt").readlines()
-    for item in data:
-        translation = item.split(",")
-        crossmap[int(translation[0], 16)] = CrossmapEntry(int(translation[1], 16))
-
+    
 def load_natives_data():
     global natives
 
@@ -61,26 +55,13 @@ def load_natives_data():
         for hash_str, native_data in natives_list.items():
             natives[ns].append(NativeFunc(ns, native_data["name"], int(hash_str, 16), native_data["params"], native_data["return_type"]))
 
-def allocate_indices():
-    global current_idx, crossmap_hash_list
-
-    for _, n in natives.items():
-        for native in n:
-            hash = native.hash
-            if hash in crossmap:
-                crossmap[hash].native_index = current_idx
-                native.native_index = current_idx
-                crossmap_hash_list.append(crossmap[hash].hash)
-                current_idx += 1
-
-
 def write_crossmap_header():
         open("Crossmap.hpp", "w+").write(f"""#pragma once
 #include <script/scrNativeHandler.hpp>
 
 namespace YimMenu
 {{
-	constexpr std::array<rage::scrNativeHash, {len(crossmap_hash_list)}> g_Crossmap = {{{",".join([f"0x{x:X}" for x in crossmap_hash_list])}}};
+	constexpr std::array<rage::scrNativeHash, {len(hash_list)}> g_Crossmap = {{{",".join([f"0x{x:X}" for x in hash_list])}}};
 }}
 """)
 
@@ -106,8 +87,6 @@ def write_natives_header():
 """)
     
 if __name__ == "__main__":
-    load_crossmap_data()
     load_natives_data()
-    allocate_indices()
     write_crossmap_header()
     write_natives_header()

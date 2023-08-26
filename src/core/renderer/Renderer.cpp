@@ -85,7 +85,7 @@ namespace YimMenu
 			return false;
 		}
 
-		m_FrameContext.reserve(m_SwapChainDesc.BufferCount);
+		m_FrameContext.resize(m_SwapChainDesc.BufferCount);
 
 		D3D12_DESCRIPTOR_HEAP_DESC DescriptorDesc{ D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE };
 		if (const auto result = m_Device->CreateDescriptorHeap(&DescriptorDesc, __uuidof(ID3D12DescriptorHeap), (void**)m_DescriptorHeap.GetAddressOf()); result < 0)
@@ -102,7 +102,7 @@ namespace YimMenu
 			return false;
 		}
 
-		for (size_t i{}; i != m_SwapChainDesc.BufferCount; ++i)
+		for (size_t i{}; i < m_SwapChainDesc.BufferCount; ++i)
 		{
 			m_FrameContext[i].CommandAllocator = m_CommandAllocator.Get();
 		}
