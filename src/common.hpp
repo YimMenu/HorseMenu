@@ -1,4 +1,5 @@
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <AsyncLogger/Logger.hpp>
 #include <MinHook.h>
@@ -18,11 +19,14 @@
 #include <string_view>
 #include <thread>
 #include <vector>
+#include <stack>
 
 #include <nlohmann/json.hpp>
 
 using namespace al;
 #include "core/logger/LogHelper.hpp"
+
+#undef Yield
 
 namespace YimMenu
 {

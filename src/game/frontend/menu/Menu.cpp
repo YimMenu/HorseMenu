@@ -5,6 +5,8 @@
 #include "util/Joaat.hpp"
 #include "game/rdr/natives.hpp"
 #include "core/filemgr/FileMgr.hpp"
+#include "game/backend/FiberPool.hpp"
+#include "game/backend/ScriptMgr.hpp"
 
 namespace YimMenu
 {
@@ -26,6 +28,24 @@ namespace YimMenu
 				auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
 
 				LOG(INFO) << coords.x << "x\t" << coords.y << "y\t" << coords.z << "z";
+			}
+
+			if (ImGui::Button("Spawn Ped"))
+			{
+				LOG(INFO) << "Before spawn";
+				FiberPool::Push([] {
+					auto model_hash = "U_F_M_RHDNudeWoman_01"_J; // most models don't work
+					LOG(INFO) << "In fiber pool";
+
+					STREAMING::REQUEST_MODEL(model_hash, false); 
+					while (!STREAMING::HAS_MODEL_LOADED(model_hash))
+						ScriptMgr::Yield();
+
+				    auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
+					auto ped = PED::CREATE_PED(model_hash, coords.x, coords.y, coords.z, 0.0f, false, false, false, false); 
+					ScriptMgr::Yield();
+					PED::SET_PED_RANDOM_COMPONENT_VARIATION(ped, 0);
+				});
 			}
 
 			if (ImGui::Button("Dump Entrypoints"))

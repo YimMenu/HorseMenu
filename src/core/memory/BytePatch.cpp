@@ -9,12 +9,12 @@ namespace YimMenu
 
 	void BytePatch::Apply() const
 	{
-        std::copy_n(m_Patch.get(), m_Size, reinterpret_cast<byte*>(m_Address));
+        std::copy_n(m_Patch.get(), m_Size, reinterpret_cast<std::byte*>(m_Address));
 	}
 
 	void BytePatch::Restore() const
 	{
-        std::copy_n(m_Original.get(), m_Size, reinterpret_cast<byte*>(m_Address));
+        std::copy_n(m_Original.get(), m_Size, reinterpret_cast<std::byte*>(m_Address));
 	}
 
 	void BytePatch::Remove() const
