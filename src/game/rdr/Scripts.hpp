@@ -8,6 +8,6 @@ namespace rage
 
 namespace YimMenu::Scripts
 {
-	rage::scrThread* FindScriptThread(joaat_t hash);
-	void RunAsScript(rage::scrThread* thread, std::function<void()> callback);
+	extern rage::scrThread* FindScriptThread(joaat_t hash);
+	extern void RunAsScript(rage::scrThread* thread, std::function<void()> callback);
 }
