@@ -7,6 +7,7 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/backend/backend.hpp"
 
 namespace YimMenu
 {
@@ -25,18 +26,29 @@ namespace YimMenu
 			goto unload;
 
 		ScriptMgr::Init();
+		LOG(INFO) << "ScriptMgr Initialized";
+
 		FiberPool::Init(5);
+		LOG(INFO) << "FiberPool Initialized";
 
 		GUI::Init();
 		Hooking::Init();
+
+		ScriptMgr::AddScript(std::make_unique<Script>(&backend::controls));
+		ScriptMgr::AddScript(std::make_unique<Script>(&backend::self));
 
 		while (g_Running)
 		{
 			std::this_thread::sleep_for(100ms);
 		}
 
-		FiberPool::Destroy();
+		LOG(INFO) << "Unloading";
+
 		ScriptMgr::Destroy();
+		LOG(INFO) << "ScriptMgr Uninitialized";
+
+		FiberPool::Destroy();
+		LOG(INFO) << "FiberPool Uninitialized";
 
 	unload:
 		Hooking::Destroy();

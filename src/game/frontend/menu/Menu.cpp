@@ -7,6 +7,8 @@
 #include "core/filemgr/FileMgr.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/rdr/Enums.hpp"
+#include "game/backend/looped/self/SelfLooped.hpp"
 
 namespace YimMenu
 {
@@ -17,6 +19,17 @@ namespace YimMenu
 
 		if (ImGui::Begin("Test"))
 		{
+			ImGui::Checkbox("Refill Cores", &Self::refill_cores);
+			ImGui::Checkbox("Refill Bars", &Self::refill_bars);
+			ImGui::Checkbox("Refill Horse Cores", &Self::refill_horse_cores);
+
+			if (ImGui::Button("Play Kit Emote"))
+			{
+				FiberPool::Push([] {
+					TASK::TASK_PLAY_EMOTE_WITH_HASH(Self::ped, 4, 0, "KIT_EMOTE_TWIRL_GUN"_J, true, false, false, true, false);
+				});
+			}
+
 			if (ImGui::Button("Suicide"))
 			{
 				auto player_ped = PLAYER::PLAYER_PED_ID();
@@ -34,7 +47,7 @@ namespace YimMenu
 			{
 				LOG(INFO) << "Before spawn";
 				FiberPool::Push([] {
-					auto model_hash = "U_F_M_RHDNudeWoman_01"_J; // most models don't work
+					auto model_hash = "msp_mob0_males_01"_J; // most models don't work
 					LOG(INFO) << "In fiber pool";
 
 					STREAMING::REQUEST_MODEL(model_hash, false); 
