@@ -11,6 +11,9 @@ namespace YimMenu::Self
 	inline Vehicle veh;
 	inline Ped mount;
 
+	inline float deadeye;
+	inline float max_deadeye;
+
 	inline bool refill_cores;
 	inline bool refill_bars;
 	inline bool refill_horse_cores;

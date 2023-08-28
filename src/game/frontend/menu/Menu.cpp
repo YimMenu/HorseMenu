@@ -19,6 +19,8 @@ namespace YimMenu
 
 		if (ImGui::Begin("Test"))
 		{
+			ImGui::Text(std::format("Deadeye: {}/{}", Self::deadeye, Self::max_deadeye).data());
+
 			ImGui::Checkbox("Refill Cores", &Self::refill_cores);
 			ImGui::Checkbox("Refill Bars", &Self::refill_bars);
 			ImGui::Checkbox("Refill Horse Cores", &Self::refill_horse_cores);

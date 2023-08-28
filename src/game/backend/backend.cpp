@@ -9,7 +9,7 @@ namespace YimMenu
 {
 	void backend::controls()
 	{
-		while (g_Running)
+		while (true)
 		{
 			if (GUI::IsOpen())
 			{
@@ -31,20 +31,20 @@ namespace YimMenu
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK2, 1);
 			}
 
-			ScriptMgr::Yield(10ms);
+			ScriptMgr::Yield();
 		}
 	}
 
 	void backend::self()
 	{
-		while (g_Running)
+		while (true)
 		{
 			looped::SelfLoop();
 			looped::KeepCoresFilled();
 			looped::KeepBarsFilled();
 			looped::KeepHorseCoresFilled();
 
-			ScriptMgr::Yield(10ms);
+			ScriptMgr::Yield();
 		}
 	}
 }

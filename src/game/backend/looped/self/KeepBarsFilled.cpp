@@ -19,5 +19,7 @@ namespace YimMenu
 			ENTITY::SET_ENTITY_HEALTH(Self::ped, ENTITY::GET_ENTITY_MAX_HEALTH(Self::ped, false), 0);
 		if (stamina_bar < PED::_GET_PED_MAX_STAMINA(Self::ped))
 			PED::_CHANGE_PED_STAMINA(Self::ped, PED::_GET_PED_MAX_STAMINA(Self::ped));
+		if (deadeye_bar < PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::id, 0))
+			PLAYER::_SPECIAL_ABILITY_RESTORE_BY_AMOUNT(Self::id, PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::id, false), 0, 0, 1);
 	}
 }
