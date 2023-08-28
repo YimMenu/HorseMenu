@@ -8,12 +8,13 @@ include(cmake/imgui.cmake)
 include(cmake/json.cmake)
 include(cmake/minhook.cmake)
 include(cmake/rdr-classes.cmake)
+include(cmake/vulkan.cmake)
 
 # source
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
 file(GLOB_RECURSE SRC_FILES
     "${SRC_DIR}/**.hpp"
-    "${SRC_DIR}/**.cpp"    
+    "${SRC_DIR}/**.cpp"
 )
 
 add_library(${PROJECT_NAME} MODULE ${SRC_FILES})
@@ -27,6 +28,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${imgui_SOURCE_DIR}"
     "${minhook_SOURCE_DIR}/include"    
     "${rdr_classes_SOURCE_DIR}"
+    "${vulkan_SOURCE_DIR}/include"
 )
 
 message(STATUS "Setting up linked libraries")
