@@ -4,6 +4,8 @@
 #include "game/frontend/GUI.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "looped/Looped.hpp"
+#include "commands/FeatureCommand.hpp"
+#include "game/backend/commands/HotkeySystem.hpp"
 
 namespace YimMenu
 {
@@ -31,6 +33,20 @@ namespace YimMenu
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK2, 1);
 			}
 
+			
+			
+
+			ScriptMgr::Yield();
+		}
+	}
+
+	void backend::hotkeys()
+	{
+		while (true)
+		{
+
+			g_HotkeySystem.FeatureCommandsHotkeyLoop();
+
 			ScriptMgr::Yield();
 		}
 	}
@@ -40,9 +56,20 @@ namespace YimMenu
 		while (true)
 		{
 			looped::SelfLoop();
-			looped::KeepCoresFilled();
-			looped::KeepBarsFilled();
+			looped::KeepHorseBarsFilled();
 			looped::KeepHorseCoresFilled();
+
+			ScriptMgr::Yield();
+		}
+	}
+
+	void backend::looped_commands()
+	{
+		while (true)
+		{
+			for (auto& feature_command : RegisteredCommands | std::ranges::views::values)
+				if (feature_command.IsLooped() && feature_command.GetGlobal() && *feature_command.GetGlobal())
+					feature_command.Call();
 
 			ScriptMgr::Yield();
 		}

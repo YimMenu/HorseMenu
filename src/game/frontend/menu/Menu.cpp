@@ -9,6 +9,9 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/backend/looped/self/SelfLooped.hpp"
+#include "game/backend/commands/HotkeySystem.hpp"
+#include "game/backend/commands/HotkeyMap.hpp"
+#include "game/backend/commands/FeatureCommand.hpp"
 
 namespace YimMenu
 {
@@ -19,18 +22,66 @@ namespace YimMenu
 
 		if (ImGui::Begin("Test"))
 		{
+			
+			for (auto& [name, feature_command] : RegisteredCommands)
+			{
+				ImGui::PushID(Joaat(feature_command.GetName()));
+
+				ImGui::BeginGroup();
+
+				ImGui::Text(feature_command.GetLabel().data());
+
+				ImGui::SameLine(150);
+
+				if (ImGui::Checkbox("Change Hotkey", &feature_command.hotkey_listener))
+				{
+					if (feature_command.hotkey_listener)
+						feature_command.hotkey_modifiers.clear();
+				}
+
+				if (feature_command.hotkey_listener)
+				{
+					g_HotkeySystem.CreateHotkey(feature_command.hotkey_modifiers);
+				}
+
+				ImGui::SameLine();
+				ImGui::BeginGroup();
+
+				if (feature_command.hotkey_modifiers.empty())
+				{
+					ImGui::Text("No Hotkey Assigned");
+				}
+				else
+				{
+					ImGui::PushItemWidth(100);
+					for (auto hotkey_modifier : feature_command.hotkey_modifiers)
+					{
+						char key_label[32];
+						strcpy(key_label, g_HotkeySystem.GetHotkeyLabel(hotkey_modifier).data());
+						ImGui::InputText("##keylabel", key_label, 32, ImGuiInputTextFlags_ReadOnly);
+
+						if (hotkey_modifier != feature_command.hotkey_modifiers.back())
+							ImGui::SameLine();
+					}
+					ImGui::PopItemWidth();
+				}
+
+				ImGui::EndGroup();
+
+
+				ImGui::EndGroup();
+
+				ImGui::PopID();
+			}
+
+			ImGui::Separator();
+
 			ImGui::Text(std::format("Deadeye: {}/{}", Self::deadeye, Self::max_deadeye).data());
 
 			ImGui::Checkbox("Refill Cores", &Self::refill_cores);
 			ImGui::Checkbox("Refill Bars", &Self::refill_bars);
 			ImGui::Checkbox("Refill Horse Cores", &Self::refill_horse_cores);
-
-			if (ImGui::Button("Play Kit Emote"))
-			{
-				FiberPool::Push([] {
-					TASK::TASK_PLAY_EMOTE_WITH_HASH(Self::ped, 4, 0, "KIT_EMOTE_TWIRL_GUN"_J, true, false, false, true, false);
-				});
-			}
+			ImGui::Checkbox("Refill Horse Bars", &Self::refill_horse_bars);
 
 			if (ImGui::Button("Suicide"))
 			{
@@ -57,7 +108,7 @@ namespace YimMenu
 						ScriptMgr::Yield();
 
 				    auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
-					auto ped = PED::CREATE_PED(model_hash, coords.x, coords.y, coords.z, 0.0f, false, false, false, false); 
+					auto ped = PED::CREATE_PED(model_hash, coords.x, coords.y, coords.z, 0.0f, false, false, false, false);
 					ScriptMgr::Yield();
 					PED::SET_PED_RANDOM_COMPONENT_VARIATION(ped, 0);
 				});

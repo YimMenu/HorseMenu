@@ -17,4 +17,5 @@ namespace YimMenu::Self
 	inline bool refill_cores;
 	inline bool refill_bars;
 	inline bool refill_horse_cores;
+	inline bool refill_horse_bars;
 }

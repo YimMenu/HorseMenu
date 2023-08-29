@@ -36,6 +36,8 @@ namespace YimMenu
 
 		ScriptMgr::AddScript(std::make_unique<Script>(&backend::controls));
 		ScriptMgr::AddScript(std::make_unique<Script>(&backend::self));
+		ScriptMgr::AddScript(std::make_unique<Script>(&backend::looped_commands));
+		ScriptMgr::AddScript(std::make_unique<Script>(&backend::hotkeys));
 
 		while (g_Running)
 		{

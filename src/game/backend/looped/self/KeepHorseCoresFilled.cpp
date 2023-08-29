@@ -1,7 +1,7 @@
 #include "../../../rdr/Natives.hpp"
 #include "../Looped.hpp"
 #include "SelfLooped.hpp"
-
+#include "../../commands/FeatureCommand.hpp"
 
 namespace YimMenu
 {
@@ -19,4 +19,6 @@ namespace YimMenu
 		if (stamina_care < 100)
 			ATTRIBUTE::_SET_ATTRIBUTE_CORE_VALUE(Self::mount, (int)eAttributeCore::ATTRIBUTE_CORE_STAMINA, 100);
 	}
+	
+	static FeatureCommand command{"keephorsecoresfilled", "Keep Horse Cores Filled", looped::KeepHorseCoresFilled, 0, true, &Self::refill_horse_cores};
 }

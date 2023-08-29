@@ -9,5 +9,6 @@ namespace YimMenu
 		static void KeepCoresFilled();
 		static void KeepBarsFilled();
 		static void KeepHorseCoresFilled();
+		static void KeepHorseBarsFilled();
 	};
 }

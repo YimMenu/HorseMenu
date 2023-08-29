@@ -1,6 +1,7 @@
 #include "../../../rdr/Natives.hpp"
 #include "../Looped.hpp"
 #include "SelfLooped.hpp"
+#include "../../commands/FeatureCommand.hpp"
 
 
 namespace YimMenu
@@ -22,4 +23,6 @@ namespace YimMenu
 		if (deadeye_bar < PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::id, 0))
 			PLAYER::_SPECIAL_ABILITY_RESTORE_BY_AMOUNT(Self::id, PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::id, false), 0, 0, 1);
 	}
+
+	static FeatureCommand command{"keepbarsfilled", "Keep Bars Filled", looped::KeepBarsFilled, 0, true, &Self::refill_bars};
 }
