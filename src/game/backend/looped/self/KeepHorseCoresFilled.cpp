@@ -20,5 +20,5 @@ namespace YimMenu
 			ATTRIBUTE::_SET_ATTRIBUTE_CORE_VALUE(Self::mount, (int)eAttributeCore::ATTRIBUTE_CORE_STAMINA, 100);
 	}
 
-	static FeatureCommand command{"keephorsecoresfilled", "Keep Horse Cores Filled", looped::KeepHorseCoresFilled, 0, true, &Self::refill_horse_cores};
+	static FeatureCommand command{"keephorsecoresfilled", "Keep Horse Cores Filled", looped::KeepHorseCoresFilled, "Fills your horses Health and Stamina cores", true, &Self::refill_horse_cores};
 }

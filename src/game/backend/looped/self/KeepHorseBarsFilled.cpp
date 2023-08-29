@@ -21,5 +21,5 @@ namespace YimMenu
 			PED::_CHANGE_PED_STAMINA(Self::mount, PED::_GET_PED_MAX_STAMINA(Self::mount));
 	}
 
-	static FeatureCommand command{"keephorsebarsfilled", "Keep Horse Bars Filled", looped::KeepHorseBarsFilled, 0, true, &Self::refill_horse_bars};
+	static FeatureCommand command{"keephorsebarsfilled", "Keep Horse Bars Filled", looped::KeepHorseBarsFilled, "Fills your horses Health and Stamina", true, &Self::refill_horse_bars};
 }

@@ -24,5 +24,5 @@ namespace YimMenu
 			ATTRIBUTE::_SET_ATTRIBUTE_CORE_VALUE(Self::ped, (int)eAttributeCore::ATTRIBUTE_CORE_DEADEYE, 100);
 	}
 
-	static FeatureCommand command{"keepcoresfilled", "Keep Cores Filled", looped::KeepCoresFilled, 0, true, &Self::refill_cores};
+	static FeatureCommand command{"keepcoresfilled", "Keep Cores Filled", looped::KeepCoresFilled, "Fills your Health, Stamina and Deadeye cores", true, &Self::refill_cores};
 }

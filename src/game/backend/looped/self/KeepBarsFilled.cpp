@@ -24,5 +24,5 @@ namespace YimMenu
 			PLAYER::_SPECIAL_ABILITY_RESTORE_BY_AMOUNT(Self::id, PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::id, false), 0, 0, 1);
 	}
 
-	static FeatureCommand command{"keepbarsfilled", "Keep Bars Filled", looped::KeepBarsFilled, 0, true, &Self::refill_bars};
+	static FeatureCommand command{"keepbarsfilled", "Keep Bars Filled", looped::KeepBarsFilled, "Fills your Health, Stamina and Deadeye", true, &Self::refill_bars};
 }

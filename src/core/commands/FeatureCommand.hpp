@@ -19,7 +19,7 @@ namespace YimMenu
 		std::function<void()> feature_function;
 
 	public:
-		FeatureCommand(std::string name, std::string label, std::function<void()> func, std::string desc = "", int num_args = 0, bool looped = false, bool* global = nullptr) :
+		FeatureCommand(std::string name, std::string label, std::function<void()> func, std::string desc = "", bool looped = false, bool* global = nullptr) :
 		    name(name),
 		    label(label),
 		    desc(desc),
