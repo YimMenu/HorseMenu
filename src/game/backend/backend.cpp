@@ -1,8 +1,8 @@
 #include "backend.hpp"
 
-#include "commands/FeatureCommand.hpp"
+#include "core/commands/FeatureCommand.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/backend/commands/HotkeySystem.hpp"
+#include "core/commands/HotkeySystem.hpp"
 #include "game/frontend/GUI.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"

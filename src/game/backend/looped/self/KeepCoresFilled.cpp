@@ -1,7 +1,7 @@
 #include "../Looped.hpp"
 #include "../../../rdr/Natives.hpp"
 #include "SelfLooped.hpp"
-#include "../../commands/FeatureCommand.hpp"
+#include "core/commands/FeatureCommand.hpp"
 
 
 namespace YimMenu

@@ -1,6 +1,6 @@
 #include "HotkeySystem.hpp"
 
-#include "../../rdr/Natives.hpp"
+#include "game/rdr/Natives.hpp"
 #include "FeatureCommand.hpp"
 #include "game/backend/ScriptMgr.hpp"
 

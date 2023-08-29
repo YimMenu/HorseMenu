@@ -1,5 +1,5 @@
 #include "../../../rdr/Natives.hpp"
-#include "../../commands/FeatureCommand.hpp"
+#include "core/commands/FeatureCommand.hpp"
 #include "../Looped.hpp"
 #include "SelfLooped.hpp"
 
