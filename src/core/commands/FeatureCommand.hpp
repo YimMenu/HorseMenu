@@ -12,17 +12,17 @@ namespace YimMenu
 	private:
 		std::string name;
 		std::string label;
-		int num_args = 0;
+		std::string desc;
 		bool looped  = false;
 		bool* global = nullptr;
 
 		std::function<void()> feature_function;
 
 	public:
-		FeatureCommand(std::string name, std::string label, std::function<void()> func, int num_args = 0, bool looped = false, bool* global = nullptr) :
+		FeatureCommand(std::string name, std::string label, std::function<void()> func, std::string desc = "", int num_args = 0, bool looped = false, bool* global = nullptr) :
 		    name(name),
 		    label(label),
-		    num_args(num_args),
+		    desc(desc),
 		    feature_function(func),
 		    looped(looped),
 		    global(global)
