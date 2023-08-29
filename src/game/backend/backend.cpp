@@ -56,8 +56,6 @@ namespace YimMenu
 		while (true)
 		{
 			looped::SelfLoop();
-			looped::KeepHorseBarsFilled();
-			looped::KeepHorseCoresFilled();
 
 			ScriptMgr::Yield();
 		}

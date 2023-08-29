@@ -10,7 +10,6 @@
 #include "game/rdr/Enums.hpp"
 #include "game/backend/looped/self/SelfLooped.hpp"
 #include "game/backend/commands/HotkeySystem.hpp"
-#include "game/backend/commands/HotkeyMap.hpp"
 #include "game/backend/commands/FeatureCommand.hpp"
 
 namespace YimMenu
@@ -31,7 +30,7 @@ namespace YimMenu
 
 				ImGui::Text(feature_command.GetLabel().data());
 
-				ImGui::SameLine(150);
+				ImGui::SameLine(175);
 
 				if (ImGui::Checkbox("Change Hotkey", &feature_command.hotkey_listener))
 				{

@@ -2,7 +2,6 @@
 
 #include "../../rdr/Natives.hpp"
 #include "FeatureCommand.hpp"
-#include "HotkeyMap.hpp"
 #include "game/backend/ScriptMgr.hpp"
 
 namespace YimMenu
