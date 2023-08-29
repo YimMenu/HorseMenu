@@ -25,7 +25,7 @@ namespace YimMenu
 				hotkey = i;
 
 				return true;
-			}	
+			}
 		}
 
 		return false;
@@ -45,7 +45,6 @@ namespace YimMenu
 	//Meant to be called in a loop
 	void HotkeySystem::CreateHotkey(std::vector<int>& hotkey)
 	{
-
 		static auto is_key_unique = [this](int key, std::vector<int> list) -> bool {
 			for (auto& key_ : list)
 				if (GetHotkeyLabel(key_) == GetHotkeyLabel(key))

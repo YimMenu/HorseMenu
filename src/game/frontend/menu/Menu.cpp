@@ -1,16 +1,16 @@
 #include "Menu.hpp"
 
-#include "core/memory/ModuleMgr.hpp"
-#include "game/pointers/Pointers.hpp"
-#include "util/Joaat.hpp"
-#include "game/rdr/natives.hpp"
 #include "core/filemgr/FileMgr.hpp"
+#include "core/memory/ModuleMgr.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/backend/looped/self/SelfLooped.hpp"
-#include "game/backend/commands/HotkeySystem.hpp"
 #include "game/backend/commands/FeatureCommand.hpp"
+#include "game/backend/commands/HotkeySystem.hpp"
+#include "game/backend/looped/self/SelfLooped.hpp"
+#include "game/pointers/Pointers.hpp"
+#include "game/rdr/Enums.hpp"
+#include "game/rdr/natives.hpp"
+#include "util/Joaat.hpp"
 
 namespace YimMenu
 {
@@ -21,7 +21,6 @@ namespace YimMenu
 
 		if (ImGui::Begin("Test"))
 		{
-			
 			for (auto& [name, feature_command] : RegisteredCommands)
 			{
 				ImGui::PushID(Joaat(feature_command.GetName()));
@@ -89,7 +88,7 @@ namespace YimMenu
 			}
 
 			if (ImGui::Button("Get Coords"))
-			{ 
+			{
 				auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
 
 				LOG(INFO) << coords.x << "x\t" << coords.y << "y\t" << coords.z << "z";
@@ -102,11 +101,11 @@ namespace YimMenu
 					auto model_hash = "msp_mob0_males_01"_J; // most models don't work
 					LOG(INFO) << "In fiber pool";
 
-					STREAMING::REQUEST_MODEL(model_hash, false); 
+					STREAMING::REQUEST_MODEL(model_hash, false);
 					while (!STREAMING::HAS_MODEL_LOADED(model_hash))
 						ScriptMgr::Yield();
 
-				    auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
+					auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
 					auto ped = PED::CREATE_PED(model_hash, coords.x, coords.y, coords.z, 0.0f, false, false, false, false);
 					ScriptMgr::Yield();
 					PED::SET_PED_RANDOM_COMPONENT_VARIATION(ped, 0);

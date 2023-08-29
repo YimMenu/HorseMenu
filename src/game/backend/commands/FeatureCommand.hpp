@@ -13,13 +13,13 @@ namespace YimMenu
 		std::string name;
 		std::string label;
 		int num_args = 0;
-		bool looped = false;
+		bool looped  = false;
 		bool* global = nullptr;
 
 		std::function<void()> feature_function;
 
 	public:
-		FeatureCommand(std::string name, std::string label, std::function < void()> func, int num_args = 0, bool looped = false, bool* global = nullptr) :
+		FeatureCommand(std::string name, std::string label, std::function<void()> func, int num_args = 0, bool looped = false, bool* global = nullptr) :
 		    name(name),
 		    label(label),
 		    num_args(num_args),
@@ -29,7 +29,7 @@ namespace YimMenu
 		{
 			RegisteredCommands.insert({name, *this});
 		}
-		
+
 		std::vector<int> hotkey_modifiers;
 		bool hotkey_listener;
 
@@ -38,7 +38,7 @@ namespace YimMenu
 			return name;
 		}
 
-		
+
 		std::string GetLabel()
 		{
 			return label;
@@ -57,5 +57,5 @@ namespace YimMenu
 		void Call();
 	};
 
-	
+
 }
