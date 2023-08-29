@@ -51,7 +51,7 @@ namespace YimMenu
 				}
 				else
 				{
-					ImGui::PushItemWidth(100);
+					ImGui::PushItemWidth(50);
 					for (auto hotkey_modifier : feature_command.hotkey_modifiers)
 					{
 						char key_label[32];
@@ -66,7 +66,6 @@ namespace YimMenu
 
 				ImGui::EndGroup();
 
-
 				ImGui::EndGroup();
 
 				ImGui::PopID();
@@ -80,6 +79,13 @@ namespace YimMenu
 			ImGui::Checkbox("Refill Bars", &Self::refill_bars);
 			ImGui::Checkbox("Refill Horse Cores", &Self::refill_horse_cores);
 			ImGui::Checkbox("Refill Horse Bars", &Self::refill_horse_bars);
+
+			if (ImGui::Button("Clear Crimes"))
+			{
+				FiberPool::Push([] {
+					RegisteredCommands.at("clearcrimes").Call();
+				});
+			}
 
 			if (ImGui::Button("Suicide"))
 			{

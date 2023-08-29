@@ -38,7 +38,6 @@ namespace YimMenu
 			return name;
 		}
 
-
 		std::string GetLabel()
 		{
 			return label;
