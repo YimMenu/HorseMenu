@@ -522,6 +522,7 @@ namespace YimMenu
 					}
 				}
 
+
 				if (queue == it && family.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 				{
 					return true;
@@ -530,13 +531,15 @@ namespace YimMenu
 		 }
 
 		 return false;
-	}
+	} 
 
 	void Renderer::VkOnPresentImpl(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
 	{
 		 if (!m_VkDevice || !g_Running)
+		 {
 			return;
-
+		 }
+		
 		 if (!ImGui::GetCurrentContext())
 		 {
 			ImGui::CreateContext();
