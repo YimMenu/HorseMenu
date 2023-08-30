@@ -7,7 +7,7 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/backend.hpp"
+#include "game/features/Features.hpp"
 
 namespace YimMenu
 {
@@ -16,6 +16,7 @@ namespace YimMenu
 		const auto documents = std::filesystem::path(std::getenv("USERPROFILE")) / "Documents";
 		FileMgr::Init(documents / "HellBase");
 
+		// TODO: change console name
 		LogHelper::Init("henlo", FileMgr::GetProjectFile("./cout.log"));
 
 		if (!ModuleMgr.LoadModules())
@@ -34,10 +35,7 @@ namespace YimMenu
 		GUI::Init();
 		Hooking::Init();
 
-		ScriptMgr::AddScript(std::make_unique<Script>(&backend::controls));
-		ScriptMgr::AddScript(std::make_unique<Script>(&backend::self));
-		ScriptMgr::AddScript(std::make_unique<Script>(&backend::looped_commands));
-		ScriptMgr::AddScript(std::make_unique<Script>(&backend::hotkeys));
+		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 
 		while (g_Running)
 		{

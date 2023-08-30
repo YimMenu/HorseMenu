@@ -1,9 +1,11 @@
 #include "HotkeySystem.hpp"
 
 #include "game/rdr/Natives.hpp"
-#include "FeatureCommand.hpp"
 #include "game/backend/ScriptMgr.hpp"
 
+// TODO: hotkeys
+
+#if 0
 namespace YimMenu
 {
 
@@ -99,3 +101,4 @@ namespace YimMenu
 		}
 	}
 }
+#endif

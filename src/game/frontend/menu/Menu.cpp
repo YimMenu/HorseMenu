@@ -3,17 +3,33 @@
 #include "core/filemgr/FileMgr.hpp"
 #include "core/memory/ModuleMgr.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/ScriptMgr.hpp"
-#include "core/commands/FeatureCommand.hpp"
 #include "core/commands/HotkeySystem.hpp"
-#include "game/backend/looped/self/SelfLooped.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/natives.hpp"
 #include "util/Joaat.hpp"
+#include "core/commands/Commands.hpp"
+#include "core/commands/LoopedCommand.hpp"
+#include "game/backend/ScriptMgr.hpp"
 
 namespace YimMenu
 {
+	// this is fundamentally broken and should only be used as a test
+	inline void CommandCheckboxDemo(joaat_t command_hash)
+	{
+		auto command = Commands::GetCommand<LoopedCommand>(command_hash);
+
+		if (!command)
+		{
+			ImGui::Text("Unknown!");
+			return;
+		}
+
+		bool enabled = command->GetState();
+		if (ImGui::Checkbox(command->GetLabel().data(), &enabled))
+			command->SetState(enabled);
+	}
+
 	void Menu::Main()
 	{
 		if (!GUI::IsOpen())
@@ -21,6 +37,8 @@ namespace YimMenu
 
 		if (ImGui::Begin("Test"))
 		{
+			// TODO: hotkeys
+			#if 0
 			for (auto& [name, feature_command] : RegisteredCommands)
 			{
 				ImGui::PushID(Joaat(feature_command.GetName()));
@@ -70,20 +88,19 @@ namespace YimMenu
 
 				ImGui::PopID();
 			}
+			#endif
 
 			ImGui::Separator();
 
-			ImGui::Text(std::format("Deadeye: {}/{}", Self::deadeye, Self::max_deadeye).data());
-
-			ImGui::Checkbox("Refill Cores", &Self::refill_cores);
-			ImGui::Checkbox("Refill Bars", &Self::refill_bars);
-			ImGui::Checkbox("Refill Horse Cores", &Self::refill_horse_cores);
-			ImGui::Checkbox("Refill Horse Bars", &Self::refill_horse_bars);
+			CommandCheckboxDemo("keepcoresfilled"_J);
+			CommandCheckboxDemo("keepbarsfilled"_J);
+			CommandCheckboxDemo("keephorsecoresfilled"_J);
+			CommandCheckboxDemo("keephorsebarsfilled"_J);
 
 			if (ImGui::Button("Clear Crimes"))
 			{
 				FiberPool::Push([] {
-					RegisteredCommands.at("clearcrimes").Call();
+					Commands::GetCommand("clearcrimes"_J)->Call();
 				});
 			}
 
@@ -97,7 +114,7 @@ namespace YimMenu
 			{
 				auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
 
-				LOG(INFO) << coords.x << "x\t" << coords.y << "y\t" << coords.z << "z";
+				LOG(INFO) << "X: " << coords.x << ", Y: " << coords.y << ", Z: " << coords.z;
 			}
 
 			if (ImGui::Button("Spawn Ped"))
