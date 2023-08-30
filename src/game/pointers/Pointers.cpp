@@ -4,6 +4,7 @@
 #include "core/memory/ModuleMgr.hpp"
 #include "core/memory/PatternScanner.hpp"
 #include "util/Joaat.hpp"
+#include "core/renderer/Renderer.hpp"
 
 namespace YimMenu
 {
@@ -60,6 +61,17 @@ namespace YimMenu
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
 		});
 
+	    constexpr auto vkDevice = Pattern<"48 8B 95 B0 ? ? ? 44 8B CB 48 8B ? ? ? ? ? 4D 8B C5">("VkDevice");
+		scanner.Add(vkDevice, [this](PointerCalculator ptr) {
+			VkDevicePtr = ptr.Add(0xA).Add(3).Rip().As<VkDevice*>(); //Doesn't work when used although pointer should be correct. Using ptr from hooks now.
+		});
+
+		constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
+		scanner.Add(hwnd, [this](PointerCalculator ptr) {
+			Hwnd = *ptr.Add(3).Rip().As<HWND*>();
+			LOG(INFO) << "HWND: " << Hwnd;
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
@@ -67,37 +79,26 @@ namespace YimMenu
 			return false;
 		}
 
-		if (!GetRendererInfo)
+		if (const auto& RendererInfo = GetRendererInfo(); RendererInfo)
 		{
-			LOG(FATAL) << "Failed to get rendering info, unloading.";
-
-			return false;
+			if (RendererInfo->is_rendering_type(eRenderingType::DX12))
+			{
+				IsVulkan = false;
+			}
+			else if (RendererInfo->is_rendering_type(eRenderingType::Vulkan))
+			{
+				IsVulkan = true;
+			}
+			else
+			{
+				LOG(INFO) << "Unknown renderer type!";
+				return false;
+			}
 		}
 		else
 		{
-			RenderingInfo* info{ GetRendererInfo() };
-			if (!info->is_rendering_type(eRenderingType::DX12))
-			{
-				LOG(FATAL) << "Unsupported rendering type, unloading.";
-
-				return false;
-			}
-		}
-
-		if (auto swapchain = *SwapChain)
-		{
-			if (auto result = swapchain->GetHwnd(&Hwnd); result < 0)
-			{
-				LOG(FATAL) << "Failed to grab game window from swapchain [" << result << "], unloading.";
-
-				return false;
-			}
-			else if (!Hwnd)
-			{
-				LOG(FATAL) << "Game window is invalid, unloading.";
-
-				return false;
-			}
+			LOG(INFO) << "Invalid renderer info!";
+			return false;
 		}
 
 		return true;

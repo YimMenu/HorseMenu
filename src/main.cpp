@@ -24,11 +24,13 @@ namespace YimMenu
 		if (!Renderer::Init())
 			goto unload;
 
+		Hooking::Init();
+
 		ScriptMgr::Init();
 		FiberPool::Init(5);
 
 		GUI::Init();
-		Hooking::Init();
+
 
 		while (g_Running)
 		{

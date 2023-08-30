@@ -3,12 +3,13 @@ cmake_minimum_required(VERSION 3.20.x)
 project(NewBase VERSION 0.0.1 DESCRIPTION "A new base using new C++ features optimised for speed and ease of use")
 
 # libs
+include(cmake/vulkan.cmake)
 include(cmake/async-logger.cmake)
 include(cmake/imgui.cmake)
 include(cmake/json.cmake)
 include(cmake/minhook.cmake)
 include(cmake/rdr-classes.cmake)
-include(cmake/vulkan.cmake)
+
 
 # source
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
@@ -32,4 +33,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 message(STATUS "Setting up linked libraries")
-target_link_libraries(${PROJECT_NAME} PRIVATE AsyncLogger imgui minhook nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PRIVATE AsyncLogger imgui minhook nlohmann_json::nlohmann_json  "${SRC_DIR}/vulkan-1.lib")

@@ -6,7 +6,7 @@
 #include <backends/imgui_impl_dx12.h>
 #include <backends/imgui_impl_win32.h>
 #include <imgui.h>
-#include <vulkan/vulkan.h>
+
 
 namespace YimMenu
 {
@@ -21,11 +21,24 @@ namespace YimMenu
 	void Renderer::DestroyImpl()
 	{
 		ImGui_ImplWin32_Shutdown();
-		ImGui_ImplDX12_Shutdown();
+		if (Pointers.IsVulkan)
+		{
+			VkCleanupRenderTarget();
+			vkDestroyDescriptorPool(m_VkDevice, m_VkDescriptorPool, m_VkAllocator);
+			vkDeviceWaitIdle(m_VkDevice);
+			vkDestroyInstance(m_VkInstance, m_VkAllocator);
+			ImGui_ImplVulkan_Shutdown();
+	
+		}
+		else if (!Pointers.IsVulkan)
+		{
+			ImGui_ImplDX12_Shutdown();
+		}
+
 		ImGui::DestroyContext();
 	}
 
-	bool Renderer::InitImpl()
+	bool Renderer::InitDX12()
 	{
 		if (!Pointers.SwapChain)
 		{
@@ -88,15 +101,20 @@ namespace YimMenu
 
 		m_FrameContext.resize(m_SwapChainDesc.BufferCount);
 
-		D3D12_DESCRIPTOR_HEAP_DESC DescriptorDesc{ D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE };
-		if (const auto result = m_Device->CreateDescriptorHeap(&DescriptorDesc, __uuidof(ID3D12DescriptorHeap), (void**)m_DescriptorHeap.GetAddressOf()); result < 0)
+		D3D12_DESCRIPTOR_HEAP_DESC DescriptorDesc{D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE};
+		if (const auto result =
+		        m_Device->CreateDescriptorHeap(&DescriptorDesc, __uuidof(ID3D12DescriptorHeap), (void**)m_DescriptorHeap.GetAddressOf());
+		    result < 0)
 		{
 			LOG(WARNING) << "Failed to create Descriptor Heap with result: [" << result << "]";
 
 			return false;
 		}
 
-		if (const auto result = m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(ID3D12CommandAllocator), (void**)m_CommandAllocator.GetAddressOf()); result < 0)
+		if (const auto result = m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+		        __uuidof(ID3D12CommandAllocator),
+		        (void**)m_CommandAllocator.GetAddressOf());
+		    result < 0)
 		{
 			LOG(WARNING) << "Failed to create Command Allocator with result: [" << result << "]";
 
@@ -108,7 +126,13 @@ namespace YimMenu
 			m_FrameContext[i].CommandAllocator = m_CommandAllocator.Get();
 		}
 
-		if (const auto result = m_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_CommandAllocator.Get(), NULL, __uuidof(ID3D12GraphicsCommandList), (void**)m_CommandList.GetAddressOf()); result < 0)
+		if (const auto result = m_Device->CreateCommandList(0,
+		        D3D12_COMMAND_LIST_TYPE_DIRECT,
+		        m_CommandAllocator.Get(),
+		        NULL,
+		        __uuidof(ID3D12GraphicsCommandList),
+		        (void**)m_CommandList.GetAddressOf());
+		    result < 0)
 		{
 			LOG(WARNING) << "Failed to create Command List with result: [" << result << "]";
 
@@ -122,16 +146,19 @@ namespace YimMenu
 			return false;
 		}
 
-		D3D12_DESCRIPTOR_HEAP_DESC DescriptorBackbufferDesc{ D3D12_DESCRIPTOR_HEAP_TYPE_RTV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_NONE, 1 };
-		if (const auto result = m_Device->CreateDescriptorHeap(&DescriptorBackbufferDesc, __uuidof(ID3D12DescriptorHeap), (void**)m_BackbufferDescriptorHeap.GetAddressOf()); result < 0)
+		D3D12_DESCRIPTOR_HEAP_DESC DescriptorBackbufferDesc{D3D12_DESCRIPTOR_HEAP_TYPE_RTV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_NONE, 1};
+		if (const auto result = m_Device->CreateDescriptorHeap(&DescriptorBackbufferDesc,
+		        __uuidof(ID3D12DescriptorHeap),
+		        (void**)m_BackbufferDescriptorHeap.GetAddressOf());
+		    result < 0)
 		{
 			LOG(WARNING) << "Failed to create Backbuffer Descriptor Heap with result: [" << result << "]";
 
 			return false;
 		}
-	
-		const auto RTVDescriptorSize{ m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV) };
-		D3D12_CPU_DESCRIPTOR_HANDLE RTVHandle{ m_BackbufferDescriptorHeap->GetCPUDescriptorHandleForHeapStart() };
+
+		const auto RTVDescriptorSize{m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV)};
+		D3D12_CPU_DESCRIPTOR_HANDLE RTVHandle{m_BackbufferDescriptorHeap->GetCPUDescriptorHandleForHeapStart()};
 		for (size_t i{}; i != m_SwapChainDesc.BufferCount; ++i)
 		{
 			ComPtr<ID3D12Resource> BackBuffer{};
@@ -145,7 +172,12 @@ namespace YimMenu
 		// never returns false, useless to check return
 		ImGui::CreateContext();
 		ImGui_ImplWin32_Init(Pointers.Hwnd);
-		ImGui_ImplDX12_Init(m_Device.Get(), m_SwapChainDesc.BufferCount, DXGI_FORMAT_R8G8B8A8_UNORM, m_DescriptorHeap.Get(), m_DescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_DescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+		ImGui_ImplDX12_Init(m_Device.Get(),
+		    m_SwapChainDesc.BufferCount,
+		    DXGI_FORMAT_R8G8B8A8_UNORM,
+		    m_DescriptorHeap.Get(),
+		    m_DescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+		    m_DescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
 		ImGui::StyleColorsDark();
 
@@ -153,9 +185,515 @@ namespace YimMenu
 		return true;
 	}
 
-	bool Renderer::AddDXCallbackImpl(DXCallback&& callback, std::uint32_t priority)
+	bool Renderer::InitVulkan()
 	{
-		return m_DXCallbacks.insert({priority, callback}).second;
+		VkInstanceCreateInfo CreateInfo         = {};
+		constexpr const char* InstanceExtension = "VK_KHR_surface";
+
+		CreateInfo.sType                    = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		CreateInfo.enabledExtensionCount    = 1;
+		CreateInfo.ppEnabledExtensionNames  = &InstanceExtension;
+
+		// Create Vulkan Instance without any debug feature
+		if (const VkResult result = vkCreateInstance(&CreateInfo, m_VkAllocator, &m_VkInstance); result != VK_SUCCESS)
+		{
+			LOG(WARNING) << "vkCreateInstance failed with result: [" << result << "]";
+			return false;
+		}
+
+    	uint32_t GpuCount;
+		if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, nullptr); result != VK_SUCCESS)
+		{
+			LOG(WARNING) << "vkEnumeratePhysicalDevices failed with result: [" << result << "]";
+			return false;
+		}
+		IM_ASSERT(GpuCount > 0);
+
+		ImVector<VkPhysicalDevice> Gpus;
+		Gpus.resize(GpuCount);
+
+	    if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, Gpus.Data); result != VK_SUCCESS)
+		{
+			LOG(WARNING) << "vkEnumeratePhysicalDevices 2 failed with result: [" << result << "]";
+			return false;
+		}
+
+		// If a number >1 of GPUs got reported, find discrete GPU if present, or use first one available.
+        for (VkPhysicalDevice& Device : Gpus)
+		{
+			VkPhysicalDeviceProperties Properties;
+			vkGetPhysicalDeviceProperties(Device, &Properties);
+			if (Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+			{
+				m_VkPhysicalDevice = Device;
+			}
+		}
+
+		// Use first GPU (Integrated) is a Discrete one is not available.
+		if (!m_VkPhysicalDevice && GpuCount > 0)  
+	    {
+			m_VkPhysicalDevice = Gpus[0];
+		}
+		
+		uint32_t Count;
+		vkGetPhysicalDeviceQueueFamilyProperties(m_VkPhysicalDevice, &Count, NULL);
+		m_VKQueueFamilies.resize(Count);
+		vkGetPhysicalDeviceQueueFamilyProperties(m_VkPhysicalDevice, &Count, m_VKQueueFamilies.data());
+		for (uint32_t i = 0; i < Count; ++i)
+		{
+			if (m_VKQueueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+			{
+				m_VkQueueFamily = i;
+				break;
+			}
+		}
+		IM_ASSERT(m_VkQueueFamily != (uint32_t)-1);
+
+
+		constexpr const char* DeviceExtension = "VK_KHR_swapchain";
+		constexpr const float QueuePriority   = 1.0f;
+
+		VkDeviceQueueCreateInfo queue_info = {};
+		queue_info.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queue_info.queueFamilyIndex        = m_VkQueueFamily;
+		queue_info.queueCount              = 1;
+		queue_info.pQueuePriorities        = &QueuePriority;
+
+		VkDeviceCreateInfo create_info      = {};
+		create_info.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		create_info.queueCreateInfoCount    = 1;
+		create_info.pQueueCreateInfos       = &queue_info;
+		create_info.enabledExtensionCount   = 1;
+		create_info.ppEnabledExtensionNames = &DeviceExtension;
+
+		if (const VkResult result = vkCreateDevice(m_VkPhysicalDevice, &create_info, m_VkAllocator, &m_VkFakeDevice); result != VK_SUCCESS)
+		{
+			LOG(WARNING) << "Fake vkCreateDevice failed with result: [" << result << "]";
+			return false;
+		}
+
+		//Cursed place to do it.
+		Pointers.QueuePresentKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(m_VkFakeDevice, "vkQueuePresentKHR"));
+		Pointers.CreateSwapchainKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(m_VkFakeDevice, "vkCreateSwapchainKHR"));
+		Pointers.AcquireNextImageKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(m_VkFakeDevice, "vkAcquireNextImageKHR"));
+		Pointers.AcquireNextImage2KHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(m_VkFakeDevice, "vkAcquireNextImage2KHR"));
+
+		vkDestroyDevice(m_VkFakeDevice, m_VkAllocator);
+		m_VkFakeDevice = NULL;
+
+		LOG(INFO) << "Renderer has finished initializing.";
+
+		return true; //I guess?
+	}
+
+	void Renderer::VkCreateRenderTarget(VkDevice Device, VkSwapchainKHR Swapchain)
+	{
+		uint32_t uImageCount;
+		if (const VkResult result = vkGetSwapchainImagesKHR(Device, Swapchain, &uImageCount, NULL))
+		{
+			LOG(WARNING) << "vkGetSwapchainImagesKHR failed with result: [" << result << "]";
+			return;
+		}
+
+		VkImage BackBuffers[8] = {};
+		if (const VkResult result = vkGetSwapchainImagesKHR(Device, Swapchain, &uImageCount, BackBuffers))
+		{
+			LOG(WARNING) << "vkGetSwapchainImagesKHR 2 failed with result: [" << result << "]";
+			return;
+		}
+
+    	for (uint32_t i = 0; i < uImageCount; ++i)
+    	{
+    		m_VkFrames[i].Backbuffer = BackBuffers[i];
+    
+    		ImGui_ImplVulkanH_Frame* fd            = &m_VkFrames[i];
+    		ImGui_ImplVulkanH_FrameSemaphores* fsd = &m_VkFrameSemaphores[i];
+    		{
+    			VkCommandPoolCreateInfo info = {};
+    			info.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    			info.flags                   = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    			info.queueFamilyIndex        = m_VkQueueFamily;
+    
+				if (const VkResult result = vkCreateCommandPool(Device, &info, m_VkAllocator, &fd->CommandPool))
+				{
+					LOG(WARNING) << "vkCreateCommandPool failed with result: [" << result << "]";
+					return;
+				}
+    		}
+			{
+				VkCommandBufferAllocateInfo info = {};
+				info.sType                       = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+				info.commandPool                 = fd->CommandPool;
+				info.level                       = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+				info.commandBufferCount          = 1;
+
+				if (const VkResult result = vkAllocateCommandBuffers(Device, &info, &fd->CommandBuffer))
+				{
+					LOG(WARNING) << "vkAllocateCommandBuffers failed with result: [" << result << "]";
+					return;
+				}
+			}
+			{
+				VkFenceCreateInfo info = {};
+				info.sType             = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+				info.flags             = VK_FENCE_CREATE_SIGNALED_BIT;
+				if (const VkResult result = vkCreateFence(Device, &info, m_VkAllocator, &fd->Fence))
+				{
+					LOG(WARNING) << "vkCreateFence failed with result: [" << result << "]";
+					return;
+				}
+			}
+			{
+				VkSemaphoreCreateInfo info = {};
+				info.sType                 = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+				if (const VkResult result = vkCreateSemaphore(Device, &info, m_VkAllocator, &fsd->ImageAcquiredSemaphore))
+				{
+					LOG(WARNING) << "vkCreateSemaphore failed with result: [" << result << "]";
+					return;
+				}
+
+				if (const VkResult result = vkCreateSemaphore(Device, &info, m_VkAllocator, &fsd->RenderCompleteSemaphore))
+				{
+					LOG(WARNING) << "vkCreateSemaphore 2 failed with result: [" << result << "]";
+					return;
+				}
+			}
+    	}
+
+		 {
+			VkAttachmentDescription attachment = {};
+			attachment.format                  = VK_FORMAT_B8G8R8A8_UNORM;
+			attachment.samples                 = VK_SAMPLE_COUNT_1_BIT;
+			attachment.loadOp                  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			attachment.storeOp                 = VK_ATTACHMENT_STORE_OP_STORE;
+			attachment.stencilLoadOp           = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			attachment.stencilStoreOp          = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			attachment.initialLayout           = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			attachment.finalLayout             = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+			VkAttachmentReference color_attachment = {};
+			color_attachment.attachment            = 0;
+			color_attachment.layout                = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+			VkSubpassDescription subpass = {};
+			subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
+			subpass.colorAttachmentCount = 1;
+			subpass.pColorAttachments    = &color_attachment;
+
+			VkRenderPassCreateInfo info = {};
+			info.sType                  = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+			info.attachmentCount        = 1;
+			info.pAttachments           = &attachment;
+			info.subpassCount           = 1;
+			info.pSubpasses             = &subpass;
+
+			if (const VkResult result = vkCreateRenderPass(Device, &info, m_VkAllocator, &m_VkRenderPass))
+			{
+				LOG(WARNING) << "vkCreateRenderPass failed with result: [" << result << "]";
+				return;
+			}
+		 }
+		 {
+			VkImageViewCreateInfo info = {};
+			info.sType                 = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			info.viewType              = VK_IMAGE_VIEW_TYPE_2D;
+			info.format                = VK_FORMAT_B8G8R8A8_UNORM;
+
+			info.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+			info.subresourceRange.baseMipLevel   = 0;
+			info.subresourceRange.levelCount     = 1;
+			info.subresourceRange.baseArrayLayer = 0;
+			info.subresourceRange.layerCount     = 1;
+
+			for (uint32_t i = 0; i < uImageCount; ++i)
+			{
+				ImGui_ImplVulkanH_Frame* fd = &m_VkFrames[i];
+				info.image                  = fd->Backbuffer;
+
+				if (const VkResult result = vkCreateImageView(Device, &info, m_VkAllocator, &fd->BackbufferView))
+				{
+					LOG(WARNING) << "vkCreateImageView failed with result: [" << result << "]";
+					return;
+				}
+			}
+		 }
+		 {
+			VkImageView attachment[1];
+			VkFramebufferCreateInfo info = {};
+			info.sType                   = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			info.renderPass              = m_VkRenderPass;
+			info.attachmentCount         = 1;
+			info.pAttachments            = attachment;
+			info.layers                  = 1;
+
+			for (uint32_t i = 0; i < uImageCount; ++i)
+			{
+				ImGui_ImplVulkanH_Frame* fd = &m_VkFrames[i];
+				attachment[0]               = fd->BackbufferView;
+
+				if (const VkResult result = vkCreateFramebuffer(Device, &info, m_VkAllocator, &fd->Framebuffer))
+				{
+					LOG(WARNING) << "vkCreateFramebuffer failed with result: [" << result << "]";
+					return;
+				}
+			}
+		 }
+
+		 if (!m_VkDescriptorPool) // Create Descriptor Pool.
+		 {
+			constexpr VkDescriptorPoolSize pool_sizes[] = {{VK_DESCRIPTOR_TYPE_SAMPLER, 1000}, {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000}, {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000}, {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}};
+
+			VkDescriptorPoolCreateInfo pool_info = {};
+			pool_info.sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+			pool_info.flags                      = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+			pool_info.maxSets                    = 1000 * IM_ARRAYSIZE(pool_sizes);
+			pool_info.poolSizeCount              = (uint32_t)IM_ARRAYSIZE(pool_sizes);
+			pool_info.pPoolSizes                 = pool_sizes;
+
+			if (const VkResult result = vkCreateDescriptorPool(Device, &pool_info, m_VkAllocator, &m_VkDescriptorPool))
+			{
+				LOG(WARNING) << "vkCreateDescriptorPool failed with result: [" << result << "]";
+				return;
+			}
+		 }
+	}
+
+	void Renderer::VkCleanupRenderTarget()
+	{
+		 for (uint32_t i = 0; i < RTL_NUMBER_OF(GetInstance().m_VkFrames); ++i)
+		 {
+			if (GetInstance().m_VkFrames[i].Fence)
+			{
+				vkDestroyFence(GetInstance().m_VkDevice, GetInstance().m_VkFrames[i].Fence, GetInstance().m_VkAllocator);
+				GetInstance().m_VkFrames[i].Fence = VK_NULL_HANDLE;
+			}
+			if (GetInstance().m_VkFrames[i].CommandBuffer)
+			{
+				vkFreeCommandBuffers(GetInstance().m_VkDevice, GetInstance().m_VkFrames[i].CommandPool, 1, &GetInstance().m_VkFrames[i].CommandBuffer);
+				GetInstance().m_VkFrames[i].CommandBuffer = VK_NULL_HANDLE;
+			}
+			if (GetInstance().m_VkFrames[i].CommandPool)
+			{
+				vkDestroyCommandPool(GetInstance().m_VkDevice, GetInstance().m_VkFrames[i].CommandPool, GetInstance().m_VkAllocator);
+				GetInstance().m_VkFrames[i].CommandPool = VK_NULL_HANDLE;
+			}
+			if (GetInstance().m_VkFrames[i].BackbufferView)
+			{
+				vkDestroyImageView(GetInstance().m_VkDevice, GetInstance().m_VkFrames[i].BackbufferView, GetInstance().m_VkAllocator);
+				GetInstance().m_VkFrames[i].BackbufferView = VK_NULL_HANDLE;
+			}
+			if (GetInstance().m_VkFrames[i].Framebuffer)
+			{
+				vkDestroyFramebuffer(GetInstance().m_VkDevice, GetInstance().m_VkFrames[i].Framebuffer, GetInstance().m_VkAllocator);
+				GetInstance().m_VkFrames[i].Framebuffer = VK_NULL_HANDLE;
+			}
+		 }
+
+		 for (uint32_t i = 0; i < RTL_NUMBER_OF(GetInstance().m_VkFrameSemaphores); ++i)
+		 {
+			if (GetInstance().m_VkFrameSemaphores[i].ImageAcquiredSemaphore)
+			{
+				vkDestroySemaphore(GetInstance().m_VkDevice, GetInstance().m_VkFrameSemaphores[i].ImageAcquiredSemaphore, GetInstance().m_VkAllocator);
+				GetInstance().m_VkFrameSemaphores[i].ImageAcquiredSemaphore = VK_NULL_HANDLE;
+			}
+			if (GetInstance().m_VkFrameSemaphores[i].RenderCompleteSemaphore)
+			{
+				vkDestroySemaphore(GetInstance().m_VkDevice, GetInstance().m_VkFrameSemaphores[i].RenderCompleteSemaphore, GetInstance().m_VkAllocator);
+				GetInstance().m_VkFrameSemaphores[i].RenderCompleteSemaphore = VK_NULL_HANDLE;
+			}
+		 }
+	}
+
+	bool Renderer::DoesQueueSupportGraphic(VkQueue queue, VkQueue* pGraphicQueue)
+	{
+		 for (uint32_t i = 0; i < m_VKQueueFamilies.size(); ++i)
+		 {
+			const VkQueueFamilyProperties& family = m_VKQueueFamilies[i];
+			for (uint32_t j = 0; j < family.queueCount; ++j)
+			{
+				VkQueue it = VK_NULL_HANDLE;
+				vkGetDeviceQueue(m_VkDevice, i, j, &it);
+
+				if (pGraphicQueue && family.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+				{
+					if (*pGraphicQueue == VK_NULL_HANDLE)
+					{
+						*pGraphicQueue = it;
+					}
+				}
+
+				if (queue == it && family.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+				{
+					return true;
+				}
+			}
+		 }
+
+		 return false;
+	}
+
+	void Renderer::VkOnPresentImpl(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
+	{
+		 if (!m_VkDevice || !g_Running)
+			return;
+
+		 if (!ImGui::GetCurrentContext())
+		 {
+			ImGui::CreateContext();
+			ImGui_ImplWin32_Init(Pointers.Hwnd);
+		 }
+
+		 VkQueue GraphicQueue            = VK_NULL_HANDLE;
+		 const bool QueueSupportsGraphic = DoesQueueSupportGraphic(queue, &GraphicQueue);
+
+		 for (uint32_t i = 0; i < pPresentInfo->swapchainCount; ++i)
+		 {
+			VkSwapchainKHR swapchain = pPresentInfo->pSwapchains[i];
+			if (m_VkFrames[0].Framebuffer == VK_NULL_HANDLE)
+			{
+				VkCreateRenderTarget(m_VkDevice, swapchain);
+			}
+
+			ImGui_ImplVulkanH_Frame* fd            = &m_VkFrames[pPresentInfo->pImageIndices[i]];
+			ImGui_ImplVulkanH_FrameSemaphores* fsd = &m_VkFrameSemaphores[pPresentInfo->pImageIndices[i]];
+			{
+				vkWaitForFences(m_VkDevice, 1, &fd->Fence, VK_TRUE, ~0ull);
+				vkResetFences(m_VkDevice, 1, &fd->Fence);
+			}
+			{
+				vkResetCommandBuffer(fd->CommandBuffer, 0);
+
+				VkCommandBufferBeginInfo info = {};
+				info.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+				vkBeginCommandBuffer(fd->CommandBuffer, &info);
+			}
+			{
+				VkRenderPassBeginInfo info = {};
+				info.sType                 = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+				info.renderPass            = m_VkRenderPass;
+				info.framebuffer           = fd->Framebuffer;
+				if (m_VkImageExtent.width == 0 || m_VkImageExtent.height == 0)
+				{
+					info.renderArea.extent.width  = ImGui::GetIO().DisplaySize.x;
+					info.renderArea.extent.height = ImGui::GetIO().DisplaySize.y;
+				}
+				else
+				{
+					info.renderArea.extent = m_VkImageExtent;
+				}
+
+				vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+			}
+
+			if (!ImGui::GetIO().BackendRendererUserData)
+			{
+				ImGui_ImplVulkan_InitInfo init_info = {};
+				init_info.Instance                  = m_VkInstance;
+				init_info.PhysicalDevice            = m_VkPhysicalDevice;
+				init_info.Device                    = m_VkDevice;
+				init_info.QueueFamily               = m_VkQueueFamily;
+				init_info.Queue                     = GraphicQueue;
+				init_info.PipelineCache             = m_VkPipelineCache;
+				init_info.DescriptorPool            = m_VkDescriptorPool;
+				init_info.Subpass                   = 0;
+				init_info.MinImageCount             = m_VkMinImageCount;
+				init_info.ImageCount                = m_VkMinImageCount;
+				init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
+				init_info.Allocator                 = m_VkAllocator;
+			
+			    ImGui_ImplVulkan_Init(&init_info, m_VkRenderPass);
+
+				ImGui_ImplVulkan_CreateFontsTexture(fd->CommandBuffer);
+			}
+
+			ImGui_ImplVulkan_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+
+			for (const auto& callback : m_RendererCallBacks | std::views::values)
+				 callback();
+
+			ImGui::Render();
+
+			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), fd->CommandBuffer);
+
+			vkCmdEndRenderPass(fd->CommandBuffer);
+			vkEndCommandBuffer(fd->CommandBuffer);
+
+			uint32_t waitSemaphoresCount = i == 0 ? pPresentInfo->waitSemaphoreCount : 0;
+			if (waitSemaphoresCount == 0 && !QueueSupportsGraphic)
+			{
+				constexpr VkPipelineStageFlags stages_wait = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+				{
+					VkSubmitInfo info = {};
+					info.sType        = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+					info.pWaitDstStageMask = &stages_wait;
+
+					info.signalSemaphoreCount = 1;
+					info.pSignalSemaphores    = &fsd->RenderCompleteSemaphore;
+
+					vkQueueSubmit(queue, 1, &info, VK_NULL_HANDLE);
+				}
+				{
+					VkSubmitInfo info       = {};
+					info.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+					info.commandBufferCount = 1;
+					info.pCommandBuffers    = &fd->CommandBuffer;
+
+					info.pWaitDstStageMask  = &stages_wait;
+					info.waitSemaphoreCount = 1;
+					info.pWaitSemaphores    = &fsd->RenderCompleteSemaphore;
+
+					info.signalSemaphoreCount = 1;
+					info.pSignalSemaphores    = &fsd->ImageAcquiredSemaphore;
+
+					vkQueueSubmit(GraphicQueue, 1, &info, fd->Fence);
+				}
+			}
+			else
+			{
+				std::vector<VkPipelineStageFlags> stages_wait(waitSemaphoresCount, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+
+				VkSubmitInfo info       = {};
+				info.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+				info.commandBufferCount = 1;
+				info.pCommandBuffers    = &fd->CommandBuffer;
+
+				info.pWaitDstStageMask  = stages_wait.data();
+				info.waitSemaphoreCount = waitSemaphoresCount;
+				info.pWaitSemaphores    = pPresentInfo->pWaitSemaphores;
+
+				info.signalSemaphoreCount = 1;
+				info.pSignalSemaphores    = &fsd->ImageAcquiredSemaphore;
+
+				vkQueueSubmit(GraphicQueue, 1, &info, fd->Fence);
+			}
+
+		 }
+	}
+
+    bool Renderer::InitImpl()
+	{
+		if (!Pointers.IsVulkan)
+		{
+			LOG(INFO) << "Using DX12";
+			return InitDX12();
+		}
+		else if (Pointers.IsVulkan)
+		{
+			LOG(INFO) << "Using Vulkan";
+			return InitVulkan();
+		}
+
+		return false;
+	}
+
+	bool Renderer::AddRendererCallBackImpl(RendererCallBack&& callback, std::uint32_t priority)
+	{
+		return m_RendererCallBacks.insert({priority, callback}).second;
 	}
 
 	void Renderer::AddWindowProcedureCallbackImpl(WindowProcedureCallback&& callback)
@@ -163,12 +701,12 @@ namespace YimMenu
 		return m_WindowProcedureCallbacks.push_back(callback);
 	}
 
-	void Renderer::OnPresentImpl()
+	void Renderer::DX12OnPresentImpl()
 	{
-		Renderer::NewFrame();
-		for (const auto& callback : m_DXCallbacks | std::views::values)
+		Renderer::DX12NewFrame();
+		for (const auto& callback : m_RendererCallBacks | std::views::values)
 			callback();
-		Renderer::EndFrame();
+		Renderer::DX12EndFrame();
 	}
 
 	LRESULT Renderer::WndProcImpl(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -223,7 +761,7 @@ namespace YimMenu
 		WaitForMultipleObjects(NumWaitableObjets, WaitableObjects, TRUE, INFINITE);
 	}
 
-	void Renderer::PreResize()
+	void Renderer::DX12PreResize()
 	{
 		GetInstance().m_Resizing = true;
 		WaitForLastFrame();
@@ -236,7 +774,7 @@ namespace YimMenu
 		}
 	}
 
-	void Renderer::PostResize()
+	void Renderer::DX12PostResize()
 	{
 		bool WasGUIOpen{ GUI::IsOpen() };
 		//SetCursorPos is returning true while open, this is to ensure we sync them. When the GUI is open and we resize buffers, the cursor changes pos and likes to cause a issue.
@@ -268,14 +806,14 @@ namespace YimMenu
 		GetInstance().m_Resizing = false;
 	}
 
-	void Renderer::NewFrame()
+	void Renderer::DX12NewFrame()
 	{
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 	}
 
-	void Renderer::EndFrame()
+	void Renderer::DX12EndFrame()
 	{
 		ImGui::EndFrame();
 
