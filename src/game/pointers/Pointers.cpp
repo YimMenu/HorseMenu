@@ -61,11 +61,6 @@ namespace YimMenu
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
 		});
 
-	    constexpr auto vkDevice = Pattern<"48 8B 95 B0 ? ? ? 44 8B CB 48 8B ? ? ? ? ? 4D 8B C5">("VkDevice");
-		scanner.Add(vkDevice, [this](PointerCalculator ptr) {
-			VkDevicePtr = ptr.Add(0xA).Add(3).Rip().As<VkDevice*>(); //Doesn't work when used although pointer should be correct. Using ptr from hooks now.
-		});
-
 		constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
 		scanner.Add(hwnd, [this](PointerCalculator ptr) {
 			Hwnd = *ptr.Add(3).Rip().As<HWND*>();

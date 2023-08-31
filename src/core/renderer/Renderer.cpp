@@ -196,7 +196,7 @@ namespace YimMenu
 		CreateInfo.sType                    = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		CreateInfo.enabledExtensionCount    = 1;
 		CreateInfo.ppEnabledExtensionNames  = &InstanceExtension;
-
+	
 		// Create Vulkan Instance without any debug feature
 		if (const VkResult result = vkCreateInstance(&CreateInfo, m_VkAllocator, &m_VkInstance); result != VK_SUCCESS)
 		{
