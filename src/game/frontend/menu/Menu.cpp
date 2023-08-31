@@ -42,20 +42,20 @@ namespace YimMenu
 			
 			ImGui::BulletText("Hover over the command name to change its hotkey");
 			ImGui::Spacing();
-			for (auto& [link, hotkey] : g_HotkeySystem.m_CommandHotkeys)
+			for (auto& [hash, link] : g_HotkeySystem.m_CommandHotkeys)
 			{
-				ImGui::PushID(link.HashID);
+				ImGui::PushID(hash);
 
 				ImGui::BeginGroup();
 
-				auto command = Commands::GetCommand(link.HashID);
+				auto command = Commands::GetCommand(hash);
 
 				if (!command)
 					continue;
 
 				ImGui::Text(command->GetLabel().data());
 				if (ImGui::IsItemHovered())
-					current_hotkey = &hotkey;
+					current_hotkey = &link.Hotkey;
 				else
 					current_hotkey = nullptr;
 
@@ -67,20 +67,20 @@ namespace YimMenu
 				ImGui::SameLine(175);
 				ImGui::BeginGroup();
 
-				if (hotkey.empty())
+				if (link.Hotkey.empty())
 				{
 					ImGui::Text("No Hotkey Assigned");
 				}
 				else
 				{
 					ImGui::PushItemWidth(50);
-					for (auto hotkey_modifier : hotkey)
+					for (auto hotkey_modifier : link.Hotkey)
 					{
 						char key_label[32];
 						strcpy(key_label, g_HotkeySystem.GetHotkeyLabel(hotkey_modifier).data());
 						ImGui::InputText("##keylabel", key_label, 32, ImGuiInputTextFlags_ReadOnly);
 
-						if (hotkey_modifier != hotkey.back())
+						if (hotkey_modifier != link.Hotkey.back())
 							ImGui::SameLine();
 					}
 					ImGui::PopItemWidth();
@@ -88,7 +88,7 @@ namespace YimMenu
 					ImGui::SameLine();
 					if (ImGui::Button("Clear"))
 					{
-						hotkey.clear();
+						link.Hotkey.clear();
 					}
 				}
 

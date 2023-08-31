@@ -18,20 +18,20 @@ namespace YimMenu
 		
 		for (auto [hash, command] : commands)
 		{
-			CommandLink command(hash, false);
-			m_CommandHotkeys.insert(std::make_pair(command, std::vector<int>{}));
+			CommandLink link(false);
+			m_CommandHotkeys.insert(std::make_pair(command->GetHash(), link));
 		}
 		
 		for (auto looped_command : looped_commands)
 		{
-			CommandLink command(looped_command->GetHash(), false);
-			m_CommandHotkeys.insert(std::make_pair(command, std::vector<int>{}));
+			CommandLink link(true);
+			m_CommandHotkeys.insert(std::make_pair(looped_command->GetHash(), link));
 		}
 		
 		LOG(INFO) << "Registered " << m_CommandHotkeys.size() << " commands";
 	}
 
-	bool HotkeySystem::ListenAndApply(int& hotkey, std::vector<int> blacklist)
+	bool HotkeySystem::ListenAndApply(int& Hotkey, std::vector<int> blacklist)
 	{
 		static auto is_key_blacklisted = [blacklist](int key) -> bool {
 			for (auto key_ : blacklist)
@@ -46,7 +46,7 @@ namespace YimMenu
 		{
 			if ((GetKeyState(i) & 0x8000) && i != 1 && !is_key_blacklisted(i))
 			{
-				hotkey = i;
+				Hotkey = i;
 
 				return true;
 			}
@@ -67,7 +67,7 @@ namespace YimMenu
 	}
 
 	//Meant to be called in a loop
-	void HotkeySystem::CreateHotkey(std::vector<int>& hotkey)
+	void HotkeySystem::CreateHotkey(std::vector<int>& Hotkey)
 	{
 		static auto is_key_unique = [this](int key, std::vector<int> list) -> bool {
 			for (auto& key_ : list)
@@ -78,28 +78,28 @@ namespace YimMenu
 		};
 
 		int pressed_key = 0;
-		ListenAndApply(pressed_key, hotkey);
+		ListenAndApply(pressed_key, Hotkey);
 
 
 		if (pressed_key > 1)
 		{
-			if (is_key_unique(pressed_key, hotkey))
+			if (is_key_unique(pressed_key, Hotkey))
 			{
-				hotkey.push_back(pressed_key);
+				Hotkey.push_back(pressed_key);
 			}
 		}
 	}
 
 	void HotkeySystem::FeatureCommandsHotkeyLoop()
 	{
-		for (auto& [link, hotkey] : m_CommandHotkeys)
+		for (auto& [hash, link] : m_CommandHotkeys)
 		{
-			if (hotkey.empty())
+			if (link.Hotkey.empty())
 				continue;
 	
 			bool allkeyspressed = true;
 	
-			for (auto hotkey_modifier : hotkey)
+			for (auto hotkey_modifier : link.Hotkey)
 			{
 				if (!(GetAsyncKeyState(hotkey_modifier) & 0x8000))
 				{
@@ -111,7 +111,7 @@ namespace YimMenu
 			{
 				if (link.Looped)
 				{
-					auto looped_command = Commands::GetCommand<LoopedCommand>(link.HashID);
+					auto looped_command = Commands::GetCommand<LoopedCommand>(hash);
 
 					if (looped_command)
 						looped_command->SetState(!looped_command->GetState());
@@ -120,7 +120,7 @@ namespace YimMenu
 				}
 				else
 				{
-					auto command = Commands::GetCommand(link.HashID);
+					auto command = Commands::GetCommand(hash);
 					if (command)
 					{
 						command->Call();
