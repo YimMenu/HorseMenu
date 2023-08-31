@@ -36,6 +36,7 @@ namespace YimMenu
 		Hooking::Init();
 
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
+		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
 
 		while (g_Running)
 		{

@@ -2,12 +2,34 @@
 
 #include "game/rdr/Natives.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "Commands.hpp"
+#include "LoopedCommand.hpp"
 
 // TODO: hotkeys
 
-#if 0
+
 namespace YimMenu
 {
+
+	void HotkeySystem::RegisterCommands()
+	{
+		auto commands        = Commands::GetCommands();
+		auto looped_commands = Commands::GetLoopedCommands();
+		
+		for (auto [hash, command] : commands)
+		{
+			CommandLink command(hash, false);
+			m_CommandHotkeys.insert(std::make_pair(command, std::vector<int>{}));
+		}
+		
+		for (auto looped_command : looped_commands)
+		{
+			CommandLink command(looped_command->GetHash(), false);
+			m_CommandHotkeys.insert(std::make_pair(command, std::vector<int>{}));
+		}
+		
+		LOG(INFO) << "Registered " << m_CommandHotkeys.size() << " commands";
+	}
 
 	bool HotkeySystem::ListenAndApply(int& hotkey, std::vector<int> blacklist)
 	{
@@ -70,35 +92,44 @@ namespace YimMenu
 
 	void HotkeySystem::FeatureCommandsHotkeyLoop()
 	{
-		for (auto& feature_command : RegisteredCommands | std::ranges::views::values)
+		for (auto& [link, hotkey] : m_CommandHotkeys)
 		{
-			if (feature_command.hotkey_modifiers.empty() || feature_command.hotkey_listener)
+			if (hotkey.empty())
 				continue;
-
+	
 			bool allkeyspressed = true;
-
-			for (auto hotkey_modifier : feature_command.hotkey_modifiers)
+	
+			for (auto hotkey_modifier : hotkey)
 			{
 				if (!(GetAsyncKeyState(hotkey_modifier) & 0x8000))
 				{
 					allkeyspressed = false;
 				}
 			}
-
+	
 			if (allkeyspressed)
 			{
-				if (feature_command.IsLooped() && feature_command.GetGlobal())
+				if (link.Looped)
 				{
-					*feature_command.GetGlobal() = !*feature_command.GetGlobal();
+					auto looped_command = Commands::GetCommand<LoopedCommand>(link.HashID);
+
+					if (looped_command)
+						looped_command->SetState(!looped_command->GetState());
+
+					LOG(INFO) << "Hotkey detected for looped command " << looped_command->GetName();
 				}
 				else
 				{
-					feature_command.Call();
+					auto command = Commands::GetCommand(link.HashID);
+					if (command)
+					{
+						command->Call();
+						LOG(INFO) << "Hotkey detected for command " << command->GetName();
+					}
 				}
-
+	
 				ScriptMgr::Yield(100ms);
 			}
 		}
 	}
 }
-#endif

@@ -14,4 +14,5 @@ namespace YimMenu
 	}
 
 	void FeatureLoop();
+	void BlockControlsForUI();
 }

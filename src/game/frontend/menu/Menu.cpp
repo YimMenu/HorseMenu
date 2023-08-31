@@ -37,49 +37,59 @@ namespace YimMenu
 
 		if (ImGui::Begin("Test"))
 		{
-			// TODO: hotkeys
-			#if 0
-			for (auto& [name, feature_command] : RegisteredCommands)
+
+			static std::vector<int>* current_hotkey = nullptr;
+			
+			ImGui::BulletText("Hover over the command name to change its hotkey");
+			ImGui::Spacing();
+			for (auto& [link, hotkey] : g_HotkeySystem.m_CommandHotkeys)
 			{
-				ImGui::PushID(Joaat(feature_command.GetName()));
+				ImGui::PushID(link.HashID);
 
 				ImGui::BeginGroup();
 
-				ImGui::Text(feature_command.GetLabel().data());
+				auto command = Commands::GetCommand(link.HashID);
+
+				if (!command)
+					continue;
+
+				ImGui::Text(command->GetLabel().data());
+				if (ImGui::IsItemHovered())
+					current_hotkey = &hotkey;
+				else
+					current_hotkey = nullptr;
+
+				if (current_hotkey)
+				{
+					g_HotkeySystem.CreateHotkey(*current_hotkey);
+				}
 
 				ImGui::SameLine(175);
-
-				if (ImGui::Checkbox("Change Hotkey", &feature_command.hotkey_listener))
-				{
-					if (feature_command.hotkey_listener)
-						feature_command.hotkey_modifiers.clear();
-				}
-
-				if (feature_command.hotkey_listener)
-				{
-					g_HotkeySystem.CreateHotkey(feature_command.hotkey_modifiers);
-				}
-
-				ImGui::SameLine();
 				ImGui::BeginGroup();
 
-				if (feature_command.hotkey_modifiers.empty())
+				if (hotkey.empty())
 				{
 					ImGui::Text("No Hotkey Assigned");
 				}
 				else
 				{
 					ImGui::PushItemWidth(50);
-					for (auto hotkey_modifier : feature_command.hotkey_modifiers)
+					for (auto hotkey_modifier : hotkey)
 					{
 						char key_label[32];
 						strcpy(key_label, g_HotkeySystem.GetHotkeyLabel(hotkey_modifier).data());
 						ImGui::InputText("##keylabel", key_label, 32, ImGuiInputTextFlags_ReadOnly);
 
-						if (hotkey_modifier != feature_command.hotkey_modifiers.back())
+						if (hotkey_modifier != hotkey.back())
 							ImGui::SameLine();
 					}
 					ImGui::PopItemWidth();
+
+					ImGui::SameLine();
+					if (ImGui::Button("Clear"))
+					{
+						hotkey.clear();
+					}
 				}
 
 				ImGui::EndGroup();
@@ -88,7 +98,6 @@ namespace YimMenu
 
 				ImGui::PopID();
 			}
-			#endif
 
 			ImGui::Separator();
 

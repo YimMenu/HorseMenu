@@ -36,6 +36,16 @@ namespace YimMenu
 			return reinterpret_cast<T*>(GetInstance().GetCommandImpl(hash));
 		}
 
+		static std::unordered_map<joaat_t, Command*> GetCommands()
+		{
+			return GetInstance().m_Commands;
+		};
+		
+		static std::vector<LoopedCommand*> GetLoopedCommands()
+		{
+			return GetInstance().m_LoopedCommands;
+		}
+
 	private:
 		void AddCommandImpl(Command* command);
 		void AddLoopedCommandImpl(LoopedCommand* command);
