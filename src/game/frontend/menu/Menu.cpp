@@ -37,7 +37,6 @@ namespace YimMenu
 
 		if (ImGui::Begin("Test"))
 		{
-
 			static std::vector<int>* current_hotkey = nullptr;
 			
 			ImGui::BulletText("Hover over the command name to change its hotkey");
@@ -69,7 +68,10 @@ namespace YimMenu
 
 				if (link.Hotkey.empty())
 				{
-					ImGui::Text("No Hotkey Assigned");
+					if (current_hotkey && *current_hotkey == link.Hotkey)
+						ImGui::Text("Press any button...");
+					else
+						ImGui::Text("No Hotkey Assigned");
 				}
 				else
 				{
