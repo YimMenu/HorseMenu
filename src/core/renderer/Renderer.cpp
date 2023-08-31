@@ -2,6 +2,8 @@
 
 #include "game/pointers/Pointers.hpp"
 #include "game/frontend/GUI.hpp"
+#include "core/memory/ModuleMgr.hpp"
+#include "core/memory/PatternScanner.hpp"
 
 #include <backends/imgui_impl_dx12.h>
 #include <backends/imgui_impl_win32.h>
@@ -21,6 +23,7 @@ namespace YimMenu
 	void Renderer::DestroyImpl()
 	{
 		ImGui_ImplWin32_Shutdown();
+
 		if (Pointers.IsVulkan)
 		{
 			VkCleanupRenderTarget();
@@ -181,7 +184,7 @@ namespace YimMenu
 
 		ImGui::StyleColorsDark();
 
-		LOG(INFO) << "Renderer has finished initializing.";
+		LOG(INFO) << "DirectX 12 renderer has finished initializing.";
 		return true;
 	}
 
@@ -202,39 +205,36 @@ namespace YimMenu
 		}
 
     	uint32_t GpuCount;
-		if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, nullptr); result != VK_SUCCESS)
+		if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, NULL); result != VK_SUCCESS)
 		{
 			LOG(WARNING) << "vkEnumeratePhysicalDevices failed with result: [" << result << "]";
 			return false;
 		}
+
 		IM_ASSERT(GpuCount > 0);
 
-		ImVector<VkPhysicalDevice> Gpus;
-		Gpus.resize(GpuCount);
-
-	    if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, Gpus.Data); result != VK_SUCCESS)
+		VkPhysicalDevice* Gpus = new VkPhysicalDevice[sizeof(VkPhysicalDevice) * GpuCount];
+		if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, Gpus); result != VK_SUCCESS)
 		{
 			LOG(WARNING) << "vkEnumeratePhysicalDevices 2 failed with result: [" << result << "]";
 			return false;
 		}
 
-		// If a number >1 of GPUs got reported, find discrete GPU if present, or use first one available.
-        for (VkPhysicalDevice& Device : Gpus)
+		int UseGpu = 0;
+		for (int i = 0; i < (int)GpuCount; ++i)
 		{
 			VkPhysicalDeviceProperties Properties;
-			vkGetPhysicalDeviceProperties(Device, &Properties);
+			vkGetPhysicalDeviceProperties(Gpus[i], &Properties);
 			if (Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 			{
-				m_VkPhysicalDevice = Device;
+				UseGpu = i;
+				break;
 			}
 		}
 
-		// Use first GPU (Integrated) is a Discrete one is not available.
-		if (!m_VkPhysicalDevice && GpuCount > 0)  
-	    {
-			m_VkPhysicalDevice = Gpus[0];
-		}
-		
+		LOG(INFO) << "Vulkan - Using GPU: " << UseGpu;
+		m_VkPhysicalDevice = Gpus[0];
+
 		uint32_t Count;
 		vkGetPhysicalDeviceQueueFamilyProperties(m_VkPhysicalDevice, &Count, NULL);
 		m_VKQueueFamilies.resize(Count);
@@ -248,7 +248,6 @@ namespace YimMenu
 			}
 		}
 		IM_ASSERT(m_VkQueueFamily != (uint32_t)-1);
-
 
 		constexpr const char* DeviceExtension = "VK_KHR_swapchain";
 		constexpr const float QueuePriority   = 1.0f;
@@ -281,7 +280,7 @@ namespace YimMenu
 		vkDestroyDevice(m_VkFakeDevice, m_VkAllocator);
 		m_VkFakeDevice = NULL;
 
-		LOG(INFO) << "Renderer has finished initializing.";
+		LOG(INFO) << "Vulkan renderer has finished initializing.";
 
 		return true; //I guess?
 	}
@@ -502,6 +501,36 @@ namespace YimMenu
 				GetInstance().m_VkFrameSemaphores[i].RenderCompleteSemaphore = VK_NULL_HANDLE;
 			}
 		 }
+
+		 //Fucked.
+		 //Reason we have to rescan is when window is resized the HWND changes and Vulkan ImGui does not like this at all. (Grabbing from IDXGISwapchain does not work, it simply doesn't update or is too slow in my testing. Feel free)
+		 if (IsResizing())
+		 {
+			ImGui_ImplWin32_Shutdown();
+			ImGui::DestroyContext();
+
+			const auto rdr2 = ModuleMgr.Get("RDR2.exe"_J);
+
+			auto scanner    = PatternScanner(rdr2);
+
+			constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
+			scanner.Add(hwnd, [](PointerCalculator ptr) {
+				Pointers.Hwnd = *ptr.Add(3).Rip().As<HWND*>();
+				LOG(INFO) << "HWND: " << Pointers.Hwnd;
+			});
+
+			if (!scanner.Scan())
+			{
+				LOG(FATAL) << "Failed to scan new HWND!";
+
+				return;
+			}
+		
+			ImGui::CreateContext();
+			ImGui_ImplWin32_Init(Pointers.Hwnd);
+
+			SetResizing(false);
+		 }
 	}
 
 	bool Renderer::DoesQueueSupportGraphic(VkQueue queue, VkQueue* pGraphicQueue)
@@ -535,11 +564,11 @@ namespace YimMenu
 
 	void Renderer::VkOnPresentImpl(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
 	{
-		 if (!m_VkDevice || !g_Running)
+		 if (!m_VkDevice || !g_Running || IsResizing())
 		 {
 			return;
 		 }
-		
+
 		 if (!ImGui::GetCurrentContext())
 		 {
 			ImGui::CreateContext();
@@ -560,17 +589,34 @@ namespace YimMenu
 			ImGui_ImplVulkanH_Frame* fd            = &m_VkFrames[pPresentInfo->pImageIndices[i]];
 			ImGui_ImplVulkanH_FrameSemaphores* fsd = &m_VkFrameSemaphores[pPresentInfo->pImageIndices[i]];
 			{
-				vkWaitForFences(m_VkDevice, 1, &fd->Fence, VK_TRUE, ~0ull);
-				vkResetFences(m_VkDevice, 1, &fd->Fence);
+				if (const VkResult result = vkWaitForFences(m_VkDevice, 1, &fd->Fence, VK_TRUE, ~0ull); result != VK_SUCCESS)
+				{
+					LOG(WARNING) << "vkWaitForFences failed with result: [" << result << "]";
+					return;
+				}
+
+				if (const VkResult result = vkResetFences(m_VkDevice, 1, &fd->Fence); result != VK_SUCCESS)
+				{
+					LOG(WARNING) << "vkResetFences failed with result: [" << result << "]";
+					return;
+				}
 			}
 			{
-				vkResetCommandBuffer(fd->CommandBuffer, 0);
+				if (const VkResult result = vkResetCommandBuffer(fd->CommandBuffer, 0); result != VK_SUCCESS)
+				{
+					LOG(WARNING) << "vkResetCommandBuffer failed with result: [" << result << "]";
+					return;
+		    	}
 
 				VkCommandBufferBeginInfo info = {};
 				info.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 				info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-				vkBeginCommandBuffer(fd->CommandBuffer, &info);
+				if (const VkResult result = vkBeginCommandBuffer(fd->CommandBuffer, &info); result != VK_SUCCESS)
+				{
+					LOG(WARNING) << "vkBeginCommandBuffer failed with result: [" << result << "]";
+					return;
+				}
 			}
 			{
 				VkRenderPassBeginInfo info = {};
@@ -638,7 +684,11 @@ namespace YimMenu
 					info.signalSemaphoreCount = 1;
 					info.pSignalSemaphores    = &fsd->RenderCompleteSemaphore;
 
-					vkQueueSubmit(queue, 1, &info, VK_NULL_HANDLE);
+					if (const VkResult result = vkQueueSubmit(queue, 1, &info, VK_NULL_HANDLE); result != VK_SUCCESS)
+					{
+						LOG(WARNING) << "vkQueueSubmit failed with result: [" << result << "]";
+						return;
+					}
 				}
 				{
 					VkSubmitInfo info       = {};
@@ -653,7 +703,11 @@ namespace YimMenu
 					info.signalSemaphoreCount = 1;
 					info.pSignalSemaphores    = &fsd->ImageAcquiredSemaphore;
 
-					vkQueueSubmit(GraphicQueue, 1, &info, fd->Fence);
+					if (const VkResult result = vkQueueSubmit(GraphicQueue, 1, &info, fd->Fence); result != VK_SUCCESS)
+					{
+						LOG(WARNING) << "vkQueueSubmit 2 failed with result: [" << result << "]";
+						return;
+					}
 				}
 			}
 			else
@@ -672,23 +726,26 @@ namespace YimMenu
 				info.signalSemaphoreCount = 1;
 				info.pSignalSemaphores    = &fsd->ImageAcquiredSemaphore;
 
-				vkQueueSubmit(GraphicQueue, 1, &info, fd->Fence);
+				if (const VkResult result = vkQueueSubmit(GraphicQueue, 1, &info, fd->Fence); result != VK_SUCCESS)
+				{
+					LOG(WARNING) << "vkQueueSubmit 3 failed with result: [" << result << "]";
+					return;
+				}
 			}
-
 		 }
 	}
 
     bool Renderer::InitImpl()
 	{
-		if (!Pointers.IsVulkan)
-		{
-			LOG(INFO) << "Using DX12";
-			return InitDX12();
-		}
-		else if (Pointers.IsVulkan)
+		if (Pointers.IsVulkan)
 		{
 			LOG(INFO) << "Using Vulkan";
 			return InitVulkan();
+		}
+		else if (!Pointers.IsVulkan)
+		{
+			LOG(INFO) << "Using DX12";
+			return InitDX12();
 		}
 
 		return false;
@@ -766,7 +823,8 @@ namespace YimMenu
 
 	void Renderer::DX12PreResize()
 	{
-		GetInstance().m_Resizing = true;
+		SetResizing(true);
+
 		WaitForLastFrame();
 
         ImGui_ImplDX12_InvalidateDeviceObjects();
@@ -779,13 +837,6 @@ namespace YimMenu
 
 	void Renderer::DX12PostResize()
 	{
-		bool WasGUIOpen{ GUI::IsOpen() };
-		//SetCursorPos is returning true while open, this is to ensure we sync them. When the GUI is open and we resize buffers, the cursor changes pos and likes to cause a issue.
-		if (WasGUIOpen)
-		{
-			GUI::Toggle();
-		}
-
 		//Recreate our pointers and ImGui's
         ImGui_ImplDX12_CreateDeviceObjects();
 		const auto RTVDescriptorSize{ GetInstance().m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV) };
@@ -800,13 +851,7 @@ namespace YimMenu
 			RTVHandle.ptr += RTVDescriptorSize;
 		}
 
-		//Reopen our GUI if it was open
-		if (WasGUIOpen)
-		{
-			GUI::Toggle();
-		}
-
-		GetInstance().m_Resizing = false;
+		SetResizing(false);
 	}
 
 	void Renderer::DX12NewFrame()

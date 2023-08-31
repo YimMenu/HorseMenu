@@ -13,12 +13,9 @@ namespace YimMenu::Hooks
 
 	VkResult VKAPI_CALL Vulkan::CreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain)
 	{
-
+		Renderer::SetResizing(true);
 		Renderer::VkCleanupRenderTarget();
 		Renderer::VkSetScreenSize(pCreateInfo->imageExtent);
-
-		g_Running = false; //For now.
-		//You will need to make a new fake device and new hook i think everytime you resize.
 
 		return BaseHook::Get<Vulkan::CreateSwapchainKHR, DetourHook<decltype(&CreateSwapchainKHR)>>()->Original()(device, pCreateInfo, pAllocator, pSwapchain);
 	}

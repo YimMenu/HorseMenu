@@ -99,6 +99,11 @@ namespace YimMenu
 			return GetInstance().m_Resizing;
 		}
 
+		static void SetResizing(const bool &status)
+		{
+			GetInstance().m_Resizing = status;
+		}
+
 		static void VkSetDevice(VkDevice device)
 		{
 			GetInstance().m_VkDevice = device;
