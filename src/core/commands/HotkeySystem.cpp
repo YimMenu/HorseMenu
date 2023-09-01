@@ -94,7 +94,7 @@ namespace YimMenu
 	{
 		for (auto& [hash, link] : m_CommandHotkeys)
 		{
-			if (link.Hotkey.empty())
+			if (link.Hotkey.empty() || link.Listening)
 				continue;
 	
 			bool allkeyspressed = true;

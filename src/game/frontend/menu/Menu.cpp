@@ -54,9 +54,9 @@ namespace YimMenu
 
 				ImGui::Text(command->GetLabel().data());
 				if (ImGui::IsItemHovered())
-					current_hotkey = &link.Hotkey;
+					current_hotkey = &link.Hotkey, link.Listening = true;
 				else
-					current_hotkey = nullptr;
+					current_hotkey = nullptr, link.Listening = false;
 
 				if (current_hotkey)
 				{

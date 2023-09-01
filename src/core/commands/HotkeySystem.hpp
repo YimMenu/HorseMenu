@@ -13,6 +13,8 @@ namespace YimMenu
 		    Looped(looped)
 		{
 		}
+
+		bool Listening;
 	};
 
 	class HotkeySystem
