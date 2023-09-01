@@ -7,6 +7,7 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/features/Features.hpp"
 
 namespace YimMenu
 {
@@ -15,6 +16,7 @@ namespace YimMenu
 		const auto documents = std::filesystem::path(std::getenv("USERPROFILE")) / "Documents";
 		FileMgr::Init(documents / "HellBase");
 
+		// TODO: change console name
 		LogHelper::Init("henlo", FileMgr::GetProjectFile("./cout.log"));
 
 		if (!ModuleMgr.LoadModules())
@@ -27,18 +29,29 @@ namespace YimMenu
 		Hooking::Init();
 
 		ScriptMgr::Init();
+		LOG(INFO) << "ScriptMgr Initialized";
+
 		FiberPool::Init(5);
+		LOG(INFO) << "FiberPool Initialized";
 
 		GUI::Init();
 
+
+		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
+		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
 
 		while (g_Running)
 		{
 			std::this_thread::sleep_for(100ms);
 		}
 
-		FiberPool::Destroy();
+		LOG(INFO) << "Unloading";
+
 		ScriptMgr::Destroy();
+		LOG(INFO) << "ScriptMgr Uninitialized";
+
+		FiberPool::Destroy();
+		LOG(INFO) << "FiberPool Uninitialized";
 
 	unload:
 		Hooking::Destroy();
