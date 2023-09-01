@@ -8,7 +8,7 @@ FetchContent_Declare(
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
 )
-message("RDR-Classes")
+message(STATUS "RDR-Classes")
 if(NOT rdr_classes_POPULATED)
     FetchContent_Populate(rdr_classes)
 endif()

@@ -26,6 +26,8 @@ namespace YimMenu
 		if (!Renderer::Init())
 			goto unload;
 
+		Hooking::Init();
+
 		ScriptMgr::Init();
 		LOG(INFO) << "ScriptMgr Initialized";
 
@@ -33,7 +35,7 @@ namespace YimMenu
 		LOG(INFO) << "FiberPool Initialized";
 
 		GUI::Init();
-		Hooking::Init();
+
 
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
