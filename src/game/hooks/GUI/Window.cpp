@@ -18,7 +18,7 @@ namespace YimMenu::Hooks
 	
 	BOOL Window::SetCursorPos(int x, int y)
 	{
-		if (GUI::IsOpen())
+		if (GUI::IsOpen() && !Renderer::IsResizing())
 		{
 			return true;
 		}
