@@ -9,7 +9,7 @@ namespace YimMenu::Hooks
 	{
 		if (g_Running && !Renderer::IsResizing())
 		{
-			Renderer::OnPresent();
+			Renderer::DX12OnPresent();
 		}
 
 		return BaseHook::Get<SwapChain::Present, DetourHook<decltype(&Present)>>()->Original()(that, syncInterval, flags);
@@ -19,9 +19,9 @@ namespace YimMenu::Hooks
 	{
 		if (g_Running)
 		{
-			Renderer::PreResize();
+			Renderer::DX12PreResize();
 			const auto result = BaseHook::Get<SwapChain::ResizeBuffers, DetourHook<decltype(&ResizeBuffers)>>()->Original()(that, bufferCount, width, height, newFormat, swapChainFlags);
-			Renderer::PostResize();
+			Renderer::DX12PostResize();
 			return result;
 		}
 		

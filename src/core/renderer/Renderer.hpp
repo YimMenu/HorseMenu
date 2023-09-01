@@ -8,12 +8,15 @@
 #include <windows.h>
 #include <wrl/client.h>
 #include <comdef.h>
+#include <vulkan/vulkan.h>
+#include <backends/imgui_impl_vulkan.h>
+
 #define REL(o) o->Release(); if (o) { o = nullptr; }
 
 namespace YimMenu
 {
 	using namespace Microsoft::WRL;
-	using DXCallback              = std::function<void()>;
+	using RendererCallBack              = std::function<void()>;
 	using WindowProcedureCallback = std::function<void(HWND, UINT, WPARAM, LPARAM)>;
 
 	struct FrameContext
@@ -54,9 +57,9 @@ namespace YimMenu
 		 * @return true Successfully added callback.
 		 * @return false Duplicate render priority was given.
 		 */
-		static bool AddDXCallback(DXCallback&& callback, std::uint32_t priority)
+		static bool AddRendererCallBack(RendererCallBack&& callback, std::uint32_t priority)
 		{
-			return GetInstance().AddDXCallbackImpl(std::move(callback), priority);
+			return GetInstance().AddRendererCallBackImpl(std::move(callback), priority);
 		}
 		/**
 		 * @brief Add a callback function to handle Windows WindowProcedure
@@ -68,9 +71,14 @@ namespace YimMenu
 			GetInstance().AddWindowProcedureCallbackImpl(std::move(callback));
 		}
 
-		static void OnPresent()
+		static void DX12OnPresent()
 		{
-			GetInstance().OnPresentImpl();
+			GetInstance().DX12OnPresentImpl();
+		}
+
+		static void VkOnPresent(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
+		{
+			GetInstance().VkOnPresentImpl(queue, pPresentInfo);
 		}
 
 		static LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -81,26 +89,50 @@ namespace YimMenu
 		static void WaitForLastFrame();
 		static void WaitForNextFrame();
 
-		static void PreResize();
-		static void PostResize();
+		static void DX12PreResize();
+		static void DX12PostResize();
+
+		static void VkCleanupRenderTarget();
 		
 		static bool IsResizing()
 		{
 			return GetInstance().m_Resizing;
 		}
 
-	private:
-		static void NewFrame();
-		static void EndFrame();
+		static void SetResizing(const bool &status)
+		{
+			GetInstance().m_Resizing = status;
+		}
 
+		static void VkSetDevice(VkDevice device)
+		{
+			GetInstance().m_VkDevice = device;
+		}
+		static void VkSetScreenSize(VkExtent2D extent)
+		{			 
+			GetInstance().m_VkImageExtent = extent;
+		}
+
+	private:
+		static void DX12NewFrame();
+		static void DX12EndFrame();
 	private:
 		void DestroyImpl();
 		bool InitImpl();
 
-		bool AddDXCallbackImpl(DXCallback&& callback, std::uint32_t priority);
+		bool InitDX12();
+		bool InitVulkan();
+
+		void VkCreateRenderTarget(VkDevice Device, VkSwapchainKHR Swapchain);
+
+		bool AddRendererCallBackImpl(RendererCallBack&& callback, std::uint32_t priority);
 		void AddWindowProcedureCallbackImpl(WindowProcedureCallback&& callback);
 
-		void OnPresentImpl();
+		void DX12OnPresentImpl();
+		void VkOnPresentImpl(VkQueue queue, const VkPresentInfoKHR* pPresentInfo);
+
+		bool DoesQueueSupportGraphic(VkQueue queue, VkQueue* pGraphicQueue);
+
 		LRESULT WndProcImpl(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 		static Renderer& GetInstance()
@@ -113,6 +145,7 @@ namespace YimMenu
 	private:
 		bool m_Resizing;
 
+		//DX12
 		std::vector<FrameContext> m_FrameContext;
 
 		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;
@@ -131,7 +164,25 @@ namespace YimMenu
 		HANDLE m_SwapchainWaitableObject;
 		UINT64 m_FrameIndex;
 
-		std::map<joaat_t, DXCallback> m_DXCallbacks;
+		//Vulkan
+		VkPhysicalDevice m_VkPhysicalDevice;
+		VkInstance m_VkInstance;
+		VkAllocationCallbacks* m_VkAllocator;
+		std::vector<VkQueueFamilyProperties> m_VKQueueFamilies;
+		uint32_t m_VkQueueFamily = (uint32_t)-1;
+		VkDevice m_VkFakeDevice;
+		VkDevice m_VkDevice;
+		ImGui_ImplVulkanH_Frame m_VkFrames[8] = {};
+		ImGui_ImplVulkanH_FrameSemaphores m_VkFrameSemaphores[8] = {};
+		VkRenderPass m_VkRenderPass;
+		VkDescriptorPool m_VkDescriptorPool;
+		VkPipelineCache m_VkPipelineCache;
+		uint32_t m_VkMinImageCount = 2;
+		VkExtent2D m_VkImageExtent;
+	private:
+
+		//Other
+		std::map<joaat_t, RendererCallBack> m_RendererCallBacks;
 		std::vector<WindowProcedureCallback> m_WindowProcedureCallbacks;
 	};
 }

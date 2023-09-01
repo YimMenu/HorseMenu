@@ -5,6 +5,7 @@
 #include "game/rdr/RenderingInfo.hpp"
 #include <script/scrNativeHandler.hpp>
 #include <rage/atArray.hpp>
+#include <vulkan/vulkan.h>
 
 namespace rage
 {
@@ -22,18 +23,32 @@ namespace YimMenu
 
 	struct PointerData
 	{
-		Functions::GetRendererInfo GetRendererInfo;
-		IDXGISwapChain1** SwapChain;
-		ID3D12CommandQueue** CommandQueue;
-		HWND Hwnd;
+	    //RDR
 		std::int64_t** ScriptGlobals;
 		void* NativeRegistrationTable;
-		PVOID WndProc;
 		Functions::GetNativeHandler GetNativeHandler;
 		Functions::FixVectors FixVectors;
 		rage::atArray<rage::scrThread*>* ScriptThreads;
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
+
+		//Vulkan
+		PVOID QueuePresentKHR; //Init in renderer
+		PVOID CreateSwapchainKHR; //Init in renderer
+		PVOID AcquireNextImageKHR; //Init in renderer
+		PVOID AcquireNextImage2KHR; //Init in renderer
+
+		VkDevice* VkDevicePtr;
+
+		//DX12
+		IDXGISwapChain1** SwapChain;
+		ID3D12CommandQueue** CommandQueue;
+
+		//Misc Renderer Related
+		HWND Hwnd;
+		Functions::GetRendererInfo GetRendererInfo;
+		PVOID WndProc;
+		BOOL IsVulkan;
 	};
 
 	struct Pointers : PointerData
