@@ -919,3 +919,10 @@ enum class eLawRegion : unsigned
 	LAW_REGION_VAN_HORN                    = 0x619B528E,
 	LAW_REGION_WAPITI                      = 0x7A976E02
 };
+
+enum ePedDamageCleanliness
+{
+	PED_DAMAGE_CLEANLINESS_POOR,
+	PED_DAMAGE_CLEANLINESS_GOOD,
+	PED_DAMAGE_CLEANLINESS_PERFECT
+};

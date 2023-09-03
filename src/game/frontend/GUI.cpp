@@ -8,7 +8,7 @@ namespace YimMenu
 	GUI::GUI() :
 		m_IsOpen(false)
 	{
-		Renderer::AddRendererCallBack(Menu::Main, -1);
+		Init();
 		Renderer::AddWindowProcedureCallback([this](HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			GUI::WndProc(hwnd, msg, wparam, lparam);
 		});
