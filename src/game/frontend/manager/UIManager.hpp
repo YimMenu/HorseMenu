@@ -93,15 +93,21 @@ namespace YimMenu
 
 			button_color.w += 50;
 
+			auto menu = Menu.get();
+
+			if (!menu)
+				return;
+
 			if (Menu == GetActiveMiniSubmenu())
 				ImGui::PushStyleColor(ImGuiCol_Button, button_color);
-			if (ImGui::Button(Menu.get()->m_MiniSubmenuName.data()))
+
+			if (ImGui::Button(menu->m_MiniSubmenuName.data()))
 			{
-				Menu->m_MiniSubmenuName = Menu.get()->m_MiniSubmenuName;
+				Menu->m_MiniSubmenuName = menu->m_MiniSubmenuName;
 				SetActiveMiniSubmenu(Menu);
 			}
-
-			ImGui::PopStyleColor();
+			if (Menu == GetActiveMiniSubmenu())
+				ImGui::PopStyleColor();
 		}
 
 		void Draw()

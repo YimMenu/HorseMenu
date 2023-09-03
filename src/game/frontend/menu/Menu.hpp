@@ -1,7 +1,7 @@
 #pragma once
 #include "game/frontend/GUI.hpp"
 
-namespace YimMenu
+namespace YimMenu::Menu
 {
 	extern void Init();
 }

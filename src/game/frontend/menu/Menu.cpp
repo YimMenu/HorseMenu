@@ -5,7 +5,7 @@
 
 namespace YimMenu
 {
-	void Init()
+	void Menu::Init()
 	{
 		static auto SelfSubmenu = std::make_shared<Self>();
 		SelfSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
