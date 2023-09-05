@@ -1,4 +1,5 @@
 #include "Widgets.hpp"
+#include "game/backend/FiberPool.hpp"
 
 namespace YimMenu
 {
@@ -16,7 +17,9 @@ namespace YimMenu
 		{
 			if (m_OnClick != nullptr)
 			{
-				m_OnClick();
+				FiberPool::Push([this] {
+					m_OnClick();
+				});
 			}
 		}
 	}

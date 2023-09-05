@@ -6,27 +6,25 @@ namespace YimMenu
 	//Mini Submenu 1
 	void Main()
 	{
-		ImGui::Text("Test");
+		LoopedCommandToggle("keepbarsfilled"_J).Draw();
+		LoopedCommandToggle("keepcoresfilled"_J).Draw();
+		LoopedCommandToggle("infiniteammo"_J).Draw();
+		LoopedCommandToggle("infiniteclip"_J).Draw();
+		LoopedCommandToggle("keepclean"_J).Draw();
+	};
+
+	void Horse()
+	{
+		LoopedCommandToggle("keephorsebarsfilled"_J).Draw();
+		LoopedCommandToggle("keephorsecoresfilled"_J).Draw();
+		LoopedCommandToggle("keephorseagitationlow"_J).Draw();
 	};
 
 	//Init mini submenus
 	void Self::LoadSubmenus()
 	{
 		m_MiniSubMenus.push_back(std::make_shared<MiniSubmenu>("Main", Main));
-	}
-
-	//Mini Submenu Selectors(Can be automated)
-	void Self::DrawMiniSubmenuSelectors()
-	{
-		for (auto& minisubmenu : m_MiniSubMenus)
-		{
-			MiniSubmenuOption(minisubmenu);
-
-			if (m_MiniSubMenus.back() != minisubmenu)
-				ImGui::SameLine();
-		}
-
-		//TODO Automation
+		m_MiniSubMenus.push_back(std::make_shared<MiniSubmenu>("Horse", Horse));
 	}
 
 	//Script Tick If Needed

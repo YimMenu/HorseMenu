@@ -2,6 +2,7 @@
 
 #include "core/renderer/Renderer.hpp"
 #include "game/frontend/menu/self/Self.hpp"
+#include "game/frontend/menu/settings/Settings.hpp"
 
 namespace YimMenu
 {
@@ -9,6 +10,9 @@ namespace YimMenu
 	{
 		static auto SelfSubmenu = std::make_shared<Self>();
 		SelfSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
+
+		static auto SettingsSubmenu = std::make_shared<Settings>();
+		SettingsSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
 
 		Renderer::AddRendererCallBack(
 		    [&] {
@@ -28,12 +32,13 @@ namespace YimMenu
 				    if (ImGui::BeginChild("##submenus", ImVec2(120, 0), true))
 				    {
 					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Self", SelfSubmenu); //Ideally with the logo you'd have them squares that fit perfectly.
+					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Settings", SettingsSubmenu); 
 				    }
 				    ImGui::EndChild(); //Good practice to call endchild after the brackets
 
 				    ImGui::SetCursorPos(ImVec2(pos.x + 130, pos.y));
 
-				    if (ImGui::BeginChild("##minisubmenus", ImVec2(0, 50), true))
+				    if (ImGui::BeginChild("##minisubmenus", ImVec2(0, 50), true, ImGuiWindowFlags_NoScrollbar))
 				    {
 					    g_SubmenuHandler.RenderSubmenuCategories();
 				    }
@@ -43,10 +48,6 @@ namespace YimMenu
 
 				    if (ImGui::BeginChild("##options", ImVec2(0, 0), true))
 				    {
-					    ImGui::Text("Current Submenu %s", g_SubmenuHandler.GetActiveSubmenuName());
-					    ImGui::Text("Current Mini Submenu %s", g_SubmenuHandler.GetActiveMiniSubMenuName());
-					    ImGui::Separator();
-
 					    g_SubmenuHandler.RenderActiveSubmenu();
 				    }
 				    ImGui::EndChild();

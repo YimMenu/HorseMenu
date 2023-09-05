@@ -3,7 +3,7 @@
 
 namespace YimMenu
 {
-	class Self : public Submenu
+	class Settings : public Submenu
 	{
 	public:
 		void LoadSubmenus() override;
