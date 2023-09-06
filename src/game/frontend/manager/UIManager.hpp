@@ -3,12 +3,6 @@
 
 namespace YimMenu
 {
-	class Option
-	{
-	public:
-		virtual void Draw() = 0;
-	};
-
 	class MiniSubmenu
 	{
 	public:

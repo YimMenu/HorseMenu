@@ -14,6 +14,8 @@ namespace YimMenu
 		static auto SettingsSubmenu = std::make_shared<Settings>();
 		SettingsSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
 
+		
+
 		Renderer::AddRendererCallBack(
 		    [&] {
 			    if (!GUI::IsOpen())
@@ -22,7 +24,7 @@ namespace YimMenu
 			    //Think this add HTML&PHP with no CSS. Lol just for testing.
 
 			    ImGui::SetNextWindowSize(ImVec2(610, 610 /*add auto resize*/), ImGuiCond_Once);
-			    if (ImGui::Begin("Main Window"))
+			    if (ImGui::Begin("HorseMenu"))
 			    {
 				    const auto& pos = ImGui::GetCursorPos();
 
@@ -34,6 +36,8 @@ namespace YimMenu
 
 				    if (ImGui::BeginChild("##submenus", ImVec2(120, 0), true))
 				    {
+					    //Arguably the only place this file should be edited at for more menus
+
 					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Self", SelfSubmenu); //Ideally with the logo you'd have them squares that fit perfectly.
 					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Settings", SettingsSubmenu);
 				    }
@@ -64,5 +68,7 @@ namespace YimMenu
 			    }
 		    },
 		    -1);
+
+		//Menu::ApplyTheme();
 	}
 }

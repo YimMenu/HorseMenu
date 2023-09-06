@@ -3,6 +3,14 @@
 
 namespace YimMenu
 {
+	//Preferably, all options could be saved in a global instance to make UI elements searchable.
+	//Preferably, most if not all elements should be done through a widget to have them mapped.
+	class Option
+	{
+	public:
+		virtual void Draw() = 0;
+	};
+
 	class Button : public Option
 	{
 	public:

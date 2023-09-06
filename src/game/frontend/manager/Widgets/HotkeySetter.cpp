@@ -46,7 +46,7 @@ namespace YimMenu
 				}
 				else
 				{
-					ImGui::PushItemWidth(50);
+					ImGui::PushItemWidth(35);
 					for (auto hotkey_modifier : command_hotkey_link->Hotkey)
 					{
 						char key_label[32];

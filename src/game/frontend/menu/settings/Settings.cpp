@@ -1,6 +1,6 @@
 #include "settings.hpp"
-#include "core/commands/HotkeySystem.hpp"
 #include "core/commands/Commands.hpp"
+#include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
 #include "game/frontend/manager/Widgets/Widgets.hpp"
 
@@ -11,19 +11,22 @@ namespace YimMenu
 	{
 		ImGui::BulletText("Hover over the command name to change its hotkey");
 		ImGui::BulletText("Press any registered key to remove");
+		
+		ImGui::Spacing();
+		ImGui::Separator();
 		ImGui::Spacing();
 
 		for (auto [hash, command] : Commands::GetCommands())
 		{
 			ImGui::PushID(hash);
 
-			HotkeySetter(hash).Draw();
+			if (g_HotkeySystem.m_CommandHotkeys.find(hash) != g_HotkeySystem.m_CommandHotkeys.end())
+				HotkeySetter(hash).Draw();
 
 			ImGui::Spacing();
 
 			ImGui::PopID();
 		}
-
 	};
 
 	//Init mini submenus
@@ -34,7 +37,7 @@ namespace YimMenu
 		m_DefaultMiniSubmenu = m_MiniSubMenus.front();
 	}
 
-		//Script Tick If Needed
+	//Script Tick If Needed
 	void Settings::Update()
 	{
 		//TODO
