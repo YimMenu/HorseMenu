@@ -25,6 +25,8 @@ namespace YimMenu
 	{
 		m_MiniSubMenus.push_back(std::make_shared<MiniSubmenu>("Main", Main));
 		m_MiniSubMenus.push_back(std::make_shared<MiniSubmenu>("Horse", Horse));
+
+		m_DefaultMiniSubmenu = m_MiniSubMenus.front();
 	}
 
 	//Script Tick If Needed

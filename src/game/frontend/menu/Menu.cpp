@@ -29,10 +29,13 @@ namespace YimMenu
 				    if (ImGui::Button("Unload"))
 					    g_Running = false;
 
+				    if (!g_SubmenuHandler.GetActiveSubmenu())
+					    g_SubmenuHandler.SetActiveSubmenu(SelfSubmenu);
+
 				    if (ImGui::BeginChild("##submenus", ImVec2(120, 0), true))
 				    {
 					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Self", SelfSubmenu); //Ideally with the logo you'd have them squares that fit perfectly.
-					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Settings", SettingsSubmenu); 
+					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Settings", SettingsSubmenu);
 				    }
 				    ImGui::EndChild(); //Good practice to call endchild after the brackets
 
@@ -48,6 +51,11 @@ namespace YimMenu
 
 				    if (ImGui::BeginChild("##options", ImVec2(0, 0), true))
 				    {
+					    auto active_submenu = g_SubmenuHandler.GetActiveSubmenu();
+
+					    if (active_submenu && g_SubmenuHandler.GetActiveSubmenuDefaultMiniSubmenu() && !g_SubmenuHandler.GetActiveSubmenuActiveMiniSubmenu())
+						    active_submenu.get()->SetActiveMiniSubmenu(active_submenu.get()->m_DefaultMiniSubmenu);
+
 					    g_SubmenuHandler.RenderActiveSubmenu();
 				    }
 				    ImGui::EndChild();

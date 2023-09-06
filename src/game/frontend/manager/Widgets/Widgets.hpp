@@ -25,4 +25,15 @@ namespace YimMenu
 	private:
 		joaat_t m_Id;
 	};
+
+	class HotkeySetter : public Option
+	{
+	public:
+
+		explicit HotkeySetter(joaat_t);
+		void Draw() override;
+
+	private:
+		joaat_t m_Id;
+	};
 }

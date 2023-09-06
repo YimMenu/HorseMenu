@@ -45,7 +45,7 @@ namespace YimMenu
 		if (Menu == GetActiveMiniSubmenu())
 			ImGui::PushStyleColor(ImGuiCol_Button, button_color);
 
-		if (ImGui::Button(menu->m_MiniSubmenuName.data(), ImVec2(50, 35)))
+		if (ImGui::Button(menu->m_MiniSubmenuName.data(), ImVec2(75, 35)))
 		{
 			Menu->m_MiniSubmenuName = menu->m_MiniSubmenuName;
 			SetActiveMiniSubmenu(Menu);
@@ -91,12 +91,23 @@ namespace YimMenu
 		}
 	}
 
+	std::shared_ptr<Submenu> SubmenuHandler::GetActiveSubmenu()
+	{
+		if (m_ActiveSubmenu)
+		{
+			return m_ActiveSubmenu;
+		}
+
+		return nullptr;
+	}
+
 	std::string SubmenuHandler::GetActiveSubmenuName() const
 	{
 		if (m_ActiveSubmenu)
 		{
 			return m_ActiveSubmenu->m_SubmenuName;
 		}
+
 		return "NULLSUB";
 	}
 
@@ -109,7 +120,28 @@ namespace YimMenu
 				return m_ActiveSubmenu->GetActiveMiniSubmenu()->m_MiniSubmenuName;
 			}
 		}
+
 		return "NULLSUB";
+	}
+
+	std::shared_ptr<MiniSubmenu> SubmenuHandler::GetActiveSubmenuDefaultMiniSubmenu()
+	{
+		if (m_ActiveSubmenu)
+		{
+			return m_ActiveSubmenu.get()->m_DefaultMiniSubmenu;
+		}
+
+		return nullptr;
+	}
+
+	std::shared_ptr<MiniSubmenu> SubmenuHandler::GetActiveSubmenuActiveMiniSubmenu()
+	{
+		if (m_ActiveSubmenu)
+		{
+			return m_ActiveSubmenu.get()->GetActiveMiniSubmenu();
+		}
+
+		return nullptr;
 	}
 
 	void SubmenuHandler::SubmenuOption(const std::string_view& SubmenuLogo, const std::string_view& SubmenuName, const std::shared_ptr<Submenu> Submenu_)
