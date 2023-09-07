@@ -27,15 +27,19 @@ namespace YimMenu
 
 		auto window_label = std::format("{} Hotkey", command->GetLabel());
 
-		if (ImGui::BeginPopupModal(window_label.data()))
+
+		ImGui::SetNextWindowSize(ImVec2(500, 120));
+		if (ImGui::BeginPopupModal(window_label.data(), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar))
 		{
 			ImGui::BulletText("Hover over the command name to change its hotkey");
 			ImGui::BulletText("Press any registered key to remove");
-			ImGui::Spacing();
+			ImGui::Separator();
 
 			HotkeySetter(command->GetHash()).Draw();
 
-			if (ImGui::Button("Close"))
+			
+			ImGui::Spacing();
+			if (ImGui::Button("Close") || ((!ImGui::IsWindowHovered() && !ImGui::IsAnyItemHovered()) && ImGui::IsMouseClicked(ImGuiMouseButton_Left)))
 				ImGui::CloseCurrentPopup();
 
 			ImGui::EndPopup();
