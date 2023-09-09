@@ -107,7 +107,7 @@ namespace YimMenu
 				}
 			}
 	
-			if (AllKeysPressed && GetForegroundWindow() == FindWindowA(0, "Red Dead Redemption 2"))
+			if (AllKeysPressed && GetForegroundWindow() == Pointers.Hwnd)
 			{
 				if (Link.Looped)
 				{
