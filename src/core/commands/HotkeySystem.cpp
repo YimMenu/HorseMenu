@@ -13,16 +13,16 @@ namespace YimMenu
 
 	void HotkeySystem::RegisterCommands()
 	{
-		auto commands        = Commands::GetCommands();
-		auto looped_commands = Commands::GetLoopedCommands();
+		auto Commands        = Commands::GetCommands();
+		auto LoopedCommands = Commands::GetLoopedCommands();
 		
-		for (auto [hash, command] : commands)
+		for (auto [Hash, Command] : Commands)
 		{
 			CommandLink link(false);
-			m_CommandHotkeys.insert(std::make_pair(command->GetHash(), link));
+			m_CommandHotkeys.insert(std::make_pair(Command->GetHash(), link));
 		}
 		
-		for (auto looped_command : looped_commands)
+		for (auto looped_command : LoopedCommands)
 		{
 			CommandLink link(true);
 			m_CommandHotkeys.insert(std::make_pair(looped_command->GetHash(), link));
@@ -31,11 +31,11 @@ namespace YimMenu
 		LOG(INFO) << "Registered " << m_CommandHotkeys.size() << " commands";
 	}
 
-	bool HotkeySystem::ListenAndApply(int& Hotkey, std::vector<int> blacklist)
+	bool HotkeySystem::ListenAndApply(int& Hotkey, std::vector<int> Blacklist)
 	{
-		static auto is_key_blacklisted = [blacklist](int key) -> bool {
-			for (auto key_ : blacklist)
-				if (key_ == key)
+		static auto IsKeyBlacklisted = [Blacklist](int Key) -> bool {
+			for (auto Key_ : Blacklist)
+				if (Key_ == Key)
 					return true;
 
 			return false;
@@ -44,7 +44,7 @@ namespace YimMenu
 		//VK_OEM_CLEAR Is about the limit in terms of virtual key codes
 		for (int i = 0; i < VK_OEM_CLEAR; i++)
 		{
-			if ((GetKeyState(i) & 0x8000) && i != 1 && !is_key_blacklisted(i))
+			if ((GetKeyState(i) & 0x8000) && i != 1 && !IsKeyBlacklisted(i))
 			{
 				Hotkey = i;
 
@@ -55,76 +55,76 @@ namespace YimMenu
 		return false;
 	}
 	//Will return the keycode if there are no labels
-	std::string HotkeySystem::GetHotkeyLabel(int hotkey_modifier)
+	std::string HotkeySystem::GetHotkeyLabel(int HotkeyModifier)
 	{
-		char key_name[32];
-		GetKeyNameTextA(MapVirtualKey(hotkey_modifier, MAPVK_VK_TO_VSC) << 16, key_name, 32);
+		char KeyName[32];
+		GetKeyNameTextA(MapVirtualKey(HotkeyModifier, MAPVK_VK_TO_VSC) << 16, KeyName, 32);
 
-		if (std::string(key_name).empty())
-			strcpy(key_name, std::to_string(hotkey_modifier).data());
+		if (std::string(KeyName).empty())
+			strcpy(KeyName, std::to_string(HotkeyModifier).data());
 
-		return key_name;
+		return KeyName;
 	}
 
 	//Meant to be called in a loop
 	void HotkeySystem::CreateHotkey(std::vector<int>& Hotkey)
 	{
-		static auto is_key_unique = [this](int key, std::vector<int> list) -> bool {
-			for (auto& key_ : list)
-				if (GetHotkeyLabel(key_) == GetHotkeyLabel(key))
+		static auto IsKeyUnique = [this](int Key, std::vector<int> List) -> bool {
+			for (auto& Key_ : List)
+				if (GetHotkeyLabel(Key_) == GetHotkeyLabel(Key))
 					return false;
 
 			return true;
 		};
 
-		int pressed_key = 0;
-		ListenAndApply(pressed_key, Hotkey);
+		int PressedKey = 0;
+		ListenAndApply(PressedKey, Hotkey);
 
 
-		if (pressed_key > 1)
+		if (PressedKey > 1)
 		{
-			if (is_key_unique(pressed_key, Hotkey))
+			if (IsKeyUnique(PressedKey, Hotkey))
 			{
-				Hotkey.push_back(pressed_key);
+				Hotkey.push_back(PressedKey);
 			}
 		}
 	}
 
 	void HotkeySystem::FeatureCommandsHotkeyLoop()
 	{
-		for (auto& [hash, link] : m_CommandHotkeys)
+		for (auto& [Hash, Link] : m_CommandHotkeys)
 		{
-			if (link.Hotkey.empty() || link.Listening)
+			if (Link.Hotkey.empty() || Link.Listening)
 				continue;
 	
-			bool allkeyspressed = true;
+			bool AllKeysPressed = true;
 	
-			for (auto hotkey_modifier : link.Hotkey)
+			for (auto HotkeyModifier : Link.Hotkey)
 			{
-				if (!(GetAsyncKeyState(hotkey_modifier) & 0x8000))
+				if (!(GetAsyncKeyState(HotkeyModifier) & 0x8000))
 				{
-					allkeyspressed = false;
+					AllKeysPressed = false;
 				}
 			}
 	
-			if (allkeyspressed)
+			if (AllKeysPressed && GetForegroundWindow() == Pointers.Hwnd)
 			{
-				if (link.Looped)
+				if (Link.Looped)
 				{
-					auto looped_command = Commands::GetCommand<LoopedCommand>(hash);
+					auto LoopedCommand_ = Commands::GetCommand<LoopedCommand>(Hash);
 
-					if (looped_command)
-						looped_command->SetState(!looped_command->GetState());
+					if (LoopedCommand_)
+						LoopedCommand_->SetState(!LoopedCommand_->GetState());
 
-					LOG(INFO) << "Hotkey detected for looped command " << looped_command->GetName();
+					LOG(INFO) << "Hotkey detected for looped command " << LoopedCommand_->GetName();
 				}
 				else
 				{
-					auto command = Commands::GetCommand(hash);
-					if (command)
+					auto Command = Commands::GetCommand(Hash);
+					if (Command)
 					{
-						command->Call();
-						LOG(INFO) << "Hotkey detected for command " << command->GetName();
+						Command->Call();
+						LOG(INFO) << "Hotkey detected for command " << Command->GetName();
 					}
 				}
 	

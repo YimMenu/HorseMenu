@@ -27,8 +27,6 @@ namespace YimMenu
 
 	void FeatureLoop()
 	{
-		g_HotkeySystem.RegisterCommands();
-
 		while (true)
 		{
 			UpdateSelfVars();
@@ -60,6 +58,8 @@ namespace YimMenu
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_DRIVE_LOOK2, 1);
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK, 1);
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_NEXT_WEAPON, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_PREV_WEAPON, 1);
 			}
 
 			ScriptMgr::Yield();

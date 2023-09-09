@@ -3,5 +3,5 @@
 
 namespace YimMenu::Menu
 {
-	extern void Main();
+	extern void Init();
 }

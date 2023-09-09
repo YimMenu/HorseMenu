@@ -8,6 +8,7 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/features/Features.hpp"
+#include "core/commands/HotkeySystem.hpp"
 
 namespace YimMenu
 {
@@ -36,9 +37,10 @@ namespace YimMenu
 
 		GUI::Init();
 
-
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
+
+		g_HotkeySystem.RegisterCommands();
 
 		while (g_Running)
 		{

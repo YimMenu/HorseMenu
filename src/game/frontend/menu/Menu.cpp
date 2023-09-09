@@ -1,171 +1,72 @@
-#include "Menu.hpp"
+#include "game/frontend/menu/Menu.hpp"
 
-#include "core/filemgr/FileMgr.hpp"
-#include "core/memory/ModuleMgr.hpp"
-#include "game/backend/FiberPool.hpp"
-#include "core/commands/HotkeySystem.hpp"
-#include "game/pointers/Pointers.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/rdr/natives.hpp"
-#include "util/Joaat.hpp"
-#include "core/commands/Commands.hpp"
-#include "core/commands/LoopedCommand.hpp"
-#include "game/backend/ScriptMgr.hpp"
+#include "core/renderer/Renderer.hpp"
+#include "game/frontend/menu/self/Self.hpp"
+#include "game/frontend/menu/settings/Settings.hpp"
 
 namespace YimMenu
 {
-	// this is fundamentally broken and should only be used as a test
-	inline void CommandCheckboxDemo(joaat_t command_hash)
+	void Menu::Init()
 	{
-		auto command = Commands::GetCommand<LoopedCommand>(command_hash);
+		static auto SelfSubmenu = std::make_shared<Self>();
+		SelfSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
 
-		if (!command)
-		{
-			ImGui::Text("Unknown!");
-			return;
-		}
+		static auto SettingsSubmenu = std::make_shared<Settings>();
+		SettingsSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
 
-		bool enabled = command->GetState();
-		if (ImGui::Checkbox(command->GetLabel().data(), &enabled))
-			command->SetState(enabled);
-	}
+		Renderer::AddRendererCallBack(
+		    [&] {
+			    if (!GUI::IsOpen())
+				    return;
 
-	void Menu::Main()
-	{
-		if (!GUI::IsOpen())
-			return;
+			    //Think this add HTML&PHP with no CSS. Lol just for testing.
 
-		if (ImGui::Begin("Test"))
-		{
-			static std::vector<int>* current_hotkey = nullptr;
-			
-			ImGui::BulletText("Hover over the command name to change its hotkey");
-			ImGui::Spacing();
-			for (auto& [hash, link] : g_HotkeySystem.m_CommandHotkeys)
-			{
-				ImGui::PushID(hash);
+			    ImGui::SetNextWindowSize(ImVec2(610, 610 /*add auto resize*/), ImGuiCond_Once);
+			    if (ImGui::Begin("HorseMenu"))
+			    {
+				    const auto& Pos = ImGui::GetCursorPos();
 
-				ImGui::BeginGroup();
+				    if (ImGui::Button("Unload"))
+					    g_Running = false;
 
-				auto command = Commands::GetCommand(hash);
+				    if (!g_SubmenuHandler.GetActiveSubmenu())
+					    g_SubmenuHandler.SetActiveSubmenu(SelfSubmenu);
 
-				if (!command)
-					continue;
+				    if (ImGui::BeginChild("##submenus", ImVec2(120, 0), true))
+				    {
+					    //Arguably the only place this file should be edited at for more menus
 
-				ImGui::Text(command->GetLabel().data());
-				if (ImGui::IsItemHovered())
-					current_hotkey = &link.Hotkey, link.Listening = true;
-				else
-					current_hotkey = nullptr, link.Listening = false;
+					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Self", SelfSubmenu); //Ideally with the logo you'd have them squares that fit perfectly.
+					    g_SubmenuHandler.SubmenuOption("L" /*Logo Font*/, "Settings", SettingsSubmenu);
+				    }
+				    ImGui::EndChild(); //Good practice to call endchild after the brackets
 
-				if (current_hotkey)
-				{
-					g_HotkeySystem.CreateHotkey(*current_hotkey);
-				}
+				    ImGui::SetCursorPos(ImVec2(Pos.x + 130, Pos.y));
 
-				ImGui::SameLine(175);
-				ImGui::BeginGroup();
+				    if (ImGui::BeginChild("##minisubmenus", ImVec2(0, 50), true, ImGuiWindowFlags_NoScrollbar))
+				    {
+					    g_SubmenuHandler.RenderSubmenuCategories();
+				    }
+				    ImGui::EndChild();
 
-				if (link.Hotkey.empty())
-				{
-					if (current_hotkey && *current_hotkey == link.Hotkey)
-						ImGui::Text("Press any button...");
-					else
-						ImGui::Text("No Hotkey Assigned");
-				}
-				else
-				{
-					ImGui::PushItemWidth(50);
-					for (auto hotkey_modifier : link.Hotkey)
-					{
-						char key_label[32];
-						strcpy(key_label, g_HotkeySystem.GetHotkeyLabel(hotkey_modifier).data());
-						ImGui::InputText("##keylabel", key_label, 32, ImGuiInputTextFlags_ReadOnly);
+				    ImGui::SetCursorPos(ImVec2(Pos.x + 130, Pos.y + 60));
 
-						if (hotkey_modifier != link.Hotkey.back())
-							ImGui::SameLine();
-					}
-					ImGui::PopItemWidth();
+				    if (ImGui::BeginChild("##options", ImVec2(0, 0), true))
+				    {
+					    auto ActiveSubmenu = g_SubmenuHandler.GetActiveSubmenu();
 
-					ImGui::SameLine();
-					if (ImGui::Button("Clear"))
-					{
-						link.Hotkey.clear();
-					}
-				}
+					    if (ActiveSubmenu && g_SubmenuHandler.GetActiveSubmenuDefaultMiniSubmenu() && !g_SubmenuHandler.GetActiveSubmenuActiveMiniSubmenu())
+						    ActiveSubmenu.get()->SetActiveMiniSubmenu(ActiveSubmenu.get()->m_DefaultMiniSubmenu);
 
-				ImGui::EndGroup();
+					    g_SubmenuHandler.RenderActiveSubmenu();
+				    }
+				    ImGui::EndChild();
 
-				ImGui::EndGroup();
+				    ImGui::End();
+			    }
+		    },
+		    -1);
 
-				ImGui::PopID();
-			}
-
-			ImGui::Separator();
-
-			CommandCheckboxDemo("keepcoresfilled"_J);
-			CommandCheckboxDemo("keepbarsfilled"_J);
-			CommandCheckboxDemo("keephorsecoresfilled"_J);
-			CommandCheckboxDemo("keephorsebarsfilled"_J);
-
-			if (ImGui::Button("Clear Crimes"))
-			{
-				FiberPool::Push([] {
-					Commands::GetCommand("clearcrimes"_J)->Call();
-				});
-			}
-
-			if (ImGui::Button("Suicide"))
-			{
-				auto player_ped = PLAYER::PLAYER_PED_ID();
-				ENTITY::SET_ENTITY_HEALTH(player_ped, 0, 0);
-			}
-
-			if (ImGui::Button("Get Coords"))
-			{
-				auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
-
-				LOG(INFO) << "X: " << coords.x << ", Y: " << coords.y << ", Z: " << coords.z;
-			}
-
-			if (ImGui::Button("Spawn Ped"))
-			{
-				LOG(INFO) << "Before spawn";
-				FiberPool::Push([] {
-					auto model_hash = "msp_mob0_males_01"_J; // most models don't work
-					LOG(INFO) << "In fiber pool";
-
-					STREAMING::REQUEST_MODEL(model_hash, false);
-					while (!STREAMING::HAS_MODEL_LOADED(model_hash))
-						ScriptMgr::Yield();
-
-					auto coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
-					auto ped = PED::CREATE_PED(model_hash, coords.x, coords.y, coords.z, 0.0f, false, false, false, false);
-					ScriptMgr::Yield();
-					PED::SET_PED_RANDOM_COMPONENT_VARIATION(ped, 0);
-				});
-			}
-
-			if (ImGui::Button("Dump Entrypoints"))
-			{
-				DWORD64 base_address = (DWORD64)GetModuleHandleA(0);
-
-				const auto file_path = FileMgr::GetProjectFile("./entrypoints.txt");
-				auto file            = std::ofstream(file_path.Path(), std::ios::out | std::ios::trunc);
-
-				for (auto& entry : g_Crossmap)
-				{
-					auto address = Pointers.GetNativeHandler(entry);
-
-					file << std::hex << std::uppercase << "0x" << entry << " : RDR2.exe + 0x" << (DWORD64)address - base_address << std::endl;
-				}
-
-				file.close();
-			}
-
-			if (ImGui::Button("Unload"))
-				g_Running = false;
-		}
-		ImGui::End();
+		//Menu::ApplyTheme();
 	}
 }
