@@ -23,10 +23,10 @@ namespace YimMenu
 	//Init mini submenus
 	void Self::LoadSubmenus()
 	{
-		m_MiniSubMenus.push_back(std::make_shared<MiniSubmenu>("Main", Main));
-		m_MiniSubMenus.push_back(std::make_shared<MiniSubmenu>("Horse", Horse));
+		m_MiniSubmenus.push_back(std::make_shared<MiniSubmenu>("Main", Main));
+		m_MiniSubmenus.push_back(std::make_shared<MiniSubmenu>("Horse", Horse));
 
-		m_DefaultMiniSubmenu = m_MiniSubMenus.front();
+		m_DefaultMiniSubmenu = m_MiniSubmenus.front();
 	}
 
 	//Script Tick If Needed

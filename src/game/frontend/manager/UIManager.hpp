@@ -47,7 +47,7 @@ namespace YimMenu
 		std::shared_ptr<MiniSubmenu> m_ActiveMiniSubmenu;
 
 	public:
-		std::vector<std::shared_ptr<MiniSubmenu>> m_MiniSubMenus;
+		std::vector<std::shared_ptr<MiniSubmenu>> m_MiniSubmenus;
 		std::shared_ptr<MiniSubmenu> m_DefaultMiniSubmenu;
 		std::string m_SubmenuName;
 	};

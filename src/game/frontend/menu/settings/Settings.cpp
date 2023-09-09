@@ -16,12 +16,12 @@ namespace YimMenu
 		ImGui::Separator();
 		ImGui::Spacing();
 
-		for (auto [hash, command] : Commands::GetCommands())
+		for (auto [Hash, Command] : Commands::GetCommands())
 		{
-			ImGui::PushID(hash);
+			ImGui::PushID(Hash);
 
-			if (g_HotkeySystem.m_CommandHotkeys.find(hash) != g_HotkeySystem.m_CommandHotkeys.end())
-				HotkeySetter(hash).Draw();
+			if (g_HotkeySystem.m_CommandHotkeys.find(Hash) != g_HotkeySystem.m_CommandHotkeys.end())
+				HotkeySetter(Hash).Draw();
 
 			ImGui::Spacing();
 
@@ -32,9 +32,9 @@ namespace YimMenu
 	//Init mini submenus
 	void Settings::LoadSubmenus()
 	{
-		m_MiniSubMenus.push_back(std::make_shared<MiniSubmenu>("Hotkeys", Hotkeys));
+		m_MiniSubmenus.push_back(std::make_shared<MiniSubmenu>("Hotkeys", Hotkeys));
 
-		m_DefaultMiniSubmenu = m_MiniSubMenus.front();
+		m_DefaultMiniSubmenu = m_MiniSubmenus.front();
 	}
 
 	//Script Tick If Needed

@@ -4,13 +4,13 @@ namespace YimMenu
 {
 	void Submenu::DrawMiniSubmenuSelectors()
 	{
-		for (auto& minisubmenu : m_MiniSubMenus)
+		for (auto& MiniSubmenu : m_MiniSubmenus)
 		{
-			if (minisubmenu)
+			if (MiniSubmenu)
 			{
-				MiniSubmenuOption(minisubmenu);
+				MiniSubmenuOption(MiniSubmenu);
 
-				if (m_MiniSubMenus.back() != minisubmenu)
+				if (m_MiniSubmenus.back() != MiniSubmenu)
 					ImGui::SameLine();
 			}
 		}
@@ -31,32 +31,30 @@ namespace YimMenu
 
 	void Submenu::MiniSubmenuOption(const std::shared_ptr<MiniSubmenu> Menu)
 	{
-		auto& style = ImGui::GetStyle();
+		auto& Style = ImGui::GetStyle();
 
-		auto button_color = style.Colors[ImGuiCol_Button];
+		auto ButtonColor = Style.Colors[ImGuiCol_Button];
 
-		button_color.w += 50;
+		ButtonColor.w += 50;
 
-		auto menu = Menu.get();
-
-		if (!menu)
+		if (!Menu)
 			return;
 
 		if (Menu == GetActiveMiniSubmenu())
-			ImGui::PushStyleColor(ImGuiCol_Button, button_color);
+			ImGui::PushStyleColor(ImGuiCol_Button, ButtonColor);
 
-		if (ImGui::Button(menu->m_MiniSubmenuName.data(), ImVec2(75, 35)))
+		if (ImGui::Button(Menu->m_MiniSubmenuName.data(), ImVec2(75, 35)))
 		{
-			Menu->m_MiniSubmenuName = menu->m_MiniSubmenuName;
+			Menu->m_MiniSubmenuName = Menu->m_MiniSubmenuName;
 			SetActiveMiniSubmenu(Menu);
 		}
 		if (Menu == GetActiveMiniSubmenu())
 			ImGui::PopStyleColor();
 	}
 
-	void SubmenuHandler::SetActiveSubmenu(const std::shared_ptr<Submenu> submenu)
+	void SubmenuHandler::SetActiveSubmenu(const std::shared_ptr<Submenu> Submenu)
 	{
-		m_ActiveSubmenu = submenu;
+		m_ActiveSubmenu = Submenu;
 	}
 
 	void SubmenuHandler::RenderActiveSubmenu()

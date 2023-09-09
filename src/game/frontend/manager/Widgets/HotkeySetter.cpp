@@ -12,34 +12,34 @@ namespace YimMenu
 
 	void HotkeySetter::Draw()
 	{
-		auto command = Commands::GetCommand(m_Id);
+		auto Command = Commands::GetCommand(m_Id);
 
-		if (!command)
+		if (!Command)
 			ImGui::Text("Unkown Command");
 		else
 		{
-			CommandLink* command_hotkey_link = &g_HotkeySystem.m_CommandHotkeys.at(command->GetHash());
+			CommandLink* CommandHotkeyLink = &g_HotkeySystem.m_CommandHotkeys.at(Command->GetHash());
 
-			if (!command_hotkey_link)
+			if (!CommandHotkeyLink)
 			{
 				ImGui::Text("Unkown CommandLink");
 			}
 			else
 			{
-				ImGui::Text(command->GetLabel().data());
-				command_hotkey_link->Listening = ImGui::IsItemHovered();
+				ImGui::Text(Command->GetLabel().data());
+				CommandHotkeyLink->Listening = ImGui::IsItemHovered();
 
-				if (command_hotkey_link->Listening)
+				if (CommandHotkeyLink->Listening)
 				{
-					g_HotkeySystem.CreateHotkey(command_hotkey_link->Hotkey);
+					g_HotkeySystem.CreateHotkey(CommandHotkeyLink->Hotkey);
 				}
 
 				ImGui::SameLine(200);
 				ImGui::BeginGroup();
 
-				if (command_hotkey_link->Hotkey.empty())
+				if (CommandHotkeyLink->Hotkey.empty())
 				{
-					if (command_hotkey_link->Listening)
+					if (CommandHotkeyLink->Listening)
 						ImGui::Text("Press any button...");
 					else
 						ImGui::Text("No Hotkey Assigned");
@@ -47,14 +47,14 @@ namespace YimMenu
 				else
 				{
 					ImGui::PushItemWidth(35);
-					for (auto hotkey_modifier : command_hotkey_link->Hotkey)
+					for (auto HotkeyModifier : CommandHotkeyLink->Hotkey)
 					{
-						char key_label[32];
-						strcpy(key_label, g_HotkeySystem.GetHotkeyLabel(hotkey_modifier).data());
-						ImGui::InputText("##keylabel", key_label, 32, ImGuiInputTextFlags_ReadOnly);
+						char KeyLabel[32];
+						strcpy(KeyLabel, g_HotkeySystem.GetHotkeyLabel(HotkeyModifier).data());
+						ImGui::InputText("##keylabel", KeyLabel, 32, ImGuiInputTextFlags_ReadOnly);
 						if (ImGui::IsItemClicked())
-							std::erase_if(command_hotkey_link->Hotkey, [hotkey_modifier](int i) {
-								return i == hotkey_modifier;
+							std::erase_if(CommandHotkeyLink->Hotkey, [HotkeyModifier](int i) {
+								return i == HotkeyModifier;
 							});
 
 						ImGui::SameLine();
@@ -64,7 +64,7 @@ namespace YimMenu
 					ImGui::SameLine();
 					if (ImGui::Button("Clear"))
 					{
-						command_hotkey_link->Hotkey.clear();
+						CommandHotkeyLink->Hotkey.clear();
 					}
 				}
 

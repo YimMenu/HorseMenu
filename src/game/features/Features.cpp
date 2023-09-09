@@ -27,8 +27,6 @@ namespace YimMenu
 
 	void FeatureLoop()
 	{
-		g_HotkeySystem.RegisterCommands();
-
 		while (true)
 		{
 			UpdateSelfVars();

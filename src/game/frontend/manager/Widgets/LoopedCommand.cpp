@@ -13,29 +13,29 @@ namespace YimMenu
 
 	void LoopedCommandToggle::Draw()
 	{
-		auto command = YimMenu::Commands::GetCommand<LoopedCommand>(m_Id);
+		auto Command = YimMenu::Commands::GetCommand<LoopedCommand>(m_Id);
 
-		if (!command)
+		if (!Command)
 		{
 			ImGui::Text("Unknown!");
 			return;
 		}
 
-		bool enabled = command->GetState();
-		if (ImGui::Toggle(command->GetLabel().data(), &enabled))
-			command->SetState(enabled);
+		bool Enabled = Command->GetState();
+		if (ImGui::Toggle(Command->GetLabel().data(), &Enabled))
+			Command->SetState(Enabled);
 
-		auto window_label = std::format("{} Hotkey", command->GetLabel());
+		auto WindowLabel = std::format("{} Hotkey", Command->GetLabel());
 
 
 		ImGui::SetNextWindowSize(ImVec2(500, 120));
-		if (ImGui::BeginPopupModal(window_label.data(), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar))
+		if (ImGui::BeginPopupModal(WindowLabel.data(), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar))
 		{
 			ImGui::BulletText("Hover over the command name to change its hotkey");
 			ImGui::BulletText("Press any registered key to remove");
 			ImGui::Separator();
 
-			HotkeySetter(command->GetHash()).Draw();
+			HotkeySetter(Command->GetHash()).Draw();
 
 			
 			ImGui::Spacing();
@@ -47,9 +47,9 @@ namespace YimMenu
 
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip(std::format("{}\n\nPress shift to assign a hotkey", command->GetDescription()).data());
+			ImGui::SetTooltip(std::format("{}\n\nPress shift to assign a hotkey", Command->GetDescription()).data());
 			if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
-				ImGui::OpenPopup(window_label.data());
+				ImGui::OpenPopup(WindowLabel.data());
 		}
 	}
 }

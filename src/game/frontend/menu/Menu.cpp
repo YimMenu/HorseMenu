@@ -14,8 +14,6 @@ namespace YimMenu
 		static auto SettingsSubmenu = std::make_shared<Settings>();
 		SettingsSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
 
-		
-
 		Renderer::AddRendererCallBack(
 		    [&] {
 			    if (!GUI::IsOpen())
@@ -26,7 +24,7 @@ namespace YimMenu
 			    ImGui::SetNextWindowSize(ImVec2(610, 610 /*add auto resize*/), ImGuiCond_Once);
 			    if (ImGui::Begin("HorseMenu"))
 			    {
-				    const auto& pos = ImGui::GetCursorPos();
+				    const auto& Pos = ImGui::GetCursorPos();
 
 				    if (ImGui::Button("Unload"))
 					    g_Running = false;
@@ -43,7 +41,7 @@ namespace YimMenu
 				    }
 				    ImGui::EndChild(); //Good practice to call endchild after the brackets
 
-				    ImGui::SetCursorPos(ImVec2(pos.x + 130, pos.y));
+				    ImGui::SetCursorPos(ImVec2(Pos.x + 130, Pos.y));
 
 				    if (ImGui::BeginChild("##minisubmenus", ImVec2(0, 50), true, ImGuiWindowFlags_NoScrollbar))
 				    {
@@ -51,14 +49,14 @@ namespace YimMenu
 				    }
 				    ImGui::EndChild();
 
-				    ImGui::SetCursorPos(ImVec2(pos.x + 130, pos.y + 60));
+				    ImGui::SetCursorPos(ImVec2(Pos.x + 130, Pos.y + 60));
 
 				    if (ImGui::BeginChild("##options", ImVec2(0, 0), true))
 				    {
-					    auto active_submenu = g_SubmenuHandler.GetActiveSubmenu();
+					    auto ActiveSubmenu = g_SubmenuHandler.GetActiveSubmenu();
 
-					    if (active_submenu && g_SubmenuHandler.GetActiveSubmenuDefaultMiniSubmenu() && !g_SubmenuHandler.GetActiveSubmenuActiveMiniSubmenu())
-						    active_submenu.get()->SetActiveMiniSubmenu(active_submenu.get()->m_DefaultMiniSubmenu);
+					    if (ActiveSubmenu && g_SubmenuHandler.GetActiveSubmenuDefaultMiniSubmenu() && !g_SubmenuHandler.GetActiveSubmenuActiveMiniSubmenu())
+						    ActiveSubmenu.get()->SetActiveMiniSubmenu(ActiveSubmenu.get()->m_DefaultMiniSubmenu);
 
 					    g_SubmenuHandler.RenderActiveSubmenu();
 				    }
