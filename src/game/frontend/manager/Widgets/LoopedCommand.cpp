@@ -47,7 +47,7 @@ namespace YimMenu
 
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip(std::format("{}\n\nPress shift to assign a hotkey", Command->GetDescription()).data());
+			ImGui::SetTooltip(std::format("{}\n\nPress shift to assign a hotkey", Command->GetDescription()).data()); // TODO: do we need this?
 			if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
 				ImGui::OpenPopup(WindowLabel.data());
 		}

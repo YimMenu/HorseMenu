@@ -1,25 +1,23 @@
 #pragma once
-#include "../../common.hpp"
+#include "core/settings/IStateSerializer.hpp"
 
 namespace YimMenu
 {
 	struct CommandLink
 	{
 	public:
-		bool Looped;
 		std::vector<int> Hotkey{};
+		bool Listening = false;
 
-		CommandLink(bool looped) :
-		    Looped(looped)
-		{
-		}
-
-		bool Listening;
+		CommandLink(){};
 	};
 
-	class HotkeySystem
+	class HotkeySystem : 
+		private IStateSerializer
 	{
 	public:
+		HotkeySystem();
+
 		std::map<uint32_t, CommandLink> m_CommandHotkeys;
 		void RegisterCommands();
 		bool ListenAndApply(int& Hotkey, std::vector<int> blacklist = {0});
@@ -27,6 +25,9 @@ namespace YimMenu
 		void CreateHotkey(std::vector<int>& Hotkey);
 
 		void FeatureCommandsHotkeyLoop();
+
+		virtual void SaveStateImpl(nlohmann::json& state) override;
+		virtual void LoadStateImpl(nlohmann::json& state) override;
 	};
 
 	inline HotkeySystem g_HotkeySystem;

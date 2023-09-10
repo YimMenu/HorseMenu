@@ -1,19 +1,19 @@
 #include "Self.hpp"
 #include "game/frontend/manager/Widgets/Widgets.hpp"
 
-namespace YimMenu
+namespace YimMenu::Submenus
 {
-	//Mini Submenu 1
-	void Main()
+	static void Main()
 	{
 		LoopedCommandToggle("keepbarsfilled"_J).Draw();
 		LoopedCommandToggle("keepcoresfilled"_J).Draw();
 		LoopedCommandToggle("infiniteammo"_J).Draw();
 		LoopedCommandToggle("infiniteclip"_J).Draw();
 		LoopedCommandToggle("keepclean"_J).Draw();
+		LoopedCommandToggle("noclip"_J).Draw();
 	};
 
-	void Horse()
+	static void Horse()
 	{
 		LoopedCommandToggle("keephorsebarsfilled"_J).Draw();
 		LoopedCommandToggle("keephorsecoresfilled"_J).Draw();
@@ -40,5 +40,4 @@ namespace YimMenu
 	{
 		//TODO
 	}
-
 }

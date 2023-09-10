@@ -1,7 +1,7 @@
 #pragma once
 #include "game/frontend/manager/UIManager.hpp"
 
-namespace YimMenu
+namespace YimMenu::Submenus
 {
 	class Settings : public Submenu
 	{

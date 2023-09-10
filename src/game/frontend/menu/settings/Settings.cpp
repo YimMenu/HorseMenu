@@ -3,11 +3,11 @@
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
 #include "game/frontend/manager/Widgets/Widgets.hpp"
+#include "Settings.hpp"
 
-namespace YimMenu
+namespace YimMenu::Submenus
 {
-	//Mini Submenu 1
-	void Hotkeys()
+	static void Hotkeys()
 	{
 		ImGui::BulletText("Hover over the command name to change its hotkey");
 		ImGui::BulletText("Press any registered key to remove");
@@ -29,7 +29,7 @@ namespace YimMenu
 		}
 	};
 
-	//Init mini submenus
+	// Init mini submenus
 	void Settings::LoadSubmenus()
 	{
 		m_MiniSubmenus.push_back(std::make_shared<MiniSubmenu>("Hotkeys", Hotkeys));
@@ -37,15 +37,15 @@ namespace YimMenu
 		m_DefaultMiniSubmenu = m_MiniSubmenus.front();
 	}
 
-	//Script Tick If Needed
+	// Script Tick If Needed
 	void Settings::Update()
 	{
-		//TODO
+		// TODO
 	}
 
-	//Call Everytime When Newly Entered
+	// Call Everytime When Newly Entered
 	void Settings::UpdateOnce()
 	{
-		//TODO
+		// TODO
 	}
 }

@@ -9,16 +9,18 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/features/Features.hpp"
 #include "core/commands/HotkeySystem.hpp"
+#include "core/settings/Settings.hpp"
 
 namespace YimMenu
 {
 	DWORD Main(void*)
 	{
 		const auto documents = std::filesystem::path(std::getenv("USERPROFILE")) / "Documents";
-		FileMgr::Init(documents / "HellBase");
+		FileMgr::Init(documents / "HellBase"); // TODO
 
-		// TODO: change console name
-		LogHelper::Init("henlo", FileMgr::GetProjectFile("./cout.log"));
+		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
+
+		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
 
 		if (!ModuleMgr.LoadModules())
 			goto unload;
@@ -44,7 +46,8 @@ namespace YimMenu
 
 		while (g_Running)
 		{
-			std::this_thread::sleep_for(100ms);
+			std::this_thread::sleep_for(3000ms);
+			Settings::Save(); // TODO: move this somewhere else
 		}
 
 		LOG(INFO) << "Unloading";

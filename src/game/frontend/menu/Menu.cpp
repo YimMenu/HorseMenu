@@ -3,15 +3,18 @@
 #include "core/renderer/Renderer.hpp"
 #include "game/frontend/menu/self/Self.hpp"
 #include "game/frontend/menu/settings/Settings.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/FiberPool.hpp"
+#include "core/commands/Commands.hpp"
 
 namespace YimMenu
 {
 	void Menu::Init()
 	{
-		static auto SelfSubmenu = std::make_shared<Self>();
+		static auto SelfSubmenu = std::make_shared<Submenus::Self>();
 		SelfSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
 
-		static auto SettingsSubmenu = std::make_shared<Settings>();
+		static auto SettingsSubmenu = std::make_shared<Submenus::Settings>();
 		SettingsSubmenu->LoadSubmenus(); //Loads mini submenus into memory.
 
 		Renderer::AddRendererCallBack(
@@ -27,7 +30,19 @@ namespace YimMenu
 				    const auto& Pos = ImGui::GetCursorPos();
 
 				    if (ImGui::Button("Unload"))
-					    g_Running = false;
+				    {
+						if (ScriptMgr::CanTick())
+						{
+						    FiberPool::Push([] {
+							    Commands::Shutdown();
+							    g_Running = false;
+						    });
+						}
+						else
+						{
+						    g_Running = false;
+						}
+				    }
 
 				    if (!g_SubmenuHandler.GetActiveSubmenu())
 					    g_SubmenuHandler.SetActiveSubmenu(SelfSubmenu);
