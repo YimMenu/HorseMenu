@@ -31,6 +31,7 @@ namespace YimMenu
 		rage::atArray<rage::scrThread*>* ScriptThreads;
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
+		PVOID SendMetric;
 
 		//Vulkan
 		PVOID QueuePresentKHR; //Init in renderer

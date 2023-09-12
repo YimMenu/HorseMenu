@@ -3,6 +3,11 @@
 #include <D3D12.h>
 #include <vulkan/vulkan.h>
 
+namespace rage
+{
+	class rlMetric;
+}
+
 namespace YimMenu::Hooks
 {
 	namespace SwapChain
@@ -30,5 +35,10 @@ namespace YimMenu::Hooks
 	namespace Script
 	{
 		extern bool RunScriptThreads(void* threads, int unk);
+	}
+
+	namespace Anticheat
+	{
+		extern bool SendMetric(void* manager, rage::rlMetric* metric);
 	}
 }

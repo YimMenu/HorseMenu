@@ -61,6 +61,11 @@ namespace YimMenu
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
 		});
 
+		constexpr auto sendMetricPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B F1 48 8B FA B1">("CurrentScriptThread");
+		scanner.Add(sendMetricPtrn, [this](PointerCalculator ptr) {
+			SendMetric = ptr.As<PVOID*>();
+		});
+
 		constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
 		scanner.Add(hwnd, [this](PointerCalculator ptr) {
 			Hwnd = *ptr.Add(3).Rip().As<HWND*>();

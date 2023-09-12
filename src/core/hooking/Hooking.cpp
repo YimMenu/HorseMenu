@@ -29,6 +29,7 @@ namespace YimMenu
 		}
 
 		BaseHook::Add<Hooks::Script::RunScriptThreads>(new DetourHook("RunScriptThreads", Pointers.RunScriptThreads, Hooks::Script::RunScriptThreads));
+		BaseHook::Add<Hooks::Anticheat::SendMetric>(new DetourHook("SendMetric", Pointers.SendMetric, Hooks::Anticheat::SendMetric));
 	}
 
 	Hooking::~Hooking()
