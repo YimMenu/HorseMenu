@@ -191,13 +191,21 @@ namespace YimMenu
 	bool Renderer::InitVulkan()
 	{
 		VkInstanceCreateInfo CreateInfo         = {};
-		constexpr const char* InstanceExtension = "VK_KHR_surface";
 
-		CreateInfo.sType                    = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		CreateInfo.enabledExtensionCount    = 1;
-		CreateInfo.ppEnabledExtensionNames  = &InstanceExtension;
-	
-		// Create Vulkan Instance without any debug feature
+		const std::vector<const char*> InstanceExtensions = {"VK_KHR_surface" };
+
+		const std::vector<const char*> ValidationLayers = {
+		    "VK_LAYER_KHRONOS_validation"
+		};
+
+	    CreateInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		CreateInfo.enabledExtensionCount   = (uint32_t)InstanceExtensions.size();
+		CreateInfo.ppEnabledExtensionNames = InstanceExtensions.data();
+
+	//	CreateInfo.enabledLayerCount       = (uint32_t)ValidationLayers.size();
+	//	CreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
+
+		// Create Vulkan Instance without debug feature
 		if (const VkResult result = vkCreateInstance(&CreateInfo, m_VkAllocator, &m_VkInstance); result != VK_SUCCESS)
 		{
 			LOG(WARNING) << "vkCreateInstance failed with result: [" << result << "]";
@@ -227,13 +235,14 @@ namespace YimMenu
 			vkGetPhysicalDeviceProperties(Gpus[i], &Properties);
 			if (Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 			{
+				LOG(INFO) << "Vulkan - Using GPU: " << Properties.deviceName;
+
 				UseGpu = i;
 				break;
 			}
 		}
 
-		LOG(INFO) << "Vulkan - Using GPU: " << UseGpu;
-		m_VkPhysicalDevice = Gpus[0];
+		m_VkPhysicalDevice = Gpus[UseGpu];
 
 		uint32_t Count;
 		vkGetPhysicalDeviceQueueFamilyProperties(m_VkPhysicalDevice, &Count, NULL);
@@ -247,31 +256,31 @@ namespace YimMenu
 				break;
 			}
 		}
+
 		IM_ASSERT(m_VkQueueFamily != (uint32_t)-1);
 
 		constexpr const char* DeviceExtension = "VK_KHR_swapchain";
 		constexpr const float QueuePriority   = 1.0f;
 
-		VkDeviceQueueCreateInfo queue_info = {};
-		queue_info.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queue_info.queueFamilyIndex        = m_VkQueueFamily;
-		queue_info.queueCount              = 1;
-		queue_info.pQueuePriorities        = &QueuePriority;
+		VkDeviceQueueCreateInfo DeviceQueueInfo = {};
+		DeviceQueueInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		DeviceQueueInfo.queueFamilyIndex        = m_VkQueueFamily;
+		DeviceQueueInfo.queueCount              = 1;
+		DeviceQueueInfo.pQueuePriorities        = &QueuePriority;
 
-		VkDeviceCreateInfo create_info      = {};
-		create_info.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		create_info.queueCreateInfoCount    = 1;
-		create_info.pQueueCreateInfos       = &queue_info;
-		create_info.enabledExtensionCount   = 1;
-		create_info.ppEnabledExtensionNames = &DeviceExtension;
+		VkDeviceCreateInfo DeviceCreateInfo      = {};
+		DeviceCreateInfo.sType              = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		DeviceCreateInfo.queueCreateInfoCount    = 1;
+		DeviceCreateInfo.pQueueCreateInfos       = &DeviceQueueInfo;
+		DeviceCreateInfo.enabledExtensionCount   = 1;
+		DeviceCreateInfo.ppEnabledExtensionNames = &DeviceExtension;
 
-		if (const VkResult result = vkCreateDevice(m_VkPhysicalDevice, &create_info, m_VkAllocator, &m_VkFakeDevice); result != VK_SUCCESS)
+		if (const VkResult result = vkCreateDevice(m_VkPhysicalDevice, &DeviceCreateInfo, m_VkAllocator, &m_VkFakeDevice); result != VK_SUCCESS)
 		{
 			LOG(WARNING) << "Fake vkCreateDevice failed with result: [" << result << "]";
 			return false;
 		}
 
-		//Cursed place to do it.
 		Pointers.QueuePresentKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(m_VkFakeDevice, "vkQueuePresentKHR"));
 		Pointers.CreateSwapchainKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(m_VkFakeDevice, "vkCreateSwapchainKHR"));
 		Pointers.AcquireNextImageKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(m_VkFakeDevice, "vkAcquireNextImageKHR"));
@@ -282,7 +291,7 @@ namespace YimMenu
 
 		LOG(INFO) << "Vulkan renderer has finished initializing.";
 
-		return true; //I guess?
+		return true;
 	}
 
 	void Renderer::VkCreateRenderTarget(VkDevice Device, VkSwapchainKHR Swapchain)
@@ -502,7 +511,6 @@ namespace YimMenu
 			}
 		 }
 
-		 //Fucked.
 		 //Reason we have to rescan is when window is resized the HWND changes and Vulkan ImGui does not like this at all. (Grabbing from IDXGISwapchain does not work, it simply doesn't update or is too slow in my testing. Feel free)
 		 if (IsResizing())
 		 {
@@ -734,6 +742,7 @@ namespace YimMenu
 			}
 		 }
 	}
+
 
     bool Renderer::InitImpl()
 	{

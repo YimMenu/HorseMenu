@@ -78,6 +78,20 @@ namespace YimMenu
 
 		static void VkOnPresent(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
 		{
+			if (!queue)
+			{
+				LOG(FATAL) << "Invalid Vulkan Queue!";
+
+			    return;
+			}
+
+			if (!pPresentInfo)
+			{
+				LOG(FATAL) << "Invalid Vulkan Present Info!";
+
+				return;
+			}
+
 			GetInstance().VkOnPresentImpl(queue, pPresentInfo);
 		}
 
@@ -106,6 +120,13 @@ namespace YimMenu
 
 		static void VkSetDevice(VkDevice device)
 		{
+			if (!device)
+			{
+				LOG(FATAL) << "Invalid Vulkan Device!";
+
+				return;
+			}
+
 			GetInstance().m_VkDevice = device;
 		}
 		static void VkSetScreenSize(VkExtent2D extent)

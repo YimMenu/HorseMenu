@@ -44,7 +44,13 @@ namespace YimMenu
 
 		while (g_Running)
 		{
-			std::this_thread::sleep_for(100ms);
+			//Needed incase UI is malfunctioning or for emergencies
+			if (GetAsyncKeyState(VK_DELETE) & 0x8000)
+			{
+				g_Running = false;
+			}
+
+			std::this_thread::sleep_for(500ms);
 		}
 
 		LOG(INFO) << "Unloading";
@@ -55,6 +61,7 @@ namespace YimMenu
 		FiberPool::Destroy();
 		LOG(INFO) << "FiberPool Uninitialized";
 
+		goto unload;
 	unload:
 		Hooking::Destroy();
 		Renderer::Destroy();
