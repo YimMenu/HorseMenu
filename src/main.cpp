@@ -61,7 +61,6 @@ namespace YimMenu
 		FiberPool::Destroy();
 		LOG(INFO) << "FiberPool Uninitialized";
 
-		goto unload;
 	unload:
 		Hooking::Destroy();
 		Renderer::Destroy();
