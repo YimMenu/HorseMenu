@@ -61,9 +61,41 @@ namespace YimMenu
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
 		});
 
-		constexpr auto sendMetricPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B F1 48 8B FA B1">("CurrentScriptThread");
+		constexpr auto sendMetricPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B F1 48 8B FA B1">("SendMetric");
 		scanner.Add(sendMetricPtrn, [this](PointerCalculator ptr) {
 			SendMetric = ptr.As<PVOID*>();
+		});
+
+		constexpr auto vmDetectionCallbackPtrn = Pattern<"48 8B 0D ? ? ? ? 33 F6 E8 ? ? ? ? 48 8B 0D">("VMDetectionCallback");
+		scanner.Add(vmDetectionCallbackPtrn, [this](PointerCalculator ptr) {
+			auto loc =  ptr.Add(3).Rip().As<uint8_t*>();
+			VmDetectionCallback = (PVOID*)loc;
+			RageSecurityInitialized = (bool*)(loc - 6);
+		});
+
+		constexpr auto queueDependencyPtrn = Pattern<"E8 ? ? ? ? EB 43 8A 43 54">("QueueDependency");
+		scanner.Add(queueDependencyPtrn, [this](PointerCalculator ptr) {
+			QueueDependency = ptr.Add(1).Rip().As<PVOID>();
+		});
+
+		constexpr auto unkFunctionPtrn = Pattern<"40 53 48 83 EC 20 48 8B 59 20 48 8B 43 08 48 8B 4B">("UnkFunction");
+		scanner.Add(unkFunctionPtrn, [this](PointerCalculator ptr) {
+			UnkFunction = ptr.As<PVOID>();
+		});
+
+		constexpr auto scriptGlobalsPtrn = Pattern<"48 8D 15 ? ? ? ? 48 8B 1D ? ? ? ? 8B 3D">("ScriptGlobals");
+		scanner.Add(scriptGlobalsPtrn, [this](PointerCalculator ptr) {
+			ScriptGlobals = ptr.Add(3).Rip().As<int64_t**>();
+		});
+
+		constexpr auto handleNetGameEventPtrn = Pattern<"E8 ? ? ? ? F6 43 28 01 74 05 8B 7B 0C EB 03 8B 7B 14 48 8B CB E8 ? ? ? ? 2B F8 83 FF 28 0F 8D C9 FE FF FF">("HandleNetGameEvent");
+		scanner.Add(handleNetGameEventPtrn, [this](PointerCalculator ptr) {
+			HandleNetGameEvent = ptr.Add(1).Rip().As<PVOID>();
+		});
+
+		constexpr auto sendEventAckPtrn = Pattern<"E8 ? ? ? ? F6 43 32 01 74 4B">("SendEventAck");
+		scanner.Add(sendEventAckPtrn, [this](PointerCalculator ptr) {
+			SendEventAck = ptr.Add(1).Rip().As<Functions::SendEventAck>();
 		});
 
 		constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
@@ -73,7 +105,7 @@ namespace YimMenu
 		});
 
 		if (!scanner.Scan())
-		{
+		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
 
 			return false;

@@ -7,9 +7,12 @@
 #include <rage/atArray.hpp>
 #include <vulkan/vulkan.h>
 
+class CNetGamePlayer;
+
 namespace rage
 {
 	class scrThread;
+	class netEventMgr;
 }
 
 namespace YimMenu
@@ -19,11 +22,12 @@ namespace YimMenu
 		using GetRendererInfo = RenderingInfo*(*)();
 		using GetNativeHandler = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
 		using FixVectors       = void (*)(rage::scrNativeCallContext* call_ctx);
+		using SendEventAck =     void(*)(rage::netEventMgr* eventMgr, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, int eventIndex, int handledBitset);
 	}
 
 	struct PointerData
 	{
-	    //RDR
+	    // RDR
 		std::int64_t** ScriptGlobals;
 		void* NativeRegistrationTable;
 		Functions::GetNativeHandler GetNativeHandler;
@@ -31,9 +35,19 @@ namespace YimMenu
 		rage::atArray<rage::scrThread*>* ScriptThreads;
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
-		PVOID SendMetric;
 
-		//Vulkan
+		// Security
+		PVOID SendMetric;
+		bool* RageSecurityInitialized;
+		PVOID* VmDetectionCallback;
+		PVOID QueueDependency;
+		PVOID UnkFunction;
+
+		// Protections
+		PVOID HandleNetGameEvent;
+		Functions::SendEventAck SendEventAck;
+
+		// Vulkan
 		PVOID QueuePresentKHR; //Init in renderer
 		PVOID CreateSwapchainKHR; //Init in renderer
 		PVOID AcquireNextImageKHR; //Init in renderer
@@ -41,11 +55,11 @@ namespace YimMenu
 
 		VkDevice* VkDevicePtr;
 
-		//DX12
+		// DX12
 		IDXGISwapChain1** SwapChain;
 		ID3D12CommandQueue** CommandQueue;
 
-		//Misc Renderer Related
+		// Misc Renderer Related
 		HWND Hwnd;
 		Functions::GetRendererInfo GetRendererInfo;
 		PVOID WndProc;

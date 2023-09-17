@@ -17,12 +17,13 @@ namespace YimMenu
 
 		if (PED::IS_PED_IN_ANY_VEHICLE(Self::PlayerPed, true))
 			Self::Veh = PED::GET_VEHICLE_PED_IS_IN(Self::PlayerPed, true);
+		else
+			Self::Veh = 0;
 
 		if (PED::IS_PED_ON_MOUNT(Self::PlayerPed))
 			Self::Mount = PED::GET_MOUNT(Self::PlayerPed);
-		
-		if (!ENTITY::DOES_ENTITY_EXIST(Self::Mount) && ENTITY::DOES_ENTITY_EXIST(PED::_GET_LAST_MOUNT(Self::PlayerPed)))
-			Self::Mount = PED::_GET_LAST_MOUNT(Self::PlayerPed);
+		else
+			Self::Mount = 0;
 	}
 
 	void FeatureLoop()
@@ -30,6 +31,7 @@ namespace YimMenu
 		while (true)
 		{
 			UpdateSelfVars();
+			*Pointers.RageSecurityInitialized = false;
 			Commands::RunLoopedCommands();
 			g_HotkeySystem.FeatureCommandsHotkeyLoop();
 			ScriptMgr::Yield();

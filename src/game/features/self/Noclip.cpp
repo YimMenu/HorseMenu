@@ -6,7 +6,7 @@
 namespace YimMenu::Features
 {
 	static constexpr eNativeInputs controls[] = {eNativeInputs::INPUT_SPRINT, eNativeInputs::INPUT_MOVE_UP_ONLY, eNativeInputs::INPUT_MOVE_DOWN_ONLY, eNativeInputs::INPUT_MOVE_LEFT_ONLY, eNativeInputs::INPUT_MOVE_RIGHT_ONLY, eNativeInputs::INPUT_DUCK};
-	static constexpr float speed = 20.0f;
+	static constexpr float speed = 0.57f;
 
 	class Noclip : public LoopedCommand
 	{
@@ -65,15 +65,23 @@ namespace YimMenu::Features
 			else
 			{
 				if (m_SpeedMultiplier < 20.f)
-					m_SpeedMultiplier += 0.15f;
+					m_SpeedMultiplier += 0.07f;
 
 				ENTITY::FREEZE_ENTITY_POSITION(ent, false);
 
+				#if 0
+				// TODO
 				const auto offset = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ent, vel.x, vel.y, 0.f);
 				vel.x             = offset.x - location.x;
 				vel.y             = offset.y - location.y;
 
 				ENTITY::SET_ENTITY_VELOCITY(ent, vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier);
+				#else
+				const auto offset = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ent, vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier);
+
+				ENTITY::SET_ENTITY_VELOCITY(ent, 0, 0, 0);
+				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ent, offset.x, offset.y, offset.z, true, true, true);
+				#endif
 			}
 		}
 

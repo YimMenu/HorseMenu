@@ -1,16 +1,31 @@
 #include "Self.hpp"
 #include "game/frontend/manager/Widgets/Widgets.hpp"
 
+#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/FiberPool.hpp"
+#include "game/rdr/ScriptGlobal.hpp"
+
 namespace YimMenu::Submenus
 {
 	static void Main()
 	{
+		LoopedCommandToggle("godmode"_J).Draw();
 		LoopedCommandToggle("keepbarsfilled"_J).Draw();
 		LoopedCommandToggle("keepcoresfilled"_J).Draw();
 		LoopedCommandToggle("infiniteammo"_J).Draw();
 		LoopedCommandToggle("infiniteclip"_J).Draw();
 		LoopedCommandToggle("keepclean"_J).Draw();
 		LoopedCommandToggle("noclip"_J).Draw();
+
+		static int global = 0;
+		static int value  = 0;
+		ImGui::InputInt("Global", &global);
+		ImGui::InputInt("Value", &value);
+		if (ImGui::Button("Get"))
+			value = *ScriptGlobal(global).As<int*>();
+		ImGui::SameLine();
+		if (ImGui::Button("Set"))
+			*ScriptGlobal(global).As<int*>() = value;
 	};
 
 	static void Horse()

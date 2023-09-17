@@ -6,7 +6,11 @@
 namespace rage
 {
 	class rlMetric;
+	class netEventMgr;
+	class datBitBuffer;
 }
+class CNetGamePlayer;
+enum class NetEventType;
 
 namespace YimMenu::Hooks
 {
@@ -40,5 +44,12 @@ namespace YimMenu::Hooks
 	namespace Anticheat
 	{
 		extern bool SendMetric(void* manager, rage::rlMetric* metric);
+		extern void QueueDependency(__int64 dependency);
+		extern bool UnkFunction(__int64 cb);
+	}
+
+	namespace Protections
+	{
+		extern void HandleNetGameEvent(rage::netEventMgr* pEventMgr, CNetGamePlayer* pSourcePlayer, CNetGamePlayer* pTargetPlayer, NetEventType type, int index, int handledBits, std::int16_t unk, rage::datBitBuffer* buffer);
 	}
 }
