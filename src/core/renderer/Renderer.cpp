@@ -212,6 +212,7 @@ namespace YimMenu
 			return false;
 		}
 
+;
     	uint32_t GpuCount;
 		if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, NULL); result != VK_SUCCESS)
 		{
@@ -221,28 +222,30 @@ namespace YimMenu
 
 		IM_ASSERT(GpuCount > 0);
 
-		VkPhysicalDevice* Gpus = new VkPhysicalDevice[sizeof(VkPhysicalDevice) * GpuCount];
-		if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, Gpus); result != VK_SUCCESS)
+		ImVector<VkPhysicalDevice> GpuArr;
+		GpuArr.resize(GpuCount);
+
+		if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, GpuArr.Data); result != VK_SUCCESS)
 		{
 			LOG(WARNING) << "vkEnumeratePhysicalDevices 2 failed with result: [" << result << "]";
 			return false;
 		}
 
-		int UseGpu = 0;
-		for (int i = 0; i < (int)GpuCount; ++i)
+		VkPhysicalDevice MainGPU;
+		for (const auto& Gpu : GpuArr)
 		{
 			VkPhysicalDeviceProperties Properties;
-			vkGetPhysicalDeviceProperties(Gpus[i], &Properties);
+			vkGetPhysicalDeviceProperties(Gpu, &Properties);
 			if (Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 			{
 				LOG(INFO) << "Vulkan - Using GPU: " << Properties.deviceName;
 
-				UseGpu = i;
+				MainGPU = Gpu;
 				break;
 			}
 		}
 
-		m_VkPhysicalDevice = Gpus[UseGpu];
+		m_VkPhysicalDevice = MainGPU;
 
 		uint32_t Count;
 		vkGetPhysicalDeviceQueueFamilyProperties(m_VkPhysicalDevice, &Count, NULL);
