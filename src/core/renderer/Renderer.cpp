@@ -248,7 +248,7 @@ namespace YimMenu
 		if (!MainGPU)
 		{
 			LOG(INFO) << "Failed to get main GPU!";
-			return;
+			return false;
 		}
 
 		m_VkPhysicalDevice = MainGPU;
