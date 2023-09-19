@@ -231,7 +231,7 @@ namespace YimMenu
 			return false;
 		}
 
-		VkPhysicalDevice MainGPU;
+		VkPhysicalDevice MainGPU = nullptr;
 		for (const auto& Gpu : GpuArr)
 		{
 			VkPhysicalDeviceProperties Properties;
@@ -243,6 +243,12 @@ namespace YimMenu
 				MainGPU = Gpu;
 				break;
 			}
+		}
+
+		if (!MainGPU)
+		{
+			LOG(INFO) << "Failed to get main GPU!";
+			return;
 		}
 
 		m_VkPhysicalDevice = MainGPU;
