@@ -16,6 +16,7 @@ namespace YimMenu::Submenus
 		LoopedCommandToggle("infiniteclip"_J).Draw();
 		LoopedCommandToggle("keepclean"_J).Draw();
 		LoopedCommandToggle("noclip"_J).Draw();
+		LoopedCommandToggle("voicechatoverride"_J).Draw(); // TODO: move this to spoofing or network
 
 		static int global = 0;
 		static int value  = 0;

@@ -11,6 +11,8 @@ namespace rage
 }
 class CNetGamePlayer;
 enum class NetEventType;
+class CFoundDevice;
+class IDirectSoundCapture;
 
 namespace YimMenu::Hooks
 {
@@ -51,5 +53,14 @@ namespace YimMenu::Hooks
 	namespace Protections
 	{
 		extern void HandleNetGameEvent(rage::netEventMgr* pEventMgr, CNetGamePlayer* pSourcePlayer, CNetGamePlayer* pTargetPlayer, NetEventType type, int index, int handledBits, std::int16_t unk, rage::datBitBuffer* buffer);
+	}
+
+	namespace Voice
+	{
+		// {DCB7EF33-CD8A-4231-8051-66E3F683180B}
+		inline constexpr GUID g_YimDevice = {0xdcb7ef33, 0xcd8a, 0x4231, {0x80, 0x51, 0x66, 0xe3, 0xf6, 0x83, 0x18, 0xb}};
+
+		extern int EnumerateAudioDevices(CFoundDevice* devices, int count, int flags);
+		extern HRESULT DirectSoundCaptureCreate(GUID* guid, IDirectSoundCapture** sound, void* unknown);
 	}
 }

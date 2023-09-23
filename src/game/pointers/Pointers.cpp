@@ -98,6 +98,16 @@ namespace YimMenu
 			SendEventAck = ptr.Add(1).Rip().As<Functions::SendEventAck>();
 		});
 
+		constexpr auto enumerateAudioDevicesPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 55 48 8B EC 48 83 EC 60 33 C0 41">("EnumerateAudioDevices");
+		scanner.Add(enumerateAudioDevicesPtrn, [this](PointerCalculator ptr) {
+			EnumerateAudioDevices = ptr.As<PVOID>();
+		});
+
+		constexpr auto directSoundCaptureCreatePtrn = Pattern<"E8 ? ? ? ? 85 C0 79 08 48 83 23 00 32 C0 EB 7B">("DirectSoundCaptureCreate");
+		scanner.Add(directSoundCaptureCreatePtrn, [this](PointerCalculator ptr) {
+			DirectSoundCaptureCreate = ptr.Add(1).Rip().As<PVOID>();
+		});
+
 		constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
 		scanner.Add(hwnd, [this](PointerCalculator ptr) {
 			Hwnd = *ptr.Add(3).Rip().As<HWND*>();

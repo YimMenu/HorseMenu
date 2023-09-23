@@ -47,6 +47,10 @@ namespace YimMenu
 		PVOID HandleNetGameEvent;
 		Functions::SendEventAck SendEventAck;
 
+		// Voice
+		PVOID EnumerateAudioDevices;
+		PVOID DirectSoundCaptureCreate;
+
 		// Vulkan
 		PVOID QueuePresentKHR; //Init in renderer
 		PVOID CreateSwapchainKHR; //Init in renderer
