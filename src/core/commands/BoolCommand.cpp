@@ -42,4 +42,9 @@ namespace YimMenu
 		m_State = state;
 		MarkDirty();
 	}
+
+	void BoolCommand::Shutdown()
+	{
+		OnDisable();
+	}
 }

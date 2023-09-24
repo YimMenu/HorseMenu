@@ -1,6 +1,5 @@
 #include "GUI.hpp"
-
-#include "menu/Menu.hpp"
+#include "Menu.hpp"
 #include "core/renderer/Renderer.hpp"
 
 namespace YimMenu

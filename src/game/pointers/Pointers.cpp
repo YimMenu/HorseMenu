@@ -114,6 +114,16 @@ namespace YimMenu
 			LOG(INFO) << "HWND: " << Hwnd;
 		});
 
+		constexpr auto handleToPtrPtrn = Pattern<"E8 ? ? ? ? 45 8D 47 04">("HandleToPtr");
+		scanner.Add(handleToPtrPtrn, [this](PointerCalculator ptr) {
+			HandleToPtr = ptr.Add(1).Rip().As<Functions::HandleToPtr>();
+		});
+
+		constexpr auto ptrToHandlePtrn = Pattern<"E8 ? ? ? ? F3 0F 10 0D ? ? ? ? 48 8D 4D DF 8B 5B 40">("PtrToHandle");
+		scanner.Add(ptrToHandlePtrn, [this](PointerCalculator ptr) {
+			PtrToHandle = ptr.Add(1).Rip().As<Functions::PtrToHandle>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

@@ -2,11 +2,12 @@
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
-#include "game/frontend/manager/Widgets/Widgets.hpp"
+#include "game/frontend/items/Items.hpp"
 #include "Settings.hpp"
 
 namespace YimMenu::Submenus
 {
+	// TODO: refactor this
 	static void Hotkeys()
 	{
 		ImGui::BulletText("Hover over the command name to change its hotkey");
@@ -16,7 +17,7 @@ namespace YimMenu::Submenus
 		ImGui::Separator();
 		ImGui::Spacing();
 
-		for (auto [Hash, Command] : Commands::GetCommands())
+		for (auto& [Hash, Command] : Commands::GetCommands())
 		{
 			ImGui::PushID(Hash);
 
@@ -29,23 +30,11 @@ namespace YimMenu::Submenus
 		}
 	};
 
-	// Init mini submenus
-	void Settings::LoadSubmenus()
+	Settings::Settings() :
+	    Submenu::Submenu("Settings")
 	{
-		m_MiniSubmenus.push_back(std::make_shared<MiniSubmenu>("Hotkeys", Hotkeys));
-
-		m_DefaultMiniSubmenu = m_MiniSubmenus.front();
-	}
-
-	// Script Tick If Needed
-	void Settings::Update()
-	{
-		// TODO
-	}
-
-	// Call Everytime When Newly Entered
-	void Settings::UpdateOnce()
-	{
-		// TODO
+		auto hotkeys = std::make_shared<Category>("Hotkeys");
+		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
+		AddCategory(std::move(hotkeys));
 	}
 }

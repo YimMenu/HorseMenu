@@ -19,10 +19,12 @@ namespace YimMenu
 {
 	namespace Functions
 	{
-		using GetRendererInfo = RenderingInfo*(*)();
+		using GetRendererInfo  = RenderingInfo*(*)();
 		using GetNativeHandler = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
 		using FixVectors       = void (*)(rage::scrNativeCallContext* call_ctx);
-		using SendEventAck =     void(*)(rage::netEventMgr* eventMgr, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, int eventIndex, int handledBitset);
+		using SendEventAck     = void(*)(rage::netEventMgr* eventMgr, void* event, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, int eventIndex, int handledBitset);
+		using HandleToPtr      = void*(*)(int handle);
+		using PtrToHandle      = int(*)(void* pointer);
 	}
 
 	struct PointerData
@@ -50,6 +52,10 @@ namespace YimMenu
 		// Voice
 		PVOID EnumerateAudioDevices;
 		PVOID DirectSoundCaptureCreate;
+
+		// Native Handles
+		Functions::HandleToPtr HandleToPtr;
+		Functions::PtrToHandle PtrToHandle;
 
 		// Vulkan
 		PVOID QueuePresentKHR; //Init in renderer

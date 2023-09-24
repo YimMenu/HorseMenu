@@ -18,10 +18,6 @@ namespace YimMenu
 		BoolCommand(std::string name, std::string label, std::string description);
 		bool GetState();
 		void SetState(bool state);
-
-		inline void Shutdown()
-		{
-			this->OnDisable();
-		}
+		void Shutdown();
 	};
 }
