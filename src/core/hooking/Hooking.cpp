@@ -33,6 +33,7 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Anticheat::QueueDependency>(new DetourHook("QueueDependency", Pointers.QueueDependency, Hooks::Anticheat::QueueDependency));
 		BaseHook::Add<Hooks::Anticheat::UnkFunction>(new DetourHook("UnkFunction", Pointers.UnkFunction, Hooks::Anticheat::UnkFunction));
 		BaseHook::Add<Hooks::Protections::HandleNetGameEvent>(new DetourHook("HandleNetGameEvent", Pointers.HandleNetGameEvent, Hooks::Protections::HandleNetGameEvent));
+		BaseHook::Add<Hooks::Protections::GetUnkPlayerThing>(new DetourHook("GetUnkPlayerThing", Pointers.GetUnkPlayerThing, Hooks::Protections::GetUnkPlayerThing));
 		BaseHook::Add<Hooks::Voice::EnumerateAudioDevices>(new DetourHook("EnumerateAudioDevices", Pointers.EnumerateAudioDevices, Hooks::Voice::EnumerateAudioDevices));
 		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(
 		    new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));

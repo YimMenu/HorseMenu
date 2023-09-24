@@ -28,9 +28,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${SRC_DIR}"
     "${imgui_SOURCE_DIR}"
     "${minhook_SOURCE_DIR}/include"    
+    "${minhook_SOURCE_DIR}/src/hde"    
     "${rdr_classes_SOURCE_DIR}"
     "${vulkan_SOURCE_DIR}/include"
 )
 
 message(STATUS "Setting up linked libraries")
-target_link_libraries(${PROJECT_NAME} PRIVATE AsyncLogger imgui minhook nlohmann_json::nlohmann_json  "${SRC_DIR}/vulkan-1.lib")
+target_link_libraries(${PROJECT_NAME} PRIVATE AsyncLogger imgui minhook nlohmann_json::nlohmann_json dbghelp "${SRC_DIR}/vulkan-1.lib")

@@ -126,7 +126,7 @@ namespace YimMenu
 		{
 			if (!hotkey.second.Hotkey.empty())
 			{
-				state[hotkey.first].array() = hotkey.second.Hotkey;
+				state[std::to_string(hotkey.first).data()] = hotkey.second.Hotkey;
 			}
 		}
 	}

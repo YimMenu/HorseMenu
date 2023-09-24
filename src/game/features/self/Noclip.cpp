@@ -21,7 +21,12 @@ namespace YimMenu::Features
 				PAD::DISABLE_CONTROL_ACTION(0, static_cast<int>(control), true);
 
 			const auto location = Self::Pos;
-			const Entity ent = (Self::Mount != 0 && PED::IS_PED_ON_MOUNT(Self::PlayerPed)) ? Self::Mount : Self::PlayerPed;
+			Entity ent = Self::PlayerPed;
+
+			if (Self::Mount)
+				ent = Self::Mount;
+			else if (Self::Veh)
+				ent = Self::Veh;
 
 			// cleanup when changing entities
 			if (m_Entity != ent)

@@ -20,6 +20,7 @@ namespace YimMenu
 
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
+		g_HotkeySystem.RegisterCommands();
 		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
 
 		if (!ModuleMgr.LoadModules())
@@ -42,7 +43,6 @@ namespace YimMenu
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
 
-		g_HotkeySystem.RegisterCommands();
 
 		while (g_Running)
 		{

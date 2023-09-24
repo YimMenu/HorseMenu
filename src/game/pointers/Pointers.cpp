@@ -124,6 +124,11 @@ namespace YimMenu
 			PtrToHandle = ptr.Add(1).Rip().As<Functions::PtrToHandle>();
 		});
 
+		constexpr auto getUnkPlayerThingPtrn = Pattern<"48 8B 81 10 0C 00 00 8B">("GetUnkPlayerThing");
+		scanner.Add(getUnkPlayerThingPtrn, [this](PointerCalculator ptr) {
+			GetUnkPlayerThing = ptr.As<Functions::PtrToHandle>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
