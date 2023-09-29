@@ -6,12 +6,12 @@
 
 namespace YimMenu
 {
-	constexpr void Entity::PopulatePointer()
+	void Entity::PopulatePointer()
 	{
 		m_Pointer = Pointers.HandleToPtr(m_Handle);
 	}
 
-	constexpr void Entity::PopulateHandle()
+	void Entity::PopulateHandle()
 	{
 		m_Handle = Pointers.PtrToHandle(m_Pointer);
 	}

@@ -7,6 +7,7 @@ namespace YimMenu::Submenus
 	    Submenu::Submenu("Self")
 	{
 		auto main = std::make_shared<Category>("Main");
+		main->AddItem(std::make_shared<CommandItem>("suicide"_J));
 		main->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
 		main->AddItem(std::make_shared<BoolCommandItem>("keepbarsfilled"_J));
 		main->AddItem(std::make_shared<BoolCommandItem>("keepcoresfilled"_J));

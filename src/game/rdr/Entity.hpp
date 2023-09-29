@@ -8,8 +8,8 @@ namespace YimMenu
 		void* m_Pointer;
 		int m_Handle;
 
-		constexpr void PopulatePointer();
-		constexpr void PopulateHandle();
+		void PopulatePointer();
+		void PopulateHandle();
 
 	public:
 

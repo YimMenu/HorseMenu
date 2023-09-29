@@ -129,6 +129,16 @@ namespace YimMenu
 			GetUnkPlayerThing = ptr.As<Functions::PtrToHandle>();
 		});
 
+		constexpr auto getLocalPedPtrn = Pattern<"8A 05 ?? ?? ?? ?? 33 D2 84 C0 74 39 48 8B 0D ?? ?? ?? ?? 4C 8B 05 ?? ?? ?? ?? 48 C1 C9 05 48 C1 C1 20 4C 33 C1 8B C1 83 E0 1F 49 C1 C0 20 FF C0 8A C8 8A 05 ?? ?? ?? ?? 49 D3 C0 84 C0 74 06 49 8B D0 48 F7 D2 48 8B 42">("GetLocalPed");
+		scanner.Add(getLocalPedPtrn, [this](PointerCalculator ptr) {
+			GetLocalPed = ptr.As<Functions::GetLocalPed>();
+		});
+
+		constexpr auto applyVehicleMigrationDataNodePtrn = Pattern<"48 8B C4 48 89 48 08 53 55 56 57 41 54 41 55 41 56 41 57 48 81 EC D8">("ApplyVehicleMigrationDataNode");
+		scanner.Add(applyVehicleMigrationDataNodePtrn, [this](PointerCalculator ptr) {
+			ApplyVehicleMigrationDataNode = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
