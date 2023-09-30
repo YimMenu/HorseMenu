@@ -17,7 +17,7 @@ namespace YimMenu::Hooks
 				if (vehicle && vehicle->m_EntityType != 3) // peds don't have gadgets
 				{
 					LOG(WARNING) << __FUNCTION__ ": blocked crash attempt";
-					*(rage::fwEntity**)(thingy2) = nullptr; // not a vehicle
+					return;
 				}
 			}
 		}
