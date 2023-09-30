@@ -52,8 +52,8 @@ namespace YimMenu
 		// Protections
 		PVOID HandleNetGameEvent;
 		Functions::SendEventAck SendEventAck;
-		PVOID GetUnkPlayerThing;
 		PVOID ApplyVehicleMigrationDataNode;
+		PVOID DoUnkThingWithVehicle;
 
 		// Voice
 		PVOID EnumerateAudioDevices;

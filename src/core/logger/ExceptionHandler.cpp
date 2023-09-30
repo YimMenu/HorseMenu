@@ -45,17 +45,36 @@ namespace YimMenu
 			logged_exceptions.insert(trace_hash);
 		}
 
-		hde64s opcode{};
-		hde64_disasm(reinterpret_cast<void*>(exception_info->ContextRecord->Rip), &opcode);
-		if (opcode.flags & F_ERROR)
+		if (IsBadReadPtr(reinterpret_cast<void*>(exception_info->ContextRecord->Rip), 8))
 		{
-			LOG(FATAL) << "Cannot resume execution, crashing";
-			return EXCEPTION_CONTINUE_SEARCH;
+			auto return_address_ptr = (uint64_t*)exception_info->ContextRecord->Rsp;
+			if (IsBadReadPtr(reinterpret_cast<void*>(return_address_ptr), 8))
+			{
+				LOG(FATAL) << "Cannot resume execution, crashing";
+				return EXCEPTION_CONTINUE_SEARCH;
+			}
+			else
+			{
+				exception_info->ContextRecord->Rip = *return_address_ptr;
+				exception_info->ContextRecord->Rsp += 8;
+			}
+		}
+		else
+		{
+			hde64s opcode{};
+			hde64_disasm(reinterpret_cast<void*>(exception_info->ContextRecord->Rip), &opcode);
+			if (opcode.flags & F_ERROR)
+			{
+				LOG(FATAL) << "Cannot resume execution, crashing";
+				return EXCEPTION_CONTINUE_SEARCH;
+			}
+			exception_info->ContextRecord->Rip += opcode.len;
 		}
 
-		exception_info->ContextRecord->Rip += opcode.len;
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 }
 
 static YimMenu::ExceptionHandler _ExceptionHandler{};
+// 48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 DB 44 0F
+//

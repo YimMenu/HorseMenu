@@ -53,8 +53,8 @@ namespace YimMenu::Hooks
 	namespace Protections
 	{
 		extern void HandleNetGameEvent(rage::netEventMgr* pEventMgr, CNetGamePlayer* pSourcePlayer, CNetGamePlayer* pTargetPlayer, NetEventType type, int index, int handledBits, std::int16_t unk, rage::datBitBuffer* buffer);
-		extern void* GetUnkPlayerThing(__int64 playerObj, int index);
 		extern void ApplyVehicleMigrationDataNode(__int64 iface, __int64 data);
+		extern void DoUnkThingWithVehicle(__int64 net_object, uint16_t a2, __int64 a3);
 	}
 
 	namespace Voice
