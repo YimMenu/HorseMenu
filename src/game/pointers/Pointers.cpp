@@ -35,6 +35,29 @@ namespace YimMenu
 			GetRendererInfo = ptr.Add(1).Rip().As<Functions::GetRendererInfo>();
 		});
 
+	    constexpr auto gfxInformation = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
+	    scanner.Add(gfxInformation, [this](PointerCalculator ptr) {
+	    	auto gfx = ptr.Add(3).Rip().As<uint64_t*>();
+
+			if (*reinterpret_cast<uint8_t*>((uint64_t)gfx + 0x10C))
+			{
+				LOG(WARNING) << "Turn HDR off!";
+			}
+	
+			if (*reinterpret_cast<uint8_t*>((uint64_t)gfx + 0xC))
+			{
+				LOG(INFO) << "Ew motion blur. Seriously?";
+			}
+
+			if (*reinterpret_cast<DWORD*>((uint64_t)gfx + 0x150))
+			{
+				ScreenResX = *reinterpret_cast<DWORD*>((uint64_t)gfx + 0x13C); 
+				ScreenResY =  *reinterpret_cast<DWORD*>((uint64_t)gfx + 0x140);
+				LOG(INFO) << "Screen Resolution: " << ScreenResX << "x" << ScreenResY;
+			}
+
+	    });
+		
 		constexpr auto wndProc = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
 		scanner.Add(wndProc, [this](PointerCalculator ptr) {
 			WndProc = ptr.As<PVOID>();

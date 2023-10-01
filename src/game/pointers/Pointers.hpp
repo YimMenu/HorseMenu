@@ -49,6 +49,9 @@ namespace YimMenu
 		Functions::GetRendererInfo GetRendererInfo;
 		PVOID WndProc;
 		BOOL IsVulkan;
+
+		uint32_t ScreenResX;
+		uint32_t ScreenResY;
 	};
 
 	struct Pointers : PointerData

@@ -35,6 +35,7 @@ namespace YimMenu
 		}
 		else if (!Pointers.IsVulkan)
 		{
+			WaitForLastFrame();
 			ImGui_ImplDX12_Shutdown();
 		}
 
@@ -762,7 +763,7 @@ namespace YimMenu
 		}
 		else if (!Pointers.IsVulkan)
 		{
-			LOG(INFO) << "Using DX12";
+			LOG(INFO) << "Using DX12, clear shader cache if your having issues.";
 			return InitDX12();
 		}
 
@@ -881,11 +882,6 @@ namespace YimMenu
 
 	void Renderer::DX12EndFrame()
 	{
-		ImGui::EndFrame();
-
-		UINT NextFrameIndex = GetInstance().m_FrameIndex + 1;
-		GetInstance().m_FrameIndex      = NextFrameIndex;
-
 		WaitForNextFrame();
 
 		FrameContext& CurrentFrameContext{ GetInstance().m_FrameContext[GetInstance().m_SwapChain->GetCurrentBackBufferIndex()] };
