@@ -5,6 +5,7 @@
 #include "core/memory/PatternScanner.hpp"
 #include "util/Joaat.hpp"
 #include "core/renderer/Renderer.hpp"
+#include "util/GraphicsValue.hpp"
 
 namespace YimMenu
 {
@@ -37,22 +38,25 @@ namespace YimMenu
 
 	    constexpr auto gfxInformation = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
 	    scanner.Add(gfxInformation, [this](PointerCalculator ptr) {
-	    	auto gfx = ptr.Add(3).Rip().As<uint64_t*>();
+			auto gfx = ptr.Add(3).Rip().As<GraphicsOptions*>();
 
-			if (*reinterpret_cast<uint8_t*>((uint64_t)gfx + 0x10C))
+			if (gfx->m_hdr)
 			{
 				LOG(WARNING) << "Turn HDR off!";
+
 			}
-	
-			if (*reinterpret_cast<uint8_t*>((uint64_t)gfx + 0xC))
+
+			if (gfx->m_motion_blur)
 			{
 				LOG(INFO) << "Ew motion blur. Seriously?";
 			}
 
-			if (*reinterpret_cast<DWORD*>((uint64_t)gfx + 0x150))
+			//LOG(INFO) << GetGraphicsValue(gfx->m_gfx_lightingQuality); example
+
+			if (gfx->m_unk)
 			{
-				ScreenResX = *reinterpret_cast<DWORD*>((uint64_t)gfx + 0x13C); 
-				ScreenResY =  *reinterpret_cast<DWORD*>((uint64_t)gfx + 0x140);
+				ScreenResX = gfx->m_screen_resolution_x; 
+				ScreenResY =  gfx->m_screen_resolution_y;
 				LOG(INFO) << "Screen Resolution: " << ScreenResX << "x" << ScreenResY;
 			}
 
