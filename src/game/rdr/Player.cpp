@@ -1,37 +1,47 @@
 #include "Player.hpp"
+
 #include <network/CNetGamePlayer.hpp>
 #include <player/CPlayerInfo.hpp>
 
 namespace YimMenu
 {
-	constexpr bool Player::IsValid()
+	bool Player::IsValid()
 	{
 		return m_Handle && m_Handle->IsValid();
 	}
 
-	constexpr int Player::GetId()
+	int Player::GetId()
 	{
+		if (!m_Handle)
+			return -1;
+
 		return m_Handle->m_PlayerIndex;
 	}
 
-	constexpr const char* Player::GetName()
+	const char* Player::GetName()
 	{
+		if (!m_Handle)
+			return "INVALID";
+
 		return m_Handle->GetName();
 	}
-	
-	constexpr CNetGamePlayer* Player::GetHandle()
+
+	CNetGamePlayer* Player::GetHandle()
 	{
 		return m_Handle;
 	}
 
-	constexpr rage::rlGamerInfo* Player::GetGamerInfo()
+	rage::rlGamerInfo* Player::GetGamerInfo()
 	{
+		if (!m_Handle)
+			return nullptr;
+
 		return m_Handle->GetGamerInfo();
 	}
 
-	constexpr Entity Player::GetPed()
+	Entity Player::GetPed()
 	{
-		if (!m_Handle->m_PlayerInfo)
+		if (!m_Handle || !m_Handle->m_PlayerInfo)
 			return nullptr;
 
 		return m_Handle->m_PlayerInfo->m_Ped;

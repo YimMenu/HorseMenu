@@ -8,6 +8,8 @@ namespace rage
 	class rlMetric;
 	class netEventMgr;
 	class datBitBuffer;
+	class netObject;
+	class netSyncTree;
 }
 class CNetGamePlayer;
 enum class NetEventType;
@@ -54,7 +56,12 @@ namespace YimMenu::Hooks
 	{
 		extern void HandleNetGameEvent(rage::netEventMgr* pEventMgr, CNetGamePlayer* pSourcePlayer, CNetGamePlayer* pTargetPlayer, NetEventType type, int index, int handledBits, std::int16_t unk, rage::datBitBuffer* buffer);
 		extern void ApplyVehicleMigrationDataNode(__int64 iface, __int64 data);
-		extern void DoUnkThingWithVehicle(__int64 net_object, uint16_t a2, __int64 a3);
+		extern void DoUnkThingWithVehicle(__int64 netObject, uint16_t a2, __int64 a3);
+		extern void* AllocateAnimData(__int64 _this, uint8_t phase);
+		extern void HandleCloneCreate(void* mgr, CNetGamePlayer* sender, uint16_t objectType, uint16_t objectId, int flags, void* encryptedMem, rage::datBitBuffer* buffer, int a8, int a9, bool isQueued);
+		extern int HandleCloneSync(void* mgr, CNetGamePlayer* src, CNetGamePlayer* dst, uint16_t objectType, uint16_t objectId, rage::datBitBuffer* buffer, int a7, int a8, void* a9);
+		extern bool CanApplyData(rage::netSyncTree* tree, rage::netObject* object);
+		extern void ResetSyncNodes();
 	}
 
 	namespace Voice

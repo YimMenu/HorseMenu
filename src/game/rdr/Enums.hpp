@@ -972,7 +972,8 @@ enum class eMotivationState
 	DRUNK_STATE
 };
 
-enum class eCrimeType : unsigned{
+enum class eCrimeType : unsigned
+{
 	CRIME_ACCOMPLICE                 = 0xAF074F6D,
 	CRIME_ARSON                      = 0x68134DC7,
 	CRIME_ASSAULT                    = 0x0BADC882,
@@ -1087,9 +1088,44 @@ enum class eLawRegion : unsigned
 	LAW_REGION_WAPITI                      = 0x7A976E02
 };
 
-enum ePedDamageCleanliness
+enum class ePedDamageCleanliness
 {
 	PED_DAMAGE_CLEANLINESS_POOR,
 	PED_DAMAGE_CLEANLINESS_GOOD,
 	PED_DAMAGE_CLEANLINESS_PERFECT
+};
+
+enum class eNetObjType
+{
+	Animal             = 0x0,
+	Automobile         = 0x1,
+	Bike               = 0x2,
+	Boat               = 0x3,
+	Door               = 0x4,
+	Heli               = 0x5,
+	Object             = 0x6,
+	Ped                = 0x7,
+	Pickup             = 0x8,
+	PickupPlacement    = 0x9,
+	Plane              = 0xA,
+	Submarine          = 0xB,
+	Player             = 0xC,
+	Trailer            = 0xD,
+	Train              = 0xE,
+	DraftVeh           = 0xF,
+	StatsTracker       = 0x10,
+	PropSet            = 0x11,
+	AnimScene          = 0x12,
+	GroupScenario      = 0x13,
+	Herd               = 0x14,
+	Horse              = 0x15,
+	WorldState         = 0x16,
+	WorldProjectile    = 0x17,
+	Incident           = 0x18,
+	Guardzone          = 0x19,
+	PedGroup           = 0x1A,
+	CombatDirector     = 0x1B,
+	PedSharedTargeting = 0x1C,
+	Persistent         = 0x1D,
+	Max                = 0x1E
 };

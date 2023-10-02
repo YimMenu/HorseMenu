@@ -15,6 +15,7 @@ namespace rage
 {
 	class scrThread;
 	class netEventMgr;
+	class netSyncTree;
 }
 
 namespace YimMenu
@@ -28,6 +29,7 @@ namespace YimMenu
 		using HandleToPtr             = void*(*)(int handle);
 		using PtrToHandle             = int(*)(void* pointer);
 		using GetLocalPed             = CPed*(*)();
+		using GetSyncTreeForType      = rage::netSyncTree*(*)(void* netObjMgr, uint16_t type);
 	}
 
 	struct PointerData
@@ -54,6 +56,12 @@ namespace YimMenu
 		Functions::SendEventAck SendEventAck;
 		PVOID ApplyVehicleMigrationDataNode;
 		PVOID DoUnkThingWithVehicle;
+		PVOID AllocateAnimData;
+		PVOID HandleCloneCreate;
+		PVOID HandleCloneSync;
+		PVOID CanApplyData;
+		Functions::GetSyncTreeForType GetSyncTreeForType;
+		PVOID ResetSyncNodes;
 
 		// Voice
 		PVOID EnumerateAudioDevices;

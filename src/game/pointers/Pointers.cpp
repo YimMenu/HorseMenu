@@ -139,6 +139,37 @@ namespace YimMenu
 			DoUnkThingWithVehicle = ptr.As<PVOID>();
 		});
 
+		constexpr auto allocateAnimDataPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 DB 44 0F">("AllocateAnimData");
+		scanner.Add(allocateAnimDataPtrn, [this](PointerCalculator ptr) {
+			AllocateAnimData = ptr.As<PVOID>();
+		});
+
+		constexpr auto handleCloneCreatePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 20 66 44 89 40 18 57 41 54 41 55 41 56 41 57 48 83">("HandleCloneCreate");
+		scanner.Add(handleCloneCreatePtrn, [this](PointerCalculator ptr) {
+			HandleCloneCreate = ptr.As<PVOID>();
+		});
+
+		constexpr auto handleCloneSyncPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 40 4C 8B F2">("HandleCloneSync");
+		scanner.Add(handleCloneSyncPtrn, [this](PointerCalculator ptr) {
+			HandleCloneSync = ptr.As<PVOID>();
+		});
+
+		constexpr auto canApplyDataPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 70 20 41 57 48 83 EC 30 4C 8B FA">("CanApplyData");
+		scanner.Add(canApplyDataPtrn, [this](PointerCalculator ptr) {
+			CanApplyData = ptr.As<PVOID>();
+		});
+
+		constexpr auto getSyncTreeForTypePtrn = Pattern<"0F B7 CA 83 F9">("GetSyncTreeForType");
+		scanner.Add(getSyncTreeForTypePtrn, [this](PointerCalculator ptr) {
+			GetSyncTreeForType = ptr.As<Functions::GetSyncTreeForType>();
+		});
+
+		constexpr auto resetSyncNodesPtrn = Pattern<"E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? B9 0E 00 00 00 E8 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? B9 0F 00 00 00 E8 ?? ?? ?? ?? E8">("CanApplyData");
+		scanner.Add(resetSyncNodesPtrn, [this](PointerCalculator ptr) {
+			ResetSyncNodes = ptr.Add(1).Rip().As<PVOID>();
+		});
+
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

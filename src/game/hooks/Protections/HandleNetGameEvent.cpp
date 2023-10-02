@@ -2,6 +2,7 @@
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
+#include "game/backend/Protections.hpp"
 #include <network/CNetGamePlayer.hpp>
 
 namespace YimMenu::Hooks
@@ -20,6 +21,11 @@ namespace YimMenu::Hooks
 			LOG(WARNING) << "Blocked NETWORK_CLEAR_PED_TASKS_EVENT from " << sourcePlayer->GetName();
 			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 			return;
+		}
+
+		if (type == NetEventType::GIVE_CONTROL_EVENT && sourcePlayer)
+		{
+			YimMenu::Protections::SetSyncingPlayer(sourcePlayer);
 		}
 
 		BaseHook::Get<Protections::HandleNetGameEvent, DetourHook<decltype(&Protections::HandleNetGameEvent)>>()->Original()(eventMgr, sourcePlayer, targetPlayer, type, index, handledBits, unk, buffer);

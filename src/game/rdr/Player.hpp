@@ -19,11 +19,11 @@ namespace YimMenu
 		{
 		}
 
-		constexpr bool IsValid();
-		constexpr int GetId();
-		constexpr const char* GetName();
-		constexpr CNetGamePlayer* GetHandle();
-		constexpr rage::rlGamerInfo* GetGamerInfo();
-		constexpr Entity GetPed();
+		bool IsValid();
+		int GetId();
+		const char* GetName();
+		CNetGamePlayer* GetHandle();
+		rage::rlGamerInfo* GetGamerInfo();
+		Entity GetPed();
 	};
 }

@@ -34,8 +34,13 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Anticheat::UnkFunction>(new DetourHook("UnkFunction", Pointers.UnkFunction, Hooks::Anticheat::UnkFunction));
 		BaseHook::Add<Hooks::Protections::HandleNetGameEvent>(new DetourHook("HandleNetGameEvent", Pointers.HandleNetGameEvent, Hooks::Protections::HandleNetGameEvent));
 		BaseHook::Add<Hooks::Protections::DoUnkThingWithVehicle>(new DetourHook("DoUnkThingWithVehicle", Pointers.DoUnkThingWithVehicle, Hooks::Protections::DoUnkThingWithVehicle));
+		BaseHook::Add<Hooks::Protections::AllocateAnimData>(new DetourHook("AllocateAnimData", Pointers.AllocateAnimData, Hooks::Protections::AllocateAnimData));
 		BaseHook::Add<Hooks::Protections::ApplyVehicleMigrationDataNode>(
 		    new DetourHook("ApplyVehicleMigrationDataNode", Pointers.ApplyVehicleMigrationDataNode, Hooks::Protections::ApplyVehicleMigrationDataNode));
+		BaseHook::Add<Hooks::Protections::HandleCloneCreate>(new DetourHook("HandleCloneCreate", Pointers.HandleCloneCreate, Hooks::Protections::HandleCloneCreate));
+		BaseHook::Add<Hooks::Protections::HandleCloneSync>(new DetourHook("HandleCloneSync", Pointers.HandleCloneSync, Hooks::Protections::HandleCloneSync));
+		BaseHook::Add<Hooks::Protections::CanApplyData>(new DetourHook("CanApplyData", Pointers.CanApplyData, Hooks::Protections::CanApplyData));
+		BaseHook::Add<Hooks::Protections::ResetSyncNodes>(new DetourHook("ResetSyncNodes", Pointers.ResetSyncNodes, Hooks::Protections::ResetSyncNodes));
 		BaseHook::Add<Hooks::Voice::EnumerateAudioDevices>(new DetourHook("EnumerateAudioDevices", Pointers.EnumerateAudioDevices, Hooks::Voice::EnumerateAudioDevices));
 		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(
 		    new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));
