@@ -8,15 +8,19 @@ namespace YimMenu::Hooks
 	VkResult VKAPI_CALL Vulkan::QueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
 	{
 		Renderer::VkOnPresent(queue, pPresentInfo);
+
 		return BaseHook::Get<Vulkan::QueuePresentKHR, DetourHook<decltype(&QueuePresentKHR)>>()->Original()(queue, pPresentInfo);
 	}
 
 	VkResult VKAPI_CALL Vulkan::CreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain)
 	{
-		Renderer::SetResizing(true);
-		Renderer::VkCleanupRenderTarget();
-		Renderer::VkSetScreenSize(pCreateInfo->imageExtent);
-
+		if (pCreateInfo)
+		{
+			Renderer::SetResizing(true);
+			Renderer::VkCleanupRenderTarget();
+			Renderer::VkSetScreenSize(pCreateInfo->imageExtent);
+		}
+	
 		return BaseHook::Get<Vulkan::CreateSwapchainKHR, DetourHook<decltype(&CreateSwapchainKHR)>>()->Original()(device, pCreateInfo, pAllocator, pSwapchain);
 	}
 

@@ -3,9 +3,11 @@
 #include <dxgi1_4.h>
 #include <d3d12.h>
 #include "game/rdr/RenderingInfo.hpp"
+#include "game/rdr/GraphicsOptions.hpp"
 #include <script/scrNativeHandler.hpp>
 #include <rage/atArray.hpp>
 #include <vulkan/vulkan.h>
+
 
 namespace rage
 {
@@ -46,9 +48,15 @@ namespace YimMenu
 
 		//Misc Renderer Related
 		HWND Hwnd;
+
 		Functions::GetRendererInfo GetRendererInfo;
+		GraphicsOptions GameGraphicsOptions;
+
 		PVOID WndProc;
 		BOOL IsVulkan;
+
+		uint32_t ScreenResX;
+		uint32_t ScreenResY;
 	};
 
 	struct Pointers : PointerData
