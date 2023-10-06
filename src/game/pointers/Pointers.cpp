@@ -94,6 +94,13 @@ namespace YimMenu
 			LOG(INFO) << "HWND: " << Hwnd;
 		});
 
+        constexpr auto networkRequest = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
+		scanner.Add(networkRequest, [this](PointerCalculator ptr) {
+			NetworkRequest = ptr.As<PVOID>();
+		});
+
+		
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

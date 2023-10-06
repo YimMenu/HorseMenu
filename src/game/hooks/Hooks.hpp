@@ -3,8 +3,11 @@
 #include <D3D12.h>
 #include <vulkan/vulkan.h>
 
+
 namespace YimMenu::Hooks
 {
+	class HttpRequest;
+
 	namespace SwapChain
 	{
 		constexpr auto VMTPresentIdx       = 8;
@@ -30,5 +33,10 @@ namespace YimMenu::Hooks
 	namespace Script
 	{
 		extern bool RunScriptThreads(void* threads, int unk);
+	}
+
+	namespace Info
+	{
+		uint8_t* NetworkRequest(HttpRequest* Request, uint8_t* a2, uint32_t a3);
 	}
 }
