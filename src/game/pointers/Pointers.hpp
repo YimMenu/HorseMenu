@@ -54,9 +54,6 @@ namespace YimMenu
 		// Protections
 		PVOID HandleNetGameEvent;
 		Functions::SendEventAck SendEventAck;
-		PVOID ApplyVehicleMigrationDataNode;
-		PVOID DoUnkThingWithVehicle;
-		PVOID AllocateAnimData;
 		PVOID HandleCloneCreate;
 		PVOID HandleCloneSync;
 		PVOID CanApplyData;
@@ -70,6 +67,9 @@ namespace YimMenu
 		// Native Handles
 		Functions::HandleToPtr HandleToPtr;
 		Functions::PtrToHandle PtrToHandle;
+
+		// Misc
+		PVOID ThrowFatalError;
 
 		// Vulkan
 		PVOID QueuePresentKHR; //Init in renderer

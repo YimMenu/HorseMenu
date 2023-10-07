@@ -8,10 +8,15 @@
 
 namespace YimMenu::Hooks
 {
-	void Protections::HandleCloneCreate(void* mgr, CNetGamePlayer* sender, uint16_t objectType, uint16_t objectId, int flags, void* encryptedMem, rage::datBitBuffer* buffer, int a8, int a9, bool isQueued)
+	int Protections::HandleCloneCreate(void* mgr, CNetGamePlayer* sender, uint16_t objectType, uint16_t objectId, int flags, void* encryptedMem, rage::datBitBuffer* buffer, int a8, int a9, bool isQueued)
 	{
 		YimMenu::Protections::SetSyncingPlayer(sender);
-		BaseHook::Get<Protections::HandleCloneCreate, DetourHook<decltype(&Protections::HandleCloneCreate)>>()->Original()(mgr, sender, objectType, objectId, flags, encryptedMem, buffer, a8, a9, isQueued);
+		auto ret = BaseHook::Get<Protections::HandleCloneCreate, DetourHook<decltype(&Protections::HandleCloneCreate)>>()->Original()(mgr, sender, objectType, objectId, flags, encryptedMem, buffer, a8, a9, isQueued);
 		YimMenu::Protections::SetSyncingPlayer(nullptr);
+
+		if (ret == 6)
+			ret = 0;
+
+		return ret;
 	}
 }

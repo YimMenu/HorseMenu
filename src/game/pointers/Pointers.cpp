@@ -129,21 +129,6 @@ namespace YimMenu
 			GetLocalPed = ptr.As<Functions::GetLocalPed>();
 		});
 
-		constexpr auto applyVehicleMigrationDataNodePtrn = Pattern<"48 8B C4 48 89 48 08 53 55 56 57 41 54 41 55 41 56 41 57 48 81 EC D8">("ApplyVehicleMigrationDataNode");
-		scanner.Add(applyVehicleMigrationDataNodePtrn, [this](PointerCalculator ptr) {
-			ApplyVehicleMigrationDataNode = ptr.As<PVOID>();
-		});
-
-		constexpr auto doUnkThingWithVehiclePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 20 48 8B 41 38 45">("DoUnkThingWithVehicle");
-		scanner.Add(doUnkThingWithVehiclePtrn, [this](PointerCalculator ptr) {
-			DoUnkThingWithVehicle = ptr.As<PVOID>();
-		});
-
-		constexpr auto allocateAnimDataPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 DB 44 0F">("AllocateAnimData");
-		scanner.Add(allocateAnimDataPtrn, [this](PointerCalculator ptr) {
-			AllocateAnimData = ptr.As<PVOID>();
-		});
-
 		constexpr auto handleCloneCreatePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 20 66 44 89 40 18 57 41 54 41 55 41 56 41 57 48 83">("HandleCloneCreate");
 		scanner.Add(handleCloneCreatePtrn, [this](PointerCalculator ptr) {
 			HandleCloneCreate = ptr.As<PVOID>();
@@ -167,6 +152,11 @@ namespace YimMenu
 		constexpr auto resetSyncNodesPtrn = Pattern<"E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? B9 0E 00 00 00 E8 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? B9 0F 00 00 00 E8 ?? ?? ?? ?? E8">("CanApplyData");
 		scanner.Add(resetSyncNodesPtrn, [this](PointerCalculator ptr) {
 			ResetSyncNodes = ptr.Add(1).Rip().As<PVOID>();
+		});
+
+		constexpr auto throwFatalErrorPtrn = Pattern<"48 83 EC 28 45 33 C9 E8 ?? ?? ?? ?? CC">("ThrowFatalError");
+		scanner.Add(throwFatalErrorPtrn, [this](PointerCalculator ptr) {
+			ThrowFatalError = ptr.As<PVOID>();
 		});
 
 

@@ -25,5 +25,6 @@ namespace YimMenu
 		CNetGamePlayer* GetHandle();
 		rage::rlGamerInfo* GetGamerInfo();
 		Entity GetPed();
+		bool operator==(Player other);
 	};
 }

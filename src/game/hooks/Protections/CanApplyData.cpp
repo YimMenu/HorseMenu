@@ -16,7 +16,13 @@
 #include <network/sync/CProjectBaseSyncDataNode.hpp>
 #include <network/sync/object/CObjectCreationData.hpp>
 #include <network/sync/ped/CPedCreationData.hpp>
+#include <network/sync/ped/CPedTaskTreeData.hpp>
+#include <network/sync/physical/CPhysicalAttachData.hpp>
+#include <network/sync/pickup/CPickupCreationData.hpp>
 #include <network/sync/player/CPlayerAppearanceData.hpp>
+#include <network/sync/vehicle/CVehicleCreationData.hpp>
+#include <network/sync/vehicle/CVehicleProximityMigrationData.hpp>
+#include <ped/CPed.hpp>
 
 #define LOG_FIELD_H(type, field) LOG(INFO) << "\t" << #field << ": " << HEX((node->GetData<type>().field));
 #define LOG_FIELD(type, field) LOG(INFO) << "\t" << #field << ": " << ((node->GetData<type>().field));
@@ -57,6 +63,49 @@ namespace
 			LOG_FIELD_H(CPlayerAppearanceData, m_ModelHash);
 			LOG_FIELD_B(CPlayerAppearanceData, m_BannedPlayerModel);
 			break;
+		case "CVehicleCreationDataNode"_J:
+			LOG_FIELD(CVehicleCreationData, m_PopulationType);
+			LOG_FIELD_H(CVehicleCreationData, m_ModelHash);
+			break;
+		case "CPickupCreationDataNode"_J:
+			LOG_FIELD_H(CPickupCreationData, m_PickupHash);
+			LOG_FIELD_H(CPickupCreationData, m_ModelHash);
+			break;
+		case "CPhysicalAttachDataNode"_J:
+			LOG_FIELD_B(CPhysicalAttachData, m_IsAttached);
+			LOG_FIELD(CPhysicalAttachData, m_AttachObjectId);
+			LOG_FIELD_V3(CPhysicalAttachData, m_Offset);
+			LOG_FIELD_V4(CPhysicalAttachData, m_Orientation);
+			LOG_FIELD_V3(CPhysicalAttachData, m_ParentOffset);
+			LOG_FIELD(CPhysicalAttachData, m_OtherAttachBone);
+			LOG_FIELD(CPhysicalAttachData, m_AttachBone);
+			LOG_FIELD(CPhysicalAttachData, m_AttachFlags);
+			break;
+		case "CVehicleProximityMigrationDataNode"_J:
+			LOG_FIELD(CVehicleProximityMigrationData, m_NumPassengers);
+			LOG_FIELD_B(CVehicleProximityMigrationData, m_OverridePopulationType);
+			LOG_FIELD(CVehicleProximityMigrationData, m_PopulationType);
+			LOG_FIELD(CVehicleProximityMigrationData, m_Flags);
+			LOG_FIELD(CVehicleProximityMigrationData, m_Timestamp);
+			LOG_FIELD_B(CVehicleProximityMigrationData, m_HasPositionData);
+			LOG_FIELD_V3(CVehicleProximityMigrationData, m_Position);
+			LOG_FIELD_V3(CVehicleProximityMigrationData, m_Velocity);
+			LOG_FIELD(CVehicleProximityMigrationData, m_UnkAmount);
+			break;
+		case "CPedTaskTreeDataNode"_J:
+			LOG_FIELD(CPedTaskTreeData, m_Trees[0].m_TreeType);
+			for (int i = 0; i < node->GetData<CPedTaskTreeData>().GetNumTaskTrees(); i++)
+			{
+				LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_NumTasks);
+				LOG_FIELD_B(CPedTaskTreeData, m_Trees[i].m_SequenceTree);
+				for (int j = 0; j < node->GetData<CPedTaskTreeData>().m_Trees[i].m_NumTasks; j++)
+				{
+					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskType);
+				}
+			}
+			LOG_FIELD_H(CPedTaskTreeData, m_ScriptCommand);
+			LOG_FIELD(CPedTaskTreeData, m_ScriptTaskStage);
+			break;
 		}
 	}
 
@@ -70,9 +119,15 @@ namespace
 		{
 			// this is a really bad protection, but it works
 			auto& data = node->GetData<CPedCreationData>();
-			if (data.m_PopulationType == 8 && data.m_ModelHash == "CS_MP_BOUNTYHUNTER"_J)
+			if (/*data.m_PopulationType == 8 && */ data.m_ModelHash == "CS_MP_BOUNTYHUNTER"_J)
 			{
 				LOG(WARNING) << "Blocked possible unknown ped crash from " << Protections::GetSyncingPlayer().GetName();
+				return true;
+			}
+
+			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
+			{
+				LOG(WARNING) << "Blocked mismatched ped model crash from " << Protections::GetSyncingPlayer().GetName();
 				return true;
 			}
 			break;
@@ -94,6 +149,51 @@ namespace
 			{
 				LOG(WARNING) << "Blocked mismatched player model crash from " << Protections::GetSyncingPlayer().GetName();
 				return true;
+			}
+			break;
+		}
+		case "CVehicleCreationDataNode"_J:
+		{
+			auto& data = node->GetData<CVehicleCreationData>();
+			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_VEHICLE(data.m_ModelHash))
+			{
+				LOG(WARNING) << "Blocked mismatched vehicle model crash from " << Protections::GetSyncingPlayer().GetName();
+				return true;
+			}
+			if (data.m_PopulationType == 8 && data.m_ModelHash == "SHIP_GUAMA02"_J)
+			{
+				LOG(WARNING) << "Blocked vehicle flood from " << Protections::GetSyncingPlayer().GetName();
+				return true;
+			}
+			break;
+		}
+		case "CPhysicalAttachDataNode"_J:
+		{
+			auto& data = node->GetData<CPhysicalAttachData>();
+			if (auto local = Pointers.GetLocalPed(); local && local->m_NetObject)
+			{
+				if (data.m_IsAttached && data.m_AttachObjectId == local->m_NetObject->m_ObjectId)
+				{
+					LOG(WARNING) << "Blocked attachment from " << Protections::GetSyncingPlayer().GetName();
+					return true;
+				}
+			}
+			break;
+		}
+		case "CVehicleProximityMigrationDataNode"_J:
+		{
+			auto& data = node->GetData<CVehicleProximityMigrationData>();
+			if (auto local = Pointers.GetLocalPed(); local && local->m_NetObject)
+			{
+				for (int i = 0; i < 17; i++)
+				{
+					if (data.m_PassengersActive[i] && data.m_PassengerObjectIds[i] == local->m_NetObject->m_ObjectId)
+					{
+						// TODO: add more checks
+						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
+						return true;
+					}
+				}
 			}
 			break;
 		}
