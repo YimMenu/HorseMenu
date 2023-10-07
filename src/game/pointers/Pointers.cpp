@@ -5,6 +5,7 @@
 #include "core/memory/PatternScanner.hpp"
 #include "util/Joaat.hpp"
 #include "core/renderer/Renderer.hpp"
+#include "util/GraphicsValue.hpp"
 
 namespace YimMenu
 {
@@ -35,6 +36,32 @@ namespace YimMenu
 			GetRendererInfo = ptr.Add(1).Rip().As<Functions::GetRendererInfo>();
 		});
 
+	    constexpr auto gfxInformation = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
+	    scanner.Add(gfxInformation, [this](PointerCalculator ptr) {
+			auto gfx = ptr.Add(3).Rip().As<GraphicsOptions*>();
+
+			if (gfx->m_hdr)
+			{
+				LOG(WARNING) << "Turn HDR off!";
+
+			}
+
+			if (gfx->m_motion_blur)
+			{
+				LOG(INFO) << "Ew motion blur. Seriously?";
+			}
+
+			//LOG(INFO) << GetGraphicsValue(gfx->m_gfx_lightingQuality); example
+
+			if (gfx->m_unk)
+			{
+				ScreenResX = gfx->m_screen_resolution_x; 
+				ScreenResY =  gfx->m_screen_resolution_y;
+				LOG(INFO) << "Screen Resolution: " << ScreenResX << "x" << ScreenResY;
+			}
+
+	    });
+		
 		constexpr auto wndProc = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
 		scanner.Add(wndProc, [this](PointerCalculator ptr) {
 			WndProc = ptr.As<PVOID>();

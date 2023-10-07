@@ -17,6 +17,7 @@ file(GLOB_RECURSE SRC_FILES
     "${SRC_DIR}/**.hpp"
     "${SRC_DIR}/**.cpp"
 )
+set(DEPS_DIR "${PROJECT_SOURCE_DIR}/deps")
 
 add_library(${PROJECT_NAME} MODULE ${SRC_FILES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
@@ -34,4 +35,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 message(STATUS "Setting up linked libraries")
-target_link_libraries(${PROJECT_NAME} PRIVATE AsyncLogger imgui minhook nlohmann_json::nlohmann_json dbghelp "${SRC_DIR}/vulkan-1.lib")
+target_link_libraries(${PROJECT_NAME} PRIVATE AsyncLogger imgui minhook nlohmann_json::nlohmann_json dbghelp "${DEPS_DIR}/vulkan-1.lib")

@@ -10,6 +10,7 @@
 #include "game/features/Features.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/settings/Settings.hpp"
+#include "game/rdr/Natives.hpp" // TODO
 
 namespace YimMenu
 {
@@ -45,6 +46,12 @@ namespace YimMenu
 
 		while (g_Running)
 		{
+			// Needed incase UI is malfunctioning or for emergencies
+			if (GetAsyncKeyState(VK_DELETE) & 0x8000 && !NETWORK::NETWORK_IS_SESSION_STARTED())
+			{
+				g_Running = false;
+			}
+
 			std::this_thread::sleep_for(3000ms);
 			Settings::Save(); // TODO: move this somewhere else
 		}
