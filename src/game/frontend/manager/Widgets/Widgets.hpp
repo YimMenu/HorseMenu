@@ -24,6 +24,19 @@ namespace YimMenu
 		ImVec2 m_Size;
 	};
 
+	class Checkbox : public Option
+	{
+	public:
+		explicit Checkbox(const std::string_view& Name, bool* Value, std::function<void()> OnClick = nullptr, const std::string_view& information = "Empty");
+		void Draw() override;
+
+	private:
+		std::string_view m_Name;
+		std::string_view m_Information;
+		std::function<void()> m_OnClick;
+		bool* m_Value;
+	};
+
 	class LoopedCommandToggle : public Option
 	{
 	public:

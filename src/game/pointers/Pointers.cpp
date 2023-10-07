@@ -42,7 +42,7 @@ namespace YimMenu
 
 			if (gfx->m_hdr)
 			{
-				LOG(WARNING) << "Turn HDR off!";
+				LOG(WARNING) << "Turn HDR off if your using DX12!";
 
 			}
 

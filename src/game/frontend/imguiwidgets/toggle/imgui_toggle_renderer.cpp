@@ -163,8 +163,9 @@ void ImGuiToggleRenderer::DrawToggle()
     UpdatePalette();
 
     // get colors modified by hover.
-    const ImU32 color_frame = ImGui::GetColorU32(_isHovered ? _palette.FrameHover : _palette.Frame);
-    const ImU32 color_knob = ImGui::GetColorU32(_isHovered ? _palette.KnobHover : _palette.Knob);
+	const ImU32 color_frame = ImGui::GetColorU32((_isHovered || *_value) ? _palette.FrameHover : _palette.Frame);
+	const ImU32 color_knob = ImGui::GetColorU32((_isHovered || *_value) ? _palette.KnobHover : _palette.Knob);
+    
 
     // draw the background frame
     DrawFrame(color_frame);
