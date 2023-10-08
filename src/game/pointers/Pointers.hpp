@@ -48,7 +48,7 @@ namespace YimMenu
 
 		//Misc Renderer Related
 		HWND Hwnd;
-
+	
 		Functions::GetRendererInfo GetRendererInfo;
 		GraphicsOptions GameGraphicsOptions;
 
@@ -57,6 +57,8 @@ namespace YimMenu
 
 		uint32_t ScreenResX;
 		uint32_t ScreenResY;
+
+		PVOID NetworkRequest;
 	};
 
 	struct Pointers : PointerData

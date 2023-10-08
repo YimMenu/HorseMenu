@@ -6,18 +6,44 @@ namespace YimMenu
 	//Mini Submenu 1
 	void Main()
 	{
-		LoopedCommandToggle("keepbarsfilled"_J).Draw();
-		LoopedCommandToggle("keepcoresfilled"_J).Draw();
-		LoopedCommandToggle("infiniteammo"_J).Draw();
-		LoopedCommandToggle("infiniteclip"_J).Draw();
-		LoopedCommandToggle("keepclean"_J).Draw();
+		Column(
+		    [] {
+			    //ColumnOffset() :)
+
+			    Child("Toggle Stuff", [] {
+				    LoopedCommandToggle("keepbarsfilled"_J).Draw();
+				    LoopedCommandToggle("keepcoresfilled"_J).Draw();
+				    LoopedCommandToggle("infiniteammo"_J).Draw();
+				    LoopedCommandToggle("infiniteclip"_J).Draw();
+				    LoopedCommandToggle("keepclean"_J).Draw();
+			    }, ImVec2(0, 250)).Draw();
+
+			    /* -DEMOS
+				Child("Toggle Stuff 2", [] {
+				    static bool abc = false;
+				    Checkbox("Demo One", &abc).Draw();
+				    Checkbox("Demo Two", &abc).Draw();
+				    Button("Hello", nullptr).Draw();
+			    }, ImVec2(0, 150)).Draw();
+
+				NextColumn();
+
+				Child("Toggle Stuff 3", [] {
+				    Button("Hello 2 ", nullptr).Draw();
+				    Button("Hello 3", nullptr).Draw();
+			    }, ImVec2(0, 150)).Draw();*/
+		    },
+		    2).Draw();
+
 	};
 
 	void Horse()
 	{
-		LoopedCommandToggle("keephorsebarsfilled"_J).Draw();
-		LoopedCommandToggle("keephorsecoresfilled"_J).Draw();
-		LoopedCommandToggle("keephorseagitationlow"_J).Draw();
+		Child("Horse Stuff", [] {
+			LoopedCommandToggle("keephorsebarsfilled"_J).Draw();
+			LoopedCommandToggle("keephorsecoresfilled"_J).Draw();
+			LoopedCommandToggle("keephorseagitationlow"_J).Draw();
+		}).Draw();
 	};
 
 	//Init mini submenus

@@ -35,7 +35,7 @@ namespace YimMenu
 
 		auto ButtonColor = Style.Colors[ImGuiCol_Button];
 
-		ButtonColor.w += 50;
+		ButtonColor.w -= 0.5;
 
 		if (!Menu)
 			return;
