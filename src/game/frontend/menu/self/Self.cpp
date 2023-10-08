@@ -18,6 +18,7 @@ namespace YimMenu
 				    LoopedCommandToggle("keepclean"_J).Draw();
 			    }, ImVec2(0, 250)).Draw();
 
+			    /* -DEMOS
 				Child("Toggle Stuff 2", [] {
 				    static bool abc = false;
 				    Checkbox("Demo One", &abc).Draw();
@@ -30,7 +31,7 @@ namespace YimMenu
 				Child("Toggle Stuff 3", [] {
 				    Button("Hello 2 ", nullptr).Draw();
 				    Button("Hello 3", nullptr).Draw();
-			    }, ImVec2(0, 150)).Draw();
+			    }, ImVec2(0, 150)).Draw();*/
 		    },
 		    2).Draw();
 
