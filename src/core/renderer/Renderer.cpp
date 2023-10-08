@@ -643,8 +643,8 @@ namespace YimMenu
 				info.framebuffer           = fd->Framebuffer;
 				if (m_VkImageExtent.width == 0 || m_VkImageExtent.height == 0)
 				{
-					info.renderArea.extent.width  = ImGui::GetIO().DisplaySize.x;
-					info.renderArea.extent.height = ImGui::GetIO().DisplaySize.y;
+					info.renderArea.extent.width  = Pointers.ScreenResX;
+					info.renderArea.extent.height = Pointers.ScreenResY;
 				}
 				else
 				{

@@ -32,6 +32,11 @@ namespace YimMenu
 			return GetInstance().GetActiveCategoryImpl();
 		}
 
+		static void SetOptionsFont(ImFont* font)
+		{
+			GetInstance().m_OptionsFont = font;
+		}
+
 	private:
 		static inline UIManager& GetInstance()
 		{
@@ -47,6 +52,7 @@ namespace YimMenu
 
 		std::shared_ptr<Submenu> m_ActiveSubmenu;
 		std::vector<std::shared_ptr<Submenu>> m_Submenus;
+		ImFont* m_OptionsFont = nullptr;
 	};
 }
 

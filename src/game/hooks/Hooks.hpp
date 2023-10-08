@@ -18,6 +18,8 @@ class IDirectSoundCapture;
 
 namespace YimMenu::Hooks
 {
+	class HttpRequest;
+
 	namespace SwapChain
 	{
 		constexpr auto VMTPresentIdx       = 8;
@@ -74,5 +76,10 @@ namespace YimMenu::Hooks
 	namespace Misc
 	{
 		extern void ThrowFatalError(int code, int fileHash, int fileLine);
+	}
+
+	namespace Info
+	{
+		uint8_t* NetworkRequest(HttpRequest* Request, uint8_t* a2, uint32_t a3);
 	}
 }

@@ -19,7 +19,7 @@ namespace YimMenu
 	{
 		const auto& pos = ImGui::GetCursorPos();
 
-		if (ImGui::BeginChild("##submenus", ImVec2(120, 0), true))
+		if (ImGui::BeginChild("##submenus", ImVec2(120, ImGui::GetContentRegionAvail().y - 20), true))
 		{
 			for (auto& submenu : m_Submenus)
 			{
@@ -30,6 +30,8 @@ namespace YimMenu
 			}
 		}
 		ImGui::EndChild();
+		
+		ImGui::Text("HorseMenu");
 
 		ImGui::SetCursorPos(ImVec2(pos.x + 130, pos.y));
 
@@ -43,7 +45,11 @@ namespace YimMenu
 
 		if (ImGui::BeginChild("##options", ImVec2(0, 0), true))
 		{
+			if (m_OptionsFont)
+				ImGui::PushFont(m_OptionsFont);
 			GetActiveSubmenu()->Draw();
+			if (m_OptionsFont)
+				ImGui::PopFont();
 		}
 
 		ImGui::EndChild();

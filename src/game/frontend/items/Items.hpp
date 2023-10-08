@@ -59,4 +59,21 @@ namespace YimMenu
 	private:
 		joaat_t m_Id;
 	};
+
+	class Group : public UIItem
+	{
+	public:
+		explicit Group(const std::string& name, ImVec2 size = {0, 0});
+		void Draw() override;
+		
+		void AddItem(std::shared_ptr<UIItem>&& item)
+		{
+			m_Items.push_back(std::move(item));
+		}
+
+	private:
+		std::string m_Name;
+		ImVec2 m_Size;
+		std::vector<std::shared_ptr<UIItem>> m_Items;
+	};
 }

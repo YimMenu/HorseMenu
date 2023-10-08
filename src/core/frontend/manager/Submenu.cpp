@@ -23,7 +23,7 @@ namespace YimMenu
 			{
 				auto& style = ImGui::GetStyle();
 				auto color  = style.Colors[ImGuiCol_Button];
-				color.w += 50;
+				color.w -= 0.5;
 
 				if (category == GetActiveCategory())
 					ImGui::PushStyleColor(ImGuiCol_Button, color);
