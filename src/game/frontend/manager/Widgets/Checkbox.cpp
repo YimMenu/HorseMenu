@@ -4,11 +4,11 @@
 
 namespace YimMenu
 {
-	Checkbox::Checkbox(const std::string_view& Name, bool* Value, std::function<void()> OnClick, const std::string_view& Information) :
-	    m_Name(Name),
-	    m_Information(Information),
-	    m_OnClick(OnClick),
-	    m_Value(Value)
+	Checkbox::Checkbox(const std::string_view& name, bool* value, std::function<void()> onClick, const std::string_view& information) :
+	    m_Name(name),
+	    m_Information(information),
+	    m_OnClick(onClick),
+	    m_Value(value)
 	{
 	}
 

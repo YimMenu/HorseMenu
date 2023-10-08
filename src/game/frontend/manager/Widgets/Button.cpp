@@ -3,11 +3,11 @@
 
 namespace YimMenu
 {
-	Button::Button(const std::string_view& Name, std::function<void()> OnClick, const ImVec2 Size, const std::string_view& Information) :
-	    m_Name(Name),
-	    m_Information(Information),
-	    m_OnClick(OnClick),
-	    m_Size(Size)
+	Button::Button(const std::string_view& name, std::function<void()> onClick, const ImVec2 size, const std::string_view& information) :
+	    m_Name(name),
+	    m_Information(information),
+	    m_OnClick(onClick),
+	    m_Size(size)
 	{
 	}
 

@@ -14,7 +14,7 @@ namespace YimMenu
 	class Button : public Option
 	{
 	public:
-		explicit Button(const std::string_view& Name, std::function<void()> OnClick, ImVec2 size = {0, 25}, const std::string_view& information = "Empty");
+		explicit Button(const std::string_view& name, std::function<void()> onClick, ImVec2 size = {0, 25}, const std::string_view& information = "Empty");
 		void Draw() override;
 
 	private:
@@ -27,7 +27,7 @@ namespace YimMenu
 	class Checkbox : public Option
 	{
 	public:
-		explicit Checkbox(const std::string_view& Name, bool* Value, std::function<void()> OnClick = nullptr, const std::string_view& information = "Empty");
+		explicit Checkbox(const std::string_view& name, bool* value, std::function<void()> onClick = nullptr, const std::string_view& information = "Empty");
 		void Draw() override;
 
 	private:
