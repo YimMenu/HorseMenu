@@ -174,7 +174,7 @@ namespace YimMenu
 		}
 
 		// never returns false, useless to check return
-		ImGui::CreateContext();
+		ImGui::CreateContext(&GetInstance().m_FontAtlas);
 		ImGui_ImplWin32_Init(Pointers.Hwnd);
 		ImGui_ImplDX12_Init(m_Device.Get(),
 		    m_SwapChainDesc.BufferCount,
@@ -298,6 +298,10 @@ namespace YimMenu
 
 		vkDestroyDevice(m_VkFakeDevice, m_VkAllocator);
 		m_VkFakeDevice = NULL;
+
+		ImGui::CreateContext(&GetInstance().m_FontAtlas);
+		ImGui_ImplWin32_Init(Pointers.Hwnd);
+
 
 		LOG(INFO) << "Vulkan renderer has finished initializing.";
 
@@ -544,7 +548,7 @@ namespace YimMenu
 				return;
 			}
 		
-			ImGui::CreateContext();
+			ImGui::CreateContext(&GetInstance().m_FontAtlas);
 			ImGui_ImplWin32_Init(Pointers.Hwnd);
 
 			SetResizing(false);
@@ -589,7 +593,7 @@ namespace YimMenu
 
 		 if (!ImGui::GetCurrentContext())
 		 {
-			ImGui::CreateContext();
+			ImGui::CreateContext(&GetInstance().m_FontAtlas);
 			ImGui_ImplWin32_Init(Pointers.Hwnd);
 		 }
 
