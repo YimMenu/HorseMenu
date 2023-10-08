@@ -60,6 +60,8 @@ namespace YimMenu
 		PVOID CanApplyData;
 		Functions::GetSyncTreeForType GetSyncTreeForType;
 		PVOID ResetSyncNodes;
+		PVOID HandleScriptedGameEvent;
+		PVOID AddObjectToCreationQueue;
 
 		// Voice
 		PVOID EnumerateAudioDevices;

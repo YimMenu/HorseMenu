@@ -3,12 +3,23 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/backend/Protections.hpp"
+#include "core/commands/BoolCommand.hpp"
 #include <network/CNetGamePlayer.hpp>
+
+namespace YimMenu::Features
+{
+	BoolCommand _LogEvents("logevents", "Log Network Events", "Log network events");
+}
 
 namespace YimMenu::Hooks
 {
 	void Protections::HandleNetGameEvent(rage::netEventMgr* eventMgr, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, NetEventType type, int index, int handledBits, std::int16_t unk, rage::datBitBuffer* buffer)
 	{
+		if (Features::_LogEvents.GetState() && type < NetEventType::NETWORK_EVENT_MAX)
+		{
+			LOG(INFO) << "NETWORK_EVENT: " << g_NetEventsToString[(int)type] << " from " << sourcePlayer->GetName();
+		}
+
 		if (type == NetEventType::NETWORK_PTFX_EVENT && sourcePlayer)
 		{
 			LOG(WARNING) << "Blocked NETWORK_PTFX_EVENT from " << sourcePlayer->GetName();

@@ -38,6 +38,8 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::HandleCloneSync>(new DetourHook("HandleCloneSync", Pointers.HandleCloneSync, Hooks::Protections::HandleCloneSync));
 		BaseHook::Add<Hooks::Protections::CanApplyData>(new DetourHook("CanApplyData", Pointers.CanApplyData, Hooks::Protections::CanApplyData));
 		BaseHook::Add<Hooks::Protections::ResetSyncNodes>(new DetourHook("ResetSyncNodes", Pointers.ResetSyncNodes, Hooks::Protections::ResetSyncNodes));
+		BaseHook::Add<Hooks::Protections::HandleScriptedGameEvent>(new DetourHook("HandleScriptedGameEvent", Pointers.HandleScriptedGameEvent, Hooks::Protections::HandleScriptedGameEvent));
+		BaseHook::Add<Hooks::Protections::AddObjectToCreationQueue>(new DetourHook("AddObjectToCreationQueue", Pointers.AddObjectToCreationQueue, Hooks::Protections::AddObjectToCreationQueue));
 		BaseHook::Add<Hooks::Voice::EnumerateAudioDevices>(new DetourHook("EnumerateAudioDevices", Pointers.EnumerateAudioDevices, Hooks::Voice::EnumerateAudioDevices));
 		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(
 		    new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));

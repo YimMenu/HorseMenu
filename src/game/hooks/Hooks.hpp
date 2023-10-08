@@ -15,6 +15,8 @@ class CNetGamePlayer;
 enum class NetEventType;
 class CFoundDevice;
 class IDirectSoundCapture;
+class CScriptedGameEvent;
+enum class eNetObjType;
 
 namespace YimMenu::Hooks
 {
@@ -56,12 +58,15 @@ namespace YimMenu::Hooks
 
 	namespace Protections
 	{
+		extern bool ShouldBlockSync(rage::netSyncTree* tree, eNetObjType type, rage::netObject* object); // helper function, not a hook
+
 		extern void HandleNetGameEvent(rage::netEventMgr* pEventMgr, CNetGamePlayer* pSourcePlayer, CNetGamePlayer* pTargetPlayer, NetEventType type, int index, int handledBits, std::int16_t unk, rage::datBitBuffer* buffer);
-		extern void ApplyVehicleMigrationDataNode(__int64 iface, __int64 data);
 		extern int HandleCloneCreate(void* mgr, CNetGamePlayer* sender, uint16_t objectType, uint16_t objectId, int flags, void* encryptedMem, rage::datBitBuffer* buffer, int a8, int a9, bool isQueued);
 		extern int HandleCloneSync(void* mgr, CNetGamePlayer* src, CNetGamePlayer* dst, uint16_t objectType, uint16_t objectId, rage::datBitBuffer* buffer, int a7, int a8, void* a9);
 		extern bool CanApplyData(rage::netSyncTree* tree, rage::netObject* object);
 		extern void ResetSyncNodes();
+		extern bool HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst);
+		extern int AddObjectToCreationQueue(void* mgr, eNetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
 	}
 
 	namespace Voice

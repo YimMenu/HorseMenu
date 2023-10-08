@@ -191,6 +191,16 @@ namespace YimMenu
 			NetworkRequest = ptr.As<PVOID>();
 		});
 
+		constexpr auto handleScriptedGameEventPtrn = Pattern<"40 53 48 81 EC 10 02 00 00 48 8B D9 48 8B">("HandleScriptedGameEvent");
+		scanner.Add(handleScriptedGameEventPtrn, [this](PointerCalculator ptr) {
+			HandleScriptedGameEvent = ptr.As<PVOID>();
+		});
+
+		constexpr auto addObjectToCreationQueuePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 55 41 54 41 55 41 56 41 57 48 8D 68 98 48 81 EC 50">("AddObjectToCreationQueue");
+		scanner.Add(addObjectToCreationQueuePtrn, [this](PointerCalculator ptr) {
+			AddObjectToCreationQueue = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
