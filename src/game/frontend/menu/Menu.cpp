@@ -5,7 +5,6 @@
 #include "game/frontend/menu/self/Self.hpp"
 #include "game/frontend/menu/settings/Settings.hpp"
 
-
 namespace YimMenu
 {
 	void Menu::Init()

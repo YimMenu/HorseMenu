@@ -36,8 +36,8 @@ namespace YimMenu
 			GetRendererInfo = ptr.Add(1).Rip().As<Functions::GetRendererInfo>();
 		});
 
-	    constexpr auto gfxInformation = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
-	    scanner.Add(gfxInformation, [this](PointerCalculator ptr) {
+	    constexpr auto gfxInformationPtrn = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
+		scanner.Add(gfxInformationPtrn, [this](PointerCalculator ptr) {
 			auto gfx = ptr.Add(3).Rip().As<GraphicsOptions*>();
 
 			if (gfx->m_hdr)
@@ -62,8 +62,8 @@ namespace YimMenu
 
 	    });
 		
-		constexpr auto wndProc = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
-		scanner.Add(wndProc, [this](PointerCalculator ptr) {
+		constexpr auto wndProcPtrn = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
+		scanner.Add(wndProcPtrn, [this](PointerCalculator ptr) {
 			WndProc = ptr.As<PVOID>();
 		});
 
@@ -88,18 +88,16 @@ namespace YimMenu
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
 		});
 
-		constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
-		scanner.Add(hwnd, [this](PointerCalculator ptr) {
+		constexpr auto hwndPtrn = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
+		scanner.Add(hwndPtrn, [this](PointerCalculator ptr) {
 			Hwnd = *ptr.Add(3).Rip().As<HWND*>();
 			LOG(INFO) << "HWND: " << Hwnd;
 		});
 
-        constexpr auto networkRequest = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
-		scanner.Add(networkRequest, [this](PointerCalculator ptr) {
+        constexpr auto networkRequestPtrn = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
+		scanner.Add(networkRequestPtrn, [this](PointerCalculator ptr) {
 			NetworkRequest = ptr.As<PVOID>();
 		});
-
-		
 
 		if (!scanner.Scan())
 		{
