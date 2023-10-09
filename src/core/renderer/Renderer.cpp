@@ -2,6 +2,7 @@
 
 #include "game/pointers/Pointers.hpp"
 #include "game/frontend/GUI.hpp"
+#include "game/frontend/menu/Menu.hpp"
 #include "core/memory/ModuleMgr.hpp"
 #include "core/memory/PatternScanner.hpp"
 
@@ -550,6 +551,7 @@ namespace YimMenu
 		
 			ImGui::CreateContext(&GetInstance().m_FontAtlas);
 			ImGui_ImplWin32_Init(Pointers.Hwnd);
+			Menu::Style();
 
 			SetResizing(false);
 		 }
