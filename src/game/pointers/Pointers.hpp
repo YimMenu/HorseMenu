@@ -63,6 +63,9 @@ namespace YimMenu
 		PVOID HandleScriptedGameEvent;
 		PVOID AddObjectToCreationQueue;
 
+		// Player Stuff
+		PVOID AssignPhysicalIndex;
+
 		// Voice
 		PVOID EnumerateAudioDevices;
 		PVOID DirectSoundCaptureCreate;

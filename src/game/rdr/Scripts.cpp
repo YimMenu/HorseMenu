@@ -2,6 +2,7 @@
 #include <script/scrThread.hpp>
 #include <rage/tlsContext.hpp>
 #include "game/pointers/Pointers.hpp"
+#include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Scripts
 {
@@ -27,5 +28,15 @@ namespace YimMenu::Scripts
 		callback();
 		rage::tlsContext::Get()->m_RunningScript = og_running_in_scrthread;
 		*Pointers.CurrentScriptThread = og_thread;
+	}
+
+	void SendScriptEvent(uint64_t* data, int count, int bits)
+	{
+		if (auto thread = FindScriptThread("net_main_offline"_J))
+		{
+			RunAsScript(thread, [data, count, &bits] {
+				SCRIPTS::TRIGGER_SCRIPT_EVENT(1, data, count, 0, &bits);
+			});
+		}
 	}
 }

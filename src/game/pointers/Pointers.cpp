@@ -201,6 +201,11 @@ namespace YimMenu
 			AddObjectToCreationQueue = ptr.As<PVOID>();
 		});
 
+		constexpr auto assignPhysicalIndexPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 30 41 8A C0">("AssignPhysicalIndex");
+		scanner.Add(assignPhysicalIndexPtrn, [this](PointerCalculator ptr) {
+			AssignPhysicalIndex = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
