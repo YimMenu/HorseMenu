@@ -31,7 +31,7 @@ namespace YimMenu::Hooks
 			             << "\tPlayer: " << src->GetName() << "\n"
 			             << "\tArgs: " << script_args 
 				         << "\tScript: " << HEX(event->m_ScriptId.m_ScriptHash) 
-				         << "\tMetadata Index: " << (int)event->m_ScriptMetadataIndex 
+				         << "\tHas Metadata Index: " << (event->m_HasScriptMetadataIdx ? "YES" : "NO")
 				         << "\tID Overriden: " << (event->m_ScriptIdOverridden ? "YES" : "NO");
 		}
 

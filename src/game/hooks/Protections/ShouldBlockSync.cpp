@@ -203,6 +203,19 @@ namespace
 			}
 			break;
 		}
+		case "CPedTaskTreeDataNode"_J:
+		{
+			auto& data = node->GetData<CPedTaskTreeData>();
+
+			if (data.m_ScriptCommand == 0x2E85A751 && data.m_ScriptTaskStage == 1)
+			{
+				// TODO: really bad protection
+				LOG(WARNING) << "Blocked unknown task crash from " << Protections::GetSyncingPlayer().GetName();
+				return true;
+			}
+
+			break;
+		}
 		}
 
 		return false;
