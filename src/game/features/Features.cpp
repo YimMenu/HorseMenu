@@ -22,6 +22,8 @@ namespace YimMenu
 
 		if (PED::IS_PED_ON_MOUNT(Self::PlayerPed))
 			Self::Mount = PED::GET_MOUNT(Self::PlayerPed);
+		else if (ENTITY::DOES_ENTITY_EXIST(PED::_GET_LAST_MOUNT(Self::PlayerPed)))
+			Self::Mount = PED::_GET_LAST_MOUNT(Self::PlayerPed);
 		else
 			Self::Mount = 0;
 	}

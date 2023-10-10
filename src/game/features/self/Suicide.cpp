@@ -2,15 +2,6 @@
 #include "game/features/Features.hpp"
 #include "game/rdr/Natives.hpp"
 
-#include "game/rdr/Nodes.hpp"
-#include <network/sync/CProjectBaseSyncDataNode.hpp>
-
-#include "game/rdr/Scripts.hpp"
-#include "game/backend/Players.hpp"
-
-#include "core/commands/Commands.hpp"
-#include "game/commands/PlayerCommand.hpp"
-
 namespace YimMenu::Features
 {
 	class Suicide : public Command

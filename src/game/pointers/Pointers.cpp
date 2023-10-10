@@ -67,6 +67,11 @@ namespace YimMenu
 			WndProc = ptr.As<PVOID>();
 		});
 
+		constexpr auto isSessionStartedPtrn = Pattern<"40 38 35 ? ? ? ? 74 4D">("IsSessionStarted");
+		scanner.Add(isSessionStartedPtrn, [this](PointerCalculator ptr) {
+			IsSessionStarted = ptr.Add(3).Rip().As<bool*>();
+		});
+
 		constexpr auto getNativeHandlerPtrn = Pattern<"E8 ? ? ? ? 42 8B 9C FE">("GetNativeHandler");
 		scanner.Add(getNativeHandlerPtrn, [this](PointerCalculator ptr) {
 			GetNativeHandler = ptr.Add(1).Rip().As<Functions::GetNativeHandler>();
@@ -151,7 +156,7 @@ namespace YimMenu
 			PtrToHandle = ptr.Add(1).Rip().As<Functions::PtrToHandle>();
 		});
 
-		constexpr auto getLocalPedPtrn = Pattern<"8A 05 ?? ?? ?? ?? 33 D2 84 C0 74 39 48 8B 0D ?? ?? ?? ?? 4C 8B 05 ?? ?? ?? ?? 48 C1 C9 05 48 C1 C1 20 4C 33 C1 8B C1 83 E0 1F 49 C1 C0 20 FF C0 8A C8 8A 05 ?? ?? ?? ?? 49 D3 C0 84 C0 74 06 49 8B D0 48 F7 D2 48 8B 42">("GetLocalPed");
+		constexpr auto getLocalPedPtrn = Pattern<"8A 05 ? ? ? ? 33 D2 84 C0 74 39 48 8B 0D ? ? ? ? 4C 8B 05 ? ? ? ? 48 C1 C9 05 48 C1 C1 20 4C 33 C1 8B C1 83 E0 1F 49 C1 C0 20 FF C0 8A C8 8A 05 ? ? ? ? 49 D3 C0 84 C0 74 06 49 8B D0 48 F7 D2 48 8B 42">("GetLocalPed");
 		scanner.Add(getLocalPedPtrn, [this](PointerCalculator ptr) {
 			GetLocalPed = ptr.As<Functions::GetLocalPed>();
 		});
@@ -176,12 +181,12 @@ namespace YimMenu
 			GetSyncTreeForType = ptr.As<Functions::GetSyncTreeForType>();
 		});
 
-		constexpr auto resetSyncNodesPtrn = Pattern<"E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? B9 0E 00 00 00 E8 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? B9 0F 00 00 00 E8 ?? ?? ?? ?? E8">("CanApplyData");
+		constexpr auto resetSyncNodesPtrn = Pattern<"E8 ? ? ? ? E8 ? ? ? ? B9 0E 00 00 00 E8 ? ? ? ? 48 8B CB E8 ? ? ? ? E8 ? ? ? ? B9 0F 00 00 00 E8 ? ? ? ? E8">("ResetSyncNodes");
 		scanner.Add(resetSyncNodesPtrn, [this](PointerCalculator ptr) {
 			ResetSyncNodes = ptr.Add(1).Rip().As<PVOID>();
 		});
 
-		constexpr auto throwFatalErrorPtrn = Pattern<"48 83 EC 28 45 33 C9 E8 ?? ?? ?? ?? CC">("ThrowFatalError");
+		constexpr auto throwFatalErrorPtrn = Pattern<"48 83 EC 28 45 33 C9 E8 ? ? ? ? CC">("ThrowFatalError");
 		scanner.Add(throwFatalErrorPtrn, [this](PointerCalculator ptr) {
 			ThrowFatalError = ptr.As<PVOID>();
 		});

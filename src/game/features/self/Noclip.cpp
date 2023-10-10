@@ -23,7 +23,7 @@ namespace YimMenu::Features
 			const auto location = Self::Pos;
 			Entity ent = Self::PlayerPed;
 
-			if (Self::Mount)
+			if (Self::Mount && PED::IS_PED_ON_MOUNT(Self::PlayerPed))
 				ent = Self::Mount;
 			else if (Self::Veh)
 				ent = Self::Veh;

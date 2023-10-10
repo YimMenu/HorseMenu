@@ -7,6 +7,7 @@
 #include "core/commands/Commands.hpp"
 #include "core/frontend/manager/UIManager.hpp"
 #include "game/frontend/fonts/Fonts.hpp"
+#include "game/pointers/Pointers.hpp"
 
 namespace YimMenu
 {
@@ -21,13 +22,14 @@ namespace YimMenu
 			    if (!GUI::IsOpen())
 				    return;
 
-				ImGui::PushFont(Menu::Font::sm_DefaultFont);
+				ImGui::PushFont(Menu::Font::g_DefaultFont);
 			    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImU32(ImColor(15, 15, 15)));
 
 			    // Think this add HTML&PHP with no CSS. Lol just for testing.
 			    ImGui::SetNextWindowSize(ImVec2(610, 610 /*add auto resize*/), ImGuiCond_Once);
 			    if (ImGui::Begin("HorseMenu", nullptr, ImGuiWindowFlags_NoDecoration))
 			    {
+				    ImGui::BeginDisabled(*Pointers.IsSessionStarted);
 				    if (ImGui::Button("Unload", ImVec2(120, 0)))
 				    {
 						if (ScriptMgr::CanTick())
@@ -42,6 +44,7 @@ namespace YimMenu
 						    g_Running = false;
 						}
 				    }
+				    ImGui::EndDisabled();
 
 					UIManager::Draw();
 	
@@ -114,9 +117,9 @@ namespace YimMenu
 		ImFontConfig FontCfg{};
 		FontCfg.FontDataOwnedByAtlas = false;
 
-		Menu::Font::sm_DefaultFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::sm_DefaultFontSize, &FontCfg);
-		Menu::Font::sm_OptionsFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::sm_OptionsFontSize, &FontCfg);
-		Menu::Font::sm_ChildTitleFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::sm_ChildTitleFontSize, &FontCfg);
-		UIManager::SetOptionsFont(Menu::Font::sm_OptionsFont);
+		Menu::Font::g_DefaultFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::g_DefaultFontSize, &FontCfg);
+		Menu::Font::g_OptionsFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::g_OptionsFontSize, &FontCfg);
+		Menu::Font::g_ChildTitleFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::g_ChildTitleFontSize, &FontCfg);
+		UIManager::SetOptionsFont(Menu::Font::g_OptionsFont);
 	}
 }

@@ -25,14 +25,17 @@ namespace YimMenu
 				auto color  = style.Colors[ImGuiCol_Button];
 				color.w -= 0.5;
 
-				if (category == GetActiveCategory())
+				auto active = category == GetActiveCategory();
+
+				if (active)
 					ImGui::PushStyleColor(ImGuiCol_Button, color);
 
 				if (ImGui::Button(category->m_Name.data(), ImVec2(75, 35)))
 				{
 					SetActiveCategory(category);
 				}
-				if (category == GetActiveCategory())
+
+				if (active)
 					ImGui::PopStyleColor();
 
 				if (m_Categories.back() != category)

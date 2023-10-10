@@ -16,7 +16,7 @@ namespace YimMenu
 	{
 		if (ImGui::BeginChild(m_Name.insert(0, "##").c_str(), m_Size, true))
 		{
-			ImGui::PushFont(Menu::Font::sm_ChildTitleFont);
+			ImGui::PushFont(Menu::Font::g_ChildTitleFont);
 			ImGui::Text(m_Name.erase(0, 2).c_str());
 			ImGui::PopFont();
 			ImGui::Separator();

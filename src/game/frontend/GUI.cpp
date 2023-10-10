@@ -31,7 +31,7 @@ namespace YimMenu
 	{
 		if (msg == WM_KEYUP && wparam == VK_INSERT)
 		{
-			//Persist and restore the cursor position between menu instances.
+			// Persist and restore the cursor position between menu instances
 			static POINT CursorCoords{};
 			if (m_IsOpen)
 			{

@@ -9,13 +9,13 @@ namespace YimMenu::Menu
 
 	namespace Font
 	{
-		inline ImFont* sm_DefaultFont   = nullptr;
-		inline float sm_DefaultFontSize = 18.0f;
+		inline ImFont* g_DefaultFont   = nullptr;
+		inline float g_DefaultFontSize = 18.0f;
 
-	    inline ImFont* sm_OptionsFont   = nullptr;
-		inline float sm_OptionsFontSize = 15.0f;
+	    inline ImFont* g_OptionsFont   = nullptr;
+		inline float g_OptionsFontSize = 15.0f;
 
-		inline ImFont* sm_ChildTitleFont   = nullptr;
-		inline float sm_ChildTitleFontSize   = 14.5f;
+		inline ImFont* g_ChildTitleFont   = nullptr;
+		inline float g_ChildTitleFontSize   = 14.5f;
 	}
 }

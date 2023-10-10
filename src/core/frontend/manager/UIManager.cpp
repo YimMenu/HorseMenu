@@ -37,7 +37,8 @@ namespace YimMenu
 
 		if (ImGui::BeginChild("##minisubmenus", ImVec2(0, 50), true, ImGuiWindowFlags_NoScrollbar))
 		{
-			GetActiveSubmenu()->DrawCategorySelectors();
+			if (m_ActiveSubmenu)
+				m_ActiveSubmenu->DrawCategorySelectors();
 		}
 		ImGui::EndChild();
 
@@ -47,7 +48,10 @@ namespace YimMenu
 		{
 			if (m_OptionsFont)
 				ImGui::PushFont(m_OptionsFont);
-			GetActiveSubmenu()->Draw();
+
+			if (m_ActiveSubmenu)
+				m_ActiveSubmenu->Draw();
+
 			if (m_OptionsFont)
 				ImGui::PopFont();
 		}

@@ -36,6 +36,7 @@ namespace YimMenu
 	struct PointerData
 	{
 	    // RDR
+		bool* IsSessionStarted;
 		std::int64_t** ScriptGlobals;
 		void* NativeRegistrationTable;
 		Functions::GetNativeHandler GetNativeHandler;

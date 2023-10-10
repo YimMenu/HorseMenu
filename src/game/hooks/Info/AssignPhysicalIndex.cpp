@@ -7,7 +7,7 @@ namespace YimMenu::Hooks
 {
 	void Info::AssignPhysicalIndex(void* mgr, CNetGamePlayer* player, uint8_t newIndex)
 	{
-		if (newIndex == -1)
+		if (newIndex == (uint8_t)-1)
 		{
 			Players::HandlePlayerLeave(player);
 			BaseHook::Get<Info::AssignPhysicalIndex, DetourHook<decltype(&Info::AssignPhysicalIndex)>>()->Original()(mgr, player, newIndex);
