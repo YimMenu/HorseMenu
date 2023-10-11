@@ -2,6 +2,8 @@
 
 #include "game/frontend/manager/Widgets/Widgets.hpp"
 #include "game/services/notification_service/NotificationService.hpp"
+#include "core/commands/Commands.hpp"
+#include "core/commands/Command.hpp"
 
 namespace YimMenu
 {
@@ -46,7 +48,7 @@ namespace YimMenu
 		static int test = 0;
 		if (ImGui::Button("Test"))
 		{
-			g_NotificationService.ShowNotification("Hello", std::to_string(test), NotificationType::Info, 5000);
+			g_NotificationService.ShowNotification("Hello", std::string("Kys").append(std::to_string(test)), NotificationType::Info, 5000, [=] {Commands::GetCommand("suicide"_J)->Call();}, "Suicide");
 			test++;
 		}
 	};
