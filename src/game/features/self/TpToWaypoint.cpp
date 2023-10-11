@@ -1,6 +1,6 @@
 #include "core/commands/Command.hpp"
-#include "game/rdr/Natives.hpp"
 #include "game/features/Features.hpp"
+#include "game/rdr/Natives.hpp"
 #include "util/teleport.hpp"
 
 namespace YimMenu::Features
@@ -11,8 +11,11 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-            auto waypointCoords = Teleport::GetWaypointCoords();
-			Teleport::TeleportEntity(Self::PlayerPed, waypointCoords);
+			if (MAP::IS_WAYPOINT_ACTIVE())
+			{
+				auto waypointCoords = Teleport::GetWaypointCoords();
+				Teleport::TeleportEntity(Self::PlayerPed, waypointCoords);
+			}
 		}
 	};
 

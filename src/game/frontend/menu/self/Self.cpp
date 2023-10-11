@@ -1,5 +1,7 @@
 #include "Self.hpp"
+
 #include "game/frontend/manager/Widgets/Widgets.hpp"
+#include "game/services/notification_service/NotificationService.hpp"
 
 namespace YimMenu
 {
@@ -10,13 +12,18 @@ namespace YimMenu
 		    [] {
 			    //ColumnOffset() :)
 
-			    Child("Toggle Stuff", [] {
-				    LoopedCommandToggle("keepbarsfilled"_J).Draw();
-				    LoopedCommandToggle("keepcoresfilled"_J).Draw();
-				    LoopedCommandToggle("infiniteammo"_J).Draw();
-				    LoopedCommandToggle("infiniteclip"_J).Draw();
-				    LoopedCommandToggle("keepclean"_J).Draw();
-			    }, ImVec2(0, 250)).Draw();
+			    Child(
+			        "Toggle Stuff",
+			        [] {
+				        LoopedCommandToggle("keepbarsfilled"_J).Draw();
+				        LoopedCommandToggle("keepcoresfilled"_J).Draw();
+				        LoopedCommandToggle("infiniteammo"_J).Draw();
+				        LoopedCommandToggle("infiniteclip"_J).Draw();
+				        LoopedCommandToggle("keepclean"_J).Draw();
+				        LoopedCommandToggle("noragdoll"_J).Draw();
+			        },
+			        ImVec2(0, 250))
+			        .Draw();
 
 			    /* -DEMOS
 				Child("Toggle Stuff 2", [] {
@@ -33,8 +40,15 @@ namespace YimMenu
 				    Button("Hello 3", nullptr).Draw();
 			    }, ImVec2(0, 150)).Draw();*/
 		    },
-		    2).Draw();
+		    2)
+		    .Draw();
 
+		static int test = 0;
+		if (ImGui::Button("Test"))
+		{
+			g_NotificationService.ShowNotification("Hello", std::to_string(test), NotificationType::Info, 5000);
+			test++;
+		}
 	};
 
 	void Horse()
@@ -43,6 +57,8 @@ namespace YimMenu
 			LoopedCommandToggle("keephorsebarsfilled"_J).Draw();
 			LoopedCommandToggle("keephorsecoresfilled"_J).Draw();
 			LoopedCommandToggle("keephorseagitationlow"_J).Draw();
+			LoopedCommandToggle("horsenoragdoll"_J).Draw();
+			LoopedCommandToggle("horseinvincibility"_J).Draw();
 		}).Draw();
 	};
 
