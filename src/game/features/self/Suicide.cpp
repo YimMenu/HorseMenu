@@ -2,6 +2,11 @@
 #include "game/features/Features.hpp"
 #include "game/rdr/Natives.hpp"
 
+#include "game/backend/Players.hpp"
+#include <script/scriptId.hpp>
+#include <network/rlGamerHandle.hpp>
+#include <network/rlGamerInfo.hpp>
+
 namespace YimMenu::Features
 {
 	class Suicide : public Command

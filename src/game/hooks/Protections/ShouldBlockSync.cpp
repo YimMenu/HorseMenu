@@ -146,6 +146,11 @@ namespace
 				LOG(WARNING) << "Blocked invalid object crash from " << Protections::GetSyncingPlayer().GetName();
 				return true;
 			}
+			if (data.m_ModelHash && !STREAMING::_IS_MODEL_AN_OBJECT(data.m_ModelHash))
+			{
+				LOG(WARNING) << "Blocked mismatched object model crash from " << Protections::GetSyncingPlayer().GetName();
+				return true;
+			}
 			break;
 		}
 		case "CPlayerAppearanceDataNode"_J:
