@@ -41,6 +41,7 @@ namespace YimMenu
 			return Instance;
 		}
 
+		Players();
 		void HandlePlayerJoinImpl(CNetGamePlayer* player);
 		void HandlePlayerLeaveImpl(CNetGamePlayer* player);
 	};

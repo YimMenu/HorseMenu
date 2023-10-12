@@ -11,6 +11,7 @@
 class CNetGamePlayer;
 class CVehicle;
 class CPed;
+class CNetworkPlayerMgr;
 
 namespace rage
 {
@@ -103,6 +104,8 @@ namespace YimMenu
 		uint32_t ScreenResY;
 
 		PVOID NetworkRequest;
+
+		CNetworkPlayerMgr* NetworkPlayerMgr;
 	};
 
 	struct Pointers : PointerData

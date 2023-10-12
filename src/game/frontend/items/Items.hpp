@@ -76,4 +76,26 @@ namespace YimMenu
 		ImVec2 m_Size;
 		std::vector<std::shared_ptr<UIItem>> m_Items;
 	};
+
+	class Column : public UIItem
+	{
+	public:
+		explicit Column(const int columns) :
+		    m_Columns(columns)
+		{
+		}
+
+		void AddItem(std::shared_ptr<UIItem>&& item)
+		{
+			m_Items.push_back(std::move(item));
+		}
+
+		void Draw();
+		void AddNextColumn();
+		void AddColumnOffset(const int column, const int offset);
+
+	private:
+		std::vector<std::shared_ptr<UIItem>> m_Items;
+		int m_Columns;
+	};
 }

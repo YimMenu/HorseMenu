@@ -211,6 +211,11 @@ namespace YimMenu
 			AssignPhysicalIndex = ptr.As<PVOID>();
 		});
 
+		constexpr auto networkPlayerMgrPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 48 8B ? ? ? ? 01 8A D9 80 F9 20">("NetworkPlayerMgr");
+		scanner.Add(networkPlayerMgrPtrn, [this](PointerCalculator ptr) {
+			NetworkPlayerMgr = *ptr.Add(0xD).Rip().As<CNetworkPlayerMgr**>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
