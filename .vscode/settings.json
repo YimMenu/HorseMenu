@@ -88,7 +88,12 @@
         "unordered_set": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "codecvt": "cpp",
+        "coroutine": "cpp",
+        "resumable": "cpp",
+        "stack": "cpp"
     },
-    "C_Cpp.default.configurationProvider": "maxmitti.cmake-tools-fork"
+    "C_Cpp.default.configurationProvider": "maxmitti.cmake-tools-fork",
+    "C_Cpp.errorSquiggles": "disabled"
 }

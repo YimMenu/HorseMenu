@@ -1,7 +1,5 @@
 #include "Menu.hpp"
 #include "core/renderer/Renderer.hpp"
-#include "submenus/Self.hpp"
-#include "submenus/Settings.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "core/commands/Commands.hpp"
@@ -9,12 +7,17 @@
 #include "game/frontend/fonts/Fonts.hpp"
 #include "game/pointers/Pointers.hpp"
 
+#include "submenus/Self.hpp"
+#include "submenus/Teleport.hpp"
+#include "submenus/Settings.hpp"
+
 namespace YimMenu
 {
 	void Menu::Init()
 	{
 		// Arguably the only place this file should be edited at for more menus
 		UIManager::AddSubmenu(std::make_shared<Submenus::Self>());
+		UIManager::AddSubmenu(std::make_shared<Submenus::Teleport>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::Settings>());
 
 		Renderer::AddRendererCallBack(

@@ -1,11 +1,12 @@
 #include "GUI.hpp"
 #include "Menu.hpp"
 #include "core/renderer/Renderer.hpp"
+#include "core/frontend/Notifications.hpp"
 
 namespace YimMenu
 {
 	GUI::GUI() :
-		m_IsOpen(false)
+	    m_IsOpen(false)
 	{
 		Menu::SetupFonts();
 		Menu::SetupStyle();
@@ -14,6 +15,12 @@ namespace YimMenu
 		Renderer::AddWindowProcedureCallback([this](HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			GUI::WndProc(hwnd, msg, wparam, lparam);
 		});
+
+		Renderer::AddRendererCallBack(
+		    [&] {
+			    Notifications::Draw();
+		    },
+		    -2);
 	}
 
 	GUI::~GUI()
@@ -22,7 +29,7 @@ namespace YimMenu
 
 	void GUI::ToggleMouse()
 	{
-		auto& io = ImGui::GetIO();
+		auto& io           = ImGui::GetIO();
 		io.MouseDrawCursor = GUI::IsOpen();
 		GUI::IsOpen() ? io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse : io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 	}
