@@ -11,7 +11,7 @@ namespace YimMenu
         if (!player.IsValid())
             return;
 
-        NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(!g_Spectating, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(player.GetId()));
+        NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(g_Spectating, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(player.GetId()));
 
     }
 }
