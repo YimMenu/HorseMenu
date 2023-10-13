@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "game/pointers/Pointers.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <player/CPlayerInfo.hpp>
@@ -7,44 +8,44 @@ namespace YimMenu
 {
 	bool Player::IsValid()
 	{
-		return m_Handle && m_Handle->IsValid();
+		return m_NetPlayer && m_NetPlayer->IsValid() && (Pointers.GetNetPlayerFromPid(m_Handle) == m_NetPlayer);
 	}
 
 	int Player::GetId()
 	{
-		if (!m_Handle)
-			return -1;
+		if (!IsValid())
+			return 255;
 
-		return m_Handle->m_PlayerIndex;
+		return m_NetPlayer->m_PlayerIndex;
 	}
 
 	const char* Player::GetName()
 	{
-		if (!m_Handle)
-			return "INVALID";
+		if (!IsValid())
+			return "Null Player!";
 
-		return m_Handle->GetName();
+		return m_NetPlayer->GetName();
 	}
 
 	CNetGamePlayer* Player::GetHandle()
 	{
-		return m_Handle;
+		return Pointers.GetNetPlayerFromPid(m_Handle);
 	}
 
 	rage::rlGamerInfo* Player::GetGamerInfo()
 	{
-		if (!m_Handle)
+		if (!IsValid())
 			return nullptr;
 
-		return m_Handle->GetGamerInfo();
+		return m_NetPlayer->GetGamerInfo();
 	}
 
 	Entity Player::GetPed()
 	{
-		if (!m_Handle || !m_Handle->m_PlayerInfo)
+		if (!IsValid() || !m_NetPlayer->m_PlayerInfo)
 			return nullptr;
 
-		return m_Handle->m_PlayerInfo->m_Ped;
+		return m_NetPlayer->m_PlayerInfo->m_Ped;
 	}
 
 	bool Player::operator==(Player other)

@@ -5,18 +5,13 @@ namespace YimMenu
 {
 	class Players
 	{
-		std::multimap<std::string, Player> m_Players{};
-		Player m_SelectedPlayer = nullptr;
+		std::map<uint8_t, Player> m_Players{};
+		Player m_SelectedPlayer = Player((uint8_t)0);
 
 	public:
-		static void HandlePlayerJoin(CNetGamePlayer* player)
+		static void Tick()
 		{
-			GetInstance().HandlePlayerJoinImpl(player);
-		}
-
-		static void HandlePlayerLeave(CNetGamePlayer* player)
-		{
-			GetInstance().HandlePlayerLeaveImpl(player);
+			GetInstance().TickImpl();
 		}
 
 		static Player GetSelected()
@@ -24,12 +19,12 @@ namespace YimMenu
 			return GetInstance().m_SelectedPlayer;
 		}
 
-		static void SetSelected(Player player)
+		static void SetSelected(uint8_t idx)
 		{
-			GetInstance().m_SelectedPlayer = player;
+			GetInstance().m_SelectedPlayer = Player(idx);
 		}
 
-		static std::multimap<std::string, Player>& GetPlayers()
+		static std::map<uint8_t, Player>& GetPlayers()
 		{
 			return GetInstance().m_Players;
 		}
@@ -41,8 +36,6 @@ namespace YimMenu
 			return Instance;
 		}
 
-		Players();
-		void HandlePlayerJoinImpl(CNetGamePlayer* player);
-		void HandlePlayerLeaveImpl(CNetGamePlayer* player);
+		void TickImpl();
 	};
 }

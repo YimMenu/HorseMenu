@@ -12,10 +12,25 @@ namespace YimMenu
 {
 	class Player
 	{
-		CNetGamePlayer* m_Handle;
+		uint8_t m_Handle;
+		CNetGamePlayer* m_NetPlayer;
+
 	public:
-		constexpr Player(CNetGamePlayer* handle) :
-			m_Handle(handle)
+		Player() :
+		    m_Handle(0),
+		    m_NetPlayer(nullptr)
+		{
+		}
+
+		Player(uint8_t handle) :
+		    m_Handle(handle),
+		    m_NetPlayer(GetHandle())
+		{
+		}
+
+		constexpr Player(CNetGamePlayer* netGamePlayer) :
+		    m_Handle(255),
+		    m_NetPlayer(netGamePlayer)
 		{
 		}
 

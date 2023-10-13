@@ -5,32 +5,23 @@
 
 namespace YimMenu
 {
-	Players::Players()
+	void Players::TickImpl()
 	{
-		if (*Pointers.IsSessionStarted)
-			for (int i = 0; i < 32; i++)
-				if (Pointers.NetworkPlayerMgr->m_PlayerList[i] && Pointers.NetworkPlayerMgr->m_PlayerList[i]->IsValid())
-					HandlePlayerJoinImpl(Pointers.NetworkPlayerMgr->m_PlayerList[i]);
-	}
+		const auto& playerMgr = Pointers.NetworkPlayerMgr;
+		if (!playerMgr || !g_Running)
+			return;
 
-	void Players::HandlePlayerJoinImpl(CNetGamePlayer* player)
-	{
-		m_Players.insert({ player->GetName(), player });
-	}
-
-	void Players::HandlePlayerLeaveImpl(CNetGamePlayer* player)
-	{
-		if (m_SelectedPlayer == player)
-			m_SelectedPlayer = nullptr;
-
-		if (auto it = std::find_if(m_Players.begin(),
-		        m_Players.end(),
-		        [player](const auto& p) {
-			        return p.second == Player(player);
-		        });
-		    it != m_Players.end())
+		for (uint8_t idx = 0; idx < 32u; idx++)
 		{
-			m_Players.erase(it);
+			if (const auto& netPlayer = playerMgr->m_PlayerList[idx];
+			    netPlayer && (Pointers.GetNetPlayerFromPid(idx) == netPlayer /*game also does this*/) && netPlayer->IsValid())
+			{
+				m_Players[idx] = Player(idx);
+			}
+			else
+			{
+				m_Players.erase(idx);
+			}
 		}
 	}
 }

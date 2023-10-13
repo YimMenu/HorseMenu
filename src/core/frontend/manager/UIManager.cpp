@@ -17,7 +17,7 @@ namespace YimMenu
 
 	void UIManager::DrawImpl()
 	{
-		const auto& pos = ImGui::GetCursorPos();
+		auto pos = ImGui::GetCursorPos();
 
 		if (ImGui::BeginChild("##submenus", ImVec2(120, ImGui::GetContentRegionAvail().y - 20), true))
 		{
@@ -33,6 +33,7 @@ namespace YimMenu
 		
 		ImGui::Text("HorseMenu");
 
+		pos.y -= 28;
 		ImGui::SetCursorPos(ImVec2(pos.x + 130, pos.y));
 
 		if (ImGui::BeginChild("##minisubmenus", ImVec2(0, 50), true, ImGuiWindowFlags_NoScrollbar))

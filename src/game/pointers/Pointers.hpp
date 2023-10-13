@@ -32,6 +32,7 @@ namespace YimMenu
 		using PtrToHandle             = int(*)(void* pointer);
 		using GetLocalPed             = CPed*(*)();
 		using GetSyncTreeForType      = rage::netSyncTree*(*)(void* netObjMgr, uint16_t type);
+		using GetNetworkPlayerFromPid   = CNetGamePlayer * (*)(uint8_t player);
 	}
 
 	struct PointerData
@@ -67,6 +68,7 @@ namespace YimMenu
 
 		// Player Stuff
 		PVOID AssignPhysicalIndex;
+		Functions::GetNetworkPlayerFromPid GetNetPlayerFromPid;
 
 		// Voice
 		PVOID EnumerateAudioDevices;
@@ -106,11 +108,15 @@ namespace YimMenu
 		PVOID NetworkRequest;
 
 		CNetworkPlayerMgr* NetworkPlayerMgr;
+
+		//Patches
+		PVOID ExplosionBypass;
 	};
 
 	struct Pointers : PointerData
 	{
 		bool Init();
+		void Restore();
 	};
 
 	inline YimMenu::Pointers Pointers;

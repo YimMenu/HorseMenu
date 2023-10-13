@@ -3191,7 +3191,7 @@ namespace NETWORK
 	FORCEINLINE constexpr int GET_TIME_DIFFERENCE(int Time1, int Time2) { return YimMenu::NativeInvoker::Invoke<3012, int>(Time1, Time2); }
 	FORCEINLINE constexpr int GET_CLOUD_TIME_AS_INT() { return YimMenu::NativeInvoker::Invoke<3013, int>(); }
 	FORCEINLINE constexpr void CONVERT_POSIX_TIME(int nContentIndex, void* sDate) { return YimMenu::NativeInvoker::Invoke<3014, void>(nContentIndex, sDate); }
-	FORCEINLINE constexpr void NETWORK_SET_IN_SPECTATOR_MODE(bool InSpectatorMode, Player playerIndex) { return YimMenu::NativeInvoker::Invoke<3015, void>(InSpectatorMode, playerIndex); }
+	FORCEINLINE constexpr void NETWORK_SET_IN_SPECTATOR_MODE(bool InSpectatorMode, Ped playerPed) { return YimMenu::NativeInvoker::Invoke<3015, void>(InSpectatorMode, playerPed); }
 	FORCEINLINE constexpr void _NETWORK_SET_IN_STATIC_SPECTATOR_MODE(bool toggle, float x, float y, float z) { return YimMenu::NativeInvoker::Invoke<3016, void>(toggle, x, y, z); }
 	FORCEINLINE constexpr bool NETWORK_IS_IN_SPECTATOR_MODE() { return YimMenu::NativeInvoker::Invoke<3017, bool>(); }
 	FORCEINLINE constexpr bool _NETWORK_IS_PLAYER_IN_SPECTATOR_MODE(Player player) { return YimMenu::NativeInvoker::Invoke<3018, bool>(player); }

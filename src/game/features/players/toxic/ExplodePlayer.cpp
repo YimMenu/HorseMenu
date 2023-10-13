@@ -1,6 +1,8 @@
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/Enums.hpp"
+#include "game/pointers/Pointers.hpp"
 
 namespace YimMenu::Features
 {
@@ -12,7 +14,7 @@ namespace YimMenu::Features
 		virtual void OnCall(Player player) override
 		{
 			auto playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(player.GetId()), true, true);
-			FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, 29, 1.0f, true, false, 1.0f);
+			FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 5.0f); 
 		}
 	};
 

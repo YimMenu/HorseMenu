@@ -256,7 +256,7 @@ namespace YimMenu::Hooks::Protections
 	{
 		Nodes::Init();
 
-		if (tree->m_NodeCount && tree->m_NextSyncNode && SyncNodeVisitor(reinterpret_cast<CProjectBaseSyncDataNode*>(tree->m_NextSyncNode), type, object))
+		if (g_Running /*something getting nulled before last iteration*/ && tree->m_NodeCount && tree->m_NextSyncNode && SyncNodeVisitor(reinterpret_cast<CProjectBaseSyncDataNode*>(tree->m_NextSyncNode), type, object))
 		{
 			return true;
 		}
