@@ -34,7 +34,7 @@ namespace YimMenu
 			    ImGui::SetNextWindowSize(ImVec2(610, 610 /*add auto resize*/), ImGuiCond_Once);
 			    if (ImGui::Begin("HorseMenu", nullptr, ImGuiWindowFlags_NoDecoration))
 			    {
-				    ImGui::BeginDisabled(*Pointers.IsSessionStarted);
+				    //ImGui::BeginDisabled(*Pointers.IsSessionStarted);
 				    if (ImGui::Button("Unload", ImVec2(120, 0)))
 				    {
 						if (ScriptMgr::CanTick())
@@ -49,7 +49,7 @@ namespace YimMenu
 						    g_Running = false;
 						}
 				    }
-				    ImGui::EndDisabled();
+				    //ImGui::EndDisabled();
 
 					UIManager::Draw();
 	

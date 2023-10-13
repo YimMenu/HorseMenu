@@ -1,6 +1,12 @@
 #include "Players.hpp"
-#include "game/frontend/items/Items.hpp"
+
+#include "core/commands/Commands.hpp"
+#include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
+#include "game/commands/PlayerCommand.hpp"
+#include "game/frontend/items/Items.hpp"
+#include "game/rdr/Natives.hpp"
+#include "util/spectate.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -19,6 +25,9 @@ namespace YimMenu::Submenus
 					if (ImGui::Selectable(name.c_str(), (YimMenu::Players::GetSelected() == player)))
 					{
 						YimMenu::Players::SetSelected(player);
+
+						if(YimMenu::g_Spectating)
+							YimMenu::SpectatePlayer(player);
 					}
 				}
 			}));
@@ -28,6 +37,12 @@ namespace YimMenu::Submenus
 			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 				ImGui::Separator();
+
+				if(ImGui::Checkbox("Spectate", &YimMenu::g_Spectating))
+				{
+					YimMenu::SpectatePlayer(YimMenu::Players::GetSelected());
+				}
+				
 			}));
 
 			column->AddColumnOffset(1, 160);
@@ -38,7 +53,7 @@ namespace YimMenu::Submenus
 			main->AddItem(column);
 			AddCategory(std::move(main));
 		}
-		
+
 		{
 			auto helpful = std::make_shared<Category>("Helpful");
 
@@ -55,6 +70,19 @@ namespace YimMenu::Submenus
 			trolling->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
+
+			trolling->AddItem(std::make_shared<ImGuiItem>([] {
+				if (ImGui::Button("Explode"))
+				{
+					FiberPool::Push([] {
+						auto playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()), true, true);
+
+
+						FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, 22, 1.0f, true, false, 1.0f);
+					});
+				};
+			}));
+
 
 			AddCategory(std::move(trolling));
 		}

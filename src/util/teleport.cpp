@@ -1,5 +1,6 @@
 #include "teleport.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "core/frontend/Notifications.hpp"
 
 namespace YimMenu::Teleport
 {
@@ -37,7 +38,9 @@ namespace YimMenu::Teleport
 			}
 		}
 
-		//TODO notify
+		
+		Notifications::Show("Streaming", "Failed loading ground at coords", NotificationType::Warning);
+		
 		coords.z = 1000.f;
 
 		return false;
@@ -67,7 +70,8 @@ namespace YimMenu::Teleport
 		if (MAP::IS_WAYPOINT_ACTIVE())
 			return MAP::_GET_WAYPOINT_COORDS();
 
-		//TODO notify
+		Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Warning);
+			
 		return Vector3{0, 0, 0};
 	}
 } 

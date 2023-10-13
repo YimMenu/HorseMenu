@@ -3,6 +3,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "util/teleport.hpp"
+#include "core/frontend/Notifications.hpp"
 
 namespace YimMenu::Features
 {
@@ -17,6 +18,10 @@ namespace YimMenu::Features
 			{
 				auto waypointCoords = Teleport::GetWaypointCoords();
 				Teleport::TeleportEntity(Self::PlayerPed, waypointCoords);
+			}
+			else
+			{
+				Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Warning);
 			}
 		}
 	};
