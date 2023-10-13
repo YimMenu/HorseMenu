@@ -12,7 +12,7 @@ namespace YimMenu::Hooks
 
 		metric->Serialize(&serializer);
 
-		LOG(INFO) << "METRIC: " << metric->GetName() << "; DATA: " << serializer.GetBuffer();
+		//LOG(INFO) << "METRIC: " << metric->GetName() << "; DATA: " << serializer.GetBuffer();
 		return true;
 	}
 }

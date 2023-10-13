@@ -27,7 +27,7 @@ namespace YimMenu
 
 				auto active = category == GetActiveCategory();
 
-				if (active)
+				if (!active)
 					ImGui::PushStyleColor(ImGuiCol_Button, color);
 
 				if (ImGui::Button(category->m_Name.data(), ImVec2(75, 35)))
@@ -35,7 +35,7 @@ namespace YimMenu
 					SetActiveCategory(category);
 				}
 
-				if (active)
+				if (!active)
 					ImGui::PopStyleColor();
 
 				if (m_Categories.back() != category)
