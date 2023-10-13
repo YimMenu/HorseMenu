@@ -1,31 +1,27 @@
 #include "HotkeySystem.hpp"
 
-#include "game/rdr/Natives.hpp"
+#include "game/rdr/Natives.hpp" // TODO: game import in core
 #include "game/backend/ScriptMgr.hpp"
 #include "Commands.hpp"
 #include "LoopedCommand.hpp"
 
-// TODO: hotkeys
-
+// TODO: serialization isn't stable
 
 namespace YimMenu
 {
+	HotkeySystem::HotkeySystem() : 
+		IStateSerializer("hotkeys")
+	{
+	}
 
 	void HotkeySystem::RegisterCommands()
 	{
 		auto Commands        = Commands::GetCommands();
-		auto LoopedCommands = Commands::GetLoopedCommands();
 		
 		for (auto [Hash, Command] : Commands)
 		{
-			CommandLink link(false);
+			CommandLink link;
 			m_CommandHotkeys.insert(std::make_pair(Command->GetHash(), link));
-		}
-		
-		for (auto looped_command : LoopedCommands)
-		{
-			CommandLink link(true);
-			m_CommandHotkeys.insert(std::make_pair(looped_command->GetHash(), link));
 		}
 		
 		LOG(INFO) << "Registered " << m_CommandHotkeys.size() << " commands";
@@ -41,7 +37,7 @@ namespace YimMenu
 			return false;
 		};
 
-		//VK_OEM_CLEAR Is about the limit in terms of virtual key codes
+		// VK_OEM_CLEAR Is about the limit in terms of virtual key codes
 		for (int i = 0; i < VK_OEM_CLEAR; i++)
 		{
 			if ((GetKeyState(i) & 0x8000) && i != 1 && !IsKeyBlacklisted(i))
@@ -54,7 +50,8 @@ namespace YimMenu
 
 		return false;
 	}
-	//Will return the keycode if there are no labels
+
+	// Will return the keycode if there are no labels
 	std::string HotkeySystem::GetHotkeyLabel(int HotkeyModifier)
 	{
 		char KeyName[32];
@@ -66,7 +63,7 @@ namespace YimMenu
 		return KeyName;
 	}
 
-	//Meant to be called in a loop
+	// Meant to be called in a loop
 	void HotkeySystem::CreateHotkey(std::vector<int>& Hotkey)
 	{
 		static auto IsKeyUnique = [this](int Key, std::vector<int> List) -> bool {
@@ -88,6 +85,8 @@ namespace YimMenu
 				Hotkey.push_back(PressedKey);
 			}
 		}
+
+		MarkStateDirty();
 	}
 
 	void HotkeySystem::FeatureCommandsHotkeyLoop()
@@ -109,27 +108,35 @@ namespace YimMenu
 	
 			if (AllKeysPressed && GetForegroundWindow() == Pointers.Hwnd)
 			{
-				if (Link.Looped)
+				auto Command = Commands::GetCommand(Hash);
+				if (Command)
 				{
-					auto LoopedCommand_ = Commands::GetCommand<LoopedCommand>(Hash);
-
-					if (LoopedCommand_)
-						LoopedCommand_->SetState(!LoopedCommand_->GetState());
-
-					LOG(INFO) << "Hotkey detected for looped command " << LoopedCommand_->GetName();
+					Command->Call();
+					LOG(INFO) << "Hotkey detected for command " << Command->GetName();
 				}
-				else
-				{
-					auto Command = Commands::GetCommand(Hash);
-					if (Command)
-					{
-						Command->Call();
-						LOG(INFO) << "Hotkey detected for command " << Command->GetName();
-					}
-				}
-	
+
 				ScriptMgr::Yield(100ms);
 			}
+		}
+	}
+
+	void HotkeySystem::SaveStateImpl(nlohmann::json& state)
+	{
+		for (auto& hotkey : m_CommandHotkeys)
+		{
+			if (!hotkey.second.Hotkey.empty())
+			{
+				state[std::to_string(hotkey.first).data()] = hotkey.second.Hotkey;
+			}
+		}
+	}
+
+	void HotkeySystem::LoadStateImpl(nlohmann::json& state)
+	{
+		for (auto& [key, value] : state.items())
+		{
+			if (m_CommandHotkeys.contains(std::atoi(key.data())))
+				m_CommandHotkeys[std::atoi(key.data())].Hotkey = value.get<std::vector<int>>(); 
 		}
 	}
 }

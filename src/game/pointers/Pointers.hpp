@@ -8,24 +8,36 @@
 #include <rage/atArray.hpp>
 #include <vulkan/vulkan.h>
 
+class CNetGamePlayer;
+class CVehicle;
+class CPed;
+class CNetworkPlayerMgr;
 
 namespace rage
 {
 	class scrThread;
+	class netEventMgr;
+	class netSyncTree;
 }
 
 namespace YimMenu
 {
 	namespace Functions
 	{
-		using GetRendererInfo = RenderingInfo*(*)();
-		using GetNativeHandler = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
-		using FixVectors       = void (*)(rage::scrNativeCallContext* call_ctx);
+		using GetRendererInfo         = RenderingInfo*(*)();
+		using GetNativeHandler        = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
+		using FixVectors              = void (*)(rage::scrNativeCallContext* call_ctx);
+		using SendEventAck            = void(*)(rage::netEventMgr* eventMgr, void* event, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, int eventIndex, int handledBitset);
+		using HandleToPtr             = void*(*)(int handle);
+		using PtrToHandle             = int(*)(void* pointer);
+		using GetLocalPed             = CPed*(*)();
+		using GetSyncTreeForType      = rage::netSyncTree*(*)(void* netObjMgr, uint16_t type);
 	}
 
 	struct PointerData
 	{
-	    //RDR
+	    // RDR
+		bool* IsSessionStarted;
 		std::int64_t** ScriptGlobals;
 		void* NativeRegistrationTable;
 		Functions::GetNativeHandler GetNativeHandler;
@@ -33,8 +45,41 @@ namespace YimMenu
 		rage::atArray<rage::scrThread*>* ScriptThreads;
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
+		Functions::GetLocalPed GetLocalPed;
 
-		//Vulkan
+		// Security
+		PVOID SendMetric;
+		bool* RageSecurityInitialized;
+		PVOID* VmDetectionCallback;
+		PVOID QueueDependency;
+		PVOID UnkFunction;
+
+		// Protections
+		PVOID HandleNetGameEvent;
+		Functions::SendEventAck SendEventAck;
+		PVOID HandleCloneCreate;
+		PVOID HandleCloneSync;
+		PVOID CanApplyData;
+		Functions::GetSyncTreeForType GetSyncTreeForType;
+		PVOID ResetSyncNodes;
+		PVOID HandleScriptedGameEvent;
+		PVOID AddObjectToCreationQueue;
+
+		// Player Stuff
+		PVOID AssignPhysicalIndex;
+
+		// Voice
+		PVOID EnumerateAudioDevices;
+		PVOID DirectSoundCaptureCreate;
+
+		// Native Handles
+		Functions::HandleToPtr HandleToPtr;
+		Functions::PtrToHandle PtrToHandle;
+
+		// Misc
+		PVOID ThrowFatalError;
+
+		// Vulkan
 		PVOID QueuePresentKHR; //Init in renderer
 		PVOID CreateSwapchainKHR; //Init in renderer
 		PVOID AcquireNextImageKHR; //Init in renderer
@@ -42,11 +87,11 @@ namespace YimMenu
 
 		VkDevice* VkDevicePtr;
 
-		//DX12
+		// DX12
 		IDXGISwapChain1** SwapChain;
 		ID3D12CommandQueue** CommandQueue;
 
-		//Misc Renderer Related
+		// Misc Renderer Related
 		HWND Hwnd;
 	
 		Functions::GetRendererInfo GetRendererInfo;
@@ -59,6 +104,8 @@ namespace YimMenu
 		uint32_t ScreenResY;
 
 		PVOID NetworkRequest;
+
+		CNetworkPlayerMgr* NetworkPlayerMgr;
 	};
 
 	struct Pointers : PointerData

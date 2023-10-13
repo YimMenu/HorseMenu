@@ -9,16 +9,19 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/features/Features.hpp"
 #include "core/commands/HotkeySystem.hpp"
+#include "core/settings/Settings.hpp"
 
 namespace YimMenu
 {
 	DWORD Main(void*)
 	{
 		const auto documents = std::filesystem::path(std::getenv("USERPROFILE")) / "Documents";
-		FileMgr::Init(documents / "HellBase");
+		FileMgr::Init(documents / "HellBase"); // TODO
 
-		// TODO: change console name
-		LogHelper::Init("henlo", FileMgr::GetProjectFile("./cout.log"));
+		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
+
+		g_HotkeySystem.RegisterCommands();
+		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
 
 		if (!ModuleMgr.LoadModules())
 			goto unload;
@@ -40,17 +43,16 @@ namespace YimMenu
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
 
-		g_HotkeySystem.RegisterCommands();
-
 		while (g_Running)
 		{
-			//Needed incase UI is malfunctioning or for emergencies
-			if (GetAsyncKeyState(VK_DELETE) & 0x8000)
+			// Needed incase UI is malfunctioning or for emergencies
+			if (GetAsyncKeyState(VK_DELETE) & 0x8000 && !*Pointers.IsSessionStarted)
 			{
 				g_Running = false;
 			}
 
-			std::this_thread::sleep_for(500ms);
+			std::this_thread::sleep_for(3000ms);
+			Settings::Save(); // TODO: move this somewhere else
 		}
 
 		LOG(INFO) << "Unloading";

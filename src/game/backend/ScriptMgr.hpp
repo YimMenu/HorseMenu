@@ -60,9 +60,15 @@ namespace YimMenu
 			GetInstance().AddScriptImpl(std::move(script));
 		}
 
+		static bool CanTick()
+		{
+			return GetInstance().m_CanTick;
+		}
+
 	private:
 		std::mutex m_Mutex;
 		std::vector<std::unique_ptr<Script>> m_Scripts;
+		bool m_CanTick = false;
 
 		void InitImpl();
 		void DestroyImpl();

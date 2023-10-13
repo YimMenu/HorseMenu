@@ -18,4 +18,9 @@ namespace YimMenu
 	{
 		OnCall();
 	}
+
+	void Command::MarkDirty()
+	{
+		Commands::MarkDirty();
+	}
 }
