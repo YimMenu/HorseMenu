@@ -25,6 +25,8 @@ namespace YimMenu
 		 */
 		template<typename T = void*>
 		T GetExport(const std::string_view symbolName) const;
+		template<typename T = void*>
+		T GetExport(int ordinal) const;
 		/**
 		 * @brief Gets the address of the import function
 		 * 
@@ -83,6 +85,30 @@ namespace YimMenu
 		}
 
 		LOG(FATAL) << "Cannot find export: " << symbolName;
+		return nullptr;
+	}
+
+	template<typename T>
+	inline T Module::GetExport(int ordinal) const
+	{
+		const auto ntHeader = GetNtHeader();
+		if (!ntHeader)
+			return nullptr;
+
+		const auto imageDataDirectory = ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+		const auto exportDirectory    = m_Base.Add(imageDataDirectory.VirtualAddress).As<IMAGE_EXPORT_DIRECTORY*>();
+		const auto ordinalOffsets       = m_Base.Add(exportDirectory->AddressOfNameOrdinals).As<uint16_t*>();
+		const auto funcOffsets        = m_Base.Add(exportDirectory->AddressOfFunctions).As<DWORD*>();
+
+		for (std::size_t i = 0; i < exportDirectory->NumberOfFunctions; i++)
+		{
+			if (ordinalOffsets[i] != ordinal)
+				continue;
+
+			return m_Base.Add(funcOffsets[i]).As<T>();
+		}
+
+		LOG(FATAL) << "Cannot find export: " << ordinal;
 		return nullptr;
 	}
 }

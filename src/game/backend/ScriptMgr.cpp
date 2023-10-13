@@ -62,6 +62,10 @@ namespace YimMenu
 
 		if (startup)
 		{
+			static bool enable = ([this] {
+				m_CanTick = true;
+			}(), true);
+
 			Scripts::RunAsScript(startup, [this]() {
 				std::lock_guard lock(m_Mutex);
 				static bool ensure_main_fiber = (ConvertThreadToFiber(nullptr), true);

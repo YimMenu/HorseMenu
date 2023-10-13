@@ -1,20 +1,26 @@
 #include "GUI.hpp"
-
-#include "menu/Menu.hpp"
+#include "Menu.hpp"
 #include "core/renderer/Renderer.hpp"
+#include "core/frontend/Notifications.hpp"
 
 namespace YimMenu
 {
 	GUI::GUI() :
-		m_IsOpen(false)
+	    m_IsOpen(false)
 	{
-		Menu::Fonts();
-		Menu::Style();
+		Menu::SetupFonts();
+		Menu::SetupStyle();
 		Menu::Init();
 
 		Renderer::AddWindowProcedureCallback([this](HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			GUI::WndProc(hwnd, msg, wparam, lparam);
 		});
+
+		Renderer::AddRendererCallBack(
+		    [&] {
+			    Notifications::Draw();
+		    },
+		    -2);
 	}
 
 	GUI::~GUI()
@@ -23,7 +29,7 @@ namespace YimMenu
 
 	void GUI::ToggleMouse()
 	{
-		auto& io = ImGui::GetIO();
+		auto& io           = ImGui::GetIO();
 		io.MouseDrawCursor = GUI::IsOpen();
 		GUI::IsOpen() ? io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse : io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 	}
@@ -32,7 +38,7 @@ namespace YimMenu
 	{
 		if (msg == WM_KEYUP && wparam == VK_INSERT)
 		{
-			//Persist and restore the cursor position between menu instances.
+			// Persist and restore the cursor position between menu instances
 			static POINT CursorCoords{};
 			if (m_IsOpen)
 			{
