@@ -1,12 +1,16 @@
 #include "Players.hpp"
 
 #include "core/commands/Commands.hpp"
-#include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "util/teleport.hpp"
+
+// remove after testing
+#include "game/rdr/Natives.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/FiberPool.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -125,6 +129,16 @@ namespace YimMenu::Submenus
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
+
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
+				if (ImGui::Button("Test"))
+				{
+					FiberPool::Push([] {
+						//auto horse = PED::CREATE_PED();
+
+					});
+				}
+			}));
 
 			AddCategory(std::move(toxic));
 		}
