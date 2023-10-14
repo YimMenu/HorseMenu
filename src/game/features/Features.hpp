@@ -13,6 +13,10 @@ namespace YimMenu
 		inline Ped Mount;
 	}
 
+	inline bool g_Spectating = false;
+	inline int g_SpectateId = -1;
+
 	void FeatureLoop();
 	void BlockControlsForUI();
+	void SpectateTick();
 }

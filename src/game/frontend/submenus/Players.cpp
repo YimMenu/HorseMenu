@@ -4,9 +4,10 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
+#include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/spectate.hpp"
+#include "util/teleport.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -15,16 +16,15 @@ namespace YimMenu::Submenus
 	{
 		if (external)
 		{
-			ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x + offset, ImGui::GetWindowPos().y));
+			ImGui::SetNextWindowPos(
+			    ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x + offset, ImGui::GetWindowPos().y));
 			ImGui::SetNextWindowSize(ImVec2(150, ImGui::GetWindowSize().y));
-			ImGui::Begin("Player List", nullptr, ImGuiWindowFlags_NoDecoration);	
+			ImGui::Begin("Player List", nullptr, ImGuiWindowFlags_NoDecoration);
 			for (auto& [id, player] : YimMenu::Players::GetPlayers())
 			{
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
-					if (YimMenu::g_Spectating)
-						YimMenu::SpectatePlayer(player);
 				}
 			}
 			ImGui::End();
@@ -36,8 +36,6 @@ namespace YimMenu::Submenus
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
-					if (YimMenu::g_Spectating)
-						YimMenu::SpectatePlayer(player);
 				}
 			}
 		}
@@ -62,11 +60,16 @@ namespace YimMenu::Submenus
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 				ImGui::Separator();
 
-				if(ImGui::Checkbox("Spectate", &YimMenu::g_Spectating))
+				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+
+				//Button Widget crashes the game, idk why. Changed to regular for now.
+				if(ImGui::Button("Teleport To"))
 				{
-					YimMenu::SpectatePlayer(YimMenu::Players::GetSelected());
+					FiberPool::Push([]{
+						auto playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()), true, true);
+						Teleport::TeleportEntity(Self::PlayerPed, playerCoords);
+					});
 				}
-				
 			}));
 
 			column->AddColumnOffset(1, 160);
@@ -107,7 +110,10 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Explode"))
 				{
 					FiberPool::Push([] {
-						auto playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()), true, true);
+						auto playerCoords = ENTITY::GET_ENTITY_COORDS(
+						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
+						    true,
+						    true);
 
 
 						FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, 22, 1.0f, true, false, 1.0f);

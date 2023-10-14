@@ -15,6 +15,7 @@ namespace YimMenu::Features
 			    PED::SET_PED_CAN_RAGDOLL(Self::Mount, false);
 		}
 
+		//Doesn't work
         virtual void OnDisable() override
         {
             PED::SET_PED_CAN_RAGDOLL(Self::Mount, true);

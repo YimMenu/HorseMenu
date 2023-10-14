@@ -21,6 +21,8 @@
 
 #include <unordered_set>
 
+#include "core/frontend/Notifications.hpp"
+
 #define LOG_FIELD_H(type, field) LOG(INFO) << "\t" << #field << ": " << HEX((node->GetData<type>().field));
 #define LOG_FIELD(type, field) LOG(INFO) << "\t" << #field << ": " << ((node->GetData<type>().field));
 #define LOG_FIELD_C(type, field) LOG(INFO) << "\t" << #field << ": " << (int)((node->GetData<type>().field));
@@ -128,12 +130,14 @@ namespace
 			if (/*data.m_PopulationType == 8 && */ data.m_ModelHash == "CS_MP_BOUNTYHUNTER"_J)
 			{
 				LOG(WARNING) << "Blocked possible unknown ped crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections", std::string("Blocked possible unknown ped crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 				return true;
 			}
 
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched ped model crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections", std::string("Blocked mismatched ped model crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -144,11 +148,13 @@ namespace
 			if (g_CrashObjects.count(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked invalid object crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections", std::string("Blocked invalid object crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 				return true;
 			}
 			if (data.m_ModelHash && !STREAMING::_IS_MODEL_AN_OBJECT(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched object model crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections", std::string("Blocked mismatched object model crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -159,6 +165,7 @@ namespace
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched player model crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections", std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -174,6 +181,7 @@ namespace
 			if (data.m_PopulationType == 8 && data.m_ModelHash == "SHIP_GUAMA02"_J)
 			{
 				LOG(WARNING) << "Blocked vehicle flood from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections", std::string("Blocked vehicle flood from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -186,6 +194,7 @@ namespace
 				if (data.m_IsAttached && data.m_AttachObjectId == local->m_NetObject->m_ObjectId)
 				{
 					LOG(WARNING) << "Blocked attachment from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections", std::string("Blocked attachment from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 					return true;
 				}
 			}
