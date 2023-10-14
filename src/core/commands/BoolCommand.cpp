@@ -43,6 +43,16 @@ namespace YimMenu
 		MarkDirty();
 	}
 
+	void BoolCommand::SetDisabled(bool state)
+	{
+		m_Disabled = state;
+	}
+
+	bool BoolCommand::GetDisabled()
+	{
+		return m_Disabled;
+	}
+
 	void BoolCommand::Shutdown()
 	{
 		OnDisable();
