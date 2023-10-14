@@ -9,6 +9,14 @@
 
 namespace YimMenu
 {
+	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes) //TODO: make service
+	{
+		DWORD oldProtect;
+		VirtualProtect(address, numBytes, PAGE_EXECUTE_READWRITE, &oldProtect);
+		memcpy(address, bytes, numBytes);
+		VirtualProtect(address, numBytes, oldProtect, &oldProtect);
+	} 
+
 	bool Pointers::Init()
 	{
 		const auto rdr2 = ModuleMgr.Get("RDR2.exe"_J);
@@ -216,6 +224,21 @@ namespace YimMenu
 			NetworkPlayerMgr = *ptr.Add(0xD).Rip().As<CNetworkPlayerMgr**>();
 		});
 
+		constexpr auto getNetworkPlayerFromPidPtrn = Pattern<"E8 ? ? ? ? B2 01 8B CB 48 8B F8">("GetNetworkPlayerFromPid");
+		scanner.Add(getNetworkPlayerFromPidPtrn, [this](PointerCalculator ptr) {
+			GetNetPlayerFromPid = ptr.Add(1).Rip().As<Functions::GetNetworkPlayerFromPid>();
+		});
+
+		constexpr auto addExplosionBypass = Pattern<"38 1D ? ? ? ? 0F 85 ? ? ? ? E8">("ExplosionBypass");
+		scanner.Add(addExplosionBypass, [this](PointerCalculator ptr) {
+			ExplosionBypass = ptr.Add(6).As<PVOID>();
+	    	if (ExplosionBypass)
+		    {
+			  uint8_t bytes[] = {0x0F, 0x84, 0x9C, 0x00, 0x00, 0x00}; //JNZ->JZ
+			  patch_byte(ExplosionBypass, bytes, sizeof(bytes));
+			}
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
@@ -246,5 +269,15 @@ namespace YimMenu
 		}
 
 		return true;
+	}
+
+	void Pointers::Restore()
+	{
+		if (ExplosionBypass)
+		{
+			uint8_t bytes[] = {0x0F, 0x85, 0x9C, 0x00, 0x00, 0x00}; //JZ->JNZ
+			patch_byte(ExplosionBypass, bytes, sizeof(bytes));
+		}
+		
 	}
 }

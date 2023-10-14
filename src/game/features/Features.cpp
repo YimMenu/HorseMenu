@@ -5,6 +5,7 @@
 #include "core/commands/HotkeySystem.hpp"
 #include "game/frontend/GUI.hpp"
 #include "game/rdr/Enums.hpp"
+#include "game/backend/Players.hpp"
 
 namespace YimMenu
 {
@@ -32,6 +33,7 @@ namespace YimMenu
 	{
 		while (true)
 		{
+			Players::Tick();
 			UpdateSelfVars();
 			*Pointers.RageSecurityInitialized = false;
 			Commands::RunLoopedCommands();

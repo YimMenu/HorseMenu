@@ -770,6 +770,8 @@ namespace YimMenu
 		else if (!Pointers.IsVulkan)
 		{
 			LOG(INFO) << "Using DX12, clear shader cache if your having issues.";
+			LOG(INFO) << "Waiting...";
+			std::this_thread::sleep_for(5s); //Early injection could result in errors. 
 			return InitDX12();
 		}
 

@@ -10,6 +10,39 @@
 
 namespace YimMenu::Submenus
 {
+	bool popPlayerList = true; //TODO make optional
+	void drawPlayerList(bool external, float offset = 15.0f)
+	{
+		if (external)
+		{
+			ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x + offset, ImGui::GetWindowPos().y));
+			ImGui::SetNextWindowSize(ImVec2(150, ImGui::GetWindowSize().y));
+			ImGui::Begin("Player List", nullptr, ImGuiWindowFlags_NoDecoration);	
+			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+			{
+				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
+				{
+					YimMenu::Players::SetSelected(id);
+					if (YimMenu::g_Spectating)
+						YimMenu::SpectatePlayer(player);
+				}
+			}
+			ImGui::End();
+		}
+		else
+		{
+			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+			{
+				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
+				{
+					YimMenu::Players::SetSelected(id);
+					if (YimMenu::g_Spectating)
+						YimMenu::SpectatePlayer(player);
+				}
+			}
+		}
+	}
+
 	Players::Players() :
 	    Submenu::Submenu("Players")
 	{
@@ -20,16 +53,7 @@ namespace YimMenu::Submenus
 			auto playersListGroup = std::make_shared<Group>("Players");
 
 			playersListGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				for (auto& [name, player] : YimMenu::Players::GetPlayers())
-				{
-					if (ImGui::Selectable(name.c_str(), (YimMenu::Players::GetSelected() == player)))
-					{
-						YimMenu::Players::SetSelected(player);
-
-						if(YimMenu::g_Spectating)
-							YimMenu::SpectatePlayer(player);
-					}
-				}
+				drawPlayerList(false);
 			}));
 
 			auto playerOptionsGroup = std::make_shared<Group>("Info");
@@ -58,6 +82,10 @@ namespace YimMenu::Submenus
 			auto helpful = std::make_shared<Category>("Helpful");
 
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
+				drawPlayerList(popPlayerList);
+			}));
+
+			helpful->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
@@ -66,6 +94,10 @@ namespace YimMenu::Submenus
 
 		{
 			auto trolling = std::make_shared<Category>("Trolling");
+
+			trolling->AddItem(std::make_shared<ImGuiItem>([] {
+				drawPlayerList(popPlayerList);
+			}));
 
 			trolling->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
@@ -91,6 +123,10 @@ namespace YimMenu::Submenus
 			auto toxic = std::make_shared<Category>("Toxic");
 
 			toxic->AddItem(std::make_shared<ImGuiItem>([] {
+				drawPlayerList(true);
+			}));
+
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
@@ -99,6 +135,10 @@ namespace YimMenu::Submenus
 
 		{
 			auto kick = std::make_shared<Category>("Kick"); // would we ever find one?
+
+			kick->AddItem(std::make_shared<ImGuiItem>([] {
+				drawPlayerList(true);
+			}));
 
 			kick->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
