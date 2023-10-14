@@ -55,7 +55,7 @@ namespace YimMenu
 		ImGui::ProgressBar(depletionProgress, ImVec2(-1, 1), "");
 
 		auto style = ImGui::GetStyle();
-		// TODO: Add icon for type insted of colored text
+		// TODO: Add icon for type instead of colored text
 		if (notification.m_Type == NotificationType::Info)
 		{
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));

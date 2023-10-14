@@ -5,7 +5,7 @@
 
 namespace YimMenu::Features
 {
-	class TpToMount : public Command
+	class TpToMountToSelf : public Command
 	{
 		using Command::Command;
 
@@ -13,7 +13,7 @@ namespace YimMenu::Features
 		{
             if(ENTITY::DOES_ENTITY_EXIST(Self::Mount))
 				if(PED::GET_MOUNT(Self::PlayerPed) != Self::Mount)
-                	PED::SET_PED_ONTO_MOUNT(Self::PlayerPed, Self::Mount, -1, true);    
+                	ENTITY::SET_ENTITY_COORDS(Self::Mount, Self::Pos.x, Self::Pos.y, Self::Pos.z, true, false, false, true);    
 				else
                 	Notifications::Show("Teleport", "Already on mount", NotificationType::Warning);
 
@@ -22,5 +22,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static TpToMount _TpToMount{"tptomount", "Teleport To Horse", "Get on your horse from anywhere"};
+	static TpToMountToSelf _TpToMountToSelf{"tpmounttoself", "Bring Horse", "Teleport your last horse to you"};
 }

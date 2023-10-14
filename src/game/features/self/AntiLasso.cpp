@@ -18,6 +18,7 @@ namespace YimMenu::Features
             PED::SET_PED_LASSO_HOGTIE_FLAG(Self::PlayerPed, (int) eLassoFlags::LHF_DISABLE_IN_MP, true);
 		}
 
+		//Doesn't work
 		virtual void OnDisable() override
 		{
 			PED::SET_PED_LASSO_HOGTIE_FLAG(Self::PlayerPed, (int) eLassoFlags::LHF_CAN_BE_LASSOED, true);

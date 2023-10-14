@@ -28,6 +28,7 @@ namespace YimMenu::Submenus
 		horse->AddItem(std::make_shared<BoolCommandItem>("keephorsebarsfilled"_J));
 		horse->AddItem(std::make_shared<BoolCommandItem>("keephorsecoresfilled"_J));
 		horse->AddItem(std::make_shared<BoolCommandItem>("keephorseagitationlow"_J));
+		horse->AddItem(std::make_shared<CommandItem>("tpmounttoself"_J));
 		AddCategory(std::move(horse));
 	}
 }
