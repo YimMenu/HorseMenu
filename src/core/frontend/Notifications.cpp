@@ -54,15 +54,30 @@ namespace YimMenu
 
 		ImGui::ProgressBar(depletionProgress, ImVec2(-1, 1), "");
 
-		// TODO: Add icon for type
+		auto style = ImGui::GetStyle();
+		// TODO: Add icon for type insted of colored text
 		if (notification.m_Type == NotificationType::Info)
-			ImGui::Text("Info: %s", notification.m_Title.c_str());
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+			ImGui::Text(notification.m_Title.c_str());
+		}
 		else if (notification.m_Type == NotificationType::Success)
-			ImGui::Text("Success: %s", notification.m_Title.c_str());
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+			ImGui::Text(notification.m_Title.c_str());
+		}
 		else if (notification.m_Type == NotificationType::Warning)
-			ImGui::Text("Warning: %s", notification.m_Title.c_str());
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.5f, 0.0f, 1.0f));
+			ImGui::Text(notification.m_Title.c_str());
+		}
 		else if (notification.m_Type == NotificationType::Error)
-			ImGui::Text("Error: %s", notification.m_Title.c_str());
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			ImGui::Text(notification.m_Title.c_str());
+		}
+
+		ImGui::PopStyleColor();
 
 		ImGui::Separator();
 
@@ -89,7 +104,11 @@ namespace YimMenu
 			DrawNotification(notification, position);
 			
 			if(notification.m_AnimationOffset < 0)
-				notification.m_AnimationOffset += 50.f;
+				notification.m_AnimationOffset += m_CardAnimationSpeed;
+
+			//Need this to account for changes in card size (x dimension), custom increments might result in odd numbers
+			if(notification.m_AnimationOffset > 0)
+				notification.m_AnimationOffset = 0.f;
 			
 			if ((float)std::chrono::duration_cast<std::chrono::milliseconds>(
 			        std::chrono::system_clock::now() - notification.m_created_on)
