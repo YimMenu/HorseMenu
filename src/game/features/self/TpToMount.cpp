@@ -14,7 +14,7 @@ namespace YimMenu::Features
             if(ENTITY::DOES_ENTITY_EXIST(Self::Mount) && PED::GET_MOUNT(Self::PlayerPed) != Self::Mount)
                 PED::SET_PED_ONTO_MOUNT(Self::PlayerPed, Self::Mount, -1, true);    
             else
-                Notifications::Show("Teleport", "No current mount found", NotificationType::Warning);
+                Notifications::Show("Teleport", "No current mount found", NotificationType::Error);
 		}
 	};
 
