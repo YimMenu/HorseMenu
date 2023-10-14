@@ -17,5 +17,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static AntiAfk _AntiAfk{"antiafk", "Anti Afk", "Prevents you from being kick for being afk"};
+	static AntiAfk _AntiAfk{"antiafk", "Anti Afk", "Prevents your from being idle kicked"};
 }

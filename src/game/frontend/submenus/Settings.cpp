@@ -36,11 +36,5 @@ namespace YimMenu::Submenus
 		auto hotkeys = std::make_shared<Category>("Hotkeys");
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
 		AddCategory(std::move(hotkeys));
-
-		auto debug = std::make_shared<Category>("Debug");
-		debug->AddItem(std::make_shared<BoolCommandItem>("logclones"_J));
-		debug->AddItem(std::make_shared<BoolCommandItem>("logevents"_J));
-		debug->AddItem(std::make_shared<BoolCommandItem>("logtses"_J));
-		AddCategory(std::move(debug));
 	}
 }

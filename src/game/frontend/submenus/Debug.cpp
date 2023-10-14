@@ -178,6 +178,13 @@ namespace YimMenu::Submenus
 			if (ImGui::Button("Add Read Player Id"))
 				global_test.global_appendages.push_back({GlobalAppendageType_PlayerId, 0LL, 0ULL});
 
+			ImGui::SameLine();
+			if (ImGui::Button("Clear"))
+			{
+				global_test.global_index = 0;
+				global_test.global_appendages.clear();
+			}
+
 			if (global_test.global_appendages.size() > 0 && ImGui::Button("Remove Offset"))
 				global_test.global_appendages.pop_back();
 
@@ -243,12 +250,6 @@ namespace YimMenu::Submenus
 			{
 				global_test.global_appendages.push_back({GlobalAppendageType_ReadGlobal, 0LL, 0ULL, selected_global});
 			}
-			ImGui::SameLine();
-			if (ImGui::Button("Clear"))
-			{
-				global_test.global_index = 0;
-				global_test.global_appendages.clear();
-			}
 			ImGui::EndGroup();
 			ImGui::EndTabItem();
 		
@@ -264,5 +265,11 @@ namespace YimMenu::Submenus
 			}));
 
 		AddCategory(std::move(globals));
+
+		auto debug = std::make_shared<Category>("Logging");
+		debug->AddItem(std::make_shared<BoolCommandItem>("logclones"_J));
+		debug->AddItem(std::make_shared<BoolCommandItem>("logevents"_J));
+		debug->AddItem(std::make_shared<BoolCommandItem>("logtses"_J));
+		AddCategory(std::move(debug));
 	}
 }
