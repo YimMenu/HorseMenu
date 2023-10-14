@@ -6,7 +6,7 @@
 #include "game/commands/PlayerCommand.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/spectate.hpp"
+#include "game/features/Features.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -23,8 +23,6 @@ namespace YimMenu::Submenus
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
-					if (YimMenu::g_Spectating)
-						YimMenu::SpectatePlayer(player);
 				}
 			}
 			ImGui::End();
@@ -36,8 +34,6 @@ namespace YimMenu::Submenus
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
-					if (YimMenu::g_Spectating)
-						YimMenu::SpectatePlayer(player);
 				}
 			}
 		}
@@ -62,10 +58,7 @@ namespace YimMenu::Submenus
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 				ImGui::Separator();
 
-				if(ImGui::Checkbox("Spectate", &YimMenu::g_Spectating))
-				{
-					YimMenu::SpectatePlayer(YimMenu::Players::GetSelected());
-				}
+				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 				
 			}));
 

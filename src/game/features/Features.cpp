@@ -29,6 +29,29 @@ namespace YimMenu
 			Self::Mount = 0;
 	}
 
+	void SpectateTick()
+	{
+		if(g_SpectateId != Players::GetSelected().GetId() && g_Spectating)
+		{
+			g_SpectateId = Players::GetSelected().GetId();
+			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
+		}
+
+		if(g_Spectating)
+		{
+			if(!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
+
+			if(!Players::GetSelected().IsValid() || !NETWORK::NETWORK_IS_PLAYER_CONNECTED(Players::GetSelected().GetId()))
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId())), g_Spectating = false;
+		}
+		else
+		{
+			if(NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
+		}
+	}
+
 	void FeatureLoop()
 	{
 		while (true)
@@ -38,6 +61,7 @@ namespace YimMenu
 			*Pointers.RageSecurityInitialized = false;
 			Commands::RunLoopedCommands();
 			g_HotkeySystem.FeatureCommandsHotkeyLoop();
+			SpectateTick();
 			ScriptMgr::Yield();
 		}
 	}
