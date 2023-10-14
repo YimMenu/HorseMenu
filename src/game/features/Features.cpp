@@ -6,6 +6,7 @@
 #include "game/frontend/GUI.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/backend/Players.hpp"
+#include "core/frontend/Notifications.hpp"
 
 namespace YimMenu
 {
@@ -43,7 +44,7 @@ namespace YimMenu
 				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
 
 			if(!Players::GetSelected().IsValid() || !NETWORK::NETWORK_IS_PLAYER_CONNECTED(Players::GetSelected().GetId()))
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId())), g_Spectating = false;
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId())), g_Spectating = false, Notifications::Show("Spectate", "Player is no longer in the session.\nSpectate mode disabled.", NotificationType::Warning);
 		}
 		else
 		{

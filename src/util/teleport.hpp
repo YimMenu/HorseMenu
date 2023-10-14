@@ -72,7 +72,7 @@ namespace YimMenu::Teleport
 		if (MAP::IS_WAYPOINT_ACTIVE())
 			return MAP::_GET_WAYPOINT_COORDS();
 
-		Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Warning);
+		Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Error);
 
 		return Vector3{0, 0, 0};
 	}
