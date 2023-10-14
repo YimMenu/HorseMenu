@@ -110,7 +110,7 @@ namespace YimMenu
 		CNetworkPlayerMgr* NetworkPlayerMgr;
 
 		//Patches
-		PVOID ExplosionBypass;
+		bool* ExplosionBypass;
 	};
 
 	struct Pointers : PointerData

@@ -60,6 +60,7 @@ namespace YimMenu
 			Players::Tick();
 			UpdateSelfVars();
 			*Pointers.RageSecurityInitialized = false;
+			*Pointers.ExplosionBypass         = true;
 			Commands::RunLoopedCommands();
 			g_HotkeySystem.FeatureCommandsHotkeyLoop();
 			SpectateTick();
