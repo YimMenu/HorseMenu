@@ -16,12 +16,12 @@ namespace YimMenu::Features
 		{
 			if (MAP::IS_WAYPOINT_ACTIVE())
 			{
-				auto waypointCoords = Teleport::GetWaypointCoords();
-				Teleport::TeleportEntity(Self::PlayerPed, waypointCoords);
+				auto waypointCoords = YimMenu::Teleport::GetWaypointCoords();
+				YimMenu::Teleport::TeleportEntity(Self::PlayerPed, waypointCoords);
 			}
 			else
 			{
-				Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Warning);
+				Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Error);
 			}
 		}
 	};

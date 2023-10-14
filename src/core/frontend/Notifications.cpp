@@ -37,31 +37,47 @@ namespace YimMenu
 	static void DrawNotification(Notification& notification, int position)
 	{
 		float y_pos = position * 100;
-		ImVec2 cardSize(350, 100);
+		float x_pos = 10;
+		ImVec2 cardSize(m_CardSizeX, m_CardSizeY);
 
 		ImGui::SetNextWindowSize(cardSize, ImGuiCond_Always);
-		ImGui::SetNextWindowPos(ImVec2(10, y_pos + 10), ImGuiCond_Always);
+		ImGui::SetNextWindowPos(ImVec2(x_pos + notification.m_AnimationOffset, y_pos + 10), ImGuiCond_Always);
 
 		std::string windowTitle = "Notification " + std::to_string(position + 1);
 		ImGui::Begin(windowTitle.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-		auto timeElapsed =  (float)std::chrono::duration_cast<std::chrono::milliseconds>(
-			        std::chrono::system_clock::now() - notification.m_created_on)
-			        .count();
+		auto timeElapsed =
+		    (float)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - notification.m_created_on)
+		        .count();
 
-		auto depletionProgress = 1.0f - ( timeElapsed / (float) notification.m_Duration);
-		
+		auto depletionProgress = 1.0f - (timeElapsed / (float)notification.m_Duration);
+
 		ImGui::ProgressBar(depletionProgress, ImVec2(-1, 1), "");
 
-		// TODO: Add icon for type
+		auto style = ImGui::GetStyle();
+		// TODO: Add icon for type instead of colored text
 		if (notification.m_Type == NotificationType::Info)
-			ImGui::Text("Info: %s", notification.m_Title.c_str());
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+			ImGui::Text(notification.m_Title.c_str());
+		}
 		else if (notification.m_Type == NotificationType::Success)
-			ImGui::Text("Success: %s", notification.m_Title.c_str());
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+			ImGui::Text(notification.m_Title.c_str());
+		}
 		else if (notification.m_Type == NotificationType::Warning)
-			ImGui::Text("Warning: %s", notification.m_Title.c_str());
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.5f, 0.0f, 1.0f));
+			ImGui::Text(notification.m_Title.c_str());
+		}
 		else if (notification.m_Type == NotificationType::Error)
-			ImGui::Text("Error: %s", notification.m_Title.c_str());
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			ImGui::Text(notification.m_Title.c_str());
+		}
+
+		ImGui::PopStyleColor();
 
 		ImGui::Separator();
 
@@ -70,7 +86,6 @@ namespace YimMenu
 		if (notification.m_context_function)
 		{
 			ImGui::Spacing();
-			ImGui::Separator();
 			if (ImGui::Selectable(notification.m_context_function_name.c_str()))
 				FiberPool::Push([notification] {
 					notification.m_context_function();
@@ -82,17 +97,26 @@ namespace YimMenu
 
 	void Notifications::DrawImpl()
 	{
-		int position = 0;
+		int position             = 0;
+
 		for (auto& [id, notification] : m_Notifications)
 		{
 			DrawNotification(notification, position);
-			position++;
+			
+			if(notification.m_AnimationOffset < 0)
+				notification.m_AnimationOffset += m_CardAnimationSpeed;
 
+			//Need this to account for changes in card size (x dimension), custom increments might result in odd numbers
+			if(notification.m_AnimationOffset > 0)
+				notification.m_AnimationOffset = 0.f;
+			
 			if ((float)std::chrono::duration_cast<std::chrono::milliseconds>(
 			        std::chrono::system_clock::now() - notification.m_created_on)
 			        .count()
 			    >= notification.m_Duration)
 				m_Notifications.erase(id);
+
+			position++;
 		}
 	}
 }

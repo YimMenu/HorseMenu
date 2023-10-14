@@ -2,6 +2,10 @@
 
 namespace YimMenu
 {
+	static inline float m_CardSizeX = 350.f;
+	static inline float m_CardSizeY = 100.f;
+	static inline float m_CardAnimationSpeed = 50.f;
+
 	enum class NotificationType
 	{
 		Info,
@@ -19,6 +23,7 @@ namespace YimMenu
 		int m_Duration;
 		std::function<void()> m_context_function;
 		std::string m_context_function_name;
+		float m_AnimationOffset = -m_CardSizeX;
 
 		std::string GetIdentifier()
 		{
