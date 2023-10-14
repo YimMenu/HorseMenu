@@ -4,6 +4,7 @@
 namespace YimMenu
 {
 	class BoolCommand;
+	class PlayerCommand;
 	class Command;
 
 	class Button : public UIItem
@@ -27,6 +28,16 @@ namespace YimMenu
 
 	private:
 		Command* m_Command;
+	};
+
+	class PlayerCommandItem : public UIItem
+	{
+	public:
+		explicit PlayerCommandItem(joaat_t id);
+		void Draw() override;
+
+	private:
+		PlayerCommand* m_Command;
 	};
 
 	class BoolCommandItem : public UIItem

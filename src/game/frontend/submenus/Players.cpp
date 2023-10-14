@@ -6,7 +6,6 @@
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "game/rdr/Natives.hpp"
 #include "util/teleport.hpp"
 
 namespace YimMenu::Submenus
@@ -65,6 +64,7 @@ namespace YimMenu::Submenus
 				//Button Widget crashes the game, idk why. Changed to regular for now.
 				if(ImGui::Button("Teleport To"))
 				{
+					// TODO: convert into a command
 					FiberPool::Push([]{
 						auto playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()), true, true);
 						Teleport::TeleportEntity(Self::PlayerPed, playerCoords);
@@ -106,21 +106,6 @@ namespace YimMenu::Submenus
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
-				if (ImGui::Button("Explode"))
-				{
-					FiberPool::Push([] {
-						auto playerCoords = ENTITY::GET_ENTITY_COORDS(
-						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
-						    true,
-						    true);
-
-
-						FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, 22, 1.0f, true, false, 1.0f);
-					});
-				};
-			}));
-
 
 			AddCategory(std::move(trolling));
 		}
@@ -135,6 +120,11 @@ namespace YimMenu::Submenus
 			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
+
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
 
 			AddCategory(std::move(toxic));
 		}

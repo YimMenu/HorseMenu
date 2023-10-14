@@ -9,7 +9,6 @@
 
 namespace YimMenu
 {
-
 	Hooking::Hooking()
 	{
 		BaseHook::Add<Hooks::Window::WndProc>(new DetourHook("WndProc", Pointers.WndProc, Hooks::Window::WndProc));
