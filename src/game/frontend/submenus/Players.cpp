@@ -61,7 +61,6 @@ namespace YimMenu::Submenus
 				ImGui::Separator();
 
 				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
-
 				//Button Widget crashes the game, idk why. Changed to regular for now.
 				if(ImGui::Button("Teleport To"))
 				{

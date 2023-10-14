@@ -8,7 +8,12 @@ namespace YimMenu
 {
 	bool Player::IsValid()
 	{
-		return m_NetPlayer && m_NetPlayer->IsValid() && (Pointers.GetNetPlayerFromPid(m_Handle) == m_NetPlayer);
+		if (m_NetPlayer && m_NetPlayer->IsValid())
+			m_Handle = m_NetPlayer->m_ActiveIndex;
+		else
+			return false;
+
+		return true;
 	}
 
 	int Player::GetId()

@@ -112,7 +112,6 @@ namespace YimMenu
 				if (Command)
 				{
 					Command->Call();
-					LOG(INFO) << "Hotkey detected for command " << Command->GetName();
 				}
 
 				ScriptMgr::Yield(100ms);

@@ -229,14 +229,9 @@ namespace YimMenu
 			GetNetPlayerFromPid = ptr.Add(1).Rip().As<Functions::GetNetworkPlayerFromPid>();
 		});
 
-		constexpr auto addExplosionBypass = Pattern<"38 1D ? ? ? ? 0F 85 ? ? ? ? E8">("ExplosionBypass");
+		constexpr auto addExplosionBypass = Pattern<"0F 84 ? ? ? ? 44 38 3D ? ? ? ? 75 14">("ExplosionBypass");
 		scanner.Add(addExplosionBypass, [this](PointerCalculator ptr) {
-			ExplosionBypass = ptr.Add(6).As<PVOID>();
-	    	if (ExplosionBypass)
-		    {
-			  uint8_t bytes[] = {0x0F, 0x84, 0x9C, 0x00, 0x00, 0x00}; //JNZ->JZ
-			  patch_byte(ExplosionBypass, bytes, sizeof(bytes));
-			}
+			ExplosionBypass = ptr.Add(9).Rip().As<bool*>();
 		});
 
 		if (!scanner.Scan())
@@ -273,11 +268,5 @@ namespace YimMenu
 
 	void Pointers::Restore()
 	{
-		if (ExplosionBypass)
-		{
-			uint8_t bytes[] = {0x0F, 0x85, 0x9C, 0x00, 0x00, 0x00}; //JZ->JNZ
-			patch_byte(ExplosionBypass, bytes, sizeof(bytes));
-		}
-		
 	}
 }
