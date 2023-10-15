@@ -5,6 +5,25 @@
 #include "game/backend/Protections.hpp"
 #include "core/commands/BoolCommand.hpp"
 #include <network/CNetGamePlayer.hpp>
+#include <rage/datBitBuffer.hpp>
+#include <network/netObject.hpp>
+
+namespace
+{
+	bool IsVehicleType(eNetObjType type)
+	{
+		switch (type)
+		{
+		case eNetObjType::Automobile:
+		case eNetObjType::Bike:
+		case eNetObjType::Heli:
+		case eNetObjType::DraftVeh:
+		case eNetObjType::Boat: return true;
+		}
+
+		return false;
+	}
+}
 
 namespace YimMenu::Features
 {
@@ -15,9 +34,25 @@ namespace YimMenu::Hooks
 {
 	void Protections::HandleNetGameEvent(rage::netEventMgr* eventMgr, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, NetEventType type, int index, int handledBits, std::int16_t unk, rage::datBitBuffer* buffer)
 	{
+		rage::datBitBuffer new_buffer = *buffer;
+
 		if (Features::_LogEvents.GetState() && type < NetEventType::NETWORK_EVENT_MAX)
 		{
 			LOG(INFO) << "NETWORK_EVENT: " << g_NetEventsToString[(int)type] << " from " << sourcePlayer->GetName();
+		}
+
+		if (type == NetEventType::NETWORK_DESTROY_VEHICLE_LOCK_EVENT)
+		{
+			auto net_id = new_buffer.Read<uint16_t>(13);
+			if (auto object = Pointers.GetNetObjectById(net_id))
+			{
+				if (!IsVehicleType((eNetObjType)object->m_ObjectType))
+				{
+					LOG(WARNING) << "Blocked mismatched NETWORK_DESTROY_VEHICLE_LOCK_EVENT entity from " << sourcePlayer->GetName();
+					Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+					return;
+				}
+			}
 		}
 
 		if (type == NetEventType::NETWORK_PTFX_EVENT && sourcePlayer)

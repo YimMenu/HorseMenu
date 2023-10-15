@@ -45,5 +45,6 @@ namespace YimMenu
 		constexpr void SetPosition(rage::fvector3 position);
 		constexpr bool IsNetworked();
 		constexpr bool HasControl();
+		std::uint16_t GetNetworkObjectId();
 	};
 }

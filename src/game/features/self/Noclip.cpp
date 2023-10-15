@@ -92,6 +92,7 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
+			LOG(INFO) << __FUNCTION__ " called: m_Entity: " << m_Entity << ". == Player: " << (int)(m_Entity == Self::PlayerPed);
 			ENTITY::FREEZE_ENTITY_POSITION(m_Entity, false);
 			ENTITY::SET_ENTITY_COLLISION(m_Entity, true, false);
 		}

@@ -11,6 +11,10 @@
 #include "game/rdr/Natives.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/rdr/ScriptGlobal.hpp"
+#include "game/rdr/Scripts.hpp"
+#include <script/scrThread.hpp>
+#include "game/rdr/Entity.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -64,7 +68,6 @@ namespace YimMenu::Submenus
 				ImGui::Separator();
 
 				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
-
 				//Button Widget crashes the game, idk why. Changed to regular for now.
 				if(ImGui::Button("Teleport To"))
 				{
@@ -134,8 +137,31 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Test"))
 				{
 					FiberPool::Push([] {
-						//auto horse = PED::CREATE_PED();
+						using Scf = void(*)(void* ent, int flg, bool val, bool net);
+						Scf scf  = (Scf)((__int64)GetModuleHandleA(0) + 0x1d0e898);
+						for (int i = 0; i < 0x7F; i++)
+						{
+							if (!(i % 12))
+								ScriptMgr::Yield();
+							scf(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(), i, true, true);
+						}
+					});
+				}
 
+				if (ImGui::Button("Test 2"))
+				{
+					FiberPool::Push([] {
+						using Pd = void (*)(__int16 net);
+						Pd pd    = (Pd)((__int64)GetModuleHandleA(0) + 0x23f4eb8);
+						pd(YimMenu::Players::GetSelected().GetPed().GetNetworkObjectId());
+					});
+				}
+
+				if (ImGui::Button("Test 3"))
+				{
+					FiberPool::Push([] {
+						float test = 2345.0f;
+						PED::_0x09E378C52B1433B5(YimMenu::Players::GetSelected().GetPed().GetHandle(), *(int*)&test, *(int*)&test, *(int*)&test, *(int*)&test);
 					});
 				}
 			}));

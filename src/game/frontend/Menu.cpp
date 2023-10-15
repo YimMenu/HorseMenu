@@ -9,6 +9,7 @@
 
 #include "submenus/Self.hpp"
 #include "submenus/Teleport.hpp"
+#include "submenus/Debug.hpp"
 #include "submenus/Players.hpp"
 #include "submenus/Settings.hpp"
 
@@ -21,6 +22,7 @@ namespace YimMenu
 		UIManager::AddSubmenu(std::make_shared<Submenus::Teleport>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::Players>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::Settings>());
+		UIManager::AddSubmenu(std::make_shared<Submenus::Debug>());
 
 		Renderer::AddRendererCallBack(
 		    [&] {

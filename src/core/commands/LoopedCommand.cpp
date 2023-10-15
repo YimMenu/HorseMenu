@@ -11,6 +11,15 @@ namespace YimMenu
 
 	void LoopedCommand::Tick()
 	{
-		OnTick();
+		if (LoopedCommand::GetState())
+		{
+			LoopedCommand::SetDisabled(false);
+			OnTick();
+		}
+		else if (!LoopedCommand::GetDisabled())
+		{
+			LoopedCommand::SetDisabled(true);
+			OnDisable();
+		}
 	}
 }

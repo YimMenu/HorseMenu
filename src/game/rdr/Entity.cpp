@@ -45,4 +45,12 @@ namespace YimMenu
 		return GetPointer<rage::fwEntity*>()->m_NetObject->m_MigratingOwnerId < 32
 		    && !GetPointer<rage::fwEntity*>()->m_NetObject->m_IsRemotelyControlled;
 	}
+
+	std::uint16_t Entity::GetNetworkObjectId()
+	{
+		if (!IsNetworked())
+			return 0;
+
+		return GetPointer<rage::fwEntity*>()->m_NetObject->m_ObjectId;
+	}
 }

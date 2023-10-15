@@ -18,6 +18,7 @@ namespace rage
 	class scrThread;
 	class netEventMgr;
 	class netSyncTree;
+	class netObject;
 }
 
 namespace YimMenu
@@ -32,7 +33,8 @@ namespace YimMenu
 		using PtrToHandle             = int(*)(void* pointer);
 		using GetLocalPed             = CPed*(*)();
 		using GetSyncTreeForType      = rage::netSyncTree*(*)(void* netObjMgr, uint16_t type);
-		using GetNetworkPlayerFromPid   = CNetGamePlayer * (*)(uint8_t player);
+		using GetNetworkPlayerFromPid = CNetGamePlayer * (*)(uint8_t player);
+		using GetNetObjectById        = rage::netObject*(*)(uint16_t id);
 	}
 
 	struct PointerData
@@ -109,8 +111,10 @@ namespace YimMenu
 
 		CNetworkPlayerMgr* NetworkPlayerMgr;
 
+		Functions::GetNetObjectById GetNetObjectById;
+
 		//Patches
-		PVOID ExplosionBypass;
+		bool* ExplosionBypass;
 	};
 
 	struct Pointers : PointerData
