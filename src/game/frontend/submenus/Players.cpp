@@ -66,7 +66,9 @@ namespace YimMenu::Submenus
 				{
 					FiberPool::Push([]{
 						auto playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()), true, true);
-						Teleport::TeleportEntity(Self::PlayerPed, playerCoords);
+						if(Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+							g_Spectating = false;
+						
 					});
 				}
 			}));
@@ -113,7 +115,6 @@ namespace YimMenu::Submenus
 						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
 						    true,
 						    true);
-
 
 						FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, 22, 1.0f, true, false, 1.0f);
 					});

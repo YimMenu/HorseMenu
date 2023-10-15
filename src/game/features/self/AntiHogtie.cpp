@@ -23,5 +23,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static AntiHogtie _AntiHogtie{"antihogtie", "Anti Hogtie", "Avoid getting hogtied'd by other players"};
+	static AntiHogtie _AntiHogtie{"antihogtie", "Anti Hogtie", "Avoid getting hogtied by other players"};
 }

@@ -12,8 +12,10 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			auto afkTimer = ScriptGlobal(1102813).At(3919).As<int*>();
-            *afkTimer = 999999;
+			auto afkTimer = ScriptGlobal(1102813).At(3919).As<float*>();
+			auto afkSwitch = ScriptGlobal(1102813).At(3918).As<int*>();
+            *afkTimer = 0;
+            *afkSwitch = 0;
 		}
 	};
 

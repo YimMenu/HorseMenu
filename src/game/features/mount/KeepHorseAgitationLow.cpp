@@ -5,6 +5,7 @@
 
 namespace YimMenu::Features
 {
+	//Horse still kicks player off on max agitation on online
 	class KeepHorseAgitationLow : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
