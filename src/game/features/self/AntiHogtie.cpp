@@ -16,7 +16,6 @@ namespace YimMenu::Features
            
 		}
 
-		//Doesn't work
 		virtual void OnDisable() override
 		{
 			ENTITY::_SET_ENTITY_CARRYING_FLAG(Self::PlayerPed, (int) eCarryingFlags::CARRYING_FLAG_CAN_BE_HOGTIED, true);

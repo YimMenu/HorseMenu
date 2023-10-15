@@ -10,6 +10,8 @@
 #include "game/features/Features.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/settings/Settings.hpp"
+#include "core/frontend/Notifications.hpp"
+#include "game/services/custom_teleport_service.hpp"
 
 namespace YimMenu
 {
@@ -21,6 +23,7 @@ namespace YimMenu
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
 		g_HotkeySystem.RegisterCommands();
+		g_CustomTeleportService.FetchSavedLocations();
 		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
 
 		if (!ModuleMgr.LoadModules())
@@ -42,6 +45,8 @@ namespace YimMenu
 
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
+		
+		Notifications::Show("HorseMenu", "Loaded succesfully", NotificationType::Success);
 
 		while (g_Running)
 		{

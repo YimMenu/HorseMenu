@@ -11,6 +11,7 @@ namespace YimMenu
 		inline Vector3 Rot;
 		inline Vehicle Veh;
 		inline Ped Mount;
+		inline bool IsOnMount;
 	}
 
 	inline bool g_Spectating = false;

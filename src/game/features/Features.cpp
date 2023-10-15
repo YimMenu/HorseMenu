@@ -30,6 +30,8 @@ namespace YimMenu
 			Self::Mount = PLAYER::GET_MOUNT_OWNED_BY_PLAYER(Self::Id);
 		else
 			Self::Mount = 0;
+
+		Self::IsOnMount = PED::IS_PED_ON_MOUNT(Self::PlayerPed);
 	}
 
 	void SpectateTick()
