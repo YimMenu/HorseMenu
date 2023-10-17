@@ -1,15 +1,15 @@
-#include "custom_teleport_service.hpp"
+#include "CustomTeleport.hpp"
 #include "core/filemgr/FileMgr.hpp"
 #include "core/frontend/Notifications.hpp"
 
 namespace YimMenu
 {
-	std::filesystem::path CustomTeleportService::GetTelelocationsFile()
+	std::filesystem::path CustomTeleport::GetTelelocationsFile()
 	{
 		return FileMgr::GetProjectFile("./telelocations.json").Path();
 	}
 
-	std::vector<Telelocation> CustomTeleportService::SavedLocationsFilteredList(std::string filter)
+	std::vector<Telelocation> CustomTeleport::SavedLocationsFilteredListImpl(std::string filter)
 	{
 		std::vector<Telelocation> filterList{};
 
@@ -25,7 +25,7 @@ namespace YimMenu
 		return filterList;
 	}
 
-	bool CustomTeleportService::FetchSavedLocations()
+	bool CustomTeleport::FetchSavedLocationsImpl()
 	{
 		m_AllSavedLocations.clear();
 
@@ -52,7 +52,7 @@ namespace YimMenu
 		return false;
 	}
 
-	bool CustomTeleportService::SaveNewLocation(const std::string& category, Telelocation t)
+	bool CustomTeleport::SaveNewLocationImpl(const std::string& category, Telelocation t)
 	{
 		const auto& pair = m_AllSavedLocations.insert({category, {t}});
 		if (!pair.second)
@@ -75,7 +75,7 @@ namespace YimMenu
 		return true;
 	}
 
-	bool CustomTeleportService::DeleteSavedLocation(const std::string& category, const std::string& locationName)
+	bool CustomTeleport::DeleteSavedLocationImpl(const std::string& category, const std::string& locationName)
 	{
 		auto path = GetTelelocationsFile();
 
@@ -103,9 +103,9 @@ namespace YimMenu
 		return true;
 	}
 
-	Telelocation* CustomTeleportService::GetSavedLocationByName(std::string name)
+	Telelocation* CustomTeleport::GetSavedLocationByNameImpl(std::string name)
 	{
-		for (auto& loc : g_CustomTeleportService.SavedLocationsFilteredList())
+		for (auto& loc : SavedLocationsFilteredList())
 			if (loc.name == name)
 				return &loc;
 

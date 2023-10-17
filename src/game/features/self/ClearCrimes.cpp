@@ -10,9 +10,8 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			//Crashes??
-			// Any _0{};
-			// BOUNTY::_BOUNTY_REQUEST_SERVED_FULL_JAIL_SENTENCE(&_0);
+			DWORD test[7];
+			BOUNTY::_BOUNTY_REQUEST_SERVED_FULL_JAIL_SENTENCE(&test);
 		}
 	};
 

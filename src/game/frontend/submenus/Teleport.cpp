@@ -2,7 +2,7 @@
 
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "game/services/custom_teleport_service.hpp"
+#include "game/bigfeatures/CustomTeleport.hpp"
 #include "util/Math.hpp"
 #include "util/Teleport.hpp"
 #include "core/frontend/Notifications.hpp"
@@ -18,7 +18,7 @@ namespace YimMenu::Submenus
 		float distance = 500;
 		Telelocation closestLocation{};
 		//saved_locations_filtered_list can be used to get a joint list of all categories when the filter is empty.
-		for (auto& loc : g_CustomTeleportService.SavedLocationsFilteredList())
+		for (auto& loc : CustomTeleport::SavedLocationsFilteredList())
 		{
 			float newDistance = Math::DistanceBetweenVectors(Self::Pos, {loc.x, loc.y, loc.z});
 
@@ -54,7 +54,7 @@ namespace YimMenu::Submenus
 
 			if (ImGui::Button("Yes"))
 			{
-				g_CustomTeleportService.DeleteSavedLocation(category, deleteTelelocation.name);
+				CustomTeleport::DeleteSavedLocation(category, deleteTelelocation.name);
 				deleteTelelocation.name = "";
 				ImGui::CloseCurrentPopup();
 			}
@@ -81,7 +81,7 @@ namespace YimMenu::Submenus
 				{
 					Notifications::Show("Custom Teleport", "Please enter a valid name.", NotificationType::Warning);
 				}
-				else if (g_CustomTeleportService.GetSavedLocationByName(NewLocationName))
+				else if (CustomTeleport::GetSavedLocationByName(NewLocationName))
 				{
 					Notifications::Show("Custom Teleport", std::format("Location with the name {} already exists", NewLocationName));
 				}
@@ -102,7 +102,7 @@ namespace YimMenu::Submenus
 					teleportLocation.yaw   = ENTITY::GET_ENTITY_HEADING(teleportEntity);
 					teleportLocation.pitch = CAM::GET_GAMEPLAY_CAM_RELATIVE_PITCH();
 					teleportLocation.roll  = CAM::GET_GAMEPLAY_CAM_RELATIVE_HEADING();
-					g_CustomTeleportService.SaveNewLocation(category, teleportLocation);
+					CustomTeleport::SaveNewLocation(category, teleportLocation);
 				}
 			});
 		};
@@ -119,7 +119,7 @@ namespace YimMenu::Submenus
 		ImGui::Text("Categories");
 		if (ImGui::BeginListBox("##categories", {200, -1}))
 		{
-			for (auto& l : g_CustomTeleportService.m_AllSavedLocations | std::ranges::views::keys)
+			for (auto& l : CustomTeleport::GetAllSavedLocations() | std::ranges::views::keys)
 			{
 				if (ImGui::Selectable(l.data(), l == category))
 				{
@@ -134,15 +134,14 @@ namespace YimMenu::Submenus
 		ImGui::Text("Locations");
 		if (ImGui::BeginListBox("##Telelocations", {200, -1})) //Need automatic dimensions instead of hard coded
 		{
-			if (g_CustomTeleportService.m_AllSavedLocations.find(category)
-			    != g_CustomTeleportService.m_AllSavedLocations.end())
+			if (CustomTeleport::GetAllSavedLocations().find(category) != CustomTeleport::GetAllSavedLocations().end())
 			{
 				std::vector<Telelocation> current_list{};
 
 				if (!filter.empty())
-					current_list = g_CustomTeleportService.SavedLocationsFilteredList(filter);
+					current_list = CustomTeleport::SavedLocationsFilteredList(filter);
 				else
-					current_list = g_CustomTeleportService.m_AllSavedLocations.at(category);
+					current_list = CustomTeleport::GetAllSavedLocations().at(category);
 
 				for (const auto& l : current_list)
 				{

@@ -11,7 +11,7 @@
 #include "core/commands/HotkeySystem.hpp"
 #include "core/settings/Settings.hpp"
 #include "core/frontend/Notifications.hpp"
-#include "game/services/custom_teleport_service.hpp"
+#include "game/bigfeatures/CustomTeleport.hpp"
 
 namespace YimMenu
 {
@@ -23,7 +23,7 @@ namespace YimMenu
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
 		g_HotkeySystem.RegisterCommands();
-		g_CustomTeleportService.FetchSavedLocations();
+		CustomTeleport::FetchSavedLocations();
 		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
 
 		if (!ModuleMgr.LoadModules())

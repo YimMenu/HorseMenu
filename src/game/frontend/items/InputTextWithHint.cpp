@@ -1,9 +1,9 @@
 #include "Items.hpp"
 #include "misc/cpp/imgui_stdlib.h"
+#include "game/features/Features.hpp"
 
 namespace YimMenu
 {
-	//Need to modify imgui to accept strings instead of char*
 	InputTextWithHint::InputTextWithHint(std::string label, std::string hint, std::string* buf, ImGuiInputTextFlags_ flag , std::function<void()> cb) :
 	    m_Id(label),
 	    m_Hint(hint),
@@ -15,17 +15,15 @@ namespace YimMenu
 
 	void InputTextWithHint::Draw()
 	{
-		ImGui::InputTextWithHint(m_Id.data(), m_Hint.data(), m_Buf, m_Flag);
-		if (m_Callback != nullptr)
+		if(ImGui::InputTextWithHint(m_Id.data(), m_Hint.data(), m_Buf, m_Flag));
 		{
-			if (ImGui::IsItemDeactivatedAfterEdit())
+			if (m_Callback != nullptr)
 			{
 				m_Callback();
 			}
 		}
 
 		if (ImGui::IsItemActive())
-			;//TODO add block controls
-		
+			BlockAllControls();
 	}
 }
