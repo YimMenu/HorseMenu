@@ -55,6 +55,13 @@ namespace YimMenu::Hooks
 			}
 		}
 
+		if (type == NetEventType::NETWORK_INCREMENT_STAT_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked report from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
 		if (type == NetEventType::NETWORK_PTFX_EVENT && sourcePlayer)
 		{
 			LOG(WARNING) << "Blocked NETWORK_PTFX_EVENT from " << sourcePlayer->GetName();
@@ -65,6 +72,13 @@ namespace YimMenu::Hooks
 		if (type == NetEventType::NETWORK_CLEAR_PED_TASKS_EVENT && sourcePlayer)
 		{
 			LOG(WARNING) << "Blocked NETWORK_CLEAR_PED_TASKS_EVENT from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
+		if (type == NetEventType::SCRIPT_COMMAND_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked remote native call from " << sourcePlayer->GetName();
 			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 			return;
 		}

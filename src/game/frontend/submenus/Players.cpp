@@ -164,6 +164,24 @@ namespace YimMenu::Submenus
 						PED::_0x09E378C52B1433B5(YimMenu::Players::GetSelected().GetPed().GetHandle(), *(int*)&test, *(int*)&test, *(int*)&test, *(int*)&test);
 					});
 				}
+
+				if (ImGui::Button("Test 4"))
+				{
+					FiberPool::Push([] {
+						using GE = void (*)(__int16 net, bool ghost);
+						GE ge    = (GE)((__int64)GetModuleHandleA(0) + 0x23f43f0);
+						ge(YimMenu::Players::GetSelected().GetPed().GetNetworkObjectId(), true);
+					});
+				}
+
+				if (ImGui::Button("Test 9"))
+				{
+					FiberPool::Push([] {
+						using Rg = void (*)(__int16, bool, int);
+						Rg rg    = (Rg)((__int64)GetModuleHandleA(0) + 0x23f5244);
+						rg(YimMenu::Players::GetSelected().GetPed().GetNetworkObjectId(), true, 0);
+					});
+				}
 			}));
 
 			AddCategory(std::move(toxic));
