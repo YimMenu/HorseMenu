@@ -4,6 +4,7 @@
 #include "core/commands/LoopedCommand.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "Settings.hpp"
+#include "game/features/Features.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -30,11 +31,19 @@ namespace YimMenu::Submenus
 		}
 	};
 
+	static void Online()
+	{
+		ImGui::Checkbox("Esp", &g_Esp);
+	}
+
 	Settings::Settings() :
 	    Submenu::Submenu("Settings")
 	{
 		auto hotkeys = std::make_shared<Category>("Hotkeys");
+		auto online = std::make_shared<Category>("Online");
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
+		online->AddItem(std::make_shared<ImGuiItem>(Online));
 		AddCategory(std::move(hotkeys));
+		AddCategory(std::move(online));
 	}
 }

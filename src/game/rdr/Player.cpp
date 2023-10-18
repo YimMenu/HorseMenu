@@ -1,4 +1,5 @@
 #include "Player.hpp"
+
 #include "game/pointers/Pointers.hpp"
 
 #include <network/CNetGamePlayer.hpp>
@@ -56,5 +57,33 @@ namespace YimMenu
 	bool Player::operator==(Player other)
 	{
 		return m_Handle == other.m_Handle;
+	}
+
+	BoneCoords Player::GetBoneCoords()
+	{
+		if (!IsValid())
+			return BoneCoords();
+
+		return m_BoneCoords;
+	}
+
+	void Player::UpdateBoneCoords()
+	{
+		if (!IsValid() || !m_NetPlayer || !m_NetPlayer->m_PlayerInfo)
+			return;
+
+		auto ped = m_NetPlayer->m_PlayerInfo->m_Ped;
+
+		if (!ped || !ENTITY::DOES_ENTITY_EXIST(GetPed().GetHandle()))
+			return;
+			
+		//TODO possibly fetch info from CPed class directly
+		m_BoneCoords.Head      = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 21030, 0, 0, 0);
+		m_BoneCoords.Neck      = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 14283, 0, 0, 0);
+		m_BoneCoords.Torso     = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 14410, 0, 0, 0);
+		m_BoneCoords.LeftHand  = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 34606, 0, 0, 0);
+		m_BoneCoords.RightHand = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 22798, 0, 0, 0);
+		m_BoneCoords.LeftFoot  = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 45454, 0, 0, 0);
+		m_BoneCoords.RightFoot = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 33646, 0, 0, 0);
 	}
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.hpp"
+#include "game/rdr/Natives.hpp"
 
 class CNetGamePlayer;
 
@@ -10,10 +11,16 @@ namespace rage
 
 namespace YimMenu
 {
+	struct BoneCoords
+	{
+		Vector3 Head, Neck, Torso, LeftHand, RightHand, LeftFoot, RightFoot;
+	};
+
 	class Player
 	{
 		uint8_t m_Handle;
 		CNetGamePlayer* m_NetPlayer;
+		BoneCoords m_BoneCoords;
 
 	public:
 		Player() :
@@ -41,5 +48,7 @@ namespace YimMenu
 		rage::rlGamerInfo* GetGamerInfo();
 		Entity GetPed();
 		bool operator==(Player other);
+		BoneCoords GetBoneCoords();
+		void UpdateBoneCoords();
 	};
 }

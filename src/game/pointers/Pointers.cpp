@@ -234,6 +234,11 @@ namespace YimMenu
 			ExplosionBypass = ptr.Add(9).Rip().As<bool*>();
 		});
 
+		constexpr auto worldToScreenPtrn = Pattern<"E8 ? ? ? ? 84 C0 74 19 F3 0F 10 44 24">("WorldToScreen");
+		scanner.Add(worldToScreenPtrn, [this](PointerCalculator ptr) {
+			WorldToScreen = ptr.Add(1).Rip().As<Functions::WorldToScreen>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

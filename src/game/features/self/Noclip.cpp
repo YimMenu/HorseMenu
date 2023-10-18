@@ -93,7 +93,7 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
-			ScriptMgr::Yield();
+			ScriptMgr::Yield(10ms);
 			ENTITY::FREEZE_ENTITY_POSITION(m_Entity, false);
 			ENTITY::SET_ENTITY_COLLISION(m_Entity, true, false);
 		}
