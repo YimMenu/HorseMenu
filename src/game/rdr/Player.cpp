@@ -85,5 +85,9 @@ namespace YimMenu
 		m_BoneCoords.RightHand = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 22798, 0, 0, 0);
 		m_BoneCoords.LeftFoot  = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 45454, 0, 0, 0);
 		m_BoneCoords.RightFoot = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 33646, 0, 0, 0);
+		m_BoneCoords.LeftElbow = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 22711, 0, 0, 0);
+		m_BoneCoords.RightElbow = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 2992, 0, 0, 0);
+		m_BoneCoords.LeftKnee   = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 22173, 0, 0, 0);
+		m_BoneCoords.RightKnee  = PED::GET_PED_BONE_COORDS(GetPed().GetHandle(), 63133, 0, 0, 0);
 	}
 }

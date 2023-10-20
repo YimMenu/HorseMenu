@@ -18,27 +18,56 @@ namespace YimMenu
 	static ImColor health_red_bg    = ImColor(0.69f, 0.29f, 0.29f, .75f);
 	static ImColor health_red       = ImColor(0.69f, 0.29f, 0.29f, 1.f);
 
+	static auto boneToScreen = [=](Vector3 bone) -> ImVec2 {
+		float screen_x, screen_y;
+		float boneCoords[3] = {bone.x, bone.y, bone.z};
+
+		Pointers.WorldToScreen(boneCoords, &screen_x, &screen_y);
+
+		return ImVec2(screen_x * Pointers.ScreenResX, screen_y * Pointers.ScreenResY);
+	};
+
+	void DrawSkeleton(Player& plyr, ImDrawList* drawList, ImColor color)
+	{
+		const auto plyrBones = plyr.GetBoneCoords();
+
+		drawList->AddLine(boneToScreen(plyrBones.Head), boneToScreen(plyrBones.Neck), color);
+
+		drawList->AddLine(boneToScreen(plyrBones.Neck), boneToScreen(plyrBones.LeftElbow), color);
+		drawList->AddLine(boneToScreen(plyrBones.LeftElbow), boneToScreen(plyrBones.LeftHand), color);
+
+		drawList->AddLine(boneToScreen(plyrBones.Neck), boneToScreen(plyrBones.RightElbow), color);
+		drawList->AddLine(boneToScreen(plyrBones.RightElbow), boneToScreen(plyrBones.RightHand), color);
+
+		drawList->AddLine(boneToScreen(plyrBones.Neck), boneToScreen(plyrBones.Torso), color);
+
+		drawList->AddLine(boneToScreen(plyrBones.Torso), boneToScreen(plyrBones.LeftKnee), color);
+		drawList->AddLine(boneToScreen(plyrBones.LeftKnee), boneToScreen(plyrBones.LeftFoot), color);
+
+		drawList->AddLine(boneToScreen(plyrBones.Torso), boneToScreen(plyrBones.RightKnee), color);
+		drawList->AddLine(boneToScreen(plyrBones.RightKnee), boneToScreen(plyrBones.RightFoot), color);
+	}
+
 	//TODO : Very bare bones currently, expand and possibly refactor
-	void Esp::DrawPlayer(Player& plyr, ImDrawList* draw_list)
+	void Esp::DrawPlayer(Player& plyr, ImDrawList* drawList)
 	{
 		if (!plyr.IsValid() || plyr.GetId() == Self::Id || plyr.GetBoneCoords().Torso.x == 0)
 			return;
 
-		auto boneToTrack = plyr.GetBoneCoords().Torso;
-
-		float screen_x, screen_y;
-		float boneCoords[3] = {boneToTrack.x, boneToTrack.y, boneToTrack.z};
-
-		Pointers.WorldToScreen(boneCoords, &screen_x, &screen_y);
-
-		ImVec2 distanceIndicatorScreenPos = ImVec2(screen_x * Pointers.ScreenResX, (screen_y + 0.015f) * Pointers.ScreenResY);
+		const auto plyrBones = plyr.GetBoneCoords();
+		float distanceToPlayer = Math::DistanceBetweenVectors(Self::Pos, plyrBones.Torso);
 
 		//Name
-		draw_list->AddText(ImVec2(screen_x * Pointers.ScreenResX, screen_y * Pointers.ScreenResY), ImColor(255, 255, 255, 255), plyr.GetName());
+		drawList->AddText(boneToScreen(plyrBones.Head), ImColor(255, 255, 255, 255), plyr.GetName());
 		//Distance
-		draw_list->AddText(distanceIndicatorScreenPos,
+		drawList->AddText({boneToScreen(plyrBones.Head).x, boneToScreen(plyrBones.Head).y + 20},
 		    ImColor(255, 255, 255, 255),
-		    std::to_string((int)Math::DistanceBetweenVectors(Self::Pos, boneToTrack)).data());
+		    std::to_string((int)Math::DistanceBetweenVectors(Self::Pos, plyrBones.Torso)).data());
+
+		//TODO Boxes, Distance colors, Friendlies, Tracers
+
+		//Make this a setting
+		DrawSkeleton(plyr, drawList, ImColor(255, 255, 255, 255));
 	}
 
 	void Esp::Draw()

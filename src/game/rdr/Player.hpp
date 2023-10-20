@@ -13,7 +13,7 @@ namespace YimMenu
 {
 	struct BoneCoords
 	{
-		Vector3 Head, Neck, Torso, LeftHand, RightHand, LeftFoot, RightFoot;
+		Vector3 Head, Neck, Torso, LeftHand, RightHand, LeftFoot, RightFoot, LeftElbow, RightElbow, LeftKnee, RightKnee;
 	};
 
 	class Player
