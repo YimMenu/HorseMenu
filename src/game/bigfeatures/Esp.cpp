@@ -17,6 +17,9 @@ namespace YimMenu
 	static ImColor health_yellow    = ImColor(0.69f, 0.49f, 0.29f, 1.f);
 	static ImColor health_red_bg    = ImColor(0.69f, 0.29f, 0.29f, .75f);
 	static ImColor health_red       = ImColor(0.69f, 0.29f, 0.29f, 1.f);
+	static ImColor Green            = ImColor(0.29f, 0.69f, 0.34f, 1.f);
+	static ImColor Orange           = ImColor(0.69f, 0.49f, 0.29f, 1.f);
+	static ImColor Red              = ImColor(0.69f, 0.29f, 0.29f, 1.f);
 
 	static auto boneToScreen = [=](Vector3 bone) -> ImVec2 {
 		float screen_x, screen_y;
@@ -54,15 +57,30 @@ namespace YimMenu
 		if (!plyr.IsValid() || plyr.GetId() == Self::Id || plyr.GetBoneCoords().Torso.x == 0)
 			return;
 
-		const auto plyrBones = plyr.GetBoneCoords();
+		const auto plyrBones   = plyr.GetBoneCoords();
 		float distanceToPlayer = Math::DistanceBetweenVectors(Self::Pos, plyrBones.Torso);
+		ImColor colorBasedOnDistance = Red;
 
+		if (distanceToPlayer < 100.f)
+			colorBasedOnDistance = Green, colorBasedOnDistance.Value.w = 255;
+		else if(distanceToPlayer > 100.f && distanceToPlayer < 300.f)
+			colorBasedOnDistance = Orange, colorBasedOnDistance.Value.w = 125;
+		else if (distanceToPlayer > 300.f)
+			colorBasedOnDistance = Red, colorBasedOnDistance.Value.w = 50;
+
+		const auto originalFontSize = ImGui::GetFont()->Scale;
+		auto* currentFont = ImGui::GetFont();
+		currentFont->Scale *= 1.2;
+		ImGui::PushFont(ImGui::GetFont());
 		//Name
 		drawList->AddText(boneToScreen(plyrBones.Head), ImColor(255, 255, 255, 255), plyr.GetName());
 		//Distance
 		drawList->AddText({boneToScreen(plyrBones.Head).x, boneToScreen(plyrBones.Head).y + 20},
-		    ImColor(255, 255, 255, 255),
+		    colorBasedOnDistance,
 		    std::to_string((int)Math::DistanceBetweenVectors(Self::Pos, plyrBones.Torso)).data());
+
+		currentFont->Scale = originalFontSize;
+		ImGui::PopFont();
 
 		//TODO Boxes, Distance colors, Friendlies, Tracers
 

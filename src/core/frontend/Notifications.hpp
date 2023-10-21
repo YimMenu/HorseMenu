@@ -24,10 +24,11 @@ namespace YimMenu
 		std::function<void()> m_context_function;
 		std::string m_context_function_name;
 		float m_AnimationOffset = -m_CardSizeX;
+		bool erasing = false;
 
 		std::string GetIdentifier()
 		{
-			return m_Title + m_Message;
+			return std::string(m_Title).append(m_Message);
 		}
 	};
 
@@ -37,8 +38,9 @@ namespace YimMenu
 		std::unordered_map<std::string, Notification> m_Notifications = {};
 
 		// duration is in milliseconds
-		void ShowImpl(std::string title, std::string message, NotificationType type, int duration, std::function<void()> context_function, std::string context_function_name);
+		Notification ShowImpl(std::string title, std::string message, NotificationType type, int duration, std::function<void()> context_function, std::string context_function_name);
 		void DrawImpl();
+		bool EraseImpl(Notification notification);
 
 		static Notifications& GetInstance()
 		{
@@ -47,14 +49,19 @@ namespace YimMenu
 		}
 
 	public:
-		static void Show(std::string title, std::string message, NotificationType type = NotificationType::Info, int duration = 5000, std::function<void()> context_function = nullptr, std::string context_function_name = "")
+		static Notification Show(std::string title, std::string message, NotificationType type = NotificationType::Info, int duration = 5000 ,std::function<void()> context_function = nullptr, std::string context_function_name = "")
 		{
-			GetInstance().ShowImpl(title, message, type, duration, context_function, context_function_name);
+			return GetInstance().ShowImpl(title, message, type, duration, context_function, context_function_name);
 		}
 
 		static void Draw()
 		{
 			GetInstance().DrawImpl();
+		}
+
+		static bool Erase(Notification notification)
+		{
+			return GetInstance().EraseImpl(notification);
 		}
 
     };
