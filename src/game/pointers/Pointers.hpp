@@ -1,12 +1,13 @@
 #pragma once
-#include <windows.h>
-#include <dxgi1_4.h>
-#include <d3d12.h>
-#include "game/rdr/RenderingInfo.hpp"
 #include "game/rdr/GraphicsOptions.hpp"
-#include <script/scrNativeHandler.hpp>
+#include "game/rdr/RenderingInfo.hpp"
+
+#include <d3d12.h>
+#include <dxgi1_4.h>
 #include <rage/atArray.hpp>
+#include <script/scrNativeHandler.hpp>
 #include <vulkan/vulkan.h>
+#include <windows.h>
 
 class CNetGamePlayer;
 class CVehicle;
@@ -39,7 +40,7 @@ namespace YimMenu
 
 	struct PointerData
 	{
-	    // RDR
+		// RDR
 		bool* IsSessionStarted;
 		std::int64_t** ScriptGlobals;
 		void* NativeRegistrationTable;
@@ -79,14 +80,15 @@ namespace YimMenu
 		// Native Handles
 		Functions::HandleToPtr HandleToPtr;
 		Functions::PtrToHandle PtrToHandle;
+		Functions::WorldToScreen WorldToScreen;
 
 		// Misc
 		PVOID ThrowFatalError;
 
 		// Vulkan
-		PVOID QueuePresentKHR; //Init in renderer
-		PVOID CreateSwapchainKHR; //Init in renderer
-		PVOID AcquireNextImageKHR; //Init in renderer
+		PVOID QueuePresentKHR;      //Init in renderer
+		PVOID CreateSwapchainKHR;   //Init in renderer
+		PVOID AcquireNextImageKHR;  //Init in renderer
 		PVOID AcquireNextImage2KHR; //Init in renderer
 
 		VkDevice* VkDevicePtr;
@@ -97,7 +99,7 @@ namespace YimMenu
 
 		// Misc Renderer Related
 		HWND Hwnd;
-	
+
 		Functions::GetRendererInfo GetRendererInfo;
 		GraphicsOptions GameGraphicsOptions;
 

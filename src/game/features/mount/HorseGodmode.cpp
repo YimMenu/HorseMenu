@@ -5,6 +5,7 @@
 
 namespace YimMenu::Features
 {
+	//Doesn't work
 	class HorseGodmode : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;

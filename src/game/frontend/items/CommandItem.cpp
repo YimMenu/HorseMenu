@@ -39,7 +39,7 @@ namespace YimMenu
 		ImGui::SetNextWindowSize(ImVec2(500, 120));
 		if (ImGui::BeginPopupModal(windowLabel.data(), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar))
 		{
-			ImGui::BulletText("Hover over the command name to change its hotkey");
+			ImGui::BulletText("Hold the command name clicked to change its hotkey");
 			ImGui::BulletText("Press any registered key to remove");
 			ImGui::Separator();
 

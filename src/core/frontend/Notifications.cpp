@@ -5,17 +5,17 @@
 
 namespace YimMenu
 {
-	void Notifications::ShowImpl(std::string title, std::string message, NotificationType type, int duration, std::function<void()> context_function, std::string context_function_name)
+	Notification Notifications::ShowImpl(std::string title, std::string message, NotificationType type, int duration, std::function<void()> context_function, std::string context_function_name)
 	{
 		if (title.empty() || message.empty())
-			return;
+			return {};
 
 		auto exists = std::find_if(m_Notifications.begin(), m_Notifications.end(), [&](auto& notification) {
 			return notification.second.GetIdentifier() == std::string(title + message);
 		});
 
 		if (exists != m_Notifications.end())
-			return;
+			return {};
 
 		Notification notification{};
 		notification.m_Title      = title;
@@ -30,10 +30,21 @@ namespace YimMenu
 			notification.m_context_function_name = context_function_name.empty() ? "Context Function" : context_function_name;
 		}
 
-		m_Notifications.insert(std::make_pair(title + message, notification));
+		auto result = m_Notifications.insert(std::make_pair(title + message, notification));
+
+		return notification;
 	}
 
-	// Could arguably look a bit nicer
+	bool Notifications::EraseImpl(Notification notification)
+	{
+		for (auto& [id, n] : m_Notifications)
+			if (id == notification.GetIdentifier())
+			{
+				n.erasing = true;
+				return true;
+			}
+	}
+
 	static void DrawNotification(Notification& notification, int position)
 	{
 		float y_pos = position * 100;
@@ -103,18 +114,28 @@ namespace YimMenu
 		{
 			DrawNotification(notification, position);
 			
-			if(notification.m_AnimationOffset < 0)
-				notification.m_AnimationOffset += m_CardAnimationSpeed;
+			if (!notification.erasing)
+			{
+				if (notification.m_AnimationOffset < 0)
+					notification.m_AnimationOffset += m_CardAnimationSpeed;
 
-			//Need this to account for changes in card size (x dimension), custom increments might result in odd numbers
-			if(notification.m_AnimationOffset > 0)
-				notification.m_AnimationOffset = 0.f;
+				//Need this to account for changes in card size (x dimension), custom increments might result in odd numbers
+				if (notification.m_AnimationOffset > 0)
+					notification.m_AnimationOffset = 0.f;
+			}
+			else
+			{
+				notification.m_AnimationOffset -= m_CardAnimationSpeed;
+				if (notification.m_AnimationOffset <= -m_CardSizeX)
+					m_Notifications.erase(id);
+			}
+			
 			
 			if ((float)std::chrono::duration_cast<std::chrono::milliseconds>(
 			        std::chrono::system_clock::now() - notification.m_created_on)
 			        .count()
 			    >= notification.m_Duration)
-				m_Notifications.erase(id);
+				Erase(notification);
 
 			position++;
 		}

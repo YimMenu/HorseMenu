@@ -2,6 +2,7 @@
 #include "Menu.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "game/bigfeatures/Esp.hpp"
 
 namespace YimMenu
 {
@@ -21,6 +22,11 @@ namespace YimMenu
 			    Notifications::Draw();
 		    },
 		    -2);
+		Renderer::AddRendererCallBack(
+		    [&] {
+			    Esp::Draw();
+		    },
+		    -3);
 	}
 
 	GUI::~GUI()
