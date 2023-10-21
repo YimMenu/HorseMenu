@@ -110,17 +110,17 @@ namespace YimMenu::Submenus
 		}
 
 		{
-			auto trolling = std::make_shared<Category>("Trolling");
+			auto toxic = std::make_shared<Category>("Toxic");
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(popPlayerList);
 			}));
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				if (ImGui::Button("Explode"))
 				{
 					FiberPool::Push([] {
@@ -135,35 +135,7 @@ namespace YimMenu::Submenus
 			}));
 
 
-			AddCategory(std::move(trolling));
-		}
-
-		{
-			auto toxic = std::make_shared<Category>("Toxic");
-
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				drawPlayerList(true);
-			}));
-
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-
 			AddCategory(std::move(toxic));
-		}
-
-		{
-			auto kick = std::make_shared<Category>("Kick"); // would we ever find one?
-
-			kick->AddItem(std::make_shared<ImGuiItem>([] {
-				drawPlayerList(true);
-			}));
-
-			kick->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-
-			AddCategory(std::move(kick));
 		}
 	}
 }
