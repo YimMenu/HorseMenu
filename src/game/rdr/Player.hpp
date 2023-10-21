@@ -1,5 +1,5 @@
 #pragma once
-#include "Entity.hpp"
+#include "Ped.hpp"
 
 class CNetGamePlayer;
 
@@ -32,7 +32,8 @@ namespace YimMenu
 		const char* GetName();
 		CNetGamePlayer* GetHandle();
 		rage::rlGamerInfo* GetGamerInfo();
-		Entity GetPed();
+		Ped GetPed();
 		bool operator==(Player other);
 	};
+	static_assert(sizeof(Player) == 8, "don't add anything else to Player");
 }

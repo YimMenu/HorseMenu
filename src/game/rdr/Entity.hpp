@@ -40,6 +40,7 @@ namespace YimMenu
 			return m_Handle;
 		}
 
+		bool IsValid();
 		constexpr bool IsAlive();
 		constexpr rage::fvector3 GetPosition();
 		constexpr void SetPosition(rage::fvector3 position);

@@ -16,6 +16,11 @@ namespace YimMenu
 		m_Handle = Pointers.PtrToHandle(m_Pointer);
 	}
 
+	bool Entity::IsValid()
+	{
+		return m_Handle != -1 || m_Pointer != nullptr;
+	}
+
 	constexpr bool Entity::IsAlive()
 	{
 		return !ENTITY::IS_ENTITY_DEAD(GetHandle());

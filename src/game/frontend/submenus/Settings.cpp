@@ -31,19 +31,14 @@ namespace YimMenu::Submenus
 		}
 	};
 
-	static void Online()
-	{
-		ImGui::Checkbox("Esp", &g_Esp);
-	}
-
 	Settings::Settings() :
 	    Submenu::Submenu("Settings")
 	{
 		auto hotkeys = std::make_shared<Category>("Hotkeys");
-		auto online = std::make_shared<Category>("Online");
+		auto gui = std::make_shared<Category>("GUI");
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
-		online->AddItem(std::make_shared<ImGuiItem>(Online));
+		gui->AddItem(std::make_shared<BoolCommandItem>("esp"_J));
 		AddCategory(std::move(hotkeys));
-		AddCategory(std::move(online));
+		AddCategory(std::move(gui));
 	}
 }

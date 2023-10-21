@@ -1,8 +1,8 @@
 #include "GUI.hpp"
 #include "Menu.hpp"
+#include "ESP.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/frontend/Notifications.hpp"
-#include "game/bigfeatures/Esp.hpp"
 
 namespace YimMenu
 {
@@ -24,7 +24,7 @@ namespace YimMenu
 		    -2);
 		Renderer::AddRendererCallBack(
 		    [&] {
-			    Esp::Draw();
+			    ESP::Draw();
 		    },
 		    -3);
 	}

@@ -7,8 +7,7 @@
 #include "game/rdr/Enums.hpp"
 #include "game/backend/Players.hpp"
 #include "core/frontend/Notifications.hpp"
-#include "game/backend/FiberPool.hpp" 
-#include "game/bigfeatures/Esp.hpp"
+#include "game/backend/FiberPool.hpp"
 
 namespace YimMenu
 {
@@ -118,19 +117,5 @@ namespace YimMenu
 
 			ScriptMgr::Yield();
 		}
-	}
-
-	void UpdatePlayerInfo()
-	{
-		while (true)
-		{
-			for (auto& [id, player] : YimMenu::Players::GetPlayers())
-			{
-				player.UpdateBoneCoords();
-			}
-
-			ScriptMgr::Yield();
-		}
-		
 	}
 }
