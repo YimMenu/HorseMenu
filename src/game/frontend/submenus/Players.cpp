@@ -174,12 +174,41 @@ namespace YimMenu::Submenus
 					});
 				}
 
-				if (ImGui::Button("Test 9"))
+				if (ImGui::Button("Test 10"))
 				{
 					FiberPool::Push([] {
-						using Rg = void (*)(__int16, bool, int);
-						Rg rg    = (Rg)((__int64)GetModuleHandleA(0) + 0x23f5244);
-						rg(YimMenu::Players::GetSelected().GetPed().GetNetworkObjectId(), true, 0);
+						MISC::SET_CHEAT_ACTIVE(4);
+					});
+				}
+
+				
+				if (ImGui::Button("Test 11"))
+				{
+					FiberPool::Push([] {
+						using LP = void (*)(void* looter, void*, bool, bool);
+						LP lp    = (LP)((__int64)GetModuleHandleA(0) + 0x23f3324);
+						lp(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(), Pointers.GetLocalPed(), true, true);
+					});
+				}
+
+				if (ImGui::Button("Test 12"))
+				{
+					FiberPool::Push([] {
+						using GM = void*(*)(void*);
+						using SM = void (*)(void*, int, float, void*, bool); // PED::_SET_PED_MOTIVATION
+						GM gm    = (GM)((__int64)GetModuleHandleA(0) + 0xcb8ee8);
+						SM sm    = (SM)((__int64)GetModuleHandleA(0) + 0x9a2ab0);
+						sm(gm(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>()), 10, 999.0f, nullptr, true);
+					});
+				}
+
+				if (ImGui::Button("Test 13"))
+				{
+					FiberPool::Push([] {
+						using CS = void (*)(void*, void*, float);
+						CS cs    = (CS)((__int64)GetModuleHandleA(0) + 0x23f64d0);
+						cs(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(),
+						    YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(), -9999.0f); // positive to add
 					});
 				}
 			}));
