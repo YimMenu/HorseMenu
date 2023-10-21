@@ -85,7 +85,8 @@ namespace YimMenu
 		//TODO Boxes, Distance colors, Friendlies, Tracers
 
 		//Make this a setting
-		DrawSkeleton(plyr, drawList, ImColor(255, 255, 255, 255));
+		if (distanceToPlayer < 100.f)
+			DrawSkeleton(plyr, drawList, ImColor(255, 255, 255, 255));
 	}
 
 	void Esp::Draw()

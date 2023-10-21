@@ -11,7 +11,7 @@ namespace YimMenu::Submenus
 	// TODO: refactor this
 	static void Hotkeys()
 	{
-		ImGui::BulletText("Hover over the command name to change its hotkey");
+		ImGui::BulletText("Hold the command name clicked to change its hotkey");
 		ImGui::BulletText("Press any registered key to remove");
 		
 		ImGui::Spacing();
