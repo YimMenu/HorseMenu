@@ -14,13 +14,26 @@ namespace YimMenu::Submenus
 	bool popPlayerList = true; //TODO make optional
 	void drawPlayerList(bool external, float offset = 15.0f)
 	{
+		struct ComparePlayerNames
+		{
+			bool operator()(YimMenu::Player a, YimMenu::Player b) const
+			{
+				std::string nameA = a.GetName();
+				std::string nameB = b.GetName();
+				return nameA < nameB;
+			}
+		};
+
+		std::map<uint8_t, Player, ComparePlayerNames> sortedPlayers(YimMenu::Players::GetPlayers().begin(),
+		    YimMenu::Players::GetPlayers().end());
+
 		if (external)
 		{
 			ImGui::SetNextWindowPos(
 			    ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x + offset, ImGui::GetWindowPos().y));
 			ImGui::SetNextWindowSize(ImVec2(150, ImGui::GetWindowSize().y));
 			ImGui::Begin("Player List", nullptr, ImGuiWindowFlags_NoDecoration);
-			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+			for (auto& [id, player] : sortedPlayers)
 			{
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
@@ -31,7 +44,7 @@ namespace YimMenu::Submenus
 		}
 		else
 		{
-			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+			for (auto& [id, player] : sortedPlayers)
 			{
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
