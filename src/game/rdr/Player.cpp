@@ -56,7 +56,7 @@ namespace YimMenu
 
 	bool Player::operator==(Player other)
 	{
-		return m_Handle == other.m_Handle;
+		return m_NetPlayer == other.m_NetPlayer;
 	}
 
 	BoneCoords Player::GetBoneCoords()
