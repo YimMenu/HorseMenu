@@ -14,13 +14,26 @@ namespace YimMenu::Submenus
 	bool popPlayerList = true; //TODO make optional
 	void drawPlayerList(bool external, float offset = 15.0f)
 	{
+		struct ComparePlayerNames
+		{
+			bool operator()(YimMenu::Player a, YimMenu::Player b) const
+			{
+				std::string nameA = a.GetName();
+				std::string nameB = b.GetName();
+				return nameA < nameB;
+			}
+		};
+
+		std::map<uint8_t, Player, ComparePlayerNames> sortedPlayers(YimMenu::Players::GetPlayers().begin(),
+		    YimMenu::Players::GetPlayers().end());
+
 		if (external)
 		{
 			ImGui::SetNextWindowPos(
 			    ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x + offset, ImGui::GetWindowPos().y));
 			ImGui::SetNextWindowSize(ImVec2(150, ImGui::GetWindowSize().y));
 			ImGui::Begin("Player List", nullptr, ImGuiWindowFlags_NoDecoration);
-			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+			for (auto& [id, player] : sortedPlayers)
 			{
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
@@ -31,7 +44,7 @@ namespace YimMenu::Submenus
 		}
 		else
 		{
-			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+			for (auto& [id, player] : sortedPlayers)
 			{
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
@@ -66,7 +79,9 @@ namespace YimMenu::Submenus
 				{
 					FiberPool::Push([]{
 						auto playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()), true, true);
-						Teleport::TeleportEntity(Self::PlayerPed, playerCoords);
+						if(Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+							g_Spectating = false;
+						
 					});
 				}
 			}));
@@ -95,17 +110,17 @@ namespace YimMenu::Submenus
 		}
 
 		{
-			auto trolling = std::make_shared<Category>("Trolling");
+			auto toxic = std::make_shared<Category>("Toxic");
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(popPlayerList);
 			}));
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				if (ImGui::Button("Explode"))
 				{
 					FiberPool::Push([] {
@@ -114,42 +129,13 @@ namespace YimMenu::Submenus
 						    true,
 						    true);
 
-
 						FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, 22, 1.0f, true, false, 1.0f);
 					});
 				};
 			}));
 
 
-			AddCategory(std::move(trolling));
-		}
-
-		{
-			auto toxic = std::make_shared<Category>("Toxic");
-
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				drawPlayerList(true);
-			}));
-
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-
 			AddCategory(std::move(toxic));
-		}
-
-		{
-			auto kick = std::make_shared<Category>("Kick"); // would we ever find one?
-
-			kick->AddItem(std::make_shared<ImGuiItem>([] {
-				drawPlayerList(true);
-			}));
-
-			kick->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-
-			AddCategory(std::move(kick));
 		}
 	}
 }

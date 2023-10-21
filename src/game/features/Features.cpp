@@ -7,6 +7,8 @@
 #include "game/rdr/Enums.hpp"
 #include "game/backend/Players.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "game/backend/FiberPool.hpp" 
+#include "game/bigfeatures/Esp.hpp"
 
 namespace YimMenu
 {
@@ -30,6 +32,8 @@ namespace YimMenu
 			Self::Mount = PLAYER::GET_MOUNT_OWNED_BY_PLAYER(Self::Id);
 		else
 			Self::Mount = 0;
+
+		Self::IsOnMount = PED::IS_PED_ON_MOUNT(Self::PlayerPed);
 	}
 
 	void SpectateTick()
@@ -55,6 +59,14 @@ namespace YimMenu
 		}
 	}
 
+	
+	void BlockAllControls()
+	{
+		FiberPool::Push([] {
+			PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
+		});
+	}
+
 	void FeatureLoop()
 	{
 		while (true)
@@ -66,6 +78,7 @@ namespace YimMenu
 			Commands::RunLoopedCommands();
 			g_HotkeySystem.FeatureCommandsHotkeyLoop();
 			SpectateTick();
+
 			ScriptMgr::Yield();
 		}
 	}
@@ -94,9 +107,30 @@ namespace YimMenu
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK2, 1);
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_NEXT_WEAPON, 1);
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_PREV_WEAPON, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_AIM, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_AIM, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_ATTACK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_ATTACK2, 1);
 			}
 
 			ScriptMgr::Yield();
 		}
+	}
+
+	void UpdatePlayerInfo()
+	{
+		while (true)
+		{
+			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+			{
+				player.UpdateBoneCoords();
+			}
+
+			ScriptMgr::Yield();
+		}
+		
 	}
 }

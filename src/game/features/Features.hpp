@@ -11,12 +11,19 @@ namespace YimMenu
 		inline Vector3 Rot;
 		inline Vehicle Veh;
 		inline Ped Mount;
+		inline bool IsOnMount;
 	}
 
 	inline bool g_Spectating = false;
 	inline int g_SpectateId = -1;
+	inline bool g_BlockControls = false;
+
+	// TODO : Move these to a better place and make seriazable
+	inline bool g_Esp           = false; 
 
 	void FeatureLoop();
 	void BlockControlsForUI();
+	void BlockAllControls();
 	void SpectateTick();
+	void UpdatePlayerInfo();
 }

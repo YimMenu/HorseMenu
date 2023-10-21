@@ -98,4 +98,18 @@ namespace YimMenu
 		std::vector<std::shared_ptr<UIItem>> m_Items;
 		int m_Columns;
 	};
+
+	class InputTextWithHint : public UIItem
+	{
+	public:
+		explicit InputTextWithHint(std::string label, std::string hint, std::string* buf, ImGuiInputTextFlags_ flag = ImGuiInputTextFlags_None, std::function<void()> cb = nullptr);
+		void Draw() override;
+
+	private:
+		std::string m_Id;
+		std::string m_Hint;
+		std::string* m_Buf;
+		ImGuiInputTextFlags_ m_Flag;
+		std::function<void()> m_Callback;
+	};
 }

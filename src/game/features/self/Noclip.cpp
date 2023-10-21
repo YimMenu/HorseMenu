@@ -2,10 +2,11 @@
 #include "game/features/Features.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/backend/ScriptMgr.hpp"
 
 namespace YimMenu::Features
 {
-	static constexpr eNativeInputs controls[] = {eNativeInputs::INPUT_SPRINT, eNativeInputs::INPUT_MOVE_UP_ONLY, eNativeInputs::INPUT_MOVE_DOWN_ONLY, eNativeInputs::INPUT_MOVE_LEFT_ONLY, eNativeInputs::INPUT_MOVE_RIGHT_ONLY, eNativeInputs::INPUT_DUCK};
+	static constexpr eNativeInputs controls[] = {eNativeInputs::INPUT_SPRINT, eNativeInputs::INPUT_MOVE_UP_ONLY, eNativeInputs::INPUT_MOVE_DOWN_ONLY, eNativeInputs::INPUT_MOVE_LEFT_ONLY, eNativeInputs::INPUT_MOVE_RIGHT_ONLY, eNativeInputs::INPUT_DUCK, eNativeInputs::INPUT_HORSE_STOP};
 	static constexpr float speed = 0.57f;
 
 	class Noclip : public LoopedCommand
@@ -43,7 +44,7 @@ namespace YimMenu::Features
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_SPRINT))
 				vel.z += speed / 2;
 			// Left Control
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_DUCK))
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_DUCK) || PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_HORSE_STOP))
 				vel.z -= speed / 2;
 			// Forward
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_MOVE_UP_ONLY))
@@ -92,6 +93,7 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
+			ScriptMgr::Yield(10ms);
 			ENTITY::FREEZE_ENTITY_POSITION(m_Entity, false);
 			ENTITY::SET_ENTITY_COLLISION(m_Entity, true, false);
 		}

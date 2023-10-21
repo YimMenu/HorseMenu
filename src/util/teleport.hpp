@@ -10,6 +10,7 @@ namespace YimMenu::Teleport
 	{
 		float groundZ;
 		bool done = false;
+		auto notificationId = Notifications::Show("Streaming", "Loading ground at coords", NotificationType::Info, 5000);
 
 		for (int i = 0; i < 20; i++)
 		{
@@ -36,10 +37,13 @@ namespace YimMenu::Teleport
 
 			if (done)
 			{
+				Notifications::Erase(notificationId);
+	
 				return true;
 			}
 		}
 
+		Notifications::Erase(notificationId);
 		Notifications::Show("Streaming", "Failed loading ground at coords", NotificationType::Warning);
 
 		coords.z = 1000.f;
@@ -62,6 +66,7 @@ namespace YimMenu::Teleport
 		if (LoadGroundAtCoords(coords))
 		{
 			ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ent, coords.x, coords.y, coords.z, false, false, false);
+			Notifications::Show("Teleport", "Teleported entity to coords", NotificationType::Success);
 		}
 
 		return true;

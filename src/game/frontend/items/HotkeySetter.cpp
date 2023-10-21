@@ -26,8 +26,8 @@ namespace YimMenu
 			}
 			else
 			{
-				ImGui::Text(Command->GetLabel().data());
-				CommandHotkeyLink->Listening = ImGui::IsItemHovered();
+				ImGui::Button(Command->GetLabel().data());
+				CommandHotkeyLink->Listening = ImGui::IsItemActive();
 
 				if (CommandHotkeyLink->Listening)
 				{
