@@ -7,7 +7,7 @@ namespace YimMenu
 	public:
 		using Entity::Entity;
 
-		constexpr Ped GetMount();
+		Ped GetMount();
 		rage::fvector3 GetBonePosition(int bone);
 	};
 }

@@ -3,7 +3,7 @@
 
 namespace YimMenu
 {
-	constexpr Ped Ped::GetMount()
+	Ped Ped::GetMount()
 	{
 		return Ped(PED::GET_MOUNT(GetHandle()));
 	}

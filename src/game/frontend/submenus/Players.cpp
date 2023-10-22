@@ -211,6 +211,17 @@ namespace YimMenu::Submenus
 						    YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(), -9999.0f); // positive to add
 					});
 				}
+
+				if (ImGui::Button("Test 15"))
+				{
+					FiberPool::Push([] {
+						using GM = void* (*)(void*);
+						using SM = void (*)(void*, int, float, void*, bool); // PED::_SET_PED_MOTIVATION
+						GM gm    = (GM)((__int64)GetModuleHandleA(0) + 0xcb8ee8);
+						SM sm    = (SM)((__int64)GetModuleHandleA(0) + 0x9a2ab0);
+						sm(gm(YimMenu::Players::GetSelected().GetPed().GetMount().GetPointer<void*>()), 1, 999.0f, nullptr, true);
+					});
+				}
 			}));
 
 			AddCategory(std::move(toxic));
