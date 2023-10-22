@@ -38,24 +38,25 @@ namespace YimMenu
 
 	void SpectateTick()
 	{
-		if(g_SpectateId != Players::GetSelected().GetId() && g_Spectating)
+		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating)
 		{
 			g_SpectateId = Players::GetSelected().GetId();
-			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
+			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, Players::GetSelected().GetPed().GetHandle());
 		}
 
-		if(g_Spectating)
+		if (g_Spectating)
 		{
-			if(!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
+			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, Players::GetSelected().GetPed().GetHandle()),
+				    STREAMING::SET_FOCUS_ENTITY(Players::GetSelected().GetPed().GetHandle());
 
-			if(!Players::GetSelected().IsValid() || !NETWORK::NETWORK_IS_PLAYER_CONNECTED(Players::GetSelected().GetId()))
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId())), g_Spectating = false, Notifications::Show("Spectate", "Player is no longer in the session.\nSpectate mode disabled.", NotificationType::Warning);
+			if (!Players::GetSelected().IsValid() || !NETWORK::NETWORK_IS_PLAYER_CONNECTED(Players::GetSelected().GetId()))
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, 0), g_Spectating = false, Notifications::Show("Spectate", "Player is no longer in the session.\nSpectate mode disabled.", NotificationType::Warning);
 		}
 		else
 		{
-			if(NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
+			if (NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, 0);
 		}
 	}
 
