@@ -7,7 +7,5 @@ namespace YimMenu::Hooks
 	void Misc::ThrowFatalError(int code, int fileHash, int fileLine)
 	{
 		LOG(FATAL) << "RECEIVED FATAL ERROR | Code = " << HEX((uint32_t)code) << " | FileHash = " << HEX((uint32_t)fileHash) << " | FileLine = " << (uint32_t)fileLine << " | ReturnAddress = " << HEX((__int64)_ReturnAddress() - (__int64)GetModuleHandle(0));
-		
-		BaseHook::Get<Misc::ThrowFatalError, DetourHook<decltype(&Misc::ThrowFatalError)>>()->Original()(code, fileHash, fileLine); //Function is noreturn
 	}
 }

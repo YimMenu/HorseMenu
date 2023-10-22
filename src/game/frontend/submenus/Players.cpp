@@ -12,7 +12,7 @@
 namespace YimMenu::Submenus
 {
 	bool popPlayerList = true; //TODO make optional
-	void drawPlayerList(bool external, float offset = 15.0f)
+	void drawPlayerList(bool external, float offset = 25.0f)
 	{
 		struct ComparePlayerNames
 		{
@@ -33,6 +33,8 @@ namespace YimMenu::Submenus
 			    ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x + offset, ImGui::GetWindowPos().y));
 			ImGui::SetNextWindowSize(ImVec2(150, ImGui::GetWindowSize().y));
 			ImGui::Begin("Player List", nullptr, ImGuiWindowFlags_NoDecoration);
+
+			ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 			for (auto& [id, player] : sortedPlayers)
 			{
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
@@ -61,13 +63,11 @@ namespace YimMenu::Submenus
 			auto main   = std::make_shared<Category>("Main");
 			auto column = std::make_shared<Column>(2);
 
-			auto playersListGroup = std::make_shared<Group>("Players");
+			auto playerOptionsGroup = std::make_shared<Group>("Info", ImVec2(0, 250));
 
-			playersListGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				drawPlayerList(false);
+			main->AddItem(std::make_shared<ImGuiItem>([] {
+				drawPlayerList(true);
 			}));
-
-			auto playerOptionsGroup = std::make_shared<Group>("Info");
 
 			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
@@ -84,13 +84,22 @@ namespace YimMenu::Submenus
 						
 					});
 				}
+				if (ImGui::Button("Teleport Behind"))
+				{
+					FiberPool::Push([] {
+						auto playerCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(
+						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
+						    0,
+						    -10,
+						    0);
+						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+							g_Spectating = false;
+					});
+				}
 			}));
 
 			column->AddColumnOffset(1, 160);
-			column->AddItem(playersListGroup);
-			column->AddNextColumn();
 			column->AddItem(playerOptionsGroup);
-
 			main->AddItem(column);
 			AddCategory(std::move(main));
 		}
@@ -102,25 +111,19 @@ namespace YimMenu::Submenus
 				drawPlayerList(popPlayerList);
 			}));
 
-			helpful->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-
 			AddCategory(std::move(helpful));
 		}
 
 		{
-			auto toxic = std::make_shared<Category>("Toxic");
+			auto toxic     = std::make_shared<Category>("Toxic");
+			auto columns   = std::make_shared<Column>(2);
+			auto miscGroup = std::make_shared<Group>("Misc", ImVec2(0, 250));
 
 			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(popPlayerList);
 			}));
 
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
+			miscGroup->AddItem(std::make_shared<ImGuiItem>([] {
 				if (ImGui::Button("Explode"))
 				{
 					FiberPool::Push([] {
@@ -134,6 +137,9 @@ namespace YimMenu::Submenus
 				};
 			}));
 
+			columns->AddColumnOffset(1, 160);
+			columns->AddItem(miscGroup);
+			toxic->AddItem(columns);
 
 			AddCategory(std::move(toxic));
 		}
