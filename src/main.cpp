@@ -47,6 +47,7 @@ namespace YimMenu
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
 		ScriptMgr::AddScript(std::make_unique<Script>(&UpdatePlayerInfo));
+		ScriptMgr::AddScript(std::make_unique<Script>(&ContextMenuTick));
 		
 		Notifications::Show("HorseMenu", "Loaded succesfully", NotificationType::Success);
 

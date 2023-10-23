@@ -27,4 +27,5 @@ namespace YimMenu
 	void BlockAllControls();
 	void SpectateTick();
 	void UpdatePlayerInfo();
+	void ContextMenuTick();
 }
