@@ -3,6 +3,7 @@
 #include "core/renderer/Renderer.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/bigfeatures/Esp.hpp"
+#include "game/bigfeatures/ContextMenu.hpp"
 
 namespace YimMenu
 {
@@ -27,6 +28,12 @@ namespace YimMenu
 			    Esp::Draw();
 		    },
 		    -3);
+
+		Renderer::AddRendererCallBack(
+		    [&] {
+			    ContextMenu::DrawContextMenu();
+		    },
+		    -4);
 	}
 
 	GUI::~GUI()

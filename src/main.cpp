@@ -12,6 +12,7 @@
 #include "core/settings/Settings.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/bigfeatures/CustomTeleport.hpp"
+#include "game/bigfeatures/ContextMenu.hpp"
 
 namespace YimMenu
 {
