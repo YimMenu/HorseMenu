@@ -6,6 +6,7 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
+#include "game/backend/FiberPool.hpp"
 
 namespace YimMenu
 {
@@ -68,7 +69,7 @@ namespace YimMenu
 			auto handle   = GetEntityHandleClosestToMiddleOfScreenImpl(true);
 			auto menuType = ContextMenuEntityType::Player;
 
-			static auto swithcToMenu = [&](ContextOperationsMenu menu) -> void {
+			static auto switchToMenu = [&](ContextOperationsMenu menu) -> void {
 				if (m_CurrentOperationsMenu != menu)
 				{
 					m_CurrentOperationsMenu = menu;
@@ -82,17 +83,17 @@ namespace YimMenu
 				if (ENTITY::IS_ENTITY_A_PED(m_EntityHandle))
 				{
 					if (PED::IS_PED_A_PLAYER(m_EntityHandle))
-						menuType = ContextMenuEntityType::Player, swithcToMenu(ContextMenuPlayers);
+						menuType = ContextMenuEntityType::Player, switchToMenu(ContextMenuPlayers);
 					else
-						menuType = ContextMenuEntityType::Ped, swithcToMenu(ContextMenuDefault);
+						menuType = ContextMenuEntityType::Ped, switchToMenu(ContextMenuDefault); //TODO Create Ped menu
 				}
 				else if (ENTITY::IS_ENTITY_A_VEHICLE(m_EntityHandle))
 				{
-					menuType = ContextMenuEntityType::Vehicle, swithcToMenu(ContextMenuDefault);
+					menuType = ContextMenuEntityType::Vehicle, switchToMenu(ContextMenuDefault); //TODO Create Vehicle menu
 				}
 				else if (ENTITY::IS_ENTITY_AN_OBJECT(m_EntityHandle))
 				{
-					menuType = ContextMenuEntityType::Object, swithcToMenu(ContextMenuDefault);
+					menuType = ContextMenuEntityType::Object, switchToMenu(ContextMenuDefault); //TODO Create Object menu
 				}
 
 				if (m_CurrentOperationsMenu.m_SelectedOperation.m_Name.empty())
@@ -115,8 +116,10 @@ namespace YimMenu
 					m_CurrentOperationsMenu.SelectNext();
 
 				if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)eNativeInputs::INPUT_ATTACK))
-					m_CurrentOperationsMenu.m_SelectedOperation.m_Operation();
-
+					FiberPool::Push([=] {
+						m_CurrentOperationsMenu.m_SelectedOperation.m_Operation();
+					});
+					
 				m_MenuIsInitialized = true;
 			}
 			else
@@ -130,6 +133,10 @@ namespace YimMenu
 	void DrawOperation(ContextMenuOperation operation, bool selected, int position, ImDrawList* drawList)
 	{
 		auto screenPos = ContextMenu::GetScreenPos();
+
+		//Make compatible with ESP
+		if (g_Esp)
+			screenPos.y += 20;
 
 		if (position > 0)
 			screenPos.y += (m_OperationCardY * position) + 2 /*Margin between operation cards*/;
