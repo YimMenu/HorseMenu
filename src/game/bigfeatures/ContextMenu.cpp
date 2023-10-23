@@ -109,12 +109,10 @@ namespace YimMenu
 				PAD::DISABLE_CONTROL_ACTION(0, (int)eNativeInputs::INPUT_ATTACK, true);
 
 				if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)eNativeInputs::INPUT_PREV_WEAPON))
-					m_CurrentOperationsMenu.SelectPrevious(),
-					    LOG(INFO) << "Prev option: " << m_CurrentOperationsMenu.m_SelectedOperation.m_Name;
+					m_CurrentOperationsMenu.SelectPrevious();
 
 				if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)eNativeInputs::INPUT_NEXT_WEAPON))
-					m_CurrentOperationsMenu.SelectNext(),
-					    LOG(INFO) << "Next option: " << m_CurrentOperationsMenu.m_SelectedOperation.m_Name;
+					m_CurrentOperationsMenu.SelectNext();
 
 				if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)eNativeInputs::INPUT_ATTACK))
 					m_CurrentOperationsMenu.m_SelectedOperation.m_Operation();
