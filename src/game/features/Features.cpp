@@ -156,16 +156,6 @@ namespace YimMenu
 			{
 				player.UpdateBoneCoords();
 			}
-
-			if (g_ContextMenu)
-			{
-				ContextMenu::HandleEntityAndMenu();
-
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_SWITCH_SHOULDER, true);
-				if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (Hash)eNativeInputs::INPUT_SWITCH_SHOULDER))
-					*ContextMenu::GetEnabled() = !*ContextMenu::GetEnabled();
-			}
-
 			ScriptMgr::Yield();
 		}
 	}
