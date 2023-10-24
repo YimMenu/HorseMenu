@@ -8,6 +8,7 @@
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
 #include "util/teleport.hpp"
+#include "util/network.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -75,13 +76,15 @@ namespace YimMenu::Submenus
 
 				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 				//Button Widget crashes the game, idk why. Changed to regular for now.
-				if(ImGui::Button("Teleport To"))
+				if (ImGui::Button("Teleport To"))
 				{
-					FiberPool::Push([]{
-						auto playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()), true, true);
-						if(Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+					FiberPool::Push([] {
+						auto playerCoords = ENTITY::GET_ENTITY_COORDS(
+						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
+						    true,
+						    true);
+						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
 							g_Spectating = false;
-						
 					});
 				}
 				if (ImGui::Button("Teleport Behind"))

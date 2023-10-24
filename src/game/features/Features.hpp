@@ -20,10 +20,12 @@ namespace YimMenu
 
 	// TODO : Move these to a better place and make seriazable
 	inline bool g_Esp           = false; 
+	inline bool g_ContextMenu   = false; 
 
 	void FeatureLoop();
 	void BlockControlsForUI();
 	void BlockAllControls();
 	void SpectateTick();
 	void UpdatePlayerInfo();
+	void ContextMenuTick();
 }

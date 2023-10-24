@@ -19,6 +19,7 @@ namespace rage
 	class scrThread;
 	class netEventMgr;
 	class netSyncTree;
+	class netObject;
 }
 
 namespace YimMenu
@@ -29,12 +30,14 @@ namespace YimMenu
 		using GetNativeHandler = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
 		using FixVectors       = void (*)(rage::scrNativeCallContext* call_ctx);
 		using SendEventAck = void (*)(rage::netEventMgr* eventMgr, void* event, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, int eventIndex, int handledBitset);
-		using HandleToPtr             = void* (*)(int handle);
-		using PtrToHandle             = int (*)(void* pointer);
-		using GetLocalPed             = CPed* (*)();
-		using GetSyncTreeForType      = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
-		using GetNetworkPlayerFromPid = CNetGamePlayer* (*)(uint8_t player);
-		using WorldToScreen           = bool (*)(float* world_coords, float* out_x, float* out_y);
+		using HandleToPtr               = void* (*)(int handle);
+		using PtrToHandle               = int (*)(void* pointer);
+		using GetLocalPed               = CPed* (*)();
+		using GetSyncTreeForType        = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
+		using GetNetworkPlayerFromPid   = CNetGamePlayer* (*)(uint8_t player);
+		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
+		using GetNetObjectById        = rage::netObject*(*)(uint16_t id);
+		using RequestControlOfNetObject = bool (*)(rage::netObject* netId, bool unk);
 	};
 
 	struct PointerData
@@ -80,6 +83,8 @@ namespace YimMenu
 		Functions::HandleToPtr HandleToPtr;
 		Functions::PtrToHandle PtrToHandle;
 		Functions::WorldToScreen WorldToScreen;
+		Functions::GetNetObjectById GetNetObjectById;
+		Functions::RequestControlOfNetObject RequestControlOfNetObject;
 
 		// Misc
 		PVOID ThrowFatalError;
@@ -111,6 +116,7 @@ namespace YimMenu
 		PVOID NetworkRequest;
 
 		CNetworkPlayerMgr* NetworkPlayerMgr;
+		void* NetObjMgr;
 
 		//Patches
 		bool* ExplosionBypass;
