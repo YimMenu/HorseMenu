@@ -6,15 +6,6 @@ namespace YimMenu
 	static inline float m_OperationCardX = 125.0f;
 	static inline float m_OperationCardY = 15.0f;
 
-	enum class ContextMenuEntityType
-	{
-		Any,
-		Player,
-		Ped,
-		Vehicle,
-		Object
-	};
-
 	struct ContextMenuOperation
 	{
 		std::string m_Name;

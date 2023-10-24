@@ -53,7 +53,6 @@ namespace YimMenu
 			if (CAM::HAS_LETTER_BOX())
 			{
 				CAM::_REQUEST_LETTER_BOX_NOW(false, false);
-				CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
 			}
 
 			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
@@ -82,7 +81,6 @@ namespace YimMenu
 				STREAMING::SET_FOCUS_ENTITY(Self::PlayerPed);
 				STREAMING::CLEAR_FOCUS();
 				CAM::_REQUEST_LETTER_BOX_NOW(false, false);
-				CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
 			}
 		}
 	}

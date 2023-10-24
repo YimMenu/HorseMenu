@@ -67,7 +67,6 @@ namespace YimMenu
 		if (m_Enabled && g_ContextMenu)
 		{
 			auto handle   = GetEntityHandleClosestToMiddleOfScreenImpl(true);
-			auto menuType = ContextMenuEntityType::Player;
 
 			static auto switchToMenu = [&](ContextOperationsMenu menu) -> void {
 				if (m_CurrentOperationsMenu != menu)
@@ -83,17 +82,17 @@ namespace YimMenu
 				if (ENTITY::IS_ENTITY_A_PED(m_EntityHandle))
 				{
 					if (PED::IS_PED_A_PLAYER(m_EntityHandle))
-						menuType = ContextMenuEntityType::Player, switchToMenu(ContextMenuPlayers);
+						switchToMenu(ContextMenuPlayers);
 					else
-						menuType = ContextMenuEntityType::Ped, switchToMenu(ContextMenuDefault); //TODO Create Ped menu
+						switchToMenu(ContextMenuDefault); //TODO Create Ped menu
 				}
 				else if (ENTITY::IS_ENTITY_A_VEHICLE(m_EntityHandle))
 				{
-					menuType = ContextMenuEntityType::Vehicle, switchToMenu(ContextMenuDefault); //TODO Create Vehicle menu
+					switchToMenu(ContextMenuDefault); //TODO Create Vehicle menu
 				}
 				else if (ENTITY::IS_ENTITY_AN_OBJECT(m_EntityHandle))
 				{
-					menuType = ContextMenuEntityType::Object, switchToMenu(ContextMenuDefault); //TODO Create Object menu
+					switchToMenu(ContextMenuDefault); //TODO Create Object menu
 				}
 
 				if (m_CurrentOperationsMenu.m_SelectedOperation.m_Name.empty())
