@@ -48,17 +48,12 @@ namespace YimMenu
 
 		if (g_Spectating)
 		{
-			auto playerPed = Players::GetSelected().GetPed().GetHandle();
-
-			if (CAM::HAS_LETTER_BOX())
-			{
-				CAM::_REQUEST_LETTER_BOX_NOW(false, false);
-			}
+			auto playerPed = PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId);
+			CAM::SET_CINEMATIC_MODE_ACTIVE(false);
 
 			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
 			{
 				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, playerPed);
-				STREAMING::SET_FOCUS_ENTITY(playerPed);
 			}
 
 			if (!STREAMING::IS_ENTITY_FOCUS(playerPed))
@@ -66,10 +61,9 @@ namespace YimMenu
 
 			if (!Players::GetSelected().IsValid() || !NETWORK::NETWORK_IS_PLAYER_CONNECTED(Players::GetSelected().GetId()))
 			{
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, 0);
-				STREAMING::SET_FOCUS_ENTITY(Self::PlayerPed);
-				g_Spectating = false;
 				STREAMING::CLEAR_FOCUS();
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::PlayerPed);
+				g_Spectating = false;
 				Notifications::Show("Spectate", "Player is no longer in the session.\nSpectate mode disabled.", NotificationType::Warning);
 			}
 		}
@@ -77,10 +71,10 @@ namespace YimMenu
 		{
 			if (NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
 			{
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::PlayerPed);
-				STREAMING::SET_FOCUS_ENTITY(Self::PlayerPed);
 				STREAMING::CLEAR_FOCUS();
-				CAM::_REQUEST_LETTER_BOX_NOW(false, false);
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::PlayerPed);
+				CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
+				CAM::_DISABLE_CINEMATIC_MODE_THIS_FRAME();
 			}
 		}
 	}
