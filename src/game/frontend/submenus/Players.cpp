@@ -128,6 +128,7 @@ namespace YimMenu::Submenus
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));

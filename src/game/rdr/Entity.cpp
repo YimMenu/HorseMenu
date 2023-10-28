@@ -13,7 +13,8 @@ namespace YimMenu
 
 	void Entity::PopulateHandle()
 	{
-		m_Handle = Pointers.PtrToHandle(m_Pointer);
+		if (m_Pointer)
+			m_Handle = Pointers.PtrToHandle(m_Pointer);
 	}
 
 	bool Entity::IsValid()
@@ -21,28 +22,28 @@ namespace YimMenu
 		return m_Handle != -1 || m_Pointer != nullptr;
 	}
 
-	constexpr bool Entity::IsAlive()
+	bool Entity::IsAlive()
 	{
 		return !ENTITY::IS_ENTITY_DEAD(GetHandle());
 	}
 
-	constexpr rage::fvector3 Entity::GetPosition()
+	rage::fvector3 Entity::GetPosition()
 	{
 		auto pos = ENTITY::GET_ENTITY_COORDS(GetHandle(), false, true);
 		return rage::fvector3(pos.x, pos.y, pos.z);
 	}
 
-	constexpr void Entity::SetPosition(rage::fvector3 position)
+	void Entity::SetPosition(rage::fvector3 position)
 	{
 		ENTITY::SET_ENTITY_COORDS(GetHandle(), position.x, position.y, position.z, false, true, true, true);
 	}
 
-	constexpr bool Entity::IsNetworked()
+	bool Entity::IsNetworked()
 	{
 		return GetPointer<rage::fwEntity*>()->m_NetObject != nullptr;
 	}
 
-	constexpr bool Entity::HasControl()
+	bool Entity::HasControl()
 	{
 		if (!IsNetworked())
 			return true;

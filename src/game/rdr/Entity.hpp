@@ -41,11 +41,11 @@ namespace YimMenu
 		}
 
 		bool IsValid();
-		constexpr bool IsAlive();
-		constexpr rage::fvector3 GetPosition();
-		constexpr void SetPosition(rage::fvector3 position);
-		constexpr bool IsNetworked();
-		constexpr bool HasControl();
+		bool IsAlive();
+		rage::fvector3 GetPosition();
+		void SetPosition(rage::fvector3 position);
+		bool IsNetworked();
+		bool HasControl();
 		std::uint16_t GetNetworkObjectId();
 	};
 }

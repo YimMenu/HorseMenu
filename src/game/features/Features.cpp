@@ -4,6 +4,10 @@
 #include "core/commands/HotkeySystem.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Players.hpp"
+#include "game/rdr/Enums.hpp"
+#include "game/frontend/GUI.hpp"
 
 namespace YimMenu
 {
@@ -33,13 +37,7 @@ namespace YimMenu
 
 	void SpectateTick()
 	{
-		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating)
-		{
-			g_SpectateId = Players::GetSelected().GetId();
-			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, Players::GetSelected().GetPed().GetHandle());
-		}
-
-		if (g_Spectating)
+		if (g_Spectating && Players::GetSelected().GetPed().IsValid())
 		{
 			auto playerPed = Players::GetSelected().GetPed().GetHandle();
 
@@ -49,34 +47,26 @@ namespace YimMenu
 				CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
 			}
 
-			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
+			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, playerPed);
+
+			if (!STREAMING::IS_ENTITY_FOCUS(playerPed) || g_SpectateId != Players::GetSelected().GetId())
 			{
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, playerPed);
 				STREAMING::SET_FOCUS_ENTITY(playerPed);
 			}
 
-			if (!STREAMING::IS_ENTITY_FOCUS(playerPed))
-				STREAMING::SET_FOCUS_ENTITY(playerPed);
-
-			if (!Players::GetSelected().IsValid() || !NETWORK::NETWORK_IS_PLAYER_CONNECTED(Players::GetSelected().GetId()))
+			if (!Players::GetSelected().IsValid())
 			{
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, 0);
-				STREAMING::SET_FOCUS_ENTITY(Self::PlayerPed);
-				g_Spectating = false;
-				STREAMING::CLEAR_FOCUS();
 				Notifications::Show("Spectate", "Player is no longer in the session.\nSpectate mode disabled.", NotificationType::Warning);
+				g_Spectating = false;
 			}
+			g_SpectateId = Players::GetSelected().GetId();
 		}
 		else
 		{
-			if (NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
-			{
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::PlayerPed);
-				STREAMING::SET_FOCUS_ENTITY(Self::PlayerPed);
-				STREAMING::CLEAR_FOCUS();
-				CAM::_REQUEST_LETTER_BOX_NOW(false, false);
-				CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
-			}
+			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::PlayerPed);
+			STREAMING::CLEAR_FOCUS();
+			CAM::_REQUEST_LETTER_BOX_NOW(false, false);
+			CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
 		}
 	}
 
