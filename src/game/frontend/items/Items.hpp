@@ -1,10 +1,16 @@
 #include "core/frontend/manager/UIItem.hpp"
 #include "util/Joaat.hpp"
+#include "game/frontend/GUI.hpp"
 
 namespace YimMenu
 {
 	class BoolCommand;
 	class Command;
+
+	inline ImVec2 GetListBoxDimensions()
+	{
+		return {300, 250};
+	}
 
 	class Button : public UIItem
 	{

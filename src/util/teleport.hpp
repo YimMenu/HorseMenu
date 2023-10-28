@@ -52,7 +52,7 @@ namespace YimMenu::Teleport
 	}
 
     //Entity typdef is being ambiguous with Entity class
-	inline bool TeleportEntity(int ent, Vector3& coords)
+	inline bool TeleportEntity(int ent, Vector3& coords, bool loadGround)
 	{
 		if (ENTITY::IS_ENTITY_A_PED(ent))
 		{
@@ -63,7 +63,15 @@ namespace YimMenu::Teleport
 		}
 
 		//TOOD request control of entity
-		if (LoadGroundAtCoords(coords))
+		if (loadGround)
+		{
+			if (LoadGroundAtCoords(coords))
+			{
+				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ent, coords.x, coords.y, coords.z, false, false, false);
+				Notifications::Show("Teleport", "Teleported entity to coords", NotificationType::Success);
+			}
+		}
+		else
 		{
 			ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ent, coords.x, coords.y, coords.z, false, false, false);
 			Notifications::Show("Teleport", "Teleported entity to coords", NotificationType::Success);

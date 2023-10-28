@@ -8,9 +8,9 @@ namespace YimMenu::Submenus
 	    Submenu::Submenu("Self")
 	{
 		auto main          = std::make_shared<Category>("Main");
-		auto globalsGroup  = std::make_shared<Group>("Globals", ImVec2(0, 250));
-		auto movementGroup = std::make_shared<Group>("Movement", ImVec2(0, 250));
-		auto toolsGroup    = std::make_shared<Group>("Tools", ImVec2(0, 250));
+		auto globalsGroup  = std::make_shared<Group>("Globals", GetListBoxDimensions());
+		auto movementGroup = std::make_shared<Group>("Movement", GetListBoxDimensions());
+		auto toolsGroup    = std::make_shared<Group>("Tools", GetListBoxDimensions());
 		auto columns       = std::make_shared<Column>(2);
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
@@ -40,14 +40,22 @@ namespace YimMenu::Submenus
 		AddCategory(std::move(main));
 
 		auto horse             = std::make_shared<Category>("Horse");
-		auto horseGlobalsGroup = std::make_shared<Group>("Globals");
+		auto columnsHorse      = std::make_shared<Column>(2);
+		auto horseGlobalsGroup = std::make_shared<Group>("Globals", GetListBoxDimensions());
+		auto horseToolsGroup   = std::make_shared<Group>("Tools", GetListBoxDimensions());
+
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsegodmode"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsenoragdoll"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsebarsfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsecoresfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseagitationlow"_J));
-		horseGlobalsGroup->AddItem(std::make_shared<CommandItem>("tpmounttoself"_J));
-		horse->AddItem(horseGlobalsGroup);
+		horseToolsGroup->AddItem(std::make_shared<CommandItem>("tpmounttoself"_J));
+
+		columnsHorse->AddItem(horseGlobalsGroup);
+		columnsHorse->AddNextColumn();
+		columnsHorse->AddItem(horseToolsGroup);
+
+		horse->AddItem(columnsHorse);
 		AddCategory(std::move(horse));
 	}
 }

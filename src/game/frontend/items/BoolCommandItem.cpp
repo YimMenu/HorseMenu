@@ -30,7 +30,7 @@ namespace YimMenu
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::SetTooltip(m_Command->GetDescription().data());
-			if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
+			if (GetAsyncKeyState(VK_OEM_3) & 0x8000)
 				ImGui::OpenPopup(std::format("{} Hotkey", m_Command->GetLabel()).data());
 		}
 

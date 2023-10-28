@@ -6,11 +6,11 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/bigfeatures/ContextMenu.hpp"
 #include "game/bigfeatures/Esp.hpp"
 #include "game/frontend/GUI.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
-#include "game/bigfeatures/ContextMenu.hpp"
 
 namespace YimMenu
 {
@@ -40,10 +40,11 @@ namespace YimMenu
 
 	void SpectateTick()
 	{
-		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating)
+		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating
+		    && ENTITY::DOES_ENTITY_EXIST(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId)))
 		{
 			g_SpectateId = Players::GetSelected().GetId();
-			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, Players::GetSelected().GetPed().GetHandle());
+			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId));
 		}
 
 		if (g_Spectating)
@@ -51,13 +52,15 @@ namespace YimMenu
 			auto playerPed = PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId);
 			CAM::SET_CINEMATIC_MODE_ACTIVE(false);
 
-			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
+			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE() && ENTITY::DOES_ENTITY_EXIST(playerPed))
 			{
 				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, playerPed);
 			}
 
-			if (!STREAMING::IS_ENTITY_FOCUS(playerPed))
-				STREAMING::SET_FOCUS_ENTITY(playerPed);
+			if (GRAPHICS::_ANIMPOSTFX_IS_TAG_PLAYING("SpectateFilter"))
+			{
+				GRAPHICS::_ANIMPOSTFX_STOP_TAG("SpectateFilter");
+			}
 
 			if (!Players::GetSelected().IsValid() || !NETWORK::NETWORK_IS_PLAYER_CONNECTED(Players::GetSelected().GetId()))
 			{

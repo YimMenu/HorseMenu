@@ -71,8 +71,15 @@ namespace YimMenu::Submenus
 			}));
 
 			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-				ImGui::Separator();
+				if (YimMenu::Players::GetSelected().IsValid())
+				{
+					ImGui::Text(YimMenu::Players::GetSelected().GetName());
+					ImGui::Separator();
+				}
+				else
+				{
+					YimMenu::Players::SetSelected(Self::Id);
+				}
 
 				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 				//Button Widget crashes the game, idk why. Changed to regular for now.
@@ -83,7 +90,7 @@ namespace YimMenu::Submenus
 						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
 						    true,
 						    true);
-						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, false))
 							g_Spectating = false;
 					});
 				}
@@ -95,7 +102,7 @@ namespace YimMenu::Submenus
 						    0,
 						    -10,
 						    0);
-						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, false))
 							g_Spectating = false;
 					});
 				}

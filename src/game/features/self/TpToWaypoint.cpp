@@ -17,7 +17,7 @@ namespace YimMenu::Features
 			if (MAP::IS_WAYPOINT_ACTIVE())
 			{
 				auto waypointCoords = YimMenu::Teleport::GetWaypointCoords();
-				YimMenu::Teleport::TeleportEntity(Self::PlayerPed, waypointCoords);
+				YimMenu::Teleport::TeleportEntity(Self::PlayerPed, waypointCoords, true);
 			}
 			else
 			{
