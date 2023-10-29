@@ -9,47 +9,29 @@
 
 namespace YimMenu::Network
 {
-	inline bool NetWorkHasControlOfNetObject(rage::netObject* net_object, int ent)
+	inline bool NetWorkHasControlEntity(int ent)
 	{
-		/*LOG(INFO) << "m_OwnerId: " << (int) net_object->m_OwnerId; 
-		LOG(INFO) << "m_MigratingOwnerId: " << (int)net_object->m_MigratingOwnerId; 
-		LOG(INFO) << "m_IsRemotelyControlled: " << (int)net_object->m_IsRemotelyControlled; 
-		LOG(INFO) << "m_Unk: " << (int) net_object->m_Unk; 
-		LOG(INFO) << "========================================================================"; */
-		return !net_object->m_IsRemotelyControlled || NETWORK::NETWORK_HAS_CONTROL_OF_ENTITY(ent);
+		return NETWORK::NETWORK_HAS_CONTROL_OF_ENTITY(ent);
 	}
 
-	//Cannot get this to work (e.g for player mounts)
-	inline bool RequestControlOfEntity(int ent, int timeout = 50)
+	//Won't work on player mounts
+	inline bool RequestControlOfEntity(int ent, int timeout = 100)
 	{
 		if (!*Pointers.IsSessionStarted)
 			return true;
 
-		auto fwEntity = reinterpret_cast<rage::fwEntity*>(Pointers.HandleToPtr(ent));
-
-		if (!fwEntity)
-			return false;
-
-		auto netObject = fwEntity->m_NetObject;
-
-		if (!netObject)
-			return false;
-
-		if (NetWorkHasControlOfNetObject(netObject, ent))
+		if (NetWorkHasControlEntity(ent))
 			return true;
 
 		for (int i = 0; i < timeout; i++)
 		{
-			NETWORK::NETWORK_REQUEST_CONTROL_OF_ENTITY(ent);
-			NETWORK::NETWORK_REQUEST_CONTROL_OF_NETWORK_ID(netObject->m_ObjectId);
-			Pointers.RequestControlOfNetObject(&netObject, false);
-
-			if (NetWorkHasControlOfNetObject(netObject, ent))
+			if (NetWorkHasControlEntity(ent))
 				return true;
+			NETWORK::NETWORK_REQUEST_CONTROL_OF_ENTITY(ent);
 
 			ScriptMgr::Yield();
 		}
 
-		return NetWorkHasControlOfNetObject(netObject, ent);
+		return NetWorkHasControlEntity(ent);
 	}
 }

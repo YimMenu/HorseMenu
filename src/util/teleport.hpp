@@ -1,8 +1,8 @@
 #pragma once
 #include "common.hpp"
-#include "game/rdr/Natives.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Teleport
 {
@@ -38,7 +38,7 @@ namespace YimMenu::Teleport
 			if (done)
 			{
 				Notifications::Erase(notificationId);
-	
+
 				return true;
 			}
 		}
@@ -51,7 +51,7 @@ namespace YimMenu::Teleport
 		return false;
 	}
 
-    //Entity typdef is being ambiguous with Entity class
+	//Entity typdef is being ambiguous with Entity class
 	inline bool TeleportEntity(int ent, Vector3& coords, bool loadGround)
 	{
 		if (ENTITY::IS_ENTITY_A_PED(ent))
@@ -88,5 +88,34 @@ namespace YimMenu::Teleport
 		Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Error);
 
 		return Vector3{0, 0, 0};
+	}
+
+	inline bool WarpIntoVehicle(int ped, int veh)
+	{
+		if (!ENTITY::DOES_ENTITY_EXIST(veh) || !ENTITY::DOES_ENTITY_EXIST(ped))
+			return false;
+
+		int seat   = -2;
+		auto seats = VEHICLE::GET_VEHICLE_MODEL_NUMBER_OF_SEATS(ENTITY::GET_ENTITY_MODEL(veh));
+
+		for (int i = -1; i < seats; i++)
+		{
+			if (VEHICLE::IS_VEHICLE_SEAT_FREE(veh, i))
+			{
+				seat = i;
+				break;
+			}
+		}
+
+		if (seat < -1)
+		{
+			Notifications::Show("Teleport", "No free seats in vehicle", NotificationType::Error);
+			return false;
+		}
+		else
+		{
+			PED::SET_PED_INTO_VEHICLE(ped, veh, seat);
+			return true;
+		}
 	}
 }
