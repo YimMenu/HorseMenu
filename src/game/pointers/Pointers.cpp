@@ -244,6 +244,11 @@ namespace YimMenu
 			WorldToScreen = ptr.Add(1).Rip().As<Functions::WorldToScreen>();
 		});
 
+		constexpr auto writePlayerHealthDataPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 48 8B B1 A8">("WritePlayerHealthData");
+		scanner.Add(writePlayerHealthDataPtrn, [this](PointerCalculator ptr) {
+			WritePlayerHealthData = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

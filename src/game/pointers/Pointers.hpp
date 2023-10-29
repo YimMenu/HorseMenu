@@ -116,6 +116,8 @@ namespace YimMenu
 
 		Functions::GetNetObjectById GetNetObjectById;
 
+		PVOID WritePlayerHealthData;
+
 		//Patches
 		bool* ExplosionBypass;
 	};
