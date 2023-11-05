@@ -1,5 +1,4 @@
 #include "Teleport.hpp"
-
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/bigfeatures/CustomTeleport.hpp"
@@ -157,7 +156,7 @@ namespace YimMenu::Submenus
 							{
 								FiberPool::Push([l] {
 									Vector3 l_ = {l.x, l.y, l.z};
-									YimMenu::Teleport::TeleportEntity(Self::PlayerPed,l_);
+									YimMenu::Teleport::TeleportEntity(Self::PlayerPed,l_, false);
 								});
 							}
 						}
@@ -185,13 +184,20 @@ namespace YimMenu::Submenus
 	    Submenu::Submenu("Teleport")
 	{
 		auto main = std::make_shared<Category>("Main");
-		main->AddItem(std::make_shared<CommandItem>("tptowaypoint"_J));
-		main->AddItem(std::make_shared<CommandItem>("tptomount"_J));
+		auto columns = std::make_shared<Column>(2);
+		auto miscGroup = std::make_shared<Group>("Misc", GetListBoxDimensions());
+
+		miscGroup->AddItem(std::make_shared<CommandItem>("tptowaypoint"_J));
+		miscGroup->AddItem(std::make_shared<CommandItem>("tptomount"_J));
+
+		columns->AddItem(miscGroup);
+		main->AddItem(columns);
 
 		auto customteleport = std::make_shared<Category>("Saved");
 		customteleport->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderCustomTeleport();
 		}));
+
 
 		AddCategory(std::move(main));
 		AddCategory(std::move(customteleport));

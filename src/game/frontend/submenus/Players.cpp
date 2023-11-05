@@ -63,18 +63,27 @@ namespace YimMenu::Submenus
 		{
 			auto main   = std::make_shared<Category>("Main");
 			auto column = std::make_shared<Column>(2);
-
-			auto playerOptionsGroup = std::make_shared<Group>("Info", ImVec2(0, 250));
+			auto teleportGroup = std::make_shared<Group>("Teleport", GetListBoxDimensions());
+			auto playerOptionsGroup = std::make_shared<Group>("Info", GetListBoxDimensions());
 
 			main->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(true);
 			}));
 
 			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-				ImGui::Separator();
+				
+				if (YimMenu::Players::GetSelected().IsValid())
+				{
+					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+					ImGui::Text(YimMenu::Players::GetSelected().GetName());
+				}
+				else
+				{
+					YimMenu::Players::SetSelected(Self::Id);
+				}
+			}));
 
-				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+			teleportGroup->AddItem(std::make_shared<ImGuiItem>([] {
 				//Button Widget crashes the game, idk why. Changed to regular for now.
 				if (ImGui::Button("Teleport To"))
 				{
@@ -83,7 +92,7 @@ namespace YimMenu::Submenus
 						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
 						    true,
 						    true);
-						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, false))
 							g_Spectating = false;
 					});
 				}
@@ -95,7 +104,16 @@ namespace YimMenu::Submenus
 						    0,
 						    -10,
 						    0);
-						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, false))
+							g_Spectating = false;
+					});
+				}
+				if (ImGui::Button("Teleport Into Vehicle"))
+				{
+					FiberPool::Push([] {
+						auto playerVeh = PED::GET_VEHICLE_PED_IS_USING(
+						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
+						if (Teleport::WarpIntoVehicle(Self::PlayerPed, playerVeh))
 							g_Spectating = false;
 					});
 				}
@@ -103,6 +121,8 @@ namespace YimMenu::Submenus
 
 			column->AddColumnOffset(1, 160);
 			column->AddItem(playerOptionsGroup);
+			column->AddNextColumn();
+			column->AddItem(teleportGroup);
 			main->AddItem(column);
 			AddCategory(std::move(main));
 		}
