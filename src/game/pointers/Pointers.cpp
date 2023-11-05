@@ -254,14 +254,9 @@ namespace YimMenu
 			RequestControlOfNetObject = ptr.Add(1).Rip().As<Functions::RequestControlOfNetObject>();
 		});
 
-		constexpr auto getNetObjectByIdPtrn = Pattern<"E8 ? ? ? ? 48 85 C0 74 20 80 78 47 00">("GetNetObjectById");
-		scanner.Add(getNetObjectByIdPtrn, [this](PointerCalculator ptr) {
-			GetNetObjectById = ptr.Add(1).Rip().As<Functions::GetNetObjectById>();
-		});
-
-		constexpr auto netObjectMgrPtrn = Pattern<"48 8B 0D ? ? ? ? E9 ? ? ? ? 90 31 40">("NetObjMgr");
-		scanner.Add(netObjectMgrPtrn, [this](PointerCalculator ptr) {
-			NetObjMgr = *ptr.Add(3).Rip().As<void**>();
+		constexpr auto networkObjectMgrPtrn = Pattern<"48 8B 0D ? ? ? ? E9 ? ? ? ? 90 31 40">("NetworkObjectMgr");
+		scanner.Add(networkObjectMgrPtrn, [this](PointerCalculator ptr) {
+			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
 		});
 
 		if (!scanner.Scan())

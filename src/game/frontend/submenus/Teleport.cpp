@@ -93,12 +93,12 @@ namespace YimMenu::Submenus
 					else if (Self::IsOnMount)
 						teleportEntity = Self::Mount;
 
-					auto coords             = ENTITY::GET_ENTITY_COORDS(teleportEntity, false, true);
+					auto coords            = teleportEntity.GetPosition();
 					teleportLocation.name  = NewLocationName;
 					teleportLocation.x     = coords.x;
 					teleportLocation.y     = coords.y;
 					teleportLocation.z     = coords.z;
-					teleportLocation.yaw   = ENTITY::GET_ENTITY_HEADING(teleportEntity);
+					teleportLocation.yaw   = ENTITY::GET_ENTITY_HEADING(teleportEntity.GetHandle());
 					teleportLocation.pitch = CAM::GET_GAMEPLAY_CAM_RELATIVE_PITCH();
 					teleportLocation.roll  = CAM::GET_GAMEPLAY_CAM_RELATIVE_HEADING();
 					CustomTeleport::SaveNewLocation(category, teleportLocation);
@@ -155,7 +155,7 @@ namespace YimMenu::Submenus
 							if (ImGui::IsMouseDoubleClicked(0))
 							{
 								FiberPool::Push([l] {
-									Vector3 l_ = {l.x, l.y, l.z};
+									rage::fvector3 l_ = {l.x, l.y, l.z};
 									YimMenu::Teleport::TeleportEntity(Self::PlayerPed,l_, false);
 								});
 							}

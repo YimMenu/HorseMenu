@@ -5,7 +5,6 @@
 #include "game/frontend/items/Items.hpp"
 #include "Settings.hpp"
 #include "game/features/Features.hpp"
-#include "game/bigfeatures/ContextMenu.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -39,6 +38,7 @@ namespace YimMenu::Submenus
 		auto gui = std::make_shared<Category>("GUI");
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
 		gui->AddItem(std::make_shared<BoolCommandItem>("esp"_J));
+		gui->AddItem(std::make_shared<BoolCommandItem>("ctxmenu"_J));
 		AddCategory(std::move(hotkeys));
 		AddCategory(std::move(gui));
 	}

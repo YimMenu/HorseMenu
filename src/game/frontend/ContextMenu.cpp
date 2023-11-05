@@ -15,7 +15,7 @@ namespace YimMenu::Features
 
 namespace YimMenu
 {
-	constexpr double CumulativeDistanceToMiddleOfScreen(rage::fvector2 screenPos)
+	inline double CumulativeDistanceToMiddleOfScreen(rage::fvector2 screenPos)
 	{
 		return std::abs(screenPos.x - 0.5) + std::abs(screenPos.y - 0.5);
 	}
@@ -109,7 +109,7 @@ namespace YimMenu
 
 					if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)eNativeInputs::INPUT_ATTACK))
 						FiberPool::Push([=] {
-							m_CurrentOperationsMenu.m_SelectedOperation.m_Operation();
+							m_CurrentOperationsMenu.m_SelectedOperation.m_Operation(m_Entity);
 						});
 				}
 				else

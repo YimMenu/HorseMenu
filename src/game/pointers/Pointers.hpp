@@ -116,9 +116,7 @@ namespace YimMenu
 		PVOID NetworkRequest;
 
 		CNetworkPlayerMgr* NetworkPlayerMgr;
-		void* NetObjMgr;
-
-		Functions::GetNetObjectById GetNetObjectById;
+		void* NetworkObjectMgr;
 
 		PVOID WritePlayerHealthData;
 

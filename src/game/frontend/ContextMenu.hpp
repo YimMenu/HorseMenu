@@ -10,7 +10,7 @@ namespace YimMenu
 	struct ContextMenuOperation
 	{
 		std::string m_Name;
-		std::function<void()> m_Operation;
+		std::function<void(Entity)> m_Operation;
 
 		bool operator==(const ContextMenuOperation& other) const
 		{

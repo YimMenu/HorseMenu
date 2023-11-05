@@ -5,7 +5,7 @@ namespace YimMenu
 {
 	class Players
 	{
-		std::map<uint8_t, Player> m_Players{};
+		std::unordered_map<uint8_t, Player> m_Players{};
 		Player m_SelectedPlayer = Player((uint8_t)0);
 
 	public:
@@ -24,7 +24,7 @@ namespace YimMenu
 			GetInstance().m_SelectedPlayer = Player(idx);
 		}
 
-		static std::map<uint8_t, Player>& GetPlayers()
+		static std::unordered_map<uint8_t, Player>& GetPlayers()
 		{
 			return GetInstance().m_Players;
 		}

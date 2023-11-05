@@ -85,4 +85,24 @@ namespace YimMenu
 
 		return GetPointer<rage::fwEntity*>()->m_NetObject->m_ObjectId;
 	}
+
+	// TODO: find a better way to compare entities
+	bool Entity::operator==(const Entity& other)
+	{
+		if (m_Handle != -1 && other.m_Handle != -1)
+			return m_Handle == other.m_Handle;
+
+		if (m_Pointer != nullptr && other.m_Pointer != nullptr)
+			return m_Pointer == other.m_Pointer;
+
+		if (other.m_Pointer != nullptr)
+			if (auto ptr = GetPointer<void*>())
+				return ptr == other.m_Pointer;
+
+		if (other.m_Handle != -1)
+			if (auto handle = GetHandle(); handle != -1)
+				return handle == other.m_Handle;
+
+		return false;
+	}
 }

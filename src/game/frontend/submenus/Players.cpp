@@ -90,16 +90,14 @@ namespace YimMenu::Submenus
 				}
 			}));
 
+			// TODO: refactor teleport items
+
 			teleportGroup->AddItem(std::make_shared<ImGuiItem>([] {
 				//Button Widget crashes the game, idk why. Changed to regular for now.
 				if (ImGui::Button("Teleport To"))
 				{
 					FiberPool::Push([] {
-						auto playerCoords = ENTITY::GET_ENTITY_COORDS(
-						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
-						    true,
-						    true);
-						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, false))
+						if (Teleport::TeleportEntity(Self::PlayerPed, YimMenu::Players::GetSelected().GetPed().GetPosition(), false))
 							g_Spectating = false;
 					});
 				}
@@ -111,7 +109,7 @@ namespace YimMenu::Submenus
 						    0,
 						    -10,
 						    0);
-						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, false))
+						if (Teleport::TeleportEntity(Self::PlayerPed, {playerCoords.x, playerCoords.y, playerCoords.z}, false))
 							g_Spectating = false;
 					});
 				}

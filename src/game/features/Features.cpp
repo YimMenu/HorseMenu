@@ -38,39 +38,46 @@ namespace YimMenu
 
 	void SpectateTick()
 	{
-		if (g_Spectating && Players::GetSelected().GetPed().IsValid())
+		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating && ENTITY::DOES_ENTITY_EXIST(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId)))
 		{
-			auto playerPed = Players::GetSelected().GetPed().GetHandle();
+			g_SpectateId = Players::GetSelected().GetId();
+			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId));
+		}
 
-			if (CAM::HAS_LETTER_BOX())
+		if (g_Spectating && *Pointers.IsSessionStarted)
+		{
+			auto playerPed = PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId);
+			CAM::SET_CINEMATIC_MODE_ACTIVE(false);
+
+			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE() && ENTITY::DOES_ENTITY_EXIST(playerPed))
 			{
-				CAM::_REQUEST_LETTER_BOX_NOW(false, false);
-				CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, playerPed);
 			}
 
-			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, playerPed);
-
-			if (!STREAMING::IS_ENTITY_FOCUS(playerPed) || g_SpectateId != Players::GetSelected().GetId())
+			if (GRAPHICS::_ANIMPOSTFX_IS_TAG_PLAYING("SpectateFilter"))
 			{
-				STREAMING::SET_FOCUS_ENTITY(playerPed);
+				GRAPHICS::_ANIMPOSTFX_STOP_TAG("SpectateFilter");
 			}
 
 			if (!Players::GetSelected().IsValid())
 			{
-				Notifications::Show("Spectate", "Player is no longer in the session.\nSpectate mode disabled.", NotificationType::Warning);
+				STREAMING::CLEAR_FOCUS();
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::PlayerPed);
 				g_Spectating = false;
+				Notifications::Show("Spectate", "Player is no longer in the session.\nSpectate mode disabled.", NotificationType::Warning);
 			}
-			g_SpectateId = Players::GetSelected().GetId();
 		}
 		else
 		{
-			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::PlayerPed);
-			STREAMING::CLEAR_FOCUS();
-			CAM::_REQUEST_LETTER_BOX_NOW(false, false);
-			CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
+			if (NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
+			{
+				STREAMING::CLEAR_FOCUS();
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::PlayerPed);
+				CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
+				CAM::_DISABLE_CINEMATIC_MODE_THIS_FRAME();
+			}
 		}
 	}
-
 
 	void BlockAllControls()
 	{

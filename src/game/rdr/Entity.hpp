@@ -54,5 +54,7 @@ namespace YimMenu
 		bool IsNetworked();
 		bool HasControl();
 		std::uint16_t GetNetworkObjectId();
+
+		bool operator==(const Entity& other);
 	};
 }
