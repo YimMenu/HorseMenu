@@ -11,7 +11,7 @@ class Arg:
         self.type = type.replace("BOOL", "bool").replace("Any*", "void*")
 
         if (self.type == ""):
-            self.type = "void*"
+            self.type = "Args&&..."
 
     def __str__(self) -> str:
         return str(self.type) + " " + str(self.name)
@@ -26,10 +26,13 @@ class NativeFunc:
         self.args: list[Arg] = []
         self.return_type = return_type.replace("BOOL", "bool").replace("Any*", "void*")
         self.native_index = current_idx
+        self.variadic = False
         current_idx += 1
         hash_list.append(hash)
 
         for arg in args:
+            if (arg["name"] == "..."):
+                self.variadic = True
             self.args.append(Arg(arg["name"], arg["type"]))
     
     def get_native_def_str(self) -> str:
@@ -40,11 +43,18 @@ class NativeFunc:
         if len(self.args) > 0:
             for arg in self.args:
                 param_decl += str(arg) + ", "
-                param_pass += arg.name + ", "
+                if arg.name == "varargs":
+                    param_pass += arg.name + "..., "
+                else:
+                    param_pass += arg.name + ", "
             param_decl = param_decl[:-2]
             param_pass = param_pass[:-2]
         
-        return f"FORCEINLINE constexpr {self.return_type} {self.name}({param_decl}) {{ return YimMenu::NativeInvoker::Invoke<{self.native_index}, {self.return_type}>({param_pass}); }}"
+        var_template = ""
+        if self.variadic:
+            var_template = "template <typename... Args> "
+
+        return f"{var_template}FORCEINLINE constexpr {self.return_type} {self.name}({param_decl}) {{ return YimMenu::NativeInvoker::Invoke<{self.native_index}, {self.return_type}>({param_pass}); }}"
     
 def load_natives_data():
     global natives

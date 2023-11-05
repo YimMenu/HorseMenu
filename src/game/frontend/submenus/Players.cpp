@@ -216,11 +216,28 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Test 15"))
 				{
 					FiberPool::Push([] {
-						using GM = void* (*)(void*);
-						using SM = void (*)(void*, int, float, void*, bool); // PED::_SET_PED_MOTIVATION
-						GM gm    = (GM)((__int64)GetModuleHandleA(0) + 0xcb8ee8);
-						SM sm    = (SM)((__int64)GetModuleHandleA(0) + 0x9a2ab0);
-						sm(gm(YimMenu::Players::GetSelected().GetPed().GetMount().GetPointer<void*>()), 1, 999.0f, nullptr, true);
+						struct Struct1
+						{
+							SCR_INT Time;
+							SCR_INT Pad[12];
+						};
+
+						struct Struct2
+						{
+							SCR_INT Pad;
+							const char* VarString;
+							SCR_INT Pad2[2];
+						};
+
+						Struct1 s1{};
+						Struct2 s2{};
+
+						s1.Time = 3000;
+
+						auto text = MISC::VAR_STRING(10, "LITERAL_STRING"s.data(), "~b~Player~s~ left."s.data());
+						s2.VarString = text;
+
+						UIFEED::_UI_FEED_POST_FEED_TICKER(&s1, &s2, false);
 					});
 				}
 			}));

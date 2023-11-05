@@ -938,7 +938,7 @@ namespace DATABINDING
 	FORCEINLINE constexpr Any _0xF47E33F8D2523825(Any p0, int p1) { return YimMenu::NativeInvoker::Invoke<867, Any>(p0, p1); }
 	FORCEINLINE constexpr void _0x3BF0767CF33FCC88(Hash entryId) { return YimMenu::NativeInvoker::Invoke<868, void>(entryId); }
 	FORCEINLINE constexpr Any _DATABINDING_GET_ARRAY_COUNT(Hash entryId) { return YimMenu::NativeInvoker::Invoke<869, Any>(entryId); }
-	FORCEINLINE constexpr void _DATABINDING_WRITE_DATA_SCRIPT_VARIABLES(int p0, int p1, void* varargs) { return YimMenu::NativeInvoker::Invoke<870, void>(p0, p1, varargs); }
+	template <typename... Args> FORCEINLINE constexpr void _DATABINDING_WRITE_DATA_SCRIPT_VARIABLES(int p0, int p1, Args&&... varargs) { return YimMenu::NativeInvoker::Invoke<870, void>(p0, p1, varargs...); }
 	FORCEINLINE constexpr void _DATABINDING_WRITE_DATA_BOOL(Any p0, bool p1) { return YimMenu::NativeInvoker::Invoke<871, void>(p0, p1); }
 	FORCEINLINE constexpr void _DATABINDING_WRITE_DATA_BOOL_FROM_PARENT(Any p0, const char* p1, bool p2) { return YimMenu::NativeInvoker::Invoke<872, void>(p0, p1, p2); }
 	FORCEINLINE constexpr void _0xBFC83DA249BEFCC9(Any p0, Hash p1, Any p2) { return YimMenu::NativeInvoker::Invoke<873, void>(p0, p1, p2); }
@@ -2669,7 +2669,7 @@ namespace MISC
 	FORCEINLINE constexpr const char* _GET_STRING_FROM_FLOAT(float value, int digits) { return YimMenu::NativeInvoker::Invoke<2506, const char*>(value, digits); }
 	FORCEINLINE constexpr const char* _GET_STRING_FROM_VECTOR(float x, float y, float z) { return YimMenu::NativeInvoker::Invoke<2507, const char*>(x, y, z); }
 	FORCEINLINE constexpr const char* _GET_STRING_FROM_BOOL(bool value) { return YimMenu::NativeInvoker::Invoke<2508, const char*>(value); }
-	FORCEINLINE constexpr const char* VAR_STRING(int flags, void* varargs) { return YimMenu::NativeInvoker::Invoke<2509, const char*>(flags, varargs); }
+	template <typename... Args> FORCEINLINE constexpr const char* VAR_STRING(int flags, Args&&... varargs) { return YimMenu::NativeInvoker::Invoke<2509, const char*>(flags, varargs...); }
 	FORCEINLINE constexpr const char* _CREATE_COLOR_STRING(int rgb) { return YimMenu::NativeInvoker::Invoke<2510, const char*>(rgb); }
 	FORCEINLINE constexpr void SET_BITS_IN_RANGE(int* VariableToChange, int StartBit, int EndBit, int NewValue) { return YimMenu::NativeInvoker::Invoke<2511, void>(VariableToChange, StartBit, EndBit, NewValue); }
 	FORCEINLINE constexpr int GET_BITS_IN_RANGE(int VariableToRead, int StartBit, int EndBit) { return YimMenu::NativeInvoker::Invoke<2512, int>(VariableToRead, StartBit, EndBit); }
@@ -3191,7 +3191,7 @@ namespace NETWORK
 	FORCEINLINE constexpr int GET_TIME_DIFFERENCE(int Time1, int Time2) { return YimMenu::NativeInvoker::Invoke<3012, int>(Time1, Time2); }
 	FORCEINLINE constexpr int GET_CLOUD_TIME_AS_INT() { return YimMenu::NativeInvoker::Invoke<3013, int>(); }
 	FORCEINLINE constexpr void CONVERT_POSIX_TIME(int nContentIndex, void* sDate) { return YimMenu::NativeInvoker::Invoke<3014, void>(nContentIndex, sDate); }
-	FORCEINLINE constexpr void NETWORK_SET_IN_SPECTATOR_MODE(bool InSpectatorMode, Ped playerPed) { return YimMenu::NativeInvoker::Invoke<3015, void>(InSpectatorMode, playerPed); }
+	FORCEINLINE constexpr void NETWORK_SET_IN_SPECTATOR_MODE(bool InSpectatorMode, Player playerIndex) { return YimMenu::NativeInvoker::Invoke<3015, void>(InSpectatorMode, playerIndex); }
 	FORCEINLINE constexpr void _NETWORK_SET_IN_STATIC_SPECTATOR_MODE(bool toggle, float x, float y, float z) { return YimMenu::NativeInvoker::Invoke<3016, void>(toggle, x, y, z); }
 	FORCEINLINE constexpr bool NETWORK_IS_IN_SPECTATOR_MODE() { return YimMenu::NativeInvoker::Invoke<3017, bool>(); }
 	FORCEINLINE constexpr bool _NETWORK_IS_PLAYER_IN_SPECTATOR_MODE(Player player) { return YimMenu::NativeInvoker::Invoke<3018, bool>(player); }
