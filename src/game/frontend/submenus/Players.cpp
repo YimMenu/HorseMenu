@@ -22,13 +22,28 @@ namespace YimMenu::Submenus
 	bool popPlayerList = true; //TODO make optional
 	void drawPlayerList(bool external, float offset = 15.0f)
 	{
+		struct ComparePlayerNames
+		{
+			bool operator()(YimMenu::Player a, YimMenu::Player b) const
+			{
+				std::string nameA = a.GetName();
+				std::string nameB = b.GetName();
+				return nameA < nameB;
+			}
+		};
+
+		std::map<uint8_t, Player, ComparePlayerNames> sortedPlayers(YimMenu::Players::GetPlayers().begin(),
+		    YimMenu::Players::GetPlayers().end());
+
 		if (external)
 		{
 			ImGui::SetNextWindowPos(
 			    ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x + offset, ImGui::GetWindowPos().y));
 			ImGui::SetNextWindowSize(ImVec2(150, ImGui::GetWindowSize().y));
 			ImGui::Begin("Player List", nullptr, ImGuiWindowFlags_NoDecoration);
-			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+
+			ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+			for (auto& [id, player] : sortedPlayers)
 			{
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
@@ -39,7 +54,7 @@ namespace YimMenu::Submenus
 		}
 		else
 		{
-			for (auto& [id, player] : YimMenu::Players::GetPlayers())
+			for (auto& [id, player] : sortedPlayers)
 			{
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
@@ -55,20 +70,27 @@ namespace YimMenu::Submenus
 		{
 			auto main   = std::make_shared<Category>("Main");
 			auto column = std::make_shared<Column>(2);
+			auto teleportGroup = std::make_shared<Group>("Teleport", GetListBoxDimensions());
+			auto playerOptionsGroup = std::make_shared<Group>("Info", GetListBoxDimensions());
 
-			auto playersListGroup = std::make_shared<Group>("Players");
-
-			playersListGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				drawPlayerList(false);
+			main->AddItem(std::make_shared<ImGuiItem>([] {
+				drawPlayerList(true);
 			}));
 
-			auto playerOptionsGroup = std::make_shared<Group>("Info");
-
 			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-				ImGui::Separator();
+				
+				if (YimMenu::Players::GetSelected().IsValid())
+				{
+					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+					ImGui::Text(YimMenu::Players::GetSelected().GetName());
+				}
+				else
+				{
+					YimMenu::Players::SetSelected(Self::Id);
+				}
+			}));
 
-				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+			teleportGroup->AddItem(std::make_shared<ImGuiItem>([] {
 				//Button Widget crashes the game, idk why. Changed to regular for now.
 				if (ImGui::Button("Teleport To"))
 				{
@@ -77,17 +99,37 @@ namespace YimMenu::Submenus
 						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
 						    true,
 						    true);
-						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords))
+						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, false))
+							g_Spectating = false;
+					});
+				}
+				if (ImGui::Button("Teleport Behind"))
+				{
+					FiberPool::Push([] {
+						auto playerCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(
+						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
+						    0,
+						    -10,
+						    0);
+						if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, false))
+							g_Spectating = false;
+					});
+				}
+				if (ImGui::Button("Teleport Into Vehicle"))
+				{
+					FiberPool::Push([] {
+						auto playerVeh = PED::GET_VEHICLE_PED_IS_USING(
+						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
+						if (Teleport::WarpIntoVehicle(Self::PlayerPed, playerVeh))
 							g_Spectating = false;
 					});
 				}
 			}));
 
 			column->AddColumnOffset(1, 160);
-			column->AddItem(playersListGroup);
-			column->AddNextColumn();
 			column->AddItem(playerOptionsGroup);
-
+			column->AddNextColumn();
+			column->AddItem(teleportGroup);
 			main->AddItem(column);
 			AddCategory(std::move(main));
 		}
