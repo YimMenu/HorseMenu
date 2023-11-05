@@ -15,6 +15,8 @@ namespace YimMenu::Submenus
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("offtheradar"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antiafk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepbarsfilled"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepcoresfilled"_J));

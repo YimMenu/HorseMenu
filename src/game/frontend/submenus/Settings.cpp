@@ -5,6 +5,7 @@
 #include "game/frontend/items/Items.hpp"
 #include "Settings.hpp"
 #include "game/features/Features.hpp"
+#include "game/bigfeatures/ContextMenu.hpp"
 
 namespace YimMenu::Submenus
 {

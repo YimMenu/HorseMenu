@@ -249,6 +249,21 @@ namespace YimMenu
 			WritePlayerHealthData = ptr.As<PVOID>();
 		});
 
+		constexpr auto requestControlPtrn = Pattern<"E8 ? ? ? ? 48 83 C4 ? 5B C3 CC 72 ? 48 89 54 24">("RequestControl");
+		scanner.Add(requestControlPtrn, [this](PointerCalculator ptr) {
+			RequestControlOfNetObject = ptr.Add(1).Rip().As<Functions::RequestControlOfNetObject>();
+		});
+
+		constexpr auto getNetObjectByIdPtrn = Pattern<"E8 ? ? ? ? 48 85 C0 74 20 80 78 47 00">("GetNetObjectById");
+		scanner.Add(getNetObjectByIdPtrn, [this](PointerCalculator ptr) {
+			GetNetObjectById = ptr.Add(1).Rip().As<Functions::GetNetObjectById>();
+		});
+
+		constexpr auto netObjectMgrPtrn = Pattern<"48 8B 0D ? ? ? ? E9 ? ? ? ? 90 31 40">("NetObjMgr");
+		scanner.Add(netObjectMgrPtrn, [this](PointerCalculator ptr) {
+			NetObjMgr = *ptr.Add(3).Rip().As<void**>();
+		});
+
 		if (!scanner.Scan())
 		{ 
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
