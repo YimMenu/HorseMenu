@@ -8,6 +8,7 @@
 #include "game/backend/Players.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/frontend/GUI.hpp"
+#include "game/frontend/ContextMenu.hpp"
 
 namespace YimMenu
 {
@@ -127,6 +128,15 @@ namespace YimMenu
 				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_ATTACK2, 1);
 			}
 
+			ScriptMgr::Yield();
+		}
+	}
+
+	void ContextMenuTick()
+	{
+		while (true)
+		{
+			ContextMenu::GameTick();
 			ScriptMgr::Yield();
 		}
 	}

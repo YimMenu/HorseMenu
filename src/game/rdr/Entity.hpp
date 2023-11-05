@@ -42,8 +42,15 @@ namespace YimMenu
 
 		bool IsValid();
 		bool IsAlive();
+
+		bool IsPed();
+		bool IsVehicle();
+		bool IsObject();
+		bool IsPlayer();
+
 		rage::fvector3 GetPosition();
 		void SetPosition(rage::fvector3 position);
+
 		bool IsNetworked();
 		bool HasControl();
 		std::uint16_t GetNetworkObjectId();

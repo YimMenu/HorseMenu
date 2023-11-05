@@ -27,6 +27,32 @@ namespace YimMenu
 		return !ENTITY::IS_ENTITY_DEAD(GetHandle());
 	}
 
+	bool Entity::IsPed()
+	{
+		if (auto ptr = GetPointer<rage::fwEntity*>())
+			return ptr->m_EntityType == 4;
+		return false;
+	}
+
+	bool Entity::IsVehicle()
+	{
+		if (auto ptr = GetPointer<rage::fwEntity*>())
+			return ptr->m_EntityType == 3;
+		return false;
+	}
+
+	bool Entity::IsObject()
+	{
+		if (auto ptr = GetPointer<rage::fwEntity*>())
+			return ptr->m_EntityType == 5;
+		return false;
+	}
+
+	bool Entity::IsPlayer()
+	{
+		return PED::IS_PED_A_PLAYER(GetHandle());
+	}
+
 	rage::fvector3 Entity::GetPosition()
 	{
 		auto pos = ENTITY::GET_ENTITY_COORDS(GetHandle(), false, true);
