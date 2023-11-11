@@ -116,7 +116,7 @@ namespace
 		}
 	}
 
-	std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60};
+	std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60,0x6927D266};
 
 	// note that object can be nullptr here if it hasn't been created yet (i.e. in the creation queue)
 	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
@@ -166,6 +166,13 @@ namespace
 			{
 				LOG(WARNING) << "Blocked mismatched player model crash from " << Protections::GetSyncingPlayer().GetName();
 				Notifications::Show("Protections", std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				return true;
+			}
+			
+			if (data.m_ModelHash != 0xF5C1611E && data.m_ModelHash != 0xA7AF20C0)
+			{
+				LOG(WARNING) << "Blocked player model switch crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections", std::string("Blocked player model switch crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 				return true;
 			}
 			break;
