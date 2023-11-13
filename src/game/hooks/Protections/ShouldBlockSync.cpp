@@ -258,6 +258,23 @@ namespace
 
 			break;
 		}
+		case "CPropSetCreationDataNode"_J:
+		{
+			auto& data = node->GetData<int>();
+			//"Rainbow smash crash" from Nightfall
+			int64_t a2   = (int64_t)&data;
+			Hash hash    = *(int32_t*)(a2 + 16);
+			int32_t type = *(int32_t*)(a2 + 28);
+			if (hash == 0x97D540A4 || hash == 0x3701844F || type == 0xFFFFFFFFFFFFFFFF)
+			{
+				LOG(WARNING) << "Blocked invalid propset from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections",
+				    std::string("Blocked invalid propset from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
+				return true;
+			}
+			break;
+		}
 		}
 
 		return false;
