@@ -38,27 +38,24 @@ namespace YimMenu
 
 	void SpectateTick()
 	{
-		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating && ENTITY::DOES_ENTITY_EXIST(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId)))
+		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating
+		    && ENTITY::DOES_ENTITY_EXIST(Players::GetSelected().GetPed().GetHandle()))
 		{
 			g_SpectateId = Players::GetSelected().GetId();
-			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId));
+			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, Players::GetSelected().GetPed().GetHandle());
 		}
 
-		if (g_Spectating && *Pointers.IsSessionStarted)
+		if (g_Spectating && g_SpectateId == Players::GetSelected().GetId())
 		{
-			auto playerPed = PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(g_SpectateId);
-			CAM::SET_CINEMATIC_MODE_ACTIVE(false);
+			auto playerPed = Players::GetSelected().GetPed().GetHandle();
+
+			if (!STREAMING::IS_ENTITY_FOCUS(playerPed))
+				STREAMING::SET_FOCUS_ENTITY(playerPed);
 
 			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE() && ENTITY::DOES_ENTITY_EXIST(playerPed))
 			{
 				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, playerPed);
 			}
-
-			if (GRAPHICS::_ANIMPOSTFX_IS_TAG_PLAYING("SpectateFilter"))
-			{
-				GRAPHICS::_ANIMPOSTFX_STOP_TAG("SpectateFilter");
-			}
-
 			if (!Players::GetSelected().IsValid())
 			{
 				STREAMING::CLEAR_FOCUS();
