@@ -2,8 +2,8 @@ include(FetchContent)
 
 FetchContent_Declare(
     rdr_classes
-    GIT_REPOSITORY https://github.com/maybegreat48/RDR-Classes.git
-    GIT_TAG        6f6c5bb3e52fae24008691e088c1798578c78bcc
+    GIT_REPOSITORY https://github.com/YimMenu/RDR-Classes.git
+    GIT_TAG        1d566f23329b756aa3ef57be7b53525d949af14a
     GIT_PROGRESS TRUE
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
