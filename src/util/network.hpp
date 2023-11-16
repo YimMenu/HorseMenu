@@ -1,6 +1,4 @@
 #pragma once
-#include "../../build/_deps/rdr_classes-src/entity/fwEntity.hpp"
-#include "../../build/_deps/rdr_classes-src/network/netObject.hpp"
 #include "common.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
