@@ -116,8 +116,29 @@ namespace
 		}
 	}
 
-	std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60};
-
+	std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60,0x6927D266};
+	std::unordered_set<uint32_t> g_FishModels = {
+		"A_C_Crawfish_01"_J,"A_C_FishBluegil_01_ms"_J,"A_C_FishBluegil_01_sm"_J,"A_C_FishBullHeadCat_01_ms"_J,
+		"A_C_FishBullHeadCat_01_sm"_J,"A_C_FishChainPickerel_01_ms"_J,"A_C_FishChainPickerel_01_sm"_J,
+		"A_C_FishChannelCatfish_01_lg"_J,"A_C_FishChannelCatfish_01_XL"_J,"A_C_FishLakeSturgeon_01_lg"_J,
+		"A_C_FishLargeMouthBass_01_lg"_J,"A_C_FishLargeMouthBass_01_ms"_J,"A_C_FishLongNoseGar_01_lg"_J,
+		"A_C_FishMuskie_01_lg"_J,"A_C_FishNorthernPike_01_lg"_J,"A_C_FishPerch_01_ms"_J,"A_C_FishPerch_01_sm"_J,
+		"A_C_FishRainbowTrout_01_lg"_J,"A_C_FishRainbowTrout_01_ms"_J,"A_C_FishRedfinPickerel_01_ms"_J,"A_C_FishRedfinPickerel_01_sm"_J,
+		"A_C_FishRockBass_01_ms"_J,"A_C_FishRockBass_01_sm"_J,"A_C_FishSalmonSockeye_01_lg"_J,"A_C_FishSalmonSockeye_01_ml"_J,
+		"A_C_FishSalmonSockeye_01_ms"_J,"A_C_FishSmallMouthBass_01_lg"_J,"A_C_FishSmallMouthBass_01_ms"_J,
+	};
+	
+	std::unordered_set<uint32_t> g_birdModels = {
+		"a_c_prairiechicken_01"_J,"a_c_cormorant_01"_J,"a_c_crow_01"_J,"a_c_duck_01"_J,"a_c_eagle_01"_J,"a_c_goosecanada_01"_J,
+		"a_c_hawk_01"_J,"a_c_owl_01"_J,"a_c_pelican_01"_J,"a_c_pigeon"_J,"a_c_raven_01"_J,"a_c_cardinal_01"_J,"a_c_seagull_01"_J,
+		"a_c_songbird_01"_J,"a_c_turkeywild_01"_J,"a_c_turkey_01"_J,"a_c_turkey_02"_J,"a_c_vulture_01"_J,"a_c_bluejay_01"_J,
+		"a_c_cedarwaxwing_01"_J,"a_c_rooster_01"_J,"mp_a_c_chicken_01"_J,"a_c_chicken_01"_J,"a_c_californiacondor_01"_J,
+		"a_c_cranewhooping_01"_J,"a_c_egret_01"_J,"a_c_heron_01"_J,"a_c_loon_01"_J,"a_c_oriole_01"_J,"a_c_carolinaparakeet_01"_J,
+		"a_c_parrot_01"_J,"a_c_pelican_01"_J,"a_c_pheasant_01"_J,"a_c_pigeon"_J,"a_c_quail_01"_J,"a_c_redfootedbooby_01"_J,
+		"a_c_robin_01"_J,"a_c_roseatespoonbill_01"_J,"a_c_seagull_01"_J,"a_c_sparrow_01"_J,"a_c_vulture_01"_J,"a_c_woodpecker_01"_J,
+		"a_c_woodpecker_02"_J,
+	};
+	
 	// note that object can be nullptr here if it hasn't been created yet (i.e. in the creation queue)
 	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
 	{
@@ -166,6 +187,13 @@ namespace
 			{
 				LOG(WARNING) << "Blocked mismatched player model crash from " << Protections::GetSyncingPlayer().GetName();
 				Notifications::Show("Protections", std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				return true;
+			}
+			
+			if (data.m_ModelHash && (g_FishModels.count(data.m_ModelHash) || g_birdModels.count(data.m_ModelHash)))
+			{
+				LOG(WARNING) << "Blocked player model switch crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections", std::string("Blocked player model switch crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -228,6 +256,23 @@ namespace
 				return true;
 			}
 
+			break;
+		}
+		case "CPropSetCreationDataNode"_J:
+		{
+			auto& data = node->GetData<int>();
+			//"Rainbow smash crash" from Nightfall
+			int64_t a2   = (int64_t)&data;
+			Hash hash    = *(int32_t*)(a2 + 16);
+			int32_t type = *(int32_t*)(a2 + 28);
+			if (hash == 0x97D540A4 || hash == 0x3701844F || type == 0xFFFFFFFFFFFFFFFF)
+			{
+				LOG(WARNING) << "Blocked invalid propset from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections",
+				    std::string("Blocked invalid propset from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
+				return true;
+			}
 			break;
 		}
 		}
