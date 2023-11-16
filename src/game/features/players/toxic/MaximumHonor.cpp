@@ -2,6 +2,7 @@
 #include "game/features/Features.hpp"
 #include "game/rdr/Scripts.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/rdr/Enums.hpp"
 
 namespace YimMenu::Features
 {
@@ -11,7 +12,7 @@ namespace YimMenu::Features
 
 		for (int i = 0; i < 5; i++)
 		{
-			data[0] = 188;
+			data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_PERSONA_HONOR);
 			data[1] = Self::Id;
 			data[4] = 2;
 			data[5] = "PERSONA_HONOR_ACTION__FME_BOUNTY_RETURNED_ALIVE"_J;

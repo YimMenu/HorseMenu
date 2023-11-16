@@ -38,11 +38,15 @@ namespace YimMenu
 	bool Notifications::EraseImpl(Notification notification)
 	{
 		for (auto& [id, n] : m_Notifications)
+		{
 			if (id == notification.GetIdentifier())
 			{
 				n.erasing = true;
 				return true;
 			}
+		}
+
+		return false;
 	}
 
 	static void DrawNotification(Notification& notification, int position)

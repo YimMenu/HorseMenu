@@ -1,16 +1,14 @@
 #include "Features.hpp"
-
+#include "game/rdr/Natives.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/bigfeatures/ContextMenu.hpp"
-#include "game/bigfeatures/Esp.hpp"
-#include "game/frontend/GUI.hpp"
+#include "game/backend/Players.hpp"
 #include "game/rdr/Enums.hpp"
-#include "game/rdr/Natives.hpp"
+#include "game/frontend/GUI.hpp"
+#include "game/frontend/ContextMenu.hpp"
 
 namespace YimMenu
 {
@@ -78,7 +76,6 @@ namespace YimMenu
 		}
 	}
 
-
 	void BlockAllControls()
 	{
 		FiberPool::Push([] {
@@ -139,31 +136,11 @@ namespace YimMenu
 		}
 	}
 
-	void UpdatePlayerInfo()
-	{
-		while (true)
-		{
-			for (auto& [id, player] : YimMenu::Players::GetPlayers())
-			{
-				player.UpdateBoneCoords();
-			}
-			ScriptMgr::Yield();
-		}
-	}
-
 	void ContextMenuTick()
 	{
 		while (true)
 		{
-			if (g_ContextMenu)
-			{
-				ContextMenu::HandleEntityAndMenu();
-
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_SWITCH_SHOULDER, true);
-				if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (Hash)eNativeInputs::INPUT_SWITCH_SHOULDER))
-					*ContextMenu::GetEnabled() = !*ContextMenu::GetEnabled();
-			}
-
+			ContextMenu::GameTick();
 			ScriptMgr::Yield();
 		}
 	}

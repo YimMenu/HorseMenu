@@ -5,7 +5,6 @@
 #include "game/frontend/items/Items.hpp"
 #include "Settings.hpp"
 #include "game/features/Features.hpp"
-#include "game/bigfeatures/ContextMenu.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -32,20 +31,15 @@ namespace YimMenu::Submenus
 		}
 	};
 
-	static void Online()
-	{
-		ImGui::Checkbox("Esp", &g_Esp);
-		ImGui::Checkbox("Context Menu", &g_ContextMenu);
-	}
-
 	Settings::Settings() :
 	    Submenu::Submenu("Settings")
 	{
 		auto hotkeys = std::make_shared<Category>("Hotkeys");
-		auto online = std::make_shared<Category>("Online");
+		auto gui = std::make_shared<Category>("GUI");
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
-		online->AddItem(std::make_shared<ImGuiItem>(Online));
+		gui->AddItem(std::make_shared<BoolCommandItem>("esp"_J));
+		gui->AddItem(std::make_shared<BoolCommandItem>("ctxmenu"_J));
 		AddCategory(std::move(hotkeys));
-		AddCategory(std::move(online)); 
+		AddCategory(std::move(gui));
 	}
 }

@@ -4,6 +4,7 @@
 
 namespace YimMenu::Hooks
 {
+	// This is *not* noreturn
 	void Misc::ThrowFatalError(int code, int fileHash, int fileLine)
 	{
 		//Spams the log with no actual information, eventually crashes the game

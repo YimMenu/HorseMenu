@@ -11,6 +11,9 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
+			if (!Self::PlayerPed || PED::IS_PED_DEAD_OR_DYING(Self::PlayerPed, true) || ENTITY::IS_ENTITY_DEAD(Self::PlayerPed))
+				return;
+
 			auto health_core = ATTRIBUTE::_GET_ATTRIBUTE_CORE_VALUE(Self::PlayerPed, (int)eAttributeCore::ATTRIBUTE_CORE_HEALTH);
 			auto stamina_care = ATTRIBUTE::_GET_ATTRIBUTE_CORE_VALUE(Self::PlayerPed, (int)eAttributeCore::ATTRIBUTE_CORE_STAMINA);
 			auto deadeye_core = ATTRIBUTE::_GET_ATTRIBUTE_CORE_VALUE(Self::PlayerPed, (int)eAttributeCore::ATTRIBUTE_CORE_DEADEYE);

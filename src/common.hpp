@@ -32,6 +32,7 @@ using namespace al;
 namespace YimMenu
 {
 	using namespace std::chrono_literals;
+	using namespace std::string_literals;
 
 	extern std::atomic<bool> g_Running;
 	extern HINSTANCE g_DllInstance;

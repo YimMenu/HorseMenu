@@ -10,44 +10,50 @@
 
 namespace YimMenu
 {
-	inline ContextOperationsMenu ContextMenuDefault = ContextOperationsMenu("Default", {ContextMenuOperation{"Error", [&] {
+	inline ContextOperationsMenu ContextMenuDefault = ContextOperationsMenu("Default", {ContextMenuOperation{"Error", [&] (Entity){
 
 	                                                                                                         }}});
 
 	inline ContextOperationsMenu ContextMenuPlayers = ContextOperationsMenu("Players",
 	    {
 	        ContextMenuOperation{"Set Selected",
-	            [&] {
-		            for (auto [id, plyr] : YimMenu::Players::GetPlayers())
+	            [&] (Entity entity) {
+		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
 			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
-				            if (ContextMenu::GetEntityHandle() == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
+				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
 				            {
 					            YimMenu::Players::SetSelected(id);
 					            break;
 				            }
 	            }},
 	        {"Teleport to",
-	            [&] {
-		            auto playerPos = ENTITY::GET_ENTITY_COORDS(ContextMenu::GetEntityHandle(), false, true);
-		            Teleport::TeleportEntity(Self::PlayerPed, playerPos, false);
+	            [&] (Entity entity) {
+		            Teleport::TeleportEntity(Self::PlayerPed, entity.GetPosition(), false);
 	            }},
 	        {"Teleport Behind",
-	            [&] {
-		            auto playerCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ContextMenu::GetEntityHandle(), 0, -10, 0);
-		            if (Teleport::TeleportEntity(Self::PlayerPed, playerCoords, true))
+	            [&] (Entity entity) {
+		            auto playerCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(entity.GetHandle(), 0, -10, 0);
+		            if (Teleport::TeleportEntity(Self::PlayerPed, {playerCoords.x, playerCoords.y, playerCoords.z}, true))
 			            g_Spectating = false;
 	            }},
 	        {"Explode",
-	            [&] {
-		            auto playerPos = ENTITY::GET_ENTITY_COORDS(ContextMenu::GetEntityHandle(), false, true);
-		            FIRE::ADD_EXPLOSION(playerPos.x, playerPos.y, playerPos.z, 22, 1.0f, true, false, 1.0f);
+	            [&] (Entity entity) {
+		            int playerId = -1;
+		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
+			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
+				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
+				            {
+					            playerId = id;
+					            break;
+				            }
+		            Commands::GetCommand<PlayerCommand>("explode"_J)->Call(playerId);
 	            }},
 	        {"Set Defensive",
-	            [&] {
+	            [&] (Entity entity) {
 		            int playerId = -1;
-		            for (auto [id, plyr] : YimMenu::Players::GetPlayers())
+		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
 			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
-				            if (ContextMenu::GetEntityHandle() == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
+				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
 				            {
 					            playerId = id;
 					            break;
@@ -55,11 +61,11 @@ namespace YimMenu
 		            Commands::GetCommand<PlayerCommand>("defensive"_J)->Call(playerId);
 	            }},
 	        {"Set Offensive",
-	            [&] {
+	            [&] (Entity entity) {
 		            int playerId = -1;
-		            for (auto [id, plyr] : YimMenu::Players::GetPlayers())
+		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
 			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
-				            if (ContextMenu::GetEntityHandle() == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
+				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
 				            {
 					            playerId = id;
 					            break;

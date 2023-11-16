@@ -229,6 +229,11 @@ namespace YimMenu
 			GetNetPlayerFromPid = ptr.Add(1).Rip().As<Functions::GetNetworkPlayerFromPid>();
 		});
 
+		constexpr auto getNetObjectByIdPtrn = Pattern<"E8 ? ? ? ? 48 85 C0 74 20 80 78 47 00">("GetNetObjectById");
+		scanner.Add(getNetObjectByIdPtrn, [this](PointerCalculator ptr) {
+			GetNetObjectById = ptr.Add(1).Rip().As<Functions::GetNetObjectById>();
+		});
+
 		constexpr auto addExplosionBypass = Pattern<"0F 84 ? ? ? ? 44 38 3D ? ? ? ? 75 14">("ExplosionBypass");
 		scanner.Add(addExplosionBypass, [this](PointerCalculator ptr) {
 			ExplosionBypass = ptr.Add(9).Rip().As<bool*>();
@@ -239,19 +244,19 @@ namespace YimMenu
 			WorldToScreen = ptr.Add(1).Rip().As<Functions::WorldToScreen>();
 		});
 
+		constexpr auto writePlayerHealthDataPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 48 8B B1 A8">("WritePlayerHealthData");
+		scanner.Add(writePlayerHealthDataPtrn, [this](PointerCalculator ptr) {
+			WritePlayerHealthData = ptr.As<PVOID>();
+		});
+
 		constexpr auto requestControlPtrn = Pattern<"E8 ? ? ? ? 48 83 C4 ? 5B C3 CC 72 ? 48 89 54 24">("RequestControl");
 		scanner.Add(requestControlPtrn, [this](PointerCalculator ptr) {
 			RequestControlOfNetObject = ptr.Add(1).Rip().As<Functions::RequestControlOfNetObject>();
 		});
 
-		constexpr auto getNetObjectByIdPtrn = Pattern<"E8 ? ? ? ? 48 85 C0 74 20 80 78 47 00">("GetNetObjectById");
-		scanner.Add(getNetObjectByIdPtrn, [this](PointerCalculator ptr) {
-			GetNetObjectById = ptr.Add(1).Rip().As<Functions::GetNetObjectById>();
-		});
-
-		constexpr auto netObjectMgrPtrn = Pattern<"48 8B 0D ? ? ? ? E9 ? ? ? ? 90 31 40">("NetObjMgr");
-		scanner.Add(netObjectMgrPtrn, [this](PointerCalculator ptr) {
-			NetObjMgr = *ptr.Add(3).Rip().As<void**>();
+		constexpr auto networkObjectMgrPtrn = Pattern<"48 8B 0D ? ? ? ? E9 ? ? ? ? 90 31 40">("NetworkObjectMgr");
+		scanner.Add(networkObjectMgrPtrn, [this](PointerCalculator ptr) {
+			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
 		});
 
 		if (!scanner.Scan())

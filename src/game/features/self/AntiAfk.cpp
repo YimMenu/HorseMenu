@@ -10,18 +10,21 @@ namespace YimMenu::Features
 	class AntiAfk : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
+		static constexpr auto timer = ScriptGlobal(1102813).At(3919);
+		static constexpr auto afkSwitch = ScriptGlobal(1102813).At(3918);
 
 		virtual void OnTick() override
 		{
 			if (*Pointers.IsSessionStarted)
 			{
-				auto timer     = ScriptGlobal(1102813).At(3919).As<int*>();
-				auto afkswitch = ScriptGlobal(1102813).At(3918).As<int*>();
-				if (timer && afkswitch)
-					*timer = 999999, *afkswitch = 0;
+				if (timer.CanAccess() && afkSwitch.CanAccess())
+				{
+					*timer.As<int*>() = 999999;
+					*afkSwitch.As<bool*>() = false;
+				}
 			}
 		}
 	};
 
-	static AntiAfk _AntiAfk{"antiafk", "Anti Afk", "Prevents your from being idle kicked"};
+	static AntiAfk _AntiAfk{"antiafk", "Anti Afk", "Prevents you from being idle kicked"};
 }

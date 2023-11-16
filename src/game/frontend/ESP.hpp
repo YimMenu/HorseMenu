@@ -3,7 +3,7 @@
 
 namespace YimMenu
 {
-	class Esp
+	class ESP
 	{
 	public:
 		static void Draw();

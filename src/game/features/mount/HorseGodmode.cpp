@@ -5,7 +5,7 @@
 
 namespace YimMenu::Features
 {
-	//Doesn't work
+	// Doesn't work
 	class HorseGodmode : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
@@ -17,7 +17,7 @@ namespace YimMenu::Features
 
         virtual void OnDisable() override
         {
-            PED::SET_PED_CAN_RAGDOLL(Self::Mount, false);
+			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, false);
         }
 	};
 

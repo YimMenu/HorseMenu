@@ -106,15 +106,14 @@ namespace YimMenu
 				}
 			}
 	
-			if (AllKeysPressed && GetForegroundWindow() == Pointers.Hwnd)
+			if (AllKeysPressed && GetForegroundWindow() == Pointers.Hwnd && std::chrono::system_clock::now() - m_LastHotkeyTriggerTime > 100ms)
 			{
 				auto Command = Commands::GetCommand(Hash);
 				if (Command)
 				{
 					Command->Call();
 				}
-
-				ScriptMgr::Yield(100ms);
+				m_LastHotkeyTriggerTime = std::chrono::system_clock::now();
 			}
 		}
 	}

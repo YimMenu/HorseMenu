@@ -9,25 +9,18 @@ namespace YimMenu::Features
 	class OffTheRadar : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
+		static constexpr auto offTheRadar = ScriptGlobal(1102813).At(3);
 
 		virtual void OnTick() override
 		{
-			if (*Pointers.IsSessionStarted)
-			{
-				auto offtheradar = ScriptGlobal(1102813).At(3).As<int*>();
-				if (offtheradar)
-					*offtheradar = 32;
-			}
+			if (offTheRadar.CanAccess())
+				*offTheRadar.As<int*>() = 32;
 		}
 
 		virtual void OnDisable() override
 		{
-			if (*Pointers.IsSessionStarted)
-			{
-				auto offtheradar = ScriptGlobal(1102813).At(3).As<int*>();
-				if (offtheradar)
-					*offtheradar = 0;
-			}
+			if (offTheRadar.CanAccess())
+				*offTheRadar.As<int*>() = 0;
 		}
 	};
 

@@ -10,6 +10,7 @@
 #include <network/netObject.hpp>
 #include <network/sync/CProjectBaseSyncDataNode.hpp>
 #include <network/sync/object/CObjectCreationData.hpp>
+#include <network/sync/ped/CPedAttachData.hpp>
 #include <network/sync/ped/CPedCreationData.hpp>
 #include <network/sync/ped/CPedTaskTreeData.hpp>
 #include <network/sync/physical/CPhysicalAttachData.hpp>
@@ -112,6 +113,10 @@ namespace
 			}
 			LOG_FIELD_H(CPedTaskTreeData, m_ScriptCommand);
 			LOG_FIELD(CPedTaskTreeData, m_ScriptTaskStage);
+			break;
+		case "CPedAttachDataNode"_J:
+			LOG_FIELD_B(CPedAttachData, m_IsAttached);
+			LOG_FIELD(CPedAttachData, m_AttachObjectId);
 			break;
 		}
 	}
@@ -258,6 +263,22 @@ namespace
 
 			break;
 		}
+		case "CPedAttachDataNode"_J:
+		{
+			auto& data = node->GetData<CPedAttachData>();
+			if (auto local = Pointers.GetLocalPed(); local && local->m_NetObject)
+			{
+				if (data.m_IsAttached && data.m_AttachObjectId == local->m_NetObject->m_ObjectId)
+				{
+					LOG(WARNING) << "Blocked ped attachment from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections",
+					    std::string("Blocked ped attachment from ").append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
+					return true;
+				}
+      }
+     break;
+    }
 		case "CPropSetCreationDataNode"_J:
 		{
 			auto& data = node->GetData<int>();

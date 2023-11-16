@@ -116,7 +116,9 @@ namespace YimMenu
 		PVOID NetworkRequest;
 
 		CNetworkPlayerMgr* NetworkPlayerMgr;
-		void* NetObjMgr;
+		void* NetworkObjectMgr;
+
+		PVOID WritePlayerHealthData;
 
 		//Patches
 		bool* ExplosionBypass;

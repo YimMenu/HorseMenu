@@ -15,6 +15,8 @@ namespace YimMenu
 	class HotkeySystem : 
 		private IStateSerializer
 	{
+		std::chrono::system_clock::time_point m_LastHotkeyTriggerTime;
+
 	public:
 		HotkeySystem();
 

@@ -11,7 +11,7 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-            if(PED::CAN_PED_RAGDOLL(Self::PlayerPed))
+            if (PED::CAN_PED_RAGDOLL(Self::PlayerPed))
 			    PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, false);
 		}
 

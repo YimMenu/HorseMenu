@@ -3,10 +3,13 @@
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/Entity.hpp"
+
+// TODO: remove this file
 
 namespace YimMenu::Teleport
 {
-	inline bool LoadGroundAtCoords(Vector3& coords)
+	inline bool LoadGroundAtCoords(rage::fvector3& coords)
 	{
 		float groundZ;
 		bool done = false;
@@ -51,8 +54,8 @@ namespace YimMenu::Teleport
 		return false;
 	}
 
-	//Entity typdef is being ambiguous with Entity class
-	inline bool TeleportEntity(int ent, Vector3& coords, bool loadGround)
+	// Entity typdef is being ambiguous with Entity class
+	inline bool TeleportEntity(int ent, rage::fvector3 coords, bool loadGround = false)
 	{
 		if (ENTITY::IS_ENTITY_A_PED(ent))
 		{
@@ -62,18 +65,18 @@ namespace YimMenu::Teleport
 				ent = PED::GET_VEHICLE_PED_IS_USING(ent);
 		}
 
-		//TOOD request control of entity
+		// TODO: request control of entity
 		if (loadGround)
 		{
 			if (LoadGroundAtCoords(coords))
 			{
-				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ent, coords.x, coords.y, coords.z, false, false, false);
+				Entity(ent).SetPosition(coords);
 				Notifications::Show("Teleport", "Teleported entity to coords", NotificationType::Success);
 			}
 		}
 		else
 		{
-			ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ent, coords.x, coords.y, coords.z, false, false, false);
+			Entity(ent).SetPosition(coords);
 			Notifications::Show("Teleport", "Teleported entity to coords", NotificationType::Success);
 		}
 

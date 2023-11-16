@@ -11,8 +11,8 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-            if(ENTITY::DOES_ENTITY_EXIST(Self::Mount))
-				if(PED::GET_MOUNT(Self::PlayerPed) != Self::Mount)
+            if (ENTITY::DOES_ENTITY_EXIST(Self::Mount))
+				if (PED::GET_MOUNT(Self::PlayerPed) != Self::Mount)
                 	ENTITY::SET_ENTITY_COORDS(Self::Mount, Self::Pos.x, Self::Pos.y, Self::Pos.z, true, false, false, true);    
 				else
                 	Notifications::Show("Teleport", "Already on mount", NotificationType::Warning);

@@ -10,8 +10,8 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			DWORD test[7];
-			BOUNTY::_BOUNTY_REQUEST_SERVED_FULL_JAIL_SENTENCE(&test);
+			char guid[0x20];
+			BOUNTY::_BOUNTY_REQUEST_SERVED_FULL_JAIL_SENTENCE(guid);
 		}
 	};
 

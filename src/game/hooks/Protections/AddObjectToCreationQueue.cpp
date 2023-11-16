@@ -11,8 +11,12 @@ namespace YimMenu::Hooks
 {
 	int Protections::AddObjectToCreationQueue(void* mgr, eNetObjType type, CNetGamePlayer* src, CNetGamePlayer* dst)
 	{
+		YimMenu::Protections::SetSyncingPlayer(src);
+
 		if (ShouldBlockSync(Pointers.GetSyncTreeForType(nullptr, (uint16_t)type), type, nullptr))
 			return -1;
+
+		YimMenu::Protections::SetSyncingPlayer(nullptr);
 
 		return BaseHook::Get<Protections::AddObjectToCreationQueue, DetourHook<decltype(&Protections::AddObjectToCreationQueue)>>()
 		    ->Original()(mgr, type, src, dst);
