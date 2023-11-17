@@ -25,7 +25,7 @@ public:
 	char m_padding_6[0x4];
 	int gfx_adv_terrainShadowQuality;
 	char m_padding_7[0x58];
-	int m_gfx_tessellation; 
+	int m_gfx_tessellation;
 	int m_gfx_shadowQuality;
 	int m_gfx_farShadowQuality;
 	int m_gfx_reflectionQuality;

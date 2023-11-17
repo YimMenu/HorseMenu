@@ -19,8 +19,8 @@ namespace YimMenu
 
 		/**
 		 * @brief Parses the EAT of the module for the requested symbolname
-		 * 
-		 * @param symbolName 
+		 *
+		 * @param symbolName
 		 * @return void* Function address of the exported function
 		 */
 		template<typename T = void*>
@@ -29,10 +29,10 @@ namespace YimMenu
 		T GetExport(int ordinal) const;
 		/**
 		 * @brief Gets the address of the import function
-		 * 
+		 *
 		 * @param moduleName The module to get the import from
 		 * @param symbolName The function name
-		 * @return void** 
+		 * @return void**
 		 */
 		void** GetImport(const std::string_view moduleName, const std::string_view symbolName) const;
 
@@ -97,7 +97,7 @@ namespace YimMenu
 
 		const auto imageDataDirectory = ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
 		const auto exportDirectory    = m_Base.Add(imageDataDirectory.VirtualAddress).As<IMAGE_EXPORT_DIRECTORY*>();
-		const auto ordinalOffsets       = m_Base.Add(exportDirectory->AddressOfNameOrdinals).As<uint16_t*>();
+		const auto ordinalOffsets     = m_Base.Add(exportDirectory->AddressOfNameOrdinals).As<uint16_t*>();
 		const auto funcOffsets        = m_Base.Add(exportDirectory->AddressOfFunctions).As<DWORD*>();
 
 		for (std::size_t i = 0; i < exportDirectory->NumberOfFunctions; i++)

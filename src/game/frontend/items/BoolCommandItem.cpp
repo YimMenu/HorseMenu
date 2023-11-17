@@ -1,6 +1,6 @@
 #include "Items.hpp"
-#include "core/commands/Commands.hpp"
 #include "core/commands/Command.hpp"
+#include "core/commands/Commands.hpp"
 #include "core/commands/LoopedCommand.hpp"
 #include "core/frontend/widgets/toggle/imgui_toggle.hpp"
 
@@ -43,7 +43,6 @@ namespace YimMenu
 
 			HotkeySetter(m_Command->GetHash()).Draw();
 
-			
 			ImGui::Spacing();
 			if (ImGui::Button("Close") || ((!ImGui::IsWindowHovered() && !ImGui::IsAnyItemHovered()) && ImGui::IsMouseClicked(ImGuiMouseButton_Left)))
 				ImGui::CloseCurrentPopup();

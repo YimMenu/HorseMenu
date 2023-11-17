@@ -1,8 +1,8 @@
 #include "Items.hpp"
-#include "game/commands/PlayerCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
+#include "game/commands/PlayerCommand.hpp"
 
 namespace YimMenu
 {

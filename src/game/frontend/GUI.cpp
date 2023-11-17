@@ -1,9 +1,10 @@
 #include "GUI.hpp"
-#include "Menu.hpp"
-#include "ESP.hpp"
+
 #include "ContextMenu.hpp"
-#include "core/renderer/Renderer.hpp"
+#include "ESP.hpp"
+#include "Menu.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "core/renderer/Renderer.hpp"
 
 namespace YimMenu
 {

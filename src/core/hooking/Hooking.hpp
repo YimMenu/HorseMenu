@@ -3,27 +3,27 @@
 
 namespace YimMenu
 {
-	template <typename T>
+	template<typename T>
 	inline void* GetVF(T ptr, uint64_t index)
 	{
-		void** VFT{ *reinterpret_cast<void***>(ptr) };
+		void** VFT{*reinterpret_cast<void***>(ptr)};
 		return VFT[index];
 	}
-	
+
 	class Hooking
 	{
 	private:
 		Hooking();
 
 		MinHook m_MinHook;
-		
+
 	public:
 		virtual ~Hooking();
-		Hooking(const Hooking&) = delete;
-		Hooking(Hooking&&) noexcept  = delete;
-		Hooking& operator=(const Hooking&) = delete;
-		Hooking& operator=(Hooking&&) noexcept  = delete;
-		
+		Hooking(const Hooking&)                = delete;
+		Hooking(Hooking&&) noexcept            = delete;
+		Hooking& operator=(const Hooking&)     = delete;
+		Hooking& operator=(Hooking&&) noexcept = delete;
+
 		static bool Init();
 		static void Destroy();
 
@@ -37,6 +37,5 @@ namespace YimMenu
 			static Hooking i{};
 			return i;
 		}
-
 	};
 }

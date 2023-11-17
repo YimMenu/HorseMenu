@@ -7,9 +7,9 @@ namespace YimMenu
 		FiberPool() = default;
 
 	public:
-		FiberPool(const FiberPool&)            = delete;
-		FiberPool(FiberPool&&) noexcept        = delete;
-		FiberPool& operator=(const FiberPool&) = delete;
+		FiberPool(const FiberPool&)                = delete;
+		FiberPool(FiberPool&&) noexcept            = delete;
+		FiberPool& operator=(const FiberPool&)     = delete;
 		FiberPool& operator=(FiberPool&&) noexcept = delete;
 		virtual ~FiberPool()                       = default;
 

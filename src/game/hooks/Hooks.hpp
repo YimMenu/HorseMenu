@@ -1,6 +1,6 @@
 #pragma once
-#include <dxgi1_4.h>
 #include <D3D12.h>
+#include <dxgi1_4.h>
 #include <vulkan/vulkan.h>
 
 namespace rage

@@ -11,14 +11,14 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-            if(PED::CAN_PED_RAGDOLL(Self::Mount))
-			    PED::SET_PED_CAN_RAGDOLL(Self::Mount, false);
+			if (PED::CAN_PED_RAGDOLL(Self::Mount))
+				PED::SET_PED_CAN_RAGDOLL(Self::Mount, false);
 		}
 
-        virtual void OnDisable() override
-        {
-            PED::SET_PED_CAN_RAGDOLL(Self::Mount, true);
-        }
+		virtual void OnDisable() override
+		{
+			PED::SET_PED_CAN_RAGDOLL(Self::Mount, true);
+		}
 	};
 
 	static HorseNoRagdoll _HorseNoRagdoll{"horsenoragdoll", "No Ragdoll", "Your horse will never ragdoll"};

@@ -1,6 +1,6 @@
 #pragma once
 #include "game/pointers/Pointers.hpp"
-#include "game/rdr/Natives.hpp" 
+#include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Math
 {

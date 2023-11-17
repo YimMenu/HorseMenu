@@ -1,4 +1,5 @@
 #include "ScriptMgr.hpp"
+
 #include "game/rdr/Scripts.hpp"
 
 namespace YimMenu

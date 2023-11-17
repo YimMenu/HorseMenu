@@ -36,7 +36,7 @@ namespace YimMenu
 		using GetSyncTreeForType        = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
 		using GetNetworkPlayerFromPid   = CNetGamePlayer* (*)(uint8_t player);
 		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
-		using GetNetObjectById        = rage::netObject*(*)(uint16_t id);
+		using GetNetObjectById          = rage::netObject* (*)(uint16_t id);
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
 	};
 

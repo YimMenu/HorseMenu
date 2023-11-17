@@ -10,7 +10,7 @@ namespace YimMenu::Features
 	class AntiAfk : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
-		static constexpr auto timer = ScriptGlobal(1102813).At(3919);
+		static constexpr auto timer     = ScriptGlobal(1102813).At(3919);
 		static constexpr auto afkSwitch = ScriptGlobal(1102813).At(3918);
 
 		virtual void OnTick() override
@@ -19,7 +19,7 @@ namespace YimMenu::Features
 			{
 				if (timer.CanAccess() && afkSwitch.CanAccess())
 				{
-					*timer.As<int*>() = 999999;
+					*timer.As<int*>()      = 999999;
 					*afkSwitch.As<bool*>() = false;
 				}
 			}

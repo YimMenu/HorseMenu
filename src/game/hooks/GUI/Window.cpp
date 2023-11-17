@@ -1,7 +1,7 @@
 #include "core/hooking/DetourHook.hpp"
 #include "core/renderer/Renderer.hpp"
-#include "game/hooks/Hooks.hpp"
 #include "game/frontend/GUI.hpp"
+#include "game/hooks/Hooks.hpp"
 
 namespace YimMenu::Hooks
 {
@@ -12,14 +12,14 @@ namespace YimMenu::Hooks
 
 		return BaseHook::Get<Window::WndProc, DetourHook<decltype(&WndProc)>>()->Original()(hwnd, umsg, wparam, lparam);
 	}
-	
+
 	BOOL Window::SetCursorPos(int x, int y)
 	{
 		if (GUI::IsOpen() && !Renderer::IsResizing())
 		{
 			return true;
 		}
-		
+
 		return BaseHook::Get<Window::SetCursorPos, DetourHook<decltype(&SetCursorPos)>>()->Original()(x, y);
 	}
 }

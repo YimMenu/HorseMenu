@@ -112,12 +112,12 @@ namespace YimMenu
 
 	void Notifications::DrawImpl()
 	{
-		int position             = 0;
+		int position = 0;
 
 		for (auto& [id, notification] : m_Notifications)
 		{
 			DrawNotification(notification, position);
-			
+
 			if (!notification.erasing)
 			{
 				if (notification.m_AnimationOffset < 0)
@@ -133,8 +133,7 @@ namespace YimMenu
 				if (notification.m_AnimationOffset <= -m_CardSizeX)
 					m_Notifications.erase(id);
 			}
-			
-			
+
 			if ((float)std::chrono::duration_cast<std::chrono::milliseconds>(
 			        std::chrono::system_clock::now() - notification.m_created_on)
 			        .count()

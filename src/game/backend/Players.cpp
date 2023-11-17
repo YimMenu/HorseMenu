@@ -1,7 +1,9 @@
 #include "Players.hpp"
+
+#include "game/pointers/Pointers.hpp"
+
 #include <network/CNetGamePlayer.hpp>
 #include <network/CNetworkPlayerMgr.hpp>
-#include "game/pointers/Pointers.hpp"
 
 namespace YimMenu
 {

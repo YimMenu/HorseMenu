@@ -1,4 +1,5 @@
 #include "Nodes.hpp"
+
 #include "game/pointers/Pointers.hpp"
 
 namespace YimMenu
@@ -42,9 +43,7 @@ namespace YimMenu
 
 	SyncNodeFinder::SyncNodeFinder()
 	{
-		m_SyncTreeNodeIdsMap = {
-		{
-		    // CAnimalSyncTree
+		m_SyncTreeNodeIdsMap = {{// CAnimalSyncTree
 		    {
 		        {"CAnimalCreationDataNode"},
 		        {"CGlobalFlagsDataNode"},
@@ -781,7 +780,6 @@ namespace YimMenu
 		        {"DataNode_1435a2658"},
 		        {"CMigrationDataNode"},
 		        {"CGlobalFlagsDataNode"},
-		    }
-        }};
+		    }}};
 	}
 }

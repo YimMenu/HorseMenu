@@ -15,7 +15,7 @@ namespace YimMenu::Features
 			if (!ENTITY::DOES_ENTITY_EXIST(Self::Mount))
 				return;
 
-			auto agitation = PED::_GET_PED_MOTIVATION(Self::Mount,(int) eMotivationState::AGITATION_STATE, 0);
+			auto agitation = PED::_GET_PED_MOTIVATION(Self::Mount, (int)eMotivationState::AGITATION_STATE, 0);
 
 			if (agitation > 0)
 				PED::_SET_PED_MOTIVATION(Self::Mount, (int)eMotivationState::AGITATION_STATE, 0, 0);

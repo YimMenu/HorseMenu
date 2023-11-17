@@ -1,14 +1,13 @@
 #pragma once
-#include "util/Joaat.hpp"
 #include "core/settings/IStateSerializer.hpp"
+#include "util/Joaat.hpp"
 
 namespace YimMenu
 {
 	class Command;
 	class LoopedCommand;
 
-	class Commands : 
-		private IStateSerializer
+	class Commands : private IStateSerializer
 	{
 	private:
 		std::unordered_map<joaat_t, Command*> m_Commands;
@@ -24,7 +23,6 @@ namespace YimMenu
 		static void AddLoopedCommand(LoopedCommand* command)
 		{
 			GetInstance().AddLoopedCommandImpl(command);
-		
 		}
 
 		static void RunLoopedCommands()
@@ -42,7 +40,7 @@ namespace YimMenu
 		{
 			return GetInstance().m_Commands;
 		};
-		
+
 		static std::vector<LoopedCommand*> GetLoopedCommands()
 		{
 			return GetInstance().m_LoopedCommands;
@@ -52,7 +50,7 @@ namespace YimMenu
 		{
 			GetInstance().MarkStateDirty();
 		}
-		
+
 		static void Shutdown()
 		{
 			GetInstance().ShutdownImpl();

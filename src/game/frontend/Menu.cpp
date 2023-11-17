@@ -1,18 +1,18 @@
 #include "Menu.hpp"
-#include "core/renderer/Renderer.hpp"
-#include "game/backend/ScriptMgr.hpp"
-#include "game/backend/FiberPool.hpp"
+
 #include "core/commands/Commands.hpp"
 #include "core/frontend/manager/UIManager.hpp"
+#include "core/renderer/Renderer.hpp"
+#include "game/backend/FiberPool.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "game/frontend/fonts/Fonts.hpp"
 #include "game/pointers/Pointers.hpp"
-
-#include "submenus/Self.hpp"
-#include "submenus/Teleport.hpp"
 #include "submenus/Debug.hpp"
-#include "submenus/Players.hpp"
-#include "submenus/Settings.hpp"
 #include "submenus/Network.hpp"
+#include "submenus/Players.hpp"
+#include "submenus/Self.hpp"
+#include "submenus/Settings.hpp"
+#include "submenus/Teleport.hpp"
 
 namespace YimMenu
 {
@@ -31,7 +31,7 @@ namespace YimMenu
 			    if (!GUI::IsOpen())
 				    return;
 
-				ImGui::PushFont(Menu::Font::g_DefaultFont);
+			    ImGui::PushFont(Menu::Font::g_DefaultFont);
 			    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImU32(ImColor(15, 15, 15)));
 
 			    // Think this add HTML&PHP with no CSS. Lol just for testing.
@@ -41,27 +41,27 @@ namespace YimMenu
 				    //ImGui::BeginDisabled(*Pointers.IsSessionStarted);
 				    if (ImGui::Button("Unload", ImVec2(120, 0)))
 				    {
-						if (ScriptMgr::CanTick())
-						{
+					    if (ScriptMgr::CanTick())
+					    {
 						    FiberPool::Push([] {
 							    Commands::Shutdown();
 							    g_Running = false;
 						    });
-						}
-						else
-						{
+					    }
+					    else
+					    {
 						    g_Running = false;
-						}
+					    }
 				    }
 				    //ImGui::EndDisabled();
 
-					UIManager::Draw();
-	
+				    UIManager::Draw();
+
 				    ImGui::End();
 			    }
 
-				ImGui::PopStyleColor();
-				ImGui::PopFont();
+			    ImGui::PopStyleColor();
+			    ImGui::PopFont();
 		    },
 		    -1);
 	}

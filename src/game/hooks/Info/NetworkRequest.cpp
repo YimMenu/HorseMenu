@@ -44,7 +44,6 @@ namespace YimMenu::Hooks
 	};
 #pragma pack(pop)
 
-
 	uint8_t* Info::NetworkRequest(HttpRequest* Request, uint8_t* a2, uint32_t a3)
 	{
 #if 0
@@ -52,5 +51,4 @@ namespace YimMenu::Hooks
 #endif
 		return BaseHook::Get<Info::NetworkRequest, DetourHook<decltype(&Info::NetworkRequest)>>()->Original()(Request, a2, a3);
 	}
-
 }

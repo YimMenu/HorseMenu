@@ -2,24 +2,24 @@
 
 namespace YimMenu
 {
-    BytePatch::~BytePatch()
-    {
-        Restore();
-    }
+	BytePatch::~BytePatch()
+	{
+		Restore();
+	}
 
 	void BytePatch::Apply() const
 	{
-        std::copy_n(m_Patch.get(), m_Size, reinterpret_cast<std::byte*>(m_Address));
+		std::copy_n(m_Patch.get(), m_Size, reinterpret_cast<std::byte*>(m_Address));
 	}
 
 	void BytePatch::Restore() const
 	{
-        std::copy_n(m_Original.get(), m_Size, reinterpret_cast<std::byte*>(m_Address));
+		std::copy_n(m_Original.get(), m_Size, reinterpret_cast<std::byte*>(m_Address));
 	}
 
 	void BytePatch::Remove() const
 	{
-        if (const auto it = std::find(m_Patches.begin(), m_Patches.end(), this); it != m_Patches.end())
+		if (const auto it = std::find(m_Patches.begin(), m_Patches.end(), this); it != m_Patches.end())
 		{
 			m_Patches.erase(it);
 		}
@@ -27,7 +27,7 @@ namespace YimMenu
 
 	void BytePatch::RestoreAll()
 	{
-        m_Patches.clear();
+		m_Patches.clear();
 	}
 
 	bool operator==(const std::unique_ptr<BytePatch>& a, const BytePatch* b)

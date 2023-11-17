@@ -25,8 +25,8 @@ namespace YimMenu
 
 		/**
 		 * @brief Signature string
-		 * 
-		 * @return constexpr const decltype(m_Signature)& 
+		 *
+		 * @return constexpr const decltype(m_Signature)&
 		 */
 		inline constexpr const decltype(m_Signature)& Get() const
 		{
@@ -34,8 +34,8 @@ namespace YimMenu
 		}
 		/**
 		 * @brief Returns the Length of the original signature string
-		 * 
-		 * @return constexpr std::size_t 
+		 *
+		 * @return constexpr std::size_t
 		 */
 		constexpr std::size_t Length() const
 		{
@@ -43,8 +43,8 @@ namespace YimMenu
 		}
 		/**
 		 * @brief Returns the actual length in bytes for the signature
-		 * 
-		 * @return constexpr std::size_t 
+		 *
+		 * @return constexpr std::size_t
 		 */
 		constexpr std::size_t ByteLength() const
 		{
@@ -106,7 +106,6 @@ namespace YimMenu
 
 				continue;
 			}
-
 
 			m_Signature[pos++] = static_cast<std::uint8_t>(StrToHex(S.Get()[i]) * 0x10 + StrToHex(S.Get()[++i]));
 		}

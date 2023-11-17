@@ -12,10 +12,10 @@ namespace YimMenu::Menu
 		inline ImFont* g_DefaultFont   = nullptr;
 		inline float g_DefaultFontSize = 18.0f;
 
-	    inline ImFont* g_OptionsFont   = nullptr;
+		inline ImFont* g_OptionsFont   = nullptr;
 		inline float g_OptionsFontSize = 15.0f;
 
 		inline ImFont* g_ChildTitleFont   = nullptr;
-		inline float g_ChildTitleFontSize   = 14.5f;
+		inline float g_ChildTitleFontSize = 14.5f;
 	}
 }

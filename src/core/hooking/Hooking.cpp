@@ -3,9 +3,9 @@
 #include "BaseHook.hpp"
 #include "DetourHook.hpp"
 #include "VMTHook.hpp"
+#include "core/memory/ModuleMgr.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
-#include "core/memory/ModuleMgr.hpp"
 
 namespace YimMenu
 {
@@ -29,11 +29,11 @@ namespace YimMenu
 		}
 
 		BaseHook::Add<Hooks::Script::RunScriptThreads>(new DetourHook("RunScriptThreads", Pointers.RunScriptThreads, Hooks::Script::RunScriptThreads));
-		
+
 		BaseHook::Add<Hooks::Anticheat::SendMetric>(new DetourHook("SendMetric", Pointers.SendMetric, Hooks::Anticheat::SendMetric));
 		BaseHook::Add<Hooks::Anticheat::QueueDependency>(new DetourHook("QueueDependency", Pointers.QueueDependency, Hooks::Anticheat::QueueDependency));
 		BaseHook::Add<Hooks::Anticheat::UnkFunction>(new DetourHook("UnkFunction", Pointers.UnkFunction, Hooks::Anticheat::UnkFunction));
-		
+
 		BaseHook::Add<Hooks::Protections::HandleNetGameEvent>(new DetourHook("HandleNetGameEvent", Pointers.HandleNetGameEvent, Hooks::Protections::HandleNetGameEvent));
 		BaseHook::Add<Hooks::Protections::HandleCloneCreate>(new DetourHook("HandleCloneCreate", Pointers.HandleCloneCreate, Hooks::Protections::HandleCloneCreate));
 		BaseHook::Add<Hooks::Protections::HandleCloneSync>(new DetourHook("HandleCloneSync", Pointers.HandleCloneSync, Hooks::Protections::HandleCloneSync));
@@ -41,13 +41,12 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::ResetSyncNodes>(new DetourHook("ResetSyncNodes", Pointers.ResetSyncNodes, Hooks::Protections::ResetSyncNodes));
 		BaseHook::Add<Hooks::Protections::HandleScriptedGameEvent>(new DetourHook("HandleScriptedGameEvent", Pointers.HandleScriptedGameEvent, Hooks::Protections::HandleScriptedGameEvent));
 		BaseHook::Add<Hooks::Protections::AddObjectToCreationQueue>(new DetourHook("AddObjectToCreationQueue", Pointers.AddObjectToCreationQueue, Hooks::Protections::AddObjectToCreationQueue));
-		
+
 		BaseHook::Add<Hooks::Voice::EnumerateAudioDevices>(new DetourHook("EnumerateAudioDevices", Pointers.EnumerateAudioDevices, Hooks::Voice::EnumerateAudioDevices));
-		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(
-		    new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));
-		
+		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));
+
 		BaseHook::Add<Hooks::Misc::ThrowFatalError>(new DetourHook("ThrowFatalError", Pointers.ThrowFatalError, Hooks::Misc::ThrowFatalError));
-		
+
 		BaseHook::Add<Hooks::Info::NetworkRequest>(new DetourHook("NetworkReqeust", Pointers.NetworkRequest, Hooks::Info::NetworkRequest));
 		BaseHook::Add<Hooks::Info::AssignPhysicalIndex>(new DetourHook("AssignPhysicalIndex", Pointers.AssignPhysicalIndex, Hooks::Info::AssignPhysicalIndex));
 

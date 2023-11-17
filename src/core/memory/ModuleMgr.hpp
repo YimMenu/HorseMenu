@@ -21,9 +21,9 @@ namespace YimMenu
 
 		/**
 		 * @brief Loads the modules from PEB and caches them.
-		 * 
+		 *
 		 * @return true If the peb is found and modules have been cached.
-		 * @return false If the peb or peb->Ldr pointer were invalid. 
+		 * @return false If the peb or peb->Ldr pointer were invalid.
 		 */
 		bool LoadModules();
 

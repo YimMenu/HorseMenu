@@ -12,16 +12,15 @@ namespace YimMenu
 		void PopulateHandle();
 
 	public:
-
 		constexpr Entity(void* pointer) :
-			m_Pointer(pointer),
+		    m_Pointer(pointer),
 		    m_Handle(-1)
 		{
 		}
 
 		constexpr Entity(int handle) :
 		    m_Pointer(nullptr),
-			m_Handle(handle)
+		    m_Handle(handle)
 		{
 		}
 

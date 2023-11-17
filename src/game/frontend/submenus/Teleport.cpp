@@ -1,11 +1,12 @@
 #include "Teleport.hpp"
-#include "game/features/Features.hpp"
-#include "game/frontend/items/Items.hpp"
-#include "game/bigfeatures/CustomTeleport.hpp"
-#include "util/Math.hpp"
-#include "util/Teleport.hpp"
+
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/bigfeatures/CustomTeleport.hpp"
+#include "game/features/Features.hpp"
+#include "game/frontend/items/Items.hpp"
+#include "util/Math.hpp"
+#include "util/Teleport.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -32,7 +33,6 @@ namespace YimMenu::Submenus
 	{
 		return Math::DistanceBetweenVectors(Vector3(t.x, t.y, t.z), Self::Pos);
 	}
-
 
 	void RenderCustomTeleport()
 	{
@@ -106,7 +106,6 @@ namespace YimMenu::Submenus
 			});
 		};
 
-
 		ImGui::Separator();
 
 		ImGui::Text("Double click to teleport\nShift click to delete");
@@ -156,7 +155,7 @@ namespace YimMenu::Submenus
 							{
 								FiberPool::Push([l] {
 									rage::fvector3 l_ = {l.x, l.y, l.z};
-									YimMenu::Teleport::TeleportEntity(Self::PlayerPed,l_, false);
+									YimMenu::Teleport::TeleportEntity(Self::PlayerPed, l_, false);
 								});
 							}
 						}
@@ -183,8 +182,8 @@ namespace YimMenu::Submenus
 	Teleport::Teleport() :
 	    Submenu::Submenu("Teleport")
 	{
-		auto main = std::make_shared<Category>("Main");
-		auto columns = std::make_shared<Column>(2);
+		auto main      = std::make_shared<Category>("Main");
+		auto columns   = std::make_shared<Column>(2);
 		auto miscGroup = std::make_shared<Group>("Misc", GetListBoxDimensions());
 
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptowaypoint"_J));
@@ -197,7 +196,6 @@ namespace YimMenu::Submenus
 		customteleport->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderCustomTeleport();
 		}));
-
 
 		AddCategory(std::move(main));
 		AddCategory(std::move(customteleport));

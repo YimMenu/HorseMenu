@@ -1,7 +1,7 @@
-#include "core/hooking/DetourHook.hpp"
-#include "game/hooks/Hooks.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/LoopedCommand.hpp"
+#include "core/hooking/DetourHook.hpp"
+#include "game/hooks/Hooks.hpp"
 
 enum class eDeviceType
 {
@@ -36,8 +36,8 @@ namespace YimMenu::Hooks
 					memset(&devices[i], 0, sizeof(CFoundDevice));
 					lstrcpyW((LPWSTR)devices[i].m_Name, L"HorseMenu Virtual Input Device");
 					memcpy(&devices[i].m_Guid, &g_YimDevice, sizeof(GUID));
-					devices[i].m_DeviceType         = eDeviceType::INPUT;
-					devices[i].m_DefaultDeviceType  = eDeviceType::INPUT;
+					devices[i].m_DeviceType        = eDeviceType::INPUT;
+					devices[i].m_DefaultDeviceType = eDeviceType::INPUT;
 
 					if (i >= res)
 						res++;

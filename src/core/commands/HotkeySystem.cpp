@@ -1,29 +1,29 @@
 #include "HotkeySystem.hpp"
 
-#include "game/rdr/Natives.hpp" // TODO: game import in core
-#include "game/backend/ScriptMgr.hpp"
 #include "Commands.hpp"
 #include "LoopedCommand.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/rdr/Natives.hpp" // TODO: game import in core
 
 // TODO: serialization isn't stable
 
 namespace YimMenu
 {
-	HotkeySystem::HotkeySystem() : 
-		IStateSerializer("hotkeys")
+	HotkeySystem::HotkeySystem() :
+	    IStateSerializer("hotkeys")
 	{
 	}
 
 	void HotkeySystem::RegisterCommands()
 	{
-		auto Commands        = Commands::GetCommands();
-		
+		auto Commands = Commands::GetCommands();
+
 		for (auto [Hash, Command] : Commands)
 		{
 			CommandLink link;
 			m_CommandHotkeys.insert(std::make_pair(Command->GetHash(), link));
 		}
-		
+
 		LOG(INFO) << "Registered " << m_CommandHotkeys.size() << " commands";
 	}
 
@@ -77,7 +77,6 @@ namespace YimMenu
 		int PressedKey = 0;
 		ListenAndApply(PressedKey, Hotkey);
 
-
 		if (PressedKey > 1)
 		{
 			if (IsKeyUnique(PressedKey, Hotkey))
@@ -95,9 +94,9 @@ namespace YimMenu
 		{
 			if (Link.Hotkey.empty() || Link.Listening)
 				continue;
-	
+
 			bool AllKeysPressed = true;
-	
+
 			for (auto HotkeyModifier : Link.Hotkey)
 			{
 				if (!(GetAsyncKeyState(HotkeyModifier) & 0x8000))
@@ -105,7 +104,7 @@ namespace YimMenu
 					AllKeysPressed = false;
 				}
 			}
-	
+
 			if (AllKeysPressed && GetForegroundWindow() == Pointers.Hwnd && std::chrono::system_clock::now() - m_LastHotkeyTriggerTime > 100ms)
 			{
 				auto Command = Commands::GetCommand(Hash);
@@ -134,7 +133,7 @@ namespace YimMenu
 		for (auto& [key, value] : state.items())
 		{
 			if (m_CommandHotkeys.contains(std::atoi(key.data())))
-				m_CommandHotkeys[std::atoi(key.data())].Hotkey = value.get<std::vector<int>>(); 
+				m_CommandHotkeys[std::atoi(key.data())].Hotkey = value.get<std::vector<int>>();
 		}
 	}
 }

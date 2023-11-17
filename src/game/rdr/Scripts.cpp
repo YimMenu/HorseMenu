@@ -1,8 +1,10 @@
 #include "Scripts.hpp"
-#include <script/scrThread.hpp>
-#include <rage/tlsContext.hpp>
+
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
+
+#include <rage/tlsContext.hpp>
+#include <script/scrThread.hpp>
 
 namespace YimMenu::Scripts
 {
@@ -21,13 +23,13 @@ namespace YimMenu::Scripts
 
 	void RunAsScript(rage::scrThread* thread, std::function<void()> callback)
 	{
-		auto og_thread = *Pointers.CurrentScriptThread;
-		auto og_running_in_scrthread  = rage::tlsContext::Get()->m_RunningScript;
-		*Pointers.CurrentScriptThread = thread;
+		auto og_thread                           = *Pointers.CurrentScriptThread;
+		auto og_running_in_scrthread             = rage::tlsContext::Get()->m_RunningScript;
+		*Pointers.CurrentScriptThread            = thread;
 		rage::tlsContext::Get()->m_RunningScript = true; // required to evade thread checks
 		callback();
 		rage::tlsContext::Get()->m_RunningScript = og_running_in_scrthread;
-		*Pointers.CurrentScriptThread = og_thread;
+		*Pointers.CurrentScriptThread            = og_thread;
 	}
 
 	void SendScriptEvent(uint64_t* data, int count, int bits)

@@ -1,4 +1,5 @@
 #include "Settings.hpp"
+
 #include "IStateSerializer.hpp"
 #include "Settings.hpp"
 

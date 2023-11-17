@@ -3,7 +3,6 @@
 #include <memory>
 #include <string>
 
-
 namespace YimMenu
 {
 	using namespace al;

@@ -7,17 +7,15 @@
 #include "game/rdr/Natives.hpp"
 #include "util/teleport.hpp"
 
-
 namespace YimMenu
 {
-	inline ContextOperationsMenu ContextMenuDefault = ContextOperationsMenu("Default", {ContextMenuOperation{"Error", [&] (Entity){
-
+	inline ContextOperationsMenu ContextMenuDefault = ContextOperationsMenu("Default", {ContextMenuOperation{"Error", [&](Entity) {
 	                                                                                                         }}});
 
 	inline ContextOperationsMenu ContextMenuPlayers = ContextOperationsMenu("Players",
 	    {
 	        ContextMenuOperation{"Set Selected",
-	            [&] (Entity entity) {
+	            [&](Entity entity) {
 		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
 			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
 				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
@@ -27,17 +25,17 @@ namespace YimMenu
 				            }
 	            }},
 	        {"Teleport to",
-	            [&] (Entity entity) {
+	            [&](Entity entity) {
 		            Teleport::TeleportEntity(Self::PlayerPed, entity.GetPosition(), false);
 	            }},
 	        {"Teleport Behind",
-	            [&] (Entity entity) {
+	            [&](Entity entity) {
 		            auto playerCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(entity.GetHandle(), 0, -10, 0);
 		            if (Teleport::TeleportEntity(Self::PlayerPed, {playerCoords.x, playerCoords.y, playerCoords.z}, true))
 			            g_Spectating = false;
 	            }},
 	        {"Explode",
-	            [&] (Entity entity) {
+	            [&](Entity entity) {
 		            int playerId = -1;
 		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
 			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
@@ -49,7 +47,7 @@ namespace YimMenu
 		            Commands::GetCommand<PlayerCommand>("explode"_J)->Call(playerId);
 	            }},
 	        {"Set Defensive",
-	            [&] (Entity entity) {
+	            [&](Entity entity) {
 		            int playerId = -1;
 		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
 			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
@@ -61,7 +59,7 @@ namespace YimMenu
 		            Commands::GetCommand<PlayerCommand>("defensive"_J)->Call(playerId);
 	            }},
 	        {"Set Offensive",
-	            [&] (Entity entity) {
+	            [&](Entity entity) {
 		            int playerId = -1;
 		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
 			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())

@@ -6,6 +6,7 @@ namespace YimMenu
 	{
 		std::string m_SerComponentName;
 		bool m_IsDirty;
+
 	public:
 		IStateSerializer(const std::string& name);
 		virtual void SaveStateImpl(nlohmann::json& state) = 0;

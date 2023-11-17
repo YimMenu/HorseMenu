@@ -1,8 +1,9 @@
+#include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "game/hooks/Hooks.hpp"
-#include "core/commands/BoolCommand.hpp"
-#include <rage/rlMetric.hpp>
+
 #include <rage/rlJson.hpp>
+#include <rage/rlMetric.hpp>
 
 namespace YimMenu::Features
 {

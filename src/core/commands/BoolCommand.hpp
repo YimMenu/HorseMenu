@@ -13,6 +13,7 @@ namespace YimMenu
 		virtual void LoadState(nlohmann::json& value) override;
 
 		bool m_State = false;
+
 	public:
 		BoolCommand(std::string name, std::string label, std::string description);
 		bool GetState();

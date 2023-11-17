@@ -1,5 +1,6 @@
 #include "core/hooking/DetourHook.hpp"
 #include "game/hooks/Hooks.hpp"
+
 #include <Psapi.h>
 
 namespace YimMenu::Hooks

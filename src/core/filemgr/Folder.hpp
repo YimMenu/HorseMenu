@@ -3,10 +3,9 @@
 
 namespace YimMenu
 {
-    class Folder final : public BaseObj
-    {
-    public:
-        Folder(const std::filesystem::path& folder);
-
-    };
+	class Folder final : public BaseObj
+	{
+	public:
+		Folder(const std::filesystem::path& folder);
+	};
 }

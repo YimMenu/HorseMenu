@@ -1,8 +1,8 @@
-#include "core/hooking/DetourHook.hpp"
-#include "game/hooks/Hooks.hpp"
-#include "core/filemgr/FileMgr.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/LoopedCommand.hpp"
+#include "core/filemgr/FileMgr.hpp"
+#include "core/hooking/DetourHook.hpp"
+#include "game/hooks/Hooks.hpp"
 
 using namespace std::chrono_literals;
 
@@ -169,11 +169,11 @@ class IDirectSoundCaptureBuffer
 		return (HRESULT)0L; // DS_OK
 	}
 
-	char* m_AudioBuffer                                       = nullptr;
-	int m_AudioSize                                           = 0;
-	int m_AudioPage                                           = 0;
-	int m_ReadPosition                                        = 0;
-	bool m_Running                                             = false;
+	char* m_AudioBuffer                                           = nullptr;
+	int m_AudioSize                                               = 0;
+	int m_AudioPage                                               = 0;
+	int m_ReadPosition                                            = 0;
+	bool m_Running                                                = false;
 	std::chrono::high_resolution_clock::time_point m_LastReadTime = std::chrono::high_resolution_clock::time_point();
 };
 inline IDirectSoundCaptureBuffer g_DirectSoundCaptureBuffer{};
@@ -207,8 +207,8 @@ namespace YimMenu::Hooks
 {
 	HRESULT Voice::DirectSoundCaptureCreate(GUID* guid, IDirectSoundCapture** sound, void* unknown)
 	{
-		static auto override = Commands::GetCommand<LoopedCommand>("voicechatoverride"_J);	
-		if ((*guid) == g_YimDevice && override->GetState()) 
+		static auto override = Commands::GetCommand<LoopedCommand>("voicechatoverride"_J);
+		if ((*guid) == g_YimDevice && override->GetState())
 		{
 			LOG(VERBOSE) << __FUNCTION__ ": Returning YimMenu capture";
 			*sound = &g_DirectSoundCapture;

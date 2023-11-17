@@ -11,14 +11,14 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-            if (PED::CAN_PED_RAGDOLL(Self::PlayerPed))
-			    PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, false);
+			if (PED::CAN_PED_RAGDOLL(Self::PlayerPed))
+				PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, false);
 		}
 
-        virtual void OnDisable() override
-        {
-            PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, true);
-        }
+		virtual void OnDisable() override
+		{
+			PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, true);
+		}
 	};
 
 	static NoRagdoll _NoRagdoll{"noragdoll", "No Ragdoll", "You will never ragdoll"};

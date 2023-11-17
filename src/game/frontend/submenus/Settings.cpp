@@ -1,10 +1,11 @@
 #include "settings.hpp"
+
+#include "Settings.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
-#include "game/frontend/items/Items.hpp"
-#include "Settings.hpp"
 #include "game/features/Features.hpp"
+#include "game/frontend/items/Items.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -13,7 +14,7 @@ namespace YimMenu::Submenus
 	{
 		ImGui::BulletText("Hold the command name clicked to change its hotkey");
 		ImGui::BulletText("Press any registered key to remove");
-		
+
 		ImGui::Spacing();
 		ImGui::Separator();
 		ImGui::Spacing();
@@ -35,7 +36,7 @@ namespace YimMenu::Submenus
 	    Submenu::Submenu("Settings")
 	{
 		auto hotkeys = std::make_shared<Category>("Hotkeys");
-		auto gui = std::make_shared<Category>("GUI");
+		auto gui     = std::make_shared<Category>("GUI");
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
 		gui->AddItem(std::make_shared<BoolCommandItem>("esp"_J));
 		gui->AddItem(std::make_shared<BoolCommandItem>("ctxmenu"_J));

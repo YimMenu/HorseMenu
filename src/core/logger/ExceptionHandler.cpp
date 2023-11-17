@@ -1,8 +1,9 @@
 #include "ExceptionHandler.hpp"
+
 #include "StackTrace.hpp"
 
-#include <unordered_set>
 #include <hde64.h>
+#include <unordered_set>
 
 namespace YimMenu
 {
@@ -17,7 +18,7 @@ namespace YimMenu
 	ExceptionHandler::ExceptionHandler()
 	{
 		LOG(INFO) << "ExceptionHandler initialized";
-		m_OldErrorMode    = SetErrorMode(0);
+		m_OldErrorMode = SetErrorMode(0);
 		m_Handler      = AddVectoredExceptionHandler(0, &VectoredExceptionHandler);
 	}
 

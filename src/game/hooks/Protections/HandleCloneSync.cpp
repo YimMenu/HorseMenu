@@ -1,8 +1,8 @@
 #include "core/hooking/DetourHook.hpp"
+#include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-#include "game/backend/Protections.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 

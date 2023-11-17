@@ -1,8 +1,9 @@
 #pragma once
-#include <rage/joaat.hpp>
-#include <network/sync/netSyncTree.hpp>
 #include "Enums.hpp"
 #include "util/Joaat.hpp"
+
+#include <network/sync/netSyncTree.hpp>
+#include <rage/joaat.hpp>
 
 // Taken from https://github.com/YimMenu/YimMenu/blob/207e5457f9fca9e638168b1f26ec210116d7ad7d/src/util/sync_trees.hpp
 // Credits to Aure7138

@@ -29,10 +29,9 @@ namespace YimMenu::Hooks
 
 			LOG(VERBOSE) << "Script Event:\n"
 			             << "\tPlayer: " << src->GetName() << "\n"
-			             << "\tArgs: " << script_args 
-				         << "\tScript: " << HEX(event->m_ScriptId.m_ScriptHash) 
-				         << "\tHas Metadata Index: " << (event->m_HasScriptMetadataIdx ? "YES" : "NO")
-				         << "\tID Overriden: " << (event->m_ScriptIdOverridden ? "YES" : "NO");
+			             << "\tArgs: " << script_args << "\tScript: " << HEX(event->m_ScriptId.m_ScriptHash)
+			             << "\tHas Metadata Index: " << (event->m_HasScriptMetadataIdx ? "YES" : "NO")
+			             << "\tID Overriden: " << (event->m_ScriptIdOverridden ? "YES" : "NO");
 		}
 
 		return BaseHook::Get<Protections::HandleScriptedGameEvent, DetourHook<decltype(&Protections::HandleScriptedGameEvent)>>()

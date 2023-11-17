@@ -1,13 +1,12 @@
 #include "core/commands/Command.hpp"
+#include "core/frontend/Notifications.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/rdr/Natives.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "util/teleport.hpp"
-#include "core/frontend/Notifications.hpp"
 
 namespace YimMenu::Features
 {
-
 	class TpToWaypoint : public Command
 	{
 		using Command::Command;

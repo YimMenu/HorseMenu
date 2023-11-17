@@ -1,10 +1,11 @@
+#include "core/commands/BoolCommand.hpp"
+#include "core/frontend/Notifications.hpp"
+#include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-#include "game/rdr/Nodes.hpp"
 #include "game/rdr/Natives.hpp"
-#include "game/backend/Protections.hpp"
-#include "core/commands/BoolCommand.hpp"
+#include "game/rdr/Nodes.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/netObject.hpp>
@@ -19,10 +20,7 @@
 #include <network/sync/vehicle/CVehicleCreationData.hpp>
 #include <network/sync/vehicle/CVehicleProximityMigrationData.hpp>
 #include <ped/CPed.hpp>
-
 #include <unordered_set>
-
-#include "core/frontend/Notifications.hpp"
 
 #define LOG_FIELD_H(type, field) LOG(INFO) << "\t" << #field << ": " << HEX((node->GetData<type>().field));
 #define LOG_FIELD(type, field) LOG(INFO) << "\t" << #field << ": " << ((node->GetData<type>().field));
@@ -121,29 +119,84 @@ namespace
 		}
 	}
 
-	std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60,0x6927D266};
-	std::unordered_set<uint32_t> g_FishModels = {
-		"A_C_Crawfish_01"_J,"A_C_FishBluegil_01_ms"_J,"A_C_FishBluegil_01_sm"_J,"A_C_FishBullHeadCat_01_ms"_J,
-		"A_C_FishBullHeadCat_01_sm"_J,"A_C_FishChainPickerel_01_ms"_J,"A_C_FishChainPickerel_01_sm"_J,
-		"A_C_FishChannelCatfish_01_lg"_J,"A_C_FishChannelCatfish_01_XL"_J,"A_C_FishLakeSturgeon_01_lg"_J,
-		"A_C_FishLargeMouthBass_01_lg"_J,"A_C_FishLargeMouthBass_01_ms"_J,"A_C_FishLongNoseGar_01_lg"_J,
-		"A_C_FishMuskie_01_lg"_J,"A_C_FishNorthernPike_01_lg"_J,"A_C_FishPerch_01_ms"_J,"A_C_FishPerch_01_sm"_J,
-		"A_C_FishRainbowTrout_01_lg"_J,"A_C_FishRainbowTrout_01_ms"_J,"A_C_FishRedfinPickerel_01_ms"_J,"A_C_FishRedfinPickerel_01_sm"_J,
-		"A_C_FishRockBass_01_ms"_J,"A_C_FishRockBass_01_sm"_J,"A_C_FishSalmonSockeye_01_lg"_J,"A_C_FishSalmonSockeye_01_ml"_J,
-		"A_C_FishSalmonSockeye_01_ms"_J,"A_C_FishSmallMouthBass_01_lg"_J,"A_C_FishSmallMouthBass_01_ms"_J,
-	};
-	
+	std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60, 0x6927D266};
+	std::unordered_set<uint32_t> g_FishModels   = {
+        "A_C_Crawfish_01"_J,
+        "A_C_FishBluegil_01_ms"_J,
+        "A_C_FishBluegil_01_sm"_J,
+        "A_C_FishBullHeadCat_01_ms"_J,
+        "A_C_FishBullHeadCat_01_sm"_J,
+        "A_C_FishChainPickerel_01_ms"_J,
+        "A_C_FishChainPickerel_01_sm"_J,
+        "A_C_FishChannelCatfish_01_lg"_J,
+        "A_C_FishChannelCatfish_01_XL"_J,
+        "A_C_FishLakeSturgeon_01_lg"_J,
+        "A_C_FishLargeMouthBass_01_lg"_J,
+        "A_C_FishLargeMouthBass_01_ms"_J,
+        "A_C_FishLongNoseGar_01_lg"_J,
+        "A_C_FishMuskie_01_lg"_J,
+        "A_C_FishNorthernPike_01_lg"_J,
+        "A_C_FishPerch_01_ms"_J,
+        "A_C_FishPerch_01_sm"_J,
+        "A_C_FishRainbowTrout_01_lg"_J,
+        "A_C_FishRainbowTrout_01_ms"_J,
+        "A_C_FishRedfinPickerel_01_ms"_J,
+        "A_C_FishRedfinPickerel_01_sm"_J,
+        "A_C_FishRockBass_01_ms"_J,
+        "A_C_FishRockBass_01_sm"_J,
+        "A_C_FishSalmonSockeye_01_lg"_J,
+        "A_C_FishSalmonSockeye_01_ml"_J,
+        "A_C_FishSalmonSockeye_01_ms"_J,
+        "A_C_FishSmallMouthBass_01_lg"_J,
+        "A_C_FishSmallMouthBass_01_ms"_J,
+    };
+
 	std::unordered_set<uint32_t> g_birdModels = {
-		"a_c_prairiechicken_01"_J,"a_c_cormorant_01"_J,"a_c_crow_01"_J,"a_c_duck_01"_J,"a_c_eagle_01"_J,"a_c_goosecanada_01"_J,
-		"a_c_hawk_01"_J,"a_c_owl_01"_J,"a_c_pelican_01"_J,"a_c_pigeon"_J,"a_c_raven_01"_J,"a_c_cardinal_01"_J,"a_c_seagull_01"_J,
-		"a_c_songbird_01"_J,"a_c_turkeywild_01"_J,"a_c_turkey_01"_J,"a_c_turkey_02"_J,"a_c_vulture_01"_J,"a_c_bluejay_01"_J,
-		"a_c_cedarwaxwing_01"_J,"a_c_rooster_01"_J,"mp_a_c_chicken_01"_J,"a_c_chicken_01"_J,"a_c_californiacondor_01"_J,
-		"a_c_cranewhooping_01"_J,"a_c_egret_01"_J,"a_c_heron_01"_J,"a_c_loon_01"_J,"a_c_oriole_01"_J,"a_c_carolinaparakeet_01"_J,
-		"a_c_parrot_01"_J,"a_c_pelican_01"_J,"a_c_pheasant_01"_J,"a_c_pigeon"_J,"a_c_quail_01"_J,"a_c_redfootedbooby_01"_J,
-		"a_c_robin_01"_J,"a_c_roseatespoonbill_01"_J,"a_c_seagull_01"_J,"a_c_sparrow_01"_J,"a_c_vulture_01"_J,"a_c_woodpecker_01"_J,
-		"a_c_woodpecker_02"_J,
+	    "a_c_prairiechicken_01"_J,
+	    "a_c_cormorant_01"_J,
+	    "a_c_crow_01"_J,
+	    "a_c_duck_01"_J,
+	    "a_c_eagle_01"_J,
+	    "a_c_goosecanada_01"_J,
+	    "a_c_hawk_01"_J,
+	    "a_c_owl_01"_J,
+	    "a_c_pelican_01"_J,
+	    "a_c_pigeon"_J,
+	    "a_c_raven_01"_J,
+	    "a_c_cardinal_01"_J,
+	    "a_c_seagull_01"_J,
+	    "a_c_songbird_01"_J,
+	    "a_c_turkeywild_01"_J,
+	    "a_c_turkey_01"_J,
+	    "a_c_turkey_02"_J,
+	    "a_c_vulture_01"_J,
+	    "a_c_bluejay_01"_J,
+	    "a_c_cedarwaxwing_01"_J,
+	    "a_c_rooster_01"_J,
+	    "mp_a_c_chicken_01"_J,
+	    "a_c_chicken_01"_J,
+	    "a_c_californiacondor_01"_J,
+	    "a_c_cranewhooping_01"_J,
+	    "a_c_egret_01"_J,
+	    "a_c_heron_01"_J,
+	    "a_c_loon_01"_J,
+	    "a_c_oriole_01"_J,
+	    "a_c_carolinaparakeet_01"_J,
+	    "a_c_parrot_01"_J,
+	    "a_c_pelican_01"_J,
+	    "a_c_pheasant_01"_J,
+	    "a_c_pigeon"_J,
+	    "a_c_quail_01"_J,
+	    "a_c_redfootedbooby_01"_J,
+	    "a_c_robin_01"_J,
+	    "a_c_roseatespoonbill_01"_J,
+	    "a_c_seagull_01"_J,
+	    "a_c_sparrow_01"_J,
+	    "a_c_vulture_01"_J,
+	    "a_c_woodpecker_01"_J,
+	    "a_c_woodpecker_02"_J,
 	};
-	
+
 	// note that object can be nullptr here if it hasn't been created yet (i.e. in the creation queue)
 	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
 	{
@@ -156,14 +209,18 @@ namespace
 			if (/*data.m_PopulationType == 8 && */ data.m_ModelHash == "CS_MP_BOUNTYHUNTER"_J)
 			{
 				LOG(WARNING) << "Blocked possible unknown ped crash from " << Protections::GetSyncingPlayer().GetName();
-				Notifications::Show("Protections", std::string("Blocked possible unknown ped crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				Notifications::Show("Protections",
+				    std::string("Blocked possible unknown ped crash from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				return true;
 			}
 
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched ped model crash from " << Protections::GetSyncingPlayer().GetName();
-				Notifications::Show("Protections", std::string("Blocked mismatched ped model crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				Notifications::Show("Protections",
+				    std::string("Blocked mismatched ped model crash from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -174,13 +231,17 @@ namespace
 			if (g_CrashObjects.count(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked invalid object crash from " << Protections::GetSyncingPlayer().GetName();
-				Notifications::Show("Protections", std::string("Blocked invalid object crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				Notifications::Show("Protections",
+				    std::string("Blocked invalid object crash from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				return true;
 			}
 			if (data.m_ModelHash && !STREAMING::_IS_MODEL_AN_OBJECT(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched object model crash from " << Protections::GetSyncingPlayer().GetName();
-				Notifications::Show("Protections", std::string("Blocked mismatched object model crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				Notifications::Show("Protections",
+				    std::string("Blocked mismatched object model crash from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -191,14 +252,18 @@ namespace
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched player model crash from " << Protections::GetSyncingPlayer().GetName();
-				Notifications::Show("Protections", std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				Notifications::Show("Protections",
+				    std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				return true;
 			}
-			
+
 			if (data.m_ModelHash && (g_FishModels.count(data.m_ModelHash) || g_birdModels.count(data.m_ModelHash)))
 			{
 				LOG(WARNING) << "Blocked player model switch crash from " << Protections::GetSyncingPlayer().GetName();
-				Notifications::Show("Protections", std::string("Blocked player model switch crash from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				Notifications::Show("Protections",
+				    std::string("Blocked player model switch crash from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -214,7 +279,9 @@ namespace
 			if (data.m_PopulationType == 8 && data.m_ModelHash == "SHIP_GUAMA02"_J)
 			{
 				LOG(WARNING) << "Blocked vehicle flood from " << Protections::GetSyncingPlayer().GetName();
-				Notifications::Show("Protections", std::string("Blocked vehicle flood from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+				Notifications::Show("Protections",
+				    std::string("Blocked vehicle flood from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -227,7 +294,9 @@ namespace
 				if (data.m_IsAttached && data.m_AttachObjectId == local->m_NetObject->m_ObjectId)
 				{
 					LOG(WARNING) << "Blocked attachment from " << Protections::GetSyncingPlayer().GetName();
-					Notifications::Show("Protections", std::string("Blocked attachment from ").append(Protections::GetSyncingPlayer().GetName()), NotificationType::Warning);
+					Notifications::Show("Protections",
+					    std::string("Blocked attachment from ").append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
 					return true;
 				}
 			}
@@ -276,9 +345,9 @@ namespace
 					    NotificationType::Warning);
 					return true;
 				}
-      }
-     break;
-    }
+			}
+			break;
+		}
 		case "CPropSetCreationDataNode"_J:
 		{
 			auto& data = node->GetData<int>();

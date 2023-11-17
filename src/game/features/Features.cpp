@@ -1,14 +1,15 @@
 #include "Features.hpp"
-#include "game/rdr/Natives.hpp"
+
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Players.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/frontend/GUI.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "game/frontend/ContextMenu.hpp"
+#include "game/frontend/GUI.hpp"
+#include "game/rdr/Enums.hpp"
+#include "game/rdr/Natives.hpp"
 
 namespace YimMenu
 {

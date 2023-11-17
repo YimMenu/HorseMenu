@@ -3,9 +3,9 @@
 #include "core/memory/BytePatch.hpp"
 #include "core/memory/ModuleMgr.hpp"
 #include "core/memory/PatternScanner.hpp"
-#include "util/Joaat.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "util/GraphicsValue.hpp"
+#include "util/Joaat.hpp"
 
 namespace YimMenu
 {
@@ -15,7 +15,7 @@ namespace YimMenu
 		VirtualProtect(address, numBytes, PAGE_EXECUTE_READWRITE, &oldProtect);
 		memcpy(address, bytes, numBytes);
 		VirtualProtect(address, numBytes, oldProtect, &oldProtect);
-	} 
+	}
 
 	bool Pointers::Init()
 	{
@@ -44,14 +44,13 @@ namespace YimMenu
 			GetRendererInfo = ptr.Add(1).Rip().As<Functions::GetRendererInfo>();
 		});
 
-	    constexpr auto gfxInformationPtrn = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
+		constexpr auto gfxInformationPtrn = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
 		scanner.Add(gfxInformationPtrn, [this](PointerCalculator ptr) {
 			auto gfx = ptr.Add(3).Rip().As<GraphicsOptions*>();
 
 			if (gfx->m_hdr)
 			{
 				LOG(WARNING) << "Turn HDR off if your using DX12!";
-
 			}
 
 			if (gfx->m_motion_blur)
@@ -63,13 +62,12 @@ namespace YimMenu
 
 			if (gfx->m_unk)
 			{
-				ScreenResX = gfx->m_screen_resolution_x; 
-				ScreenResY =  gfx->m_screen_resolution_y;
+				ScreenResX = gfx->m_screen_resolution_x;
+				ScreenResY = gfx->m_screen_resolution_y;
 				LOG(INFO) << "Screen Resolution: " << ScreenResX << "x" << ScreenResY;
 			}
+		});
 
-	    });
-		
 		constexpr auto wndProcPtrn = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
 		scanner.Add(wndProcPtrn, [this](PointerCalculator ptr) {
 			WndProc = ptr.As<PVOID>();
@@ -108,8 +106,8 @@ namespace YimMenu
 
 		constexpr auto vmDetectionCallbackPtrn = Pattern<"48 8B 0D ? ? ? ? 33 F6 E8 ? ? ? ? 48 8B 0D">("VMDetectionCallback");
 		scanner.Add(vmDetectionCallbackPtrn, [this](PointerCalculator ptr) {
-			auto loc =  ptr.Add(3).Rip().As<uint8_t*>();
-			VmDetectionCallback = (PVOID*)loc;
+			auto loc                = ptr.Add(3).Rip().As<uint8_t*>();
+			VmDetectionCallback     = (PVOID*)loc;
 			RageSecurityInitialized = (bool*)(loc - 6);
 		});
 
@@ -199,7 +197,7 @@ namespace YimMenu
 			ThrowFatalError = ptr.As<PVOID>();
 		});
 
-        constexpr auto networkRequestPtrn = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
+		constexpr auto networkRequestPtrn = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
 		scanner.Add(networkRequestPtrn, [this](PointerCalculator ptr) {
 			NetworkRequest = ptr.As<PVOID>();
 		});
@@ -260,7 +258,7 @@ namespace YimMenu
 		});
 
 		if (!scanner.Scan())
-		{ 
+		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
 
 			return false;

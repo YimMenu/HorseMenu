@@ -15,10 +15,10 @@ namespace YimMenu::Features
 			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, true);
 		}
 
-        virtual void OnDisable() override
-        {
+		virtual void OnDisable() override
+		{
 			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, false);
-        }
+		}
 	};
 
 	static HorseGodmode _HorseGodmode{"horsegodmode", "Godmode", "Blocks all incoming damage for your horse"};

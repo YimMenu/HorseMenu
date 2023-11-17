@@ -30,7 +30,7 @@ namespace YimMenu
 			}
 		}
 		ImGui::EndChild();
-		
+
 		ImGui::Text("HorseMenu");
 
 		pos.y -= 28;

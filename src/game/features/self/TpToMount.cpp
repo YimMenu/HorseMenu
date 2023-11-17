@@ -1,7 +1,7 @@
 #include "core/commands/Command.hpp"
-#include "game/rdr/Natives.hpp"
-#include "game/features/Features.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "game/features/Features.hpp"
+#include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
 {
@@ -11,14 +11,14 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-            if(ENTITY::DOES_ENTITY_EXIST(Self::Mount))
-				if(PED::GET_MOUNT(Self::PlayerPed) != Self::Mount)
-                	PED::SET_PED_ONTO_MOUNT(Self::PlayerPed, Self::Mount, -1, true);    
+			if (ENTITY::DOES_ENTITY_EXIST(Self::Mount))
+				if (PED::GET_MOUNT(Self::PlayerPed) != Self::Mount)
+					PED::SET_PED_ONTO_MOUNT(Self::PlayerPed, Self::Mount, -1, true);
 				else
-                	Notifications::Show("Teleport", "Already on mount", NotificationType::Warning);
+					Notifications::Show("Teleport", "Already on mount", NotificationType::Warning);
 
-            else
-                Notifications::Show("Teleport", "No current mount found", NotificationType::Error);
+			else
+				Notifications::Show("Teleport", "No current mount found", NotificationType::Error);
 		}
 	};
 

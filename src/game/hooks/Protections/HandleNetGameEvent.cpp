@@ -1,12 +1,13 @@
+#include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
+#include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-#include "game/backend/Protections.hpp"
-#include "core/commands/BoolCommand.hpp"
+
 #include <network/CNetGamePlayer.hpp>
-#include <rage/datBitBuffer.hpp>
 #include <network/netObject.hpp>
+#include <rage/datBitBuffer.hpp>
 
 namespace
 {

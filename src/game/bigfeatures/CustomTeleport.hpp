@@ -57,5 +57,4 @@ namespace YimMenu
 			return GetInstance().SavedLocationsFilteredListImpl(filter);
 		};
 	};
-
 }

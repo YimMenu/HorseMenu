@@ -1,6 +1,6 @@
 #include "core/commands/Command.hpp"
-#include "game/rdr/Natives.hpp"
 #include "game/features/Features.hpp"
+#include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
 {

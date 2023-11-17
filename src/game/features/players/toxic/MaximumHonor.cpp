@@ -1,8 +1,8 @@
+#include "game/backend/ScriptMgr.hpp"
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
-#include "game/rdr/Scripts.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "game/rdr/Enums.hpp"
+#include "game/rdr/Scripts.hpp"
 
 namespace YimMenu::Features
 {

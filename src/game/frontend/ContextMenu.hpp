@@ -1,6 +1,7 @@
 #pragma once
-#include <rage/vector.hpp>
 #include "game/rdr/Entity.hpp"
+
+#include <rage/vector.hpp>
 
 namespace YimMenu
 {

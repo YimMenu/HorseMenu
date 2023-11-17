@@ -1,12 +1,12 @@
 #include "ContextMenu.hpp"
 
 #include "ContextMenus.hpp"
+#include "core/commands/BoolCommand.hpp"
+#include "core/commands/Commands.hpp"
+#include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-#include "game/backend/FiberPool.hpp"
-#include "core/commands/BoolCommand.hpp"
-#include "core/commands/Commands.hpp"
 
 namespace YimMenu::Features
 {

@@ -1,6 +1,7 @@
 #include "StackTrace.hpp"
-#include <winternl.h>
+
 #include <DbgHelp.h>
+#include <winternl.h>
 
 namespace YimMenu
 {
@@ -116,7 +117,6 @@ namespace YimMenu
 		DWORD64 displacement64;
 		DWORD displacement;
 
-
 		IMAGEHLP_LINE64 line;
 		line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
@@ -153,8 +153,7 @@ namespace YimMenu
 		constexpr DWORD msvc_exception_code = 0xe06d7363;
 		if (m_ExceptionInfo->ExceptionRecord->ExceptionCode == msvc_exception_code)
 		{
-			m_Dump
-			    << reinterpret_cast<const std::exception*>(m_ExceptionInfo->ExceptionRecord->ExceptionInformation[1])->what() << '\n';
+			m_Dump << reinterpret_cast<const std::exception*>(m_ExceptionInfo->ExceptionRecord->ExceptionInformation[1])->what() << '\n';
 		}
 	}
 

@@ -1,11 +1,11 @@
 #include "Esp.hpp"
 
 #include "common.hpp"
+#include "core/commands/BoolCommand.hpp"
 #include "game/backend/Players.hpp"
 #include "game/features/Features.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "util/Math.hpp"
-#include "core/commands/BoolCommand.hpp"
 
 namespace
 {
@@ -76,11 +76,12 @@ namespace YimMenu
 	//TODO : Very bare bones currently, expand and possibly refactor
 	void ESP::DrawPlayer(Player& plyr, ImDrawList* drawList)
 	{
-		if (!plyr.IsValid() || !plyr.GetPed().IsValid() || plyr.GetId() == Self::Id || boneToScreen(plyr.GetPed().GetBonePosition(torsoBone)).x == 0)
+		if (!plyr.IsValid() || !plyr.GetPed().IsValid() || plyr.GetId() == Self::Id
+		    || boneToScreen(plyr.GetPed().GetBonePosition(torsoBone)).x == 0)
 			return;
 
 		float distanceToPlayer   = Math::DistanceBetweenVectors(Self::Pos, plyr.GetPed().GetBonePosition(torsoBone));
-		int alphaBasedOnDistance     = 255;
+		int alphaBasedOnDistance = 255;
 		ImColor colorBasedOnDistance = Red;
 
 		if (distanceToPlayer < 100.f)
@@ -125,5 +126,4 @@ namespace YimMenu
 			}
 		}
 	}
-
 }

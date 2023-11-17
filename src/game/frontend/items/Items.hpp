@@ -1,6 +1,6 @@
 #include "core/frontend/manager/UIItem.hpp"
-#include "util/Joaat.hpp"
 #include "game/frontend/GUI.hpp"
+#include "util/Joaat.hpp"
 
 namespace YimMenu
 {
@@ -69,7 +69,6 @@ namespace YimMenu
 	class HotkeySetter : public UIItem
 	{
 	public:
-
 		explicit HotkeySetter(joaat_t);
 		void Draw() override;
 
@@ -82,7 +81,7 @@ namespace YimMenu
 	public:
 		explicit Group(const std::string& name, ImVec2 size = {0, 0});
 		void Draw() override;
-		
+
 		void AddItem(std::shared_ptr<UIItem>&& item)
 		{
 			m_Items.push_back(std::move(item));

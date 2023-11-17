@@ -11,7 +11,6 @@ namespace YimMenu::Features
 
 		virtual void OnEnable() override
 		{
-
 		}
 
 		virtual void OnTick() override
@@ -21,7 +20,6 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
-
 		}
 	};
 

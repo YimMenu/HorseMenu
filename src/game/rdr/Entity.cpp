@@ -1,6 +1,8 @@
 #include "Entity.hpp"
-#include "game/pointers/Pointers.hpp"
+
 #include "Natives.hpp"
+#include "game/pointers/Pointers.hpp"
+
 #include <entity/fwEntity.hpp>
 #include <network/netObject.hpp>
 

@@ -1,6 +1,7 @@
-#include "util/Joaat.hpp"
 #include "Command.hpp"
+
 #include "Commands.hpp"
+#include "util/Joaat.hpp"
 
 namespace YimMenu
 {

@@ -1,4 +1,5 @@
 #include "IStateSerializer.hpp"
+
 #include "Settings.hpp"
 
 namespace YimMenu

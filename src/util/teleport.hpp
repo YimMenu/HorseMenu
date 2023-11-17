@@ -2,8 +2,8 @@
 #include "common.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/rdr/Natives.hpp"
 #include "game/rdr/Entity.hpp"
+#include "game/rdr/Natives.hpp"
 
 // TODO: remove this file
 

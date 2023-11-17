@@ -12,6 +12,7 @@ namespace YimMenu
 			static Protections Instance;
 			return Instance;
 		}
+
 	public:
 		static Player& GetSyncingPlayer()
 		{

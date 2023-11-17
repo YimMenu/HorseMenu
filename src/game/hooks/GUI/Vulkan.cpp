@@ -20,7 +20,7 @@ namespace YimMenu::Hooks
 			Renderer::VkCleanupRenderTarget();
 			Renderer::VkSetScreenSize(pCreateInfo->imageExtent);
 		}
-	
+
 		return BaseHook::Get<Vulkan::CreateSwapchainKHR, DetourHook<decltype(&CreateSwapchainKHR)>>()->Original()(device, pCreateInfo, pAllocator, pSwapchain);
 	}
 
@@ -28,12 +28,12 @@ namespace YimMenu::Hooks
 	{
 		Renderer::VkSetDevice(device);
 
-	    return BaseHook::Get<Vulkan::AcquireNextImage2KHR, DetourHook<decltype(&AcquireNextImage2KHR)>>()->Original()(device, pAcquireInfo, pImageIndex);
+		return BaseHook::Get<Vulkan::AcquireNextImage2KHR, DetourHook<decltype(&AcquireNextImage2KHR)>>()->Original()(device, pAcquireInfo, pImageIndex);
 	}
 
-	VkResult VKAPI_CALL Vulkan::AcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) 
+	VkResult VKAPI_CALL Vulkan::AcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
 	{
-	    Renderer::VkSetDevice(device);
+		Renderer::VkSetDevice(device);
 
 		return BaseHook::Get<Vulkan::AcquireNextImageKHR, DetourHook<decltype(&AcquireNextImageKHR)>>()->Original()(device, swapchain, timeout, semaphore, fence, pImageIndex);
 	}
