@@ -72,7 +72,8 @@ namespace YimMenu
 		PVOID AddObjectToCreationQueue;
 
 		// Player Stuff
-		PVOID AssignPhysicalIndex;
+		PVOID PlayerHasJoined;
+		PVOID PlayerHasLeft;
 		Functions::GetNetworkPlayerFromPid GetNetPlayerFromPid;
 
 		// Voice
