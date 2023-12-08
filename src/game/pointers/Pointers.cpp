@@ -214,9 +214,14 @@ namespace YimMenu
 			AddObjectToCreationQueue = ptr.As<PVOID>();
 		});
 
-		constexpr auto assignPhysicalIndexPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 30 41 8A C0">("AssignPhysicalIndex");
-		scanner.Add(assignPhysicalIndexPtrn, [this](PointerCalculator ptr) {
-			AssignPhysicalIndex = ptr.As<PVOID>();
+		constexpr auto playerHasJoinedPtrn = Pattern<"E8 ? ? ? ? 8A 4B 19 48 8B 45 38">("PlayerHasJoined");
+		scanner.Add(playerHasJoinedPtrn, [this](PointerCalculator ptr) {
+			PlayerHasJoined = ptr.Add(1).Rip().As<PVOID>();
+		});
+
+		constexpr auto playerHasLeftPtrn = Pattern<"E8 ? ? ? ? 48 8B 0D ? ? ? ? 48 8B 57 08">("PlayerHasLeft");
+		scanner.Add(playerHasLeftPtrn, [this](PointerCalculator ptr) {
+			PlayerHasLeft = ptr.Add(1).Rip().As<PVOID>();
 		});
 
 		constexpr auto networkPlayerMgrPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 48 8B ? ? ? ? 01 8A D9 80 F9 20">("NetworkPlayerMgr");

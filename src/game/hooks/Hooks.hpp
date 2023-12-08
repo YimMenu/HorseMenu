@@ -87,7 +87,9 @@ namespace YimMenu::Hooks
 	namespace Info
 	{
 		extern uint8_t* NetworkRequest(HttpRequest* Request, uint8_t* a2, uint32_t a3);
-		extern void AssignPhysicalIndex(void* mgr, CNetGamePlayer* player, uint8_t newIndex);
+		
+		extern void PlayerHasJoined(CNetGamePlayer* player);
+		extern void PlayerHasLeft(CNetGamePlayer* player);
 	}
 
 	namespace Spoofing
