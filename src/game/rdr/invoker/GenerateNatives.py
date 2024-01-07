@@ -8,7 +8,7 @@ hash_list = []
 class Arg:
     def __init__(self, name: str, type: str):
         self.name = name.replace("...", "varargs")
-        self.type = type.replace("BOOL", "bool").replace("Any*", "void*")
+        self.type = type.replace("Any*", "void*")
 
         if (self.type == ""):
             self.type = "Args&&..."
@@ -24,7 +24,7 @@ class NativeFunc:
         self.name = name
         self.hash = hash
         self.args: list[Arg] = []
-        self.return_type = return_type.replace("BOOL", "bool").replace("Any*", "void*")
+        self.return_type = return_type.replace("Any*", "void*")
         self.native_index = current_idx
         self.variadic = False
         current_idx += 1
