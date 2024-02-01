@@ -254,12 +254,12 @@ namespace YimMenu
 			WritePlayerHealthData = ptr.As<PVOID>();
 		});
 
-		constexpr auto requestControlPtrn = Pattern<"E8 ? ? ? ? 48 83 C4 ? 5B C3 CC 72 ? 48 89 54 24">("RequestControl");
+		constexpr auto requestControlPtrn = Pattern<"E8 ? ? ? ? 48 83 C4 ? 5B C3 CC E9 ? ? ? ? 24 ? 48 89 4C 24">("RequestControl");
 		scanner.Add(requestControlPtrn, [this](PointerCalculator ptr) {
 			RequestControlOfNetObject = ptr.Add(1).Rip().As<Functions::RequestControlOfNetObject>();
 		});
 
-		constexpr auto networkObjectMgrPtrn = Pattern<"48 8B 0D ? ? ? ? E9 ? ? ? ? 90 31 40">("NetworkObjectMgr");
+		constexpr auto networkObjectMgrPtrn = Pattern<"48 8B 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? 90 E9 ?? ?? ?? ?? EC">("NetworkObjectMgr");
 		scanner.Add(networkObjectMgrPtrn, [this](PointerCalculator ptr) {
 			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
 		});
