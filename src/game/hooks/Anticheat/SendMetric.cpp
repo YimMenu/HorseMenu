@@ -15,19 +15,20 @@ namespace YimMenu::Hooks
 {
 	bool Anticheat::SendMetric(void* manager, rage::rlMetric* metric)
 	{
-		const auto bad_metrics = std::unordered_set<std::string_view>({"PCSETTINGS", "CHEAT", "WEATHER", "FIRST_VEH", "HARDWARE_OS", "HARDWARE_CPU", "HARDWARE_GPU", "HARDWARE_MOBO", "HARDWARE_MEM", "CASH_CREATED"});
+		static auto bad_metrics = std::unordered_set<std::string_view>({"PCSETTINGS", "CHEAT", "WEATHER", "FIRST_VEH", "HARDWARE_OS", "HARDWARE_CPU", "HARDWARE_GPU", "HARDWARE_MOBO", "HARDWARE_MEM", "CASH_CREATED", "PELLETDROPS"});
 		char buffer[256]{};
 		rage::rlJson serializer(buffer, sizeof(buffer));
 
 		metric->Serialize(&serializer);
-		if (bad_metrics.contains(metric->GetName()))
+		auto metric_name = metric->GetName();
+		if (bad_metrics.contains(metric_name))
 		{
-			LOG(INFO) << "BAD METRIC: " << metric->GetName() << "; DATA: " << serializer.GetBuffer();
+			LOG(INFO) << "BAD METRIC: " << metric_name << "; DATA: " << serializer.GetBuffer();
 			return false;
 		}
 
 		if (Features::_LogMetrics.GetState())
-			LOG(INFO) << "METRIC: " << metric->GetName() << "; DATA: " << serializer.GetBuffer();
+			LOG(INFO) << "METRIC: " << metric_name << "; DATA: " << serializer.GetBuffer();
 		return true;
 	}
 }
