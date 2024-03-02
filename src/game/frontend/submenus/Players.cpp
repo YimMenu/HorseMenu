@@ -5,17 +5,24 @@
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "util/teleport.hpp"
 #include "util/network.hpp"
+#include "util/teleport.hpp"
+
+#include <string>
+
 
 // remove after testing
-#include "game/rdr/Natives.hpp"
-#include "game/backend/ScriptMgr.hpp"
+#include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/rdr/Entity.hpp"
+#include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Scripts.hpp"
+#include "util/VehicleSpawner.cpp"
+
 #include <script/scrThread.hpp>
-#include "game/rdr/Entity.hpp"
+
 
 namespace YimMenu::Submenus
 {
@@ -68,9 +75,9 @@ namespace YimMenu::Submenus
 	    Submenu::Submenu("Players")
 	{
 		{
-			auto main   = std::make_shared<Category>("Main");
-			auto column = std::make_shared<Column>(2);
-			auto teleportGroup = std::make_shared<Group>("Teleport", GetListBoxDimensions());
+			auto main               = std::make_shared<Category>("Main");
+			auto column             = std::make_shared<Column>(2);
+			auto teleportGroup      = std::make_shared<Group>("Teleport", GetListBoxDimensions());
 			auto playerOptionsGroup = std::make_shared<Group>("Info", GetListBoxDimensions());
 
 			main->AddItem(std::make_shared<ImGuiItem>([] {
@@ -78,7 +85,6 @@ namespace YimMenu::Submenus
 			}));
 
 			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				
 				if (YimMenu::Players::GetSelected().IsValid())
 				{
 					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
@@ -142,6 +148,15 @@ namespace YimMenu::Submenus
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
+			helpful->AddItem(std::make_shared<ImGuiItem>([] {
+				if (ImGui::Button("Spawn Wagon for Player"))
+				{
+					FiberPool::Push([] {
+						SpawnVehicle("wagonarmoured01x", YimMenu::Players::GetSelected().GetPed());
+					});
+					Notifications::Show("Spawned Wagon", "Spawned Wagon for Player");
+				};
+			}));
 
 			AddCategory(std::move(helpful));
 		}
@@ -156,7 +171,6 @@ namespace YimMenu::Submenus
 			trolling->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
-
 
 			AddCategory(std::move(trolling));
 		}
@@ -182,8 +196,8 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Test"))
 				{
 					FiberPool::Push([] {
-						using Scf = void(*)(void* ent, int flg, bool val, bool net);
-						Scf scf  = (Scf)((__int64)GetModuleHandleA(0) + 0x1d0e898);
+						using Scf = void (*)(void* ent, int flg, bool val, bool net);
+						Scf scf   = (Scf)((__int64)GetModuleHandleA(0) + 0x1d0e898);
 						for (int i = 0; i < 0x7F; i++)
 						{
 							if (!(i % 12))
@@ -226,7 +240,7 @@ namespace YimMenu::Submenus
 					});
 				}
 
-				
+
 				if (ImGui::Button("Test 11"))
 				{
 					FiberPool::Push([] {
@@ -239,7 +253,7 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Test 12"))
 				{
 					FiberPool::Push([] {
-						using GM = void*(*)(void*);
+						using GM = void* (*)(void*);
 						using SM = void (*)(void*, int, float, void*, bool); // PED::_SET_PED_MOTIVATION
 						GM gm    = (GM)((__int64)GetModuleHandleA(0) + 0xcb8ee8);
 						SM sm    = (SM)((__int64)GetModuleHandleA(0) + 0x9a2ab0);
@@ -253,7 +267,8 @@ namespace YimMenu::Submenus
 						using CS = void (*)(void*, void*, float);
 						CS cs    = (CS)((__int64)GetModuleHandleA(0) + 0x23f64d0);
 						cs(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(),
-						    YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(), -9999.0f); // positive to add
+						    YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(),
+						    -9999.0f); // positive to add
 					});
 				}
 
@@ -278,7 +293,7 @@ namespace YimMenu::Submenus
 
 						s1.Time = 3000;
 
-						auto text = MISC::VAR_STRING(10, "LITERAL_STRING"s.data(), "~b~Player~s~ left."s.data());
+						auto text    = MISC::VAR_STRING(10, "LITERAL_STRING"s.data(), "~b~Player~s~ left."s.data());
 						s2.VarString = text;
 
 						UIFEED::_UI_FEED_POST_FEED_TICKER(&s1, &s2, false);
