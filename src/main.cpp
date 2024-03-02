@@ -1,24 +1,25 @@
 #include "common.hpp"
+#include "core/commands/HotkeySystem.hpp"
 #include "core/filemgr/FileMgr.hpp"
+#include "core/frontend/Notifications.hpp"
 #include "core/hooking/Hooking.hpp"
 #include "core/memory/ModuleMgr.hpp"
 #include "core/renderer/Renderer.hpp"
+#include "core/settings/Settings.hpp"
+#include "game/backend/FiberPool.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/bigfeatures/CustomTeleport.hpp"
+#include "game/features/Features.hpp"
 #include "game/frontend/GUI.hpp"
 #include "game/pointers/Pointers.hpp"
-#include "game/backend/ScriptMgr.hpp"
-#include "game/backend/FiberPool.hpp"
-#include "game/features/Features.hpp"
-#include "core/commands/HotkeySystem.hpp"
-#include "core/settings/Settings.hpp"
-#include "core/frontend/Notifications.hpp"
-#include "game/bigfeatures/CustomTeleport.hpp"
+
 
 namespace YimMenu
 {
 	DWORD Main(void*)
 	{
-		const auto documents = std::filesystem::path(std::getenv("USERPROFILE")) / "Documents";
-		FileMgr::Init(documents / "HellBase"); // TODO
+		const auto documents = std::filesystem::path(std::getenv("appdata")) /= "HorseMenu";
+		FileMgr::Init(documents); // TODO
 
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
@@ -46,7 +47,7 @@ namespace YimMenu
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
 		ScriptMgr::AddScript(std::make_unique<Script>(&ContextMenuTick));
-		
+
 		Notifications::Show("HorseMenu", "Loaded succesfully", NotificationType::Success);
 
 		while (g_Running)
