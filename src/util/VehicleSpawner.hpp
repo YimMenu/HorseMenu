@@ -4,7 +4,8 @@
 #include "game/rdr/Natives.hpp"
 
 #include <cmath>
+
 namespace YimMenu
 {
-	inline bool SpawnVehicle(std::string model_name, Ped player_ped_id);
+	extern bool SpawnVehicle(std::string model_name, int player_ped_id);
 }

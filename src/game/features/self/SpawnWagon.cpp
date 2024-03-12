@@ -1,7 +1,7 @@
 #include "core/commands/Command.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/features/Features.hpp"
-#include "util/VehicleSpawner.cpp"
+#include "util/VehicleSpawner.hpp"
 
 
 namespace YimMenu::Features

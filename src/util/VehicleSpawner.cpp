@@ -2,7 +2,7 @@
 
 namespace YimMenu
 {
-	inline bool SpawnVehicle(std::string model_name, Ped player_ped_id)
+	extern bool SpawnVehicle(std::string model_name, int player_ped_id)
 	{
 		Hash model = MISC::GET_HASH_KEY(model_name.c_str());
 		float offset;
@@ -10,7 +10,7 @@ namespace YimMenu
 		STREAMING::REQUEST_MODEL(model, 0);
 		while (!STREAMING::HAS_MODEL_LOADED(model))
 			ScriptMgr::Yield(0ms);
-		Vector3 pCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(Self::PlayerPed, 0.0, -10.0, 0.0);
+		Vector3 pCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(player_ped_id, 0.0, -10.0, 0.0);
 
 		if (STREAMING::IS_MODEL_IN_CDIMAGE(model) && STREAMING::IS_MODEL_A_VEHICLE(model))
 		{

@@ -19,7 +19,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Scripts.hpp"
-#include "util/VehicleSpawner.cpp"
+#include "util/VehicleSpawner.hpp"
 
 #include <script/scrThread.hpp>
 
@@ -152,9 +152,10 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Spawn Wagon for Player"))
 				{
 					FiberPool::Push([] {
-						SpawnVehicle("wagonarmoured01x", YimMenu::Players::GetSelected().GetPed());
+						SpawnVehicle("wagonarmoured01x",
+						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
+						Notifications::Show("Spawned Wagon", "Spawned Wagon for Player", NotificationType::Success);
 					});
-					Notifications::Show("Spawned Wagon", "Spawned Wagon for Player");
 				};
 			}));
 
