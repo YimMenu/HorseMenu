@@ -1,7 +1,7 @@
 #pragma once
 #include "core/frontend/manager/UIManager.hpp"
 
-namespace monopoly::Submenus
+namespace yimmenu::Submenus
 {
 	class World : public Submenu
 	{
