@@ -3,7 +3,7 @@
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/features/World/weather.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/backend/ScriptMgr.hpp"
 
