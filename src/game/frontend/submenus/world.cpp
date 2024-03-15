@@ -74,21 +74,7 @@ namespace yimmenu::Submenus
 					ImGui::EndCombo();
 				}
 			}));
-		weather->AddItem(std::make_shared<ImGuiItem>([] {
-			static std::string deep;
-			InputTextWithHint("Snow", "Enter Snow Depth", &deep).Draw();
-
-			if (ImGui::Button("Change Snow Depth"))
-			{
-				float snow_depth = std::stof(deep);
-
-				FiberPool::Push([=] {
-					std::cout << "Snow Level: " << MISC::GET_SNOW_LEVEL() << std::endl;
-					MISC::_SET_SNOW_LEVEL(snow_depth);
-				});
-			}
-		}));
-
+		
 
 
 		AddCategory(std::move(main));
