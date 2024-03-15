@@ -12,7 +12,7 @@
 #include <memory>  // Include for std::make_shared
 #include "features.hpp"
 
-namespace monopoly::Submenus
+namespace yimmenu::Submenus
 {
 	World::World() :
 	    Submenu::Submenu("World")
