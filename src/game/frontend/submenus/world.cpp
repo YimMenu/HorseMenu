@@ -64,7 +64,7 @@ namespace yimmenu::Submenus
 			}));
 		
 
-
+                main->AddItem(std::make_shared<CommandItem>("forcelighting"_J));
 		AddCategory(std::move(main));
 		AddCategory(std::move(weather));
 
