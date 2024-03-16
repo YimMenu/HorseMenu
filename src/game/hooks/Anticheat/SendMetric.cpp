@@ -29,6 +29,6 @@ namespace YimMenu::Hooks
 
 		if (Features::_LogMetrics.GetState())
 			LOG(INFO) << "METRIC: " << metric_name << "; DATA: " << serializer.GetBuffer();
-		return true;
+		return BaseHook::Get<Anticheat::SendMetric, DetourHook<decltype(&Anticheat::SendMetric)>>()->Original()(manager, metric);
 	}
 }
