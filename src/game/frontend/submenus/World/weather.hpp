@@ -38,7 +38,7 @@ void ChangeTime(int H = 12, int M = 0, int S = 0, int transition = 0, bool freez
 	NETWORK::_NETWORK_CLOCK_TIME_OVERRIDE(H, M, S, transition, freeze);
 }
 
-namespace monopoly
+namespace yimmenu
 {
 	namespace Features
 	{
