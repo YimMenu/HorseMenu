@@ -46,7 +46,7 @@ namespace yimmenu::Submenus
 				int m = std::stoi(minute);
 				int s = std::stoi(second);
 				FiberPool::Push([=] {
-					RDR2_ChangeTime(h, m, s);
+					ChangeTime(h, m, s);
 				});
 			}
 		}));
@@ -65,7 +65,7 @@ namespace yimmenu::Submenus
 							current_weather = weather_type;
 							FiberPool::Push([=] {
 
-								RDR2_ChangeWeather(weather_type);
+								ChangeWeather(weather_type);
 							});
 						}
 						if (is_selected)
