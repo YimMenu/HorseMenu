@@ -22,19 +22,7 @@ namespace yimmenu::Submenus
 		
 	
 
-		main->AddItem(std::make_shared<ImGuiItem>([] {
-			if (ImGui::Button("always night"))
-			{
-				
-				NETWORK::_NETWORK_CLOCK_TIME_OVERRIDE(1, 0, 0, 0, false);
-			}
-		}));
-		main->AddItem(std::make_shared<ImGuiItem>([] {
-			if (ImGui::Button("always day"))
-			{
-				NETWORK::_NETWORK_CLOCK_TIME_OVERRIDE(15, 0, 0, 0, false);
-			}
-		}));
+		
 		main->AddItem(std::make_shared<ImGuiItem>([] {
 			static std::string hour, minute, second;
 			InputTextWithHint("Hour", "Enter Hour", &hour).Draw();
