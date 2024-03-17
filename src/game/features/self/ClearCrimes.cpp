@@ -15,6 +15,7 @@ namespace YimMenu::Features
 			LAW::CLEAR_BOUNTY(guid);
 			LAW::CLEAR_WANTED_SCORE(guid);
 			LAW::CLEAR_PLAYER_PAST_CRIMES(guid);
+			PLAYER::CLEAR_PLAYER_WANTED_LEVEL(guid);
 		}
 	};
 
