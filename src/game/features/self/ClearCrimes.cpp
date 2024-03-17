@@ -12,6 +12,9 @@ namespace YimMenu::Features
 		{
 			char guid[0x20];
 			BOUNTY::_BOUNTY_REQUEST_SERVED_FULL_JAIL_SENTENCE(guid);
+			LAW::CLEAR_BOUNTY(guid);
+			LAW::CLEAR_WANTED_SCORE(guid);
+			LAW::CLEAR_PLAYER_PAST_CRIMES(guid);
 		}
 	};
 
