@@ -55,6 +55,6 @@ namespace YimMenu
 		};
 
 	
-		static ForceLightning _forcelighting{"forcelighting", "force lighting", "spawn lighting "};
+		static ForceLightning _forcelighting{"forcelighting", "force lighting", "spawn's lighting "};
 	}
 }
