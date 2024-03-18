@@ -42,7 +42,7 @@ namespace yimmenu
 {
 	namespace Features
 	{
-		class forcelighting: public Command
+		class ForceLightning: public Command
 		{
 		public:
 			using Command::Command;
@@ -55,6 +55,6 @@ namespace yimmenu
 		};
 
 	
-		static forcelighting _forcelighting{"forcelighting", "force lighting", "spawn lighting "};
+		static ForceLightning _forcelighting{"forcelighting", "force lighting", "spawn lighting "};
 	}
 }
