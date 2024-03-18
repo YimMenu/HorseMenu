@@ -5,6 +5,9 @@
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
+#include "util/Rewards.hpp"
+
+#include <map>
 
 namespace YimMenu::Submenus
 {
@@ -44,11 +47,13 @@ namespace YimMenu::Submenus
 	Self::Self() :
 	    Submenu::Submenu("Self")
 	{
-		auto main          = std::make_shared<Category>("Main");
-		auto globalsGroup  = std::make_shared<Group>("Globals", GetListBoxDimensions());
-		auto movementGroup = std::make_shared<Group>("Movement", GetListBoxDimensions());
-		auto toolsGroup    = std::make_shared<Group>("Tools", GetListBoxDimensions());
-		auto columns       = std::make_shared<Column>(2);
+		auto main              = std::make_shared<Category>("Main");
+		auto globalsGroup      = std::make_shared<Group>("Globals", GetListBoxDimensions());
+		auto movementGroup     = std::make_shared<Group>("Movement", GetListBoxDimensions());
+		auto toolsGroup        = std::make_shared<Group>("Tools", GetListBoxDimensions());
+		auto collectiblesGroup = std::make_shared<Group>("Collectibles", GetListBoxDimensions());
+		auto columns           = std::make_shared<Column>(2);
+
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
@@ -72,18 +77,31 @@ namespace YimMenu::Submenus
 					ENTITY::FREEZE_ENTITY_POSITION(YimMenu::Self::PlayerPed, false);
 				});
 		}));
+		collectiblesGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::GOLD_REWARDS, "Gold Rewards"}, {Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
+
+			for (auto& [type, translation] : reward_translations)
+			{
+				if (ImGui::Button(std::string("Spawn all ").append(translation).c_str()))
+				{
+					Rewards::SpawnRequestedRewards({type});
+				}
+			}
+		}));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
+
 
 		columns->AddItem(globalsGroup);
 		columns->AddItem(toolsGroup);
 		columns->AddNextColumn();
 		columns->AddItem(movementGroup);
+		columns->AddItem(collectiblesGroup);
 		main->AddItem(columns);
 		AddCategory(std::move(main));
 
 		auto horse             = std::make_shared<Category>("Horse");
-		auto horseColumns             = std::make_shared<Column>(2);
+		auto horseColumns      = std::make_shared<Column>(2);
 		auto horseGlobalsGroup = std::make_shared<Group>("Globals", GetListBoxDimensions());
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsegodmode"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsenoragdoll"_J));
