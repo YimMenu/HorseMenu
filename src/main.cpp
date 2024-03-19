@@ -1,4 +1,5 @@
 #include "common.hpp"
+#include "core/byte_patch_manager/byte_patch_manager.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/filemgr/FileMgr.hpp"
 #include "core/frontend/Notifications.hpp"
@@ -33,6 +34,8 @@ namespace YimMenu
 			goto unload;
 		if (!Renderer::Init())
 			goto unload;
+
+		Byte_Patch_Manager::Init();
 
 		Hooking::Init();
 
