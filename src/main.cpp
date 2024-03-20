@@ -18,7 +18,7 @@ namespace YimMenu
 {
 	DWORD Main(void*)
 	{
-		const auto documents = std::filesystem::path(std::getenv("appdata")) /= "HorseMenu";
+		const auto documents = std::filesystem::path(std::getenv("appdata")) / "HorseMenu";
 		FileMgr::Init(documents); // TODO
 
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
