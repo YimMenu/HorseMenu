@@ -51,6 +51,7 @@ namespace YimMenu::Submenus
 		auto columns       = std::make_shared<Column>(2);
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("offtheradar"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
