@@ -56,6 +56,7 @@ namespace YimMenu::Submenus
 		auto columns         = std::make_shared<Column>(2);
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("offtheradar"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
@@ -78,7 +79,9 @@ namespace YimMenu::Submenus
 					ENTITY::FREEZE_ENTITY_POSITION(YimMenu::Self::PlayerPed, false);
 				});
 		}));
+
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
+		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnwagon"_J));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		static std::string ped_model_buf;

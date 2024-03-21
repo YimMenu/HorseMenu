@@ -106,7 +106,7 @@ namespace YimMenu
 			SendMetric = ptr.As<PVOID*>();
 		});
 
-		constexpr auto vmDetectionCallbackPtrn = Pattern<"48 8B 0D ? ? ? ? 33 F6 E8 ? ? ? ? 48 8B 0D">("VMDetectionCallback");
+		constexpr auto vmDetectionCallbackPtrn = Pattern<"48 8B 0D ? ? ? ? E8 ? ? ? ? 48 8B 0D ? ? ? ? 8D 7E">("VMDetectionCallback");
 		scanner.Add(vmDetectionCallbackPtrn, [this](PointerCalculator ptr) {
 			auto loc =  ptr.Add(3).Rip().As<uint8_t*>();
 			VmDetectionCallback = (PVOID*)loc;
@@ -254,7 +254,7 @@ namespace YimMenu
 			WritePlayerHealthData = ptr.As<PVOID>();
 		});
 
-		constexpr auto requestControlPtrn = Pattern<"E8 ? ? ? ? 48 83 C4 ? 5B C3 CC E9 ? ? ? ? 24 ? 48 89 4C 24">("RequestControl");
+		constexpr auto requestControlPtrn = Pattern<"E8 ? ? ? ? 32 C0 48 83 C4 ? 5B C3 B0 ? EB ? 48 8D 0D">("RequestControl");
 		scanner.Add(requestControlPtrn, [this](PointerCalculator ptr) {
 			RequestControlOfNetObject = ptr.Add(1).Rip().As<Functions::RequestControlOfNetObject>();
 		});

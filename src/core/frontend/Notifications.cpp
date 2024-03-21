@@ -3,8 +3,11 @@
 #include "core/logger/LogHelper.hpp"
 #include "game/backend/FiberPool.hpp" // TODO: game import in core
 
+#include <mutex>
+
 namespace YimMenu
 {
+
 	Notification Notifications::ShowImpl(std::string title, std::string message, NotificationType type, int duration, std::function<void()> context_function, std::string context_function_name)
 	{
 		if (title.empty() || message.empty())
@@ -30,6 +33,7 @@ namespace YimMenu
 			notification.m_context_function_name = context_function_name.empty() ? "Context Function" : context_function_name;
 		}
 
+		std::lock_guard<std::mutex> lock(m_mutex);
 		auto result = m_Notifications.insert(std::make_pair(title + message, notification));
 
 		return notification;
@@ -37,6 +41,7 @@ namespace YimMenu
 
 	bool Notifications::EraseImpl(Notification notification)
 	{
+		std::lock_guard<std::mutex> lock(m_mutex);
 		for (auto& [id, n] : m_Notifications)
 		{
 			if (id == notification.GetIdentifier())
@@ -112,36 +117,45 @@ namespace YimMenu
 
 	void Notifications::DrawImpl()
 	{
-		int position             = 0;
-
-		for (auto& [id, notification] : m_Notifications)
+		std::vector<std::string> keys_to_erase;
 		{
-			DrawNotification(notification, position);
-			
-			if (!notification.erasing)
-			{
-				if (notification.m_AnimationOffset < 0)
-					notification.m_AnimationOffset += m_CardAnimationSpeed;
+			std::lock_guard<std::mutex> lock(m_mutex);
+			int position = 0;
 
-				//Need this to account for changes in card size (x dimension), custom increments might result in odd numbers
-				if (notification.m_AnimationOffset > 0)
-					notification.m_AnimationOffset = 0.f;
-			}
-			else
+			for (auto& [id, notification] : m_Notifications)
 			{
-				notification.m_AnimationOffset -= m_CardAnimationSpeed;
-				if (notification.m_AnimationOffset <= -m_CardSizeX)
-					m_Notifications.erase(id);
-			}
-			
-			
-			if ((float)std::chrono::duration_cast<std::chrono::milliseconds>(
-			        std::chrono::system_clock::now() - notification.m_created_on)
-			        .count()
-			    >= notification.m_Duration)
-				Erase(notification);
+				DrawNotification(notification, position);
 
-			position++;
+				if (!notification.erasing)
+				{
+					if (notification.m_AnimationOffset < 0)
+						notification.m_AnimationOffset += m_CardAnimationSpeed;
+
+					//Need this to account for changes in card size (x dimension), custom increments might result in odd numbers
+					if (notification.m_AnimationOffset > 0)
+						notification.m_AnimationOffset = 0.f;
+				}
+				else
+				{
+					notification.m_AnimationOffset -= m_CardAnimationSpeed;
+					if (notification.m_AnimationOffset <= -m_CardSizeX)
+						keys_to_erase.push_back(id);
+				}
+
+
+				if ((float)std::chrono::duration_cast<std::chrono::milliseconds>(
+				        std::chrono::system_clock::now() - notification.m_created_on)
+				        .count()
+				    >= notification.m_Duration)
+					keys_to_erase.push_back(id);
+
+				position++;
+			}
+		}
+		std::lock_guard<std::mutex> lock(m_mutex);
+		for (const auto& key : keys_to_erase)
+		{
+			m_Notifications.erase(key);
 		}
 	}
 }

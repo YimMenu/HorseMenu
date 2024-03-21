@@ -9,13 +9,18 @@
 #include "util/teleport.hpp"
 
 
+#include <string>
+
+
 // remove after testing
+#include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/rdr/Entity.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Scripts.hpp"
+#include "util/VehicleSpawner.hpp"
 
 #include <script/scrThread.hpp>
 
@@ -144,6 +149,16 @@ namespace YimMenu::Submenus
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
+			helpful->AddItem(std::make_shared<ImGuiItem>([] {
+				if (ImGui::Button("Spawn Wagon for Player"))
+				{
+					FiberPool::Push([] {
+						SpawnVehicle("wagonarmoured01x",
+						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
+						Notifications::Show("Spawned Wagon", "Spawned Wagon for Player", NotificationType::Success);
+					});
+				};
+			}));
 
 			AddCategory(std::move(helpful));
 		}
@@ -158,7 +173,6 @@ namespace YimMenu::Submenus
 			trolling->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
-
 
 			AddCategory(std::move(trolling));
 		}
