@@ -1,6 +1,8 @@
 #include "Settings.hpp"
+
 #include "IStateSerializer.hpp"
 #include "Settings.hpp"
+
 
 namespace YimMenu
 {
@@ -16,7 +18,10 @@ namespace YimMenu
 		m_SettingsFile = settingsFile;
 
 		if (!settingsFile.Exists())
+		{
 			Reset();
+			return;
+		}
 
 		std::ifstream file(m_SettingsFile);
 
@@ -29,6 +34,7 @@ namespace YimMenu
 		{
 			LOG(WARNING) << "Detected corrupt settings, resetting settings...";
 			Reset();
+			return;
 		}
 
 		for (auto& serializer : m_StateSerializers)

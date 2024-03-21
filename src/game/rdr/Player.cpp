@@ -54,6 +54,11 @@ namespace YimMenu
 		return m_Handle->m_PlayerInfo->m_Ped;
 	}
 
+	bool Player::IsHost()
+	{
+		return m_Handle->IsHost();
+	}
+
 	bool Player::operator==(Player other)
 	{
 		return m_Handle == other.m_Handle;

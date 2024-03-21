@@ -33,6 +33,7 @@ namespace YimMenu
 		CNetGamePlayer* GetHandle();
 		rage::rlGamerInfo* GetGamerInfo();
 		Ped GetPed();
+		bool IsHost();
 		bool operator==(Player other);
 	};
 	static_assert(sizeof(Player) == 8, "don't add anything else to Player");

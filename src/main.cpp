@@ -18,8 +18,8 @@ namespace YimMenu
 {
 	DWORD Main(void*)
 	{
-		const auto documents = std::filesystem::path(std::getenv("USERPROFILE")) / "Documents";
-		FileMgr::Init(documents / "HellBase"); // TODO
+		const auto documents = std::filesystem::path(std::getenv("appdata")) / "HorseMenu";
+		FileMgr::Init(documents); // TODO
 
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
