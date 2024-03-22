@@ -3,16 +3,15 @@
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/World/weather.hpp"
+#include "World/weather.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/backend/ScriptMgr.hpp"
-
 #include <game/rdr/Natives.hpp>
 #include <imgui.h> // Include for ImGui
 #include <memory>  // Include for std::make_shared
 #include "features.hpp"
 
-namespace yimmenu::Submenus
+namespace YimMenu::Submenus
 {
 	World::World() :
 	    Submenu::Submenu("World")
