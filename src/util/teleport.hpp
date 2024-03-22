@@ -2,8 +2,9 @@
 #include "common.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/rdr/Natives.hpp"
 #include "game/rdr/Entity.hpp"
+#include "game/rdr/Natives.hpp"
+
 
 // TODO: remove this file
 
@@ -83,12 +84,13 @@ namespace YimMenu::Teleport
 		return true;
 	}
 
-	inline Vector3 GetWaypointCoords()
+	inline Vector3 GetWaypointCoords(bool showNotification = false)
 	{
 		if (MAP::IS_WAYPOINT_ACTIVE())
 			return MAP::_GET_WAYPOINT_COORDS();
 
-		Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Error);
+		if (showNotification)
+			Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Error);
 
 		return Vector3{0, 0, 0};
 	}

@@ -10,6 +10,11 @@ namespace YimMenu
 
 		static void Init();
 
+		//store created patches here for dynamic enabling/disabling
+		struct Patches
+		{
+		};
+
 	private:
 		static Byte_Patch_Manager& GetInstance()
 		{

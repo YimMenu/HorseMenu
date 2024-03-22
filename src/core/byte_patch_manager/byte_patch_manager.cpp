@@ -7,7 +7,7 @@ namespace YimMenu
 		// put patches here
 		// example usage:
 		//
-		//BytePatch::Make(Pointers.GetLocalPed,0).get()
+		//BytePatch::Make(Pointers.GetLocalPed,0)->apply();
 
 		LOG(INFO) << "Byte patch manager initialized";
 	}
