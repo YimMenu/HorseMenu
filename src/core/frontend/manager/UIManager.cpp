@@ -31,7 +31,7 @@ namespace YimMenu
 		}
 		ImGui::EndChild();
 		
-		ImGui::Text("HorseMenu");
+		ImGui::Text("Game Ver. 1.32"); // Game version
 
 		pos.y -= 28;
 		ImGui::SetCursorPos(ImVec2(pos.x + 130, pos.y));
