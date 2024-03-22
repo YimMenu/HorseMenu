@@ -1,4 +1,5 @@
 #include "common.hpp"
+#include "core/byte_patch_manager/byte_patch_manager.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/filemgr/FileMgr.hpp"
 #include "core/frontend/Notifications.hpp"
@@ -18,8 +19,8 @@ namespace YimMenu
 {
 	DWORD Main(void*)
 	{
-		const auto documents = std::filesystem::path(std::getenv("USERPROFILE")) / "Documents";
-		FileMgr::Init(documents / "HellBase"); // TODO
+		const auto documents = std::filesystem::path(std::getenv("appdata")) / "HorseMenu";
+		FileMgr::Init(documents); // TODO
 
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
@@ -33,6 +34,8 @@ namespace YimMenu
 			goto unload;
 		if (!Renderer::Init())
 			goto unload;
+
+		Byte_Patch_Manager::Init();
 
 		Hooking::Init();
 

@@ -42,6 +42,11 @@ namespace YimMenu
 			return GetInstance().m_InitialLoadDone;
 		}
 
+		static std::string GetFilePath()
+		{
+			return GetInstance().m_SettingsFile.string();
+		}
+
 	private:
 		static Settings& GetInstance()
 		{
