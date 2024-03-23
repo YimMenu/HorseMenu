@@ -4,6 +4,7 @@
 #include "ContextMenu.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "game/rdr/Natives.hpp"
 
 namespace YimMenu
 {
@@ -55,6 +56,7 @@ namespace YimMenu
 			static POINT CursorCoords{};
 			if (m_IsOpen)
 			{
+				PAD::DISABLE_ALL_CONTROL_ACTIONS(0); // Disable Shooting/Controls while menu is opened
 				GetCursorPos(&CursorCoords);
 			}
 			else if (CursorCoords.x + CursorCoords.y)
