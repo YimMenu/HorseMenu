@@ -115,11 +115,13 @@ namespace YimMenu::Submenus
 
 		AddCategory(std::move(animations));
 
-		auto recovery = std::make_shared<Category>("Recovery");
+		auto recovery               = std::make_shared<Category>("Recovery");
+		auto recoveryColumns        = std::make_shared<Column>(2);
+		auto spawnCollectiblesGroup = std::make_shared<Group>("Spawn Collectibles", GetListBoxDimensions());
 
 		static auto recoveryCommand = Commands::GetCommand<BoolCommand>("recoveryenabled"_J);
 
-		recovery->AddItem(std::make_shared<ImGuiItem>([=] {
+		spawnCollectiblesGroup->AddItem(std::make_shared<ImGuiItem>([=] {
 			if (recoveryCommand->GetState())
 			{
 				static Rewards::eRewardType selected;
@@ -127,9 +129,13 @@ namespace YimMenu::Submenus
 
 				for (auto& [type, translation] : reward_translations)
 				{
-					if (ImGui::Selectable(std::string("Spawn all ").append(translation).c_str(), type == selected))
+					if (ImGui::Selectable(std::string(translation).c_str(), type == selected, ImGuiSelectableFlags_AllowDoubleClick))
 					{
 						selected = type;
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+					{
+						Rewards::SpawnRequestedRewards({selected});
 					}
 				}
 
@@ -148,6 +154,8 @@ namespace YimMenu::Submenus
 				}
 			}
 		}));
+		recoveryColumns->AddItem(spawnCollectiblesGroup);
+		recovery->AddItem(recoveryColumns);
 
 		AddCategory(std::move(recovery));
 	}
