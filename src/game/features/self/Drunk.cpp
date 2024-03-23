@@ -10,12 +10,6 @@ namespace YimMenu::Features
 	{
 		using LoopedCommand::LoopedCommand;
 
-		virtual void OnEnable() override
-		{
-			Notifications::Show("Drunk", "You are now drunk!", NotificationType::Success);
-		}
-
-
 		virtual void OnTick() override
 		{
 			AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, true);
@@ -24,9 +18,11 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
-			AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, false);
-			PED::_SET_PED_DRUNKNESS(Self::PlayerPed, false, 0.0f);
-			Notifications::Show("Drunk", "You are now sober!", NotificationType::Success);
+			if (PED::_GET_PED_DRUNKNESS(Self::PlayerPed))
+			{
+				AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, false);
+				PED::_SET_PED_DRUNKNESS(Self::PlayerPed, false, 0.0f);
+			}
 		}
 	};
 

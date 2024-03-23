@@ -8,8 +8,8 @@
 #include "util/network.hpp"
 #include "util/teleport.hpp"
 
-
 #include <string>
+
 
 
 // remove after testing
@@ -193,7 +193,6 @@ namespace YimMenu::Submenus
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("ragdoll"_J));
 
 			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				if (ImGui::Button("Test"))

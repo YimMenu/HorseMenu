@@ -10,7 +10,6 @@ namespace YimMenu
 	{
 		FiberPool::Push([=] {
 			Hash model = MISC::GET_HASH_KEY(model_name.c_str());
-			LOG(INFO) << "FOUND HASH";
 			if (STREAMING::IS_MODEL_IN_CDIMAGE(model) && STREAMING::IS_MODEL_VALID(model))
 			{
 				if (!STREAMING::HAS_MODEL_LOADED(model))
@@ -19,9 +18,9 @@ namespace YimMenu
 					ScriptMgr::Yield();
 				}
 
-				Vector3 coords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, 0.0, 3.0, -0.3);
-				auto ped = PED::CREATE_PED(model, coords.x, coords.y, coords.z, static_cast<float>(rand() % 360), 0, 0, 0, 0);
-
+				Vector3 coords       = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, 0.0, 3.0, -0.3);
+				float playerRotation = ENTITY::GET_ENTITY_ROTATION(playerPed, 2).x;
+				auto ped             = PED::CREATE_PED(model, coords.x, coords.y, coords.z, playerRotation, 0, 0, 0, 0);
 
 				ScriptMgr::Yield();
 				PED::_SET_RANDOM_OUTFIT_VARIATION(ped, true);
@@ -29,7 +28,6 @@ namespace YimMenu
 				ENTITY::SET_ENTITY_VISIBLE(ped, true);
 				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
 				NETWORK::NETWORK_REGISTER_ENTITY_AS_NETWORKED(ped);
-				NETWORK::NETWORK_SET_ENTITY_ONLY_EXISTS_FOR_PARTICIPANTS(ped, false);
 
 				int id = NETWORK::PED_TO_NET(ped);
 				if (NETWORK::NETWORK_DOES_NETWORK_ID_EXIST(id))

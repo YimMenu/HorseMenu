@@ -10,12 +10,6 @@ namespace YimMenu::Features
 	{
 		using LoopedCommand::LoopedCommand;
 
-		virtual void OnEnable() override
-		{
-			Notifications::Show("NPC Ignore", "You are now ignored!", NotificationType::Success);
-		}
-
-
 		virtual void OnTick() override
 		{
 			PLAYER::SET_EVERYONE_IGNORE_PLAYER(Self::Id, true);
@@ -24,7 +18,6 @@ namespace YimMenu::Features
 		virtual void OnDisable() override
 		{
 			PLAYER::SET_EVERYONE_IGNORE_PLAYER(Self::Id, false);
-			Notifications::Show("NPC Ignore", "You are no longer ignored!", NotificationType::Success);
 		}
 	};
 
