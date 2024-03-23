@@ -2,8 +2,9 @@
 #include "common.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/rdr/Natives.hpp"
 #include "game/rdr/Entity.hpp"
+#include "game/rdr/Natives.hpp"
+
 
 // TODO: remove this file
 
@@ -87,8 +88,6 @@ namespace YimMenu::Teleport
 	{
 		if (MAP::IS_WAYPOINT_ACTIVE())
 			return MAP::_GET_WAYPOINT_COORDS();
-
-		Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Error);
 
 		return Vector3{0, 0, 0};
 	}
