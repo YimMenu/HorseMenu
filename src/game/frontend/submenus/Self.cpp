@@ -1,10 +1,20 @@
 #include "Self.hpp"
 
+#include "core/commands/BoolCommand.hpp"
+#include "core/commands/Commands.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "game/rdr/Natives.hpp"
+#include "util/Rewards.hpp"
+
+#include <map>
+
+
+namespace YimMenu::Features
+{
+	BoolCommand _RecoveryEnabled("recoveryenabled", "Recovery Enabled", "Is the recovery feature enabled");
+}
 
 namespace YimMenu::Submenus
 {
@@ -50,6 +60,7 @@ namespace YimMenu::Submenus
 		auto toolsGroup    = std::make_shared<Group>("Tools", GetListBoxDimensions());
 		auto columns       = std::make_shared<Column>(2);
 
+
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
@@ -78,6 +89,7 @@ namespace YimMenu::Submenus
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 
+
 		columns->AddItem(globalsGroup);
 		columns->AddItem(toolsGroup);
 		columns->AddNextColumn();
@@ -105,5 +117,49 @@ namespace YimMenu::Submenus
 		}));
 
 		AddCategory(std::move(animations));
+
+		auto recovery               = std::make_shared<Category>("Recovery");
+		auto recoveryColumns        = std::make_shared<Column>(2);
+		auto spawnCollectiblesGroup = std::make_shared<Group>("Spawn Collectibles", GetListBoxDimensions());
+
+		static auto recoveryCommand = Commands::GetCommand<BoolCommand>("recoveryenabled"_J);
+
+		spawnCollectiblesGroup->AddItem(std::make_shared<ImGuiItem>([=] {
+			if (recoveryCommand->GetState())
+			{
+				static Rewards::eRewardType selected;
+				std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::GOLD_REWARDS, "Gold Rewards"}, {Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
+
+				for (auto& [type, translation] : reward_translations)
+				{
+					if (ImGui::Selectable(std::string(translation).c_str(), type == selected, ImGuiSelectableFlags_AllowDoubleClick))
+					{
+						selected = type;
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+					{
+						Rewards::SpawnRequestedRewards({selected});
+					}
+				}
+
+				if (ImGui::Button("Spawn Selected"))
+				{
+					Rewards::SpawnRequestedRewards({selected});
+				}
+			}
+			else
+			{
+				ImGui::Text("Recovery Feature Restricted");
+				ImGui::Text("The recovery/collectibles feature is risky and you might face a ban for using it. You are responsible for what you do with this feature. None of the developers or YimMenu organization are responsible for any damages to your account.");
+				if (ImGui::Button("Enable Recovery"))
+				{
+					recoveryCommand->SetState(true);
+				}
+			}
+		}));
+		recoveryColumns->AddItem(spawnCollectiblesGroup);
+		recovery->AddItem(recoveryColumns);
+
+		AddCategory(std::move(recovery));
 	}
 }
