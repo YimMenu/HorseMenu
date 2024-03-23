@@ -1,13 +1,20 @@
 #include "Self.hpp"
 
+#include "core/commands/BoolCommand.hpp"
+#include "core/commands/Commands.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "game/rdr/Natives.hpp"
 #include "util/Rewards.hpp"
 
 #include <map>
+
+
+namespace YimMenu::Features
+{
+	BoolCommand _RecoveryEnabled("recoveryenabled", "Recovery Enabled", "Is the recovery feature enabled");
+}
 
 namespace YimMenu::Submenus
 {
@@ -78,18 +85,32 @@ namespace YimMenu::Submenus
 				});
 		}));
 
+		static auto recoveryCommand = Commands::GetCommand<BoolCommand>("recoveryenabled"_J);
 
-		collectiblesGroup->AddItem(std::make_shared<ImGuiItem>([] {
-			std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::GOLD_REWARDS, "Gold Rewards"}, {Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
-
-			for (auto& [type, translation] : reward_translations)
+		collectiblesGroup->AddItem(std::make_shared<ImGuiItem>([=] {
+			if (recoveryCommand->GetState())
 			{
-				if (ImGui::Button(std::string("Spawn all ").append(translation).c_str()))
+				std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::GOLD_REWARDS, "Gold Rewards"}, {Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
+
+				for (auto& [type, translation] : reward_translations)
 				{
-					Rewards::SpawnRequestedRewards({type});
+					if (ImGui::Button(std::string("Spawn all ").append(translation).c_str()))
+					{
+						Rewards::SpawnRequestedRewards({type});
+					}
+				}
+			}
+			else
+			{
+				ImGui::Text("Recovery Feature Restricted");
+				ImGui::Text("The recovery/collectibles feature is risky and you might face a ban for using it. You are responsible for what you do with this feature. None of the developers or YimMenu organization are responsible for any damages to your account.");
+				if (ImGui::Button("Enable Recovery"))
+				{
+					recoveryCommand->SetState(true);
 				}
 			}
 		}));
+
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 
