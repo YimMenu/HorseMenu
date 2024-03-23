@@ -1,5 +1,5 @@
 #include "UIManager.hpp"
-
+#include "game/rdr/Natives.hpp" // Needed for the DEBUG native
 namespace YimMenu
 {
 	void UIManager::AddSubmenuImpl(const std::shared_ptr<Submenu>&& submenu)
