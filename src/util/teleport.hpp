@@ -84,13 +84,10 @@ namespace YimMenu::Teleport
 		return true;
 	}
 
-	inline Vector3 GetWaypointCoords(bool showNotification = false)
+	inline Vector3 GetWaypointCoords()
 	{
 		if (MAP::IS_WAYPOINT_ACTIVE())
 			return MAP::_GET_WAYPOINT_COORDS();
-
-		if (showNotification)
-			Notifications::Show("Waypoint", "You don't have a waypoint set", NotificationType::Error);
 
 		return Vector3{0, 0, 0};
 	}

@@ -10,10 +10,13 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			Vector3 coords = Teleport::GetWaypointCoords();
-			if (coords != Vector3{0, 0, 0})
+			if (MAP::IS_WAYPOINT_ACTIVE())
 			{
-				Teleport::TeleportEntity(YimMenu::Self::PlayerPed, rage::fvector3{coords.x, coords.y, coords.z}, true);
+				Vector3 coords = Teleport::GetWaypointCoords();
+				if (coords != Vector3{0, 0, 0})
+				{
+					Teleport::TeleportEntity(YimMenu::Self::PlayerPed, rage::fvector3{coords.x, coords.y, coords.z}, true);
+				}
 			}
 		}
 	};
