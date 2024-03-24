@@ -1,4 +1,5 @@
 #include "core/commands/BoolCommand.hpp"
+#include "core/commands/Commands.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "unordered_set"
@@ -6,9 +7,11 @@
 #include <rage/rlJson.hpp>
 #include <rage/rlMetric.hpp>
 
+
 namespace YimMenu::Features
 {
 	BoolCommand _LogMetrics("logmetrics", "Log Metrics", "Log game telemetry");
+	BoolCommand _BlockAllTelemetry("blockalltelemetry", "Block All Telemetry", "Block all game telemetry");
 }
 
 namespace YimMenu::Hooks
@@ -29,6 +32,12 @@ namespace YimMenu::Hooks
 
 		if (Features::_LogMetrics.GetState())
 			LOG(INFO) << "METRIC: " << metric_name << "; DATA: " << serializer.GetBuffer();
-		return true;
+
+		if (Features::_BlockAllTelemetry.GetState())
+		{
+			return true;
+		}
+
+		return BaseHook::Get<Anticheat::SendMetric, DetourHook<decltype(&Anticheat::SendMetric)>>()->Original()(manager, metric);
 	}
 }
