@@ -3,16 +3,15 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/rdr/Natives.hpp"
 
-
 namespace YimMenu
 {
-	bool SpawnPed(std::string model_name, Player player, int playerPed)
+	bool SpawnPed(std::string model_name, Player player, int playerPed, bool blockNewPedMovement)
 	{
 		FiberPool::Push([=] {
 			Hash model = MISC::GET_HASH_KEY(model_name.c_str());
 			if (STREAMING::IS_MODEL_IN_CDIMAGE(model) && STREAMING::IS_MODEL_VALID(model))
 			{
-				if (!STREAMING::HAS_MODEL_LOADED(model))
+				for (int i = 0; i < 5 && !STREAMING::HAS_MODEL_LOADED(model); i++)
 				{
 					STREAMING::REQUEST_MODEL(model, false);
 					ScriptMgr::Yield();
@@ -20,12 +19,13 @@ namespace YimMenu
 
 				Vector3 coords       = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, 0.0, 3.0, -0.3);
 				float playerRotation = ENTITY::GET_ENTITY_ROTATION(playerPed, 2).x;
-				auto ped             = PED::CREATE_PED(model, coords.x, coords.y, coords.z, playerRotation, 0, 0, 0, 0);
+				int ped              = PED::CREATE_PED(model, coords.x, coords.y, coords.z, playerRotation, 0, 0, 0, 0);
 
 				ScriptMgr::Yield();
 				PED::_SET_RANDOM_OUTFIT_VARIATION(ped, true);
 				ENTITY::SET_ENTITY_ALPHA(ped, 255, 0);
 				ENTITY::SET_ENTITY_VISIBLE(ped, true);
+				ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&ped);
 				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
 				NETWORK::NETWORK_REGISTER_ENTITY_AS_NETWORKED(ped);
 
@@ -38,6 +38,12 @@ namespace YimMenu
 						NETWORK::SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(id, true);
 						NETWORK::IS_NETWORK_ID_OWNED_BY_PARTICIPANT(id);
 					}
+				}
+
+				if (blockNewPedMovement)
+				{
+					ENTITY::PLACE_ENTITY_ON_GROUND_PROPERLY(ped, true);
+					ENTITY::FREEZE_ENTITY_POSITION(ped, true);
 				}
 				return true;
 			}
