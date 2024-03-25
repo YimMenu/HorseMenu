@@ -10,6 +10,7 @@
 #include "game/pointers/Pointers.hpp"
 
 
+
 namespace YimMenu::Submenus
 {
 	Network::Network() :
@@ -20,6 +21,7 @@ namespace YimMenu::Submenus
 		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
+		session->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
 		AddCategory(std::move(session));

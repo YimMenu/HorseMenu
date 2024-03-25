@@ -3,9 +3,13 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
+#include "game/rdr/Natives.hpp"
+#include "util/PedModels.hpp"
+#include "util/SpawnPed.cpp"
 #include "util/Rewards.hpp"
 
 #include <map>
@@ -54,11 +58,12 @@ namespace YimMenu::Submenus
 	Self::Self() :
 	    Submenu::Submenu("Self")
 	{
-		auto main          = std::make_shared<Category>("Main");
-		auto globalsGroup  = std::make_shared<Group>("Globals", GetListBoxDimensions());
-		auto movementGroup = std::make_shared<Group>("Movement", GetListBoxDimensions());
-		auto toolsGroup    = std::make_shared<Group>("Tools", GetListBoxDimensions());
-		auto columns       = std::make_shared<Column>(2);
+		auto main            = std::make_shared<Category>("Main");
+		auto globalsGroup    = std::make_shared<Group>("Globals", GetListBoxDimensions());
+		auto movementGroup   = std::make_shared<Group>("Movement", GetListBoxDimensions());
+		auto toolsGroup      = std::make_shared<Group>("Tools", GetListBoxDimensions());
+		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner", GetListBoxDimensions());
+		auto columns         = std::make_shared<Column>(2);
 
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
@@ -74,8 +79,11 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J)); // TODO: move this to spoofing or network
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
+
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("clearcrimes"_J));
@@ -85,15 +93,42 @@ namespace YimMenu::Submenus
 					ENTITY::FREEZE_ENTITY_POSITION(YimMenu::Self::PlayerPed, false);
 				});
 		}));
+
+		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnwagon"_J));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
+		static std::string ped_model_buf;
+		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([&]() {
+			ImGui::Text(std::string("Current Model: ").append(ped_model_buf).c_str());
+			ImGui::NewLine();
+
+			if (ImGui::BeginCombo("Ped Types", ped_model_buf.c_str()))
+			{
+				for (const auto& pedItem : pedModelInfos)
+				{
+					bool is_selected = (ped_model_buf == pedItem.model);
+					if (ImGui::Selectable(pedItem.model.c_str(), is_selected))
+					{
+						ped_model_buf = pedItem.model;
+					}
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+		}));
+		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([&] {
+			if (ImGui::Button("Spawn Ped"))
+				SpawnPed(ped_model_buf, YimMenu::Self::Id, YimMenu::Self::PlayerPed);
+		}));
 
 
 		columns->AddItem(globalsGroup);
 		columns->AddItem(toolsGroup);
 		columns->AddNextColumn();
 		columns->AddItem(movementGroup);
+		columns->AddItem(pedSpawnerGroup);
 		main->AddItem(columns);
 		AddCategory(std::move(main));
 
