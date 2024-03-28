@@ -11,7 +11,6 @@
 #include <string>
 
 
-
 // remove after testing
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
@@ -95,6 +94,19 @@ namespace YimMenu::Submenus
 				{
 					YimMenu::Players::SetSelected(Self::Id);
 				}
+				if (ImGui::Button("View SC Profile"))
+					FiberPool::Push([] {
+						uint64_t handle[18];
+						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+						NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
+					});
+
+				if (ImGui::Button("Add Friend"))
+					FiberPool::Push([] {
+						uint64_t handle[18];
+						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+						NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
+					});
 			}));
 
 			// TODO: refactor teleport items
@@ -150,14 +162,23 @@ namespace YimMenu::Submenus
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
-				if (ImGui::Button("Spawn Wagon for Player"))
+				if (ImGui::Button("Spawn Bounty Wagon for Player"))
 				{
 					FiberPool::Push([] {
 						SpawnVehicle("wagonarmoured01x",
 						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
-						Notifications::Show("Spawned Wagon", "Spawned Wagon for Player", NotificationType::Success);
+						Notifications::Show("Spawned Wagon", "Spawned Bounty Wagon for Player", NotificationType::Success);
 					});
 				};
+				if (ImGui::Button("Spawn Hunting Wagon for Player"))
+				{
+					FiberPool::Push([] {
+						int id  = YimMenu::Players::GetSelected().GetId();
+						int veh = SpawnVehicle("huntercart01", PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id));
+						PLAYER::_SET_PLAYER_HUNTING_WAGON(id, veh);
+						Notifications::Show("Spawned Wagon", "Spawned Hunting Wagon for Player", NotificationType::Success);
+					});
+				}
 			}));
 
 			AddCategory(std::move(helpful));
@@ -193,6 +214,23 @@ namespace YimMenu::Submenus
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
+			toxic->AddItem(std::make_shared<ImGuiItem>([] {
+				static bool noescape, driveCircus;
+				ImGui::Checkbox("No Escape", &noescape);
+				ImGui::Checkbox("Drive Circus", &driveCircus);
+				if (ImGui::Button("Circus"))
+					FiberPool::Push([] {
+						int handle = SpawnVehicle("wagonCircus01x", YimMenu::Self::PlayerPed, ENTITY::GET_ENTITY_COORDS(YimMenu::Self::PlayerPed, true, true));
+						if (noescape)
+							ENTITY::SET_ENTITY_INVINCIBLE(handle, true);
+						if (driveCircus)
+						{
+							PED::SET_PED_INTO_VEHICLE(YimMenu::Self::PlayerPed, handle, -1);
+						}
+					});
+			}));
 
 			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				if (ImGui::Button("Test"))

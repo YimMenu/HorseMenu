@@ -4,8 +4,9 @@
 #include "game/rdr/Natives.hpp"
 
 #include <cmath>
+#include <optional>
 
 namespace YimMenu
 {
-	extern bool SpawnVehicle(std::string model_name, int player_ped_id);
+	extern int SpawnVehicle(std::string model_name, int player_ped_id, std::optional<Vector3> coords = std::nullopt);
 }
