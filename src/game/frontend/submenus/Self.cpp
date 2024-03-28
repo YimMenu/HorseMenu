@@ -98,7 +98,8 @@ namespace YimMenu::Submenus
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		static std::string ped_model_buf;
-		static bool blockNewPedMovement;
+		static bool blockNewPedMovement, spawnDead, invincible, invisible = false;
+		static int scale = 1;
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([&]() {
 			ImGui::Text(std::string("Current Model: ").append(ped_model_buf).c_str());
 			ImGui::NewLine();
@@ -119,10 +120,27 @@ namespace YimMenu::Submenus
 			}
 
 			ImGui::Checkbox("Block New Ped Movement", &blockNewPedMovement);
+
+			ImGui::BeginDisabled(invincible);
+			ImGui::Checkbox("Spawn Dead", &spawnDead);
+			ImGui::EndDisabled();
+
+			ImGui::BeginDisabled(spawnDead);
+			ImGui::Checkbox("Invincible", &invincible);
+			ImGui::EndDisabled();
+
+			ImGui::Checkbox("Invisible", &invisible);
+
+			ImGui::Text("Scale");
+			ImGui::InputInt(" ", &scale);
 		}));
-		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([&] {
+		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([=] {
 			if (ImGui::Button("Spawn Ped"))
-				SpawnPed(ped_model_buf, YimMenu::Self::Id, YimMenu::Self::PlayerPed, blockNewPedMovement);
+			{
+				FiberPool::Push([] {
+					SpawnPed(ped_model_buf, YimMenu::Self::Id, YimMenu::Self::PlayerPed, blockNewPedMovement, spawnDead, invincible, invisible, scale);
+				});
+			}
 		}));
 
 
