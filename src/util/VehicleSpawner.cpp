@@ -35,8 +35,7 @@ namespace YimMenu
 			ScriptMgr::Yield();
 			VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh, 0);
 			ENTITY::SET_ENTITY_VISIBLE(veh, true);
-			//DECORATOR::DECOR_SET_BOOL(model, "wagon_block_honor", true);
-			//ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
+			ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
 			STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
 			return veh;
 		}

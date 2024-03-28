@@ -249,9 +249,9 @@ namespace
 			}
 			if (g_CageModels.count(data.m_ModelHash))
 			{
-				LOG(WARNING) << "Potential cage spawn from " << Protections::GetSyncingPlayer().GetName();
+				LOG(WARNING) << "Blocked potential cage spawn from " << Protections::GetSyncingPlayer().GetName();
 				Notifications::Show("Protections",
-				    std::string("Potential cage spawn from ").append(Protections::GetSyncingPlayer().GetName()),
+				    std::string("Blocked potential cage spawn from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				return true;
 			}
