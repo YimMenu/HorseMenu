@@ -96,6 +96,7 @@ namespace YimMenu::Submenus
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnwagon"_J));
+		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("eagleeye"_J));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		static std::string ped_model_buf;
