@@ -102,28 +102,37 @@ namespace YimMenu::Rewards
 					STREAMING::REQUEST_MODEL(hash, false);
 					ScriptMgr::Yield();
 				}
+	
 				Vector3 coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), true, false);
-				Object obj = OBJECT::CREATE_OBJECT(hash, coords.x, coords.y, coords.z, true, NETWORK::NETWORK_IS_HOST_OF_THIS_SCRIPT(), 1, 0, 1);
+				float forwardX = ENTITY::GET_ENTITY_FORWARD_X(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(PLAYER::PLAYER_ID()));
+				float forwardY = ENTITY::GET_ENTITY_FORWARD_Y(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(PLAYER::PLAYER_ID()));
+	
+				// Adjust the spawn position using the forward vector
+				float spawnOffset = 2.0f; // Adjust this offset as needed
+				float spawnX = coords.x + forwardX * spawnOffset;
+				float spawnY = coords.y + forwardY * spawnOffset;
+	
+				Object obj = OBJECT::CREATE_OBJECT(hash, spawnX, spawnY, coords.z, 1, 1, 1, 0, 0);
+				OBJECT::PLACE_OBJECT_ON_GROUND_PROPERLY(obj, 1);
 				ScriptMgr::Yield();
-
+	
+				// Set up object properties
 				ENTITY::SET_ENTITY_VISIBLE(obj, true);
 				ScriptMgr::Yield();
-
+	
 				OBJECT::_MAKE_ITEM_CARRIABLE(obj);
-
+	
 				NETWORK::NETWORK_REGISTER_ENTITY_AS_NETWORKED(obj);
 				if (NETWORK::NETWORK_DOES_NETWORK_ID_EXIST(NETWORK::OBJ_TO_NET(obj)))
 				{
-					OBJECT::PLACE_OBJECT_ON_GROUND_PROPERLY(obj, true);
-					ENTITY::SET_ENTITY_SHOULD_FREEZE_WAITING_ON_COLLISION(obj, true);
 					NETWORK::SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(NETWORK::OBJ_TO_NET(obj), true);
 					NETWORK::NETWORK_REQUEST_CONTROL_OF_ENTITY(obj);
 				}
 				ScriptMgr::Yield();
-
+	
 				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 				ENTITY::SET_OBJECT_AS_NO_LONGER_NEEDED(&obj);
 			}
 		});
-	};
+	}
 };
