@@ -189,6 +189,7 @@ namespace YimMenu::Submenus
 			}));
 
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("lightning"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
