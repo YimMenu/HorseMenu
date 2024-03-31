@@ -14,7 +14,7 @@ namespace YimMenu::Features
 		virtual void OnCall(Player player) override
 		{
 			auto playerCoords = player.GetPed().GetPosition();
-			FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, (int)ExplosionTypes::SPARKS_WITH_FIRE_AFTERWARDS, 5.0f, true, false, 5.0f);
+			FIRE::ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z, 33, 5.0f, true, false, 5.0f);
 		}
 	};
 
