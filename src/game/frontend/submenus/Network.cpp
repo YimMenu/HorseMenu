@@ -18,6 +18,7 @@ namespace YimMenu::Submenus
 	{
 		auto session  = std::make_shared<Category>("Session");
 		auto spoofing = std::make_shared<Category>("Spoofing");
+		session->AddItem(std::make_shared<CommandItem>("quitsession"_J));
 		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
