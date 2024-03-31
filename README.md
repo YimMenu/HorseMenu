@@ -8,7 +8,7 @@ A trainer for the popular horse riding game from Rockstar Games.
 - `game/` : Game specific implemented things
 - `util/` : Loose functions that aren't game specific
 
-**Current Look**
+**Current Look (Outdated)**
 
 ![image](https://github.com/YimMenu/HorseMenu/assets/79384354/f4c0dbd8-9d89-417d-b1c1-b45c70a5f91a)
 ![image](https://github.com/YimMenu/HorseMenu/assets/79384354/610f28bd-fe28-4a25-987f-520d75460d67)
