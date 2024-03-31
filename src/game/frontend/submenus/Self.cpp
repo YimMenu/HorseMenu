@@ -76,6 +76,7 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepcoresfilled"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteclip"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("maxaccuracy"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
