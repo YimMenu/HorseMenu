@@ -2,7 +2,7 @@
 
 namespace YimMenu
 {
-	extern int SpawnPed(std::string model_name, Player player, int playerPed, bool blockNewPedMovement, bool spawnDead, bool invincible, bool invisible, int scale)
+	extern int SpawnPed(std::string model_name, bool blockNewPedMovement, bool spawnDead, bool invincible, bool invisible, int scale)
 	{
 		Hash model = MISC::GET_HASH_KEY(model_name.c_str());
 		if (STREAMING::IS_MODEL_IN_CDIMAGE(model) && STREAMING::IS_MODEL_VALID(model))
@@ -13,8 +13,8 @@ namespace YimMenu
 				ScriptMgr::Yield();
 			}
 
-			Vector3 coords       = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, 0.0, 3.0, -0.3);
-			float playerRotation = ENTITY::GET_ENTITY_ROTATION(playerPed, 2).x;
+			Vector3 coords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), 0.0, 3.0, -0.3);
+			float playerRotation = ENTITY::GET_ENTITY_ROTATION(PLAYER::PLAYER_PED_ID(), 2).x;
 			int ped              = PED::CREATE_PED(model, coords.x, coords.y, coords.z, playerRotation, 0, 0, 0, 0);
 
 			ScriptMgr::Yield();

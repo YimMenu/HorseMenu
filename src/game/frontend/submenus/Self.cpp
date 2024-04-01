@@ -10,7 +10,7 @@
 #include "game/rdr/Natives.hpp"
 #include "util/PedModels.hpp"
 #include "util/Rewards.hpp"
-#include "util/SpawnPed.cpp"
+#include "util/SpawnPed.hpp"
 
 #include <map>
 
@@ -137,8 +137,8 @@ namespace YimMenu::Submenus
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([=] {
 			if (ImGui::Button("Spawn Ped"))
 			{
-				FiberPool::Push([] {
-					SpawnPed(ped_model_buf, YimMenu::Self::Id, YimMenu::Self::PlayerPed, blockNewPedMovement, spawnDead, invincible, invisible, scale);
+				FiberPool::Push([=] {
+					SpawnPed(ped_model_buf, blockNewPedMovement, spawnDead, invincible, invisible, scale);
 				});
 			}
 		}));

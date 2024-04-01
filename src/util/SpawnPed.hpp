@@ -6,5 +6,5 @@
 
 namespace YimMenu
 {
-	extern int SpawnPed(std::string model_name, Player player, int playerPed, bool blockNewPedMovement, bool spawnDead, bool invincible, bool invisible, int scale);
+	extern int SpawnPed(std::string model_name, bool blockNewPedMovement = false, bool spawnDead = false, bool invincible = false, bool invisible = false, int scale = 1);
 }
