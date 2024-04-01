@@ -31,7 +31,12 @@ namespace YimMenu
 		}
 		ImGui::EndChild();
 		
-		ImGui::Text("HorseMenu");
+		std::string gameVer = DEBUG::GET_GAME_VERSION_NAME();
+		size_t spos = gameVer.find("_dev_live_tu");
+		if (spos != std::string::npos) {
+			gameVer.erase(spos); // removes _dev_live_tu from the game build version
+		}
+		ImGui::Text("Build Ver. %s", gameVer.c_str()); // Outputs the current game build version number.
 
 		pos.y -= 28;
 		ImGui::SetCursorPos(ImVec2(pos.x + 130, pos.y));
