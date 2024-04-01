@@ -1,4 +1,5 @@
 #include "UIManager.hpp"
+#include "game/rdr/Natives.hpp" // For DEBUG::
 
 namespace YimMenu
 {
