@@ -11,6 +11,7 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
+#include "util/Storage.hpp"
 
 #include <map>
 #include <string>
@@ -33,8 +34,7 @@ namespace YimMenu::Submenus
 		static std::string name_input_buf, color_spoof_buf = "";
 		nameChangerGroup->AddItem(std::make_shared<ImGuiItem>([=] {
 			static std::map<std::string, std::string> color_translations = {{"~e~", "Red"}, {"~f~", "Off White"}, {"~p~", "White"}, {"~o~", "Yellow"}, {"~q~", "Pure White"}, {"~d~", "Orange"}, {"~m~", "Light Grey"}, {"~t~", "Grey"}, {"~v~", "Black"}, {"~pa~", "Blue"}, {"~t1~", "Purple"}, {"~t2~", "Orange"}, {"~t3~", "Teal"}, {"~t4~", "Light Yellow"}, {"~t5~", "Pink"}, {"~t6~", "Green"}, {"~t7~", "Dark Blue"}, {"~t8~", "Red"}, {"", "None"}};
-			ImGui::BeginDisabled(!*Pointers.IsSessionStarted);
-			ImGui::Text(std::string("Current Name: ").append(Pointers.Username).c_str());
+
 
 			InputTextWithHint("New Name", "Enter New Name", &name_input_buf).Draw();
 
@@ -50,19 +50,29 @@ namespace YimMenu::Submenus
 				ImGui::EndCombo();
 			}
 
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("This effect is local");
+			}
+
+			if (!g_Storage.spoofed_name.empty())
+				if (ImGui::Button("Show Locally"))
+				{
+					FiberPool::Push([=] {
+						HUD::_CREATE_MP_GAMER_TAG(YimMenu::Self::Id, g_Storage.spoofed_name.c_str(), 0, 0, "", 0);
+						HUD::_CREATE_MP_GAMER_TAG_ON_ENTITY(YimMenu::Self::Id, g_Storage.spoofed_name.c_str());
+					});
+				}
+
 			if (ImGui::Button("Set Spoofed Name"))
 			{
-				std::string concat_name      = std::string(color_spoof_buf) + name_input_buf;
-				const char* concat_name_cstr = concat_name.c_str();
-				char new_name[26];
-				strcpy(new_name, concat_name_cstr);
-				strcpy(Pointers.Username, new_name);
+				std::string concat_name = std::string(color_spoof_buf) + name_input_buf;
+				g_Storage.spoofed_name  = concat_name;
 			}
 			if (ImGui::IsItemHovered())
 			{
-				ImGui::SetTooltip("You must change sessions for this to take effect!");
+				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally unless enabled above.");
 			}
-			ImGui::EndDisabled();
 		}));
 		spoofingColumns->AddItem(nameChangerGroup);
 		spoofing->AddItem(spoofingColumns);

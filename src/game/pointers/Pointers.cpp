@@ -263,9 +263,9 @@ namespace YimMenu
 			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
 		});
 
-		constexpr auto namePtrn = Pattern<"72 ? 78 ? 6E 6E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03 00 00 00 00 00 00 F8">("Username");
-		scanner.Add(namePtrn, [this](PointerCalculator ptr) {
-			Username = ptr.As<char*>();
+		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 56 57 41 54 41 56 41 57 48 83 EC 50 4D 8B F1 48 8B F9 48 81 C1 A0 00 00 00 4C 8D 48 08 41 8B E8 4C 8B FA 33 DB E8 ?? ?? ?? ?? 84 C0 0F 84 C8">("SendNetInfoToLobby");
+		scanner.Add(sendNetInfoToLobbyPtrn, [this](PointerCalculator ptr) {
+			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
 		});
 
 		if (!scanner.Scan())

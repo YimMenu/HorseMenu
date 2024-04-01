@@ -20,6 +20,7 @@ namespace rage
 	class netEventMgr;
 	class netSyncTree;
 	class netObject;
+	class rlGamerInfo;
 }
 
 namespace YimMenu
@@ -38,6 +39,7 @@ namespace YimMenu
 		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
 		using GetNetObjectById          = rage::netObject* (*)(uint16_t id);
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
+		using SendNetInfoToLobby        = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
 	};
 
 	struct PointerData
@@ -52,7 +54,7 @@ namespace YimMenu
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
 		Functions::GetLocalPed GetLocalPed;
-		char* Username;
+		Functions::SendNetInfoToLobby SendNetInfoToLobby;
 
 		// Security
 		PVOID SendMetric;
