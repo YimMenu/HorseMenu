@@ -165,17 +165,29 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Spawn Bounty Wagon for Player"))
 				{
 					FiberPool::Push([] {
-						SpawnVehicle("wagonarmoured01x",
-						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
+						Vector3 coords = ENTITY::GET_ENTITY_COORDS(YimMenu::Players::GetSelected().GetPed().GetHandle(), true, true);
+						float rot = ENTITY::GET_ENTITY_ROTATION(YimMenu::Players::GetSelected().GetPed().GetHandle(), 0).z;
+						SpawnVehicle("wagonarmoured01x", coords, rot);
 						Notifications::Show("Spawned Wagon", "Spawned Bounty Wagon for Player", NotificationType::Success);
 					});
 				};
 				if (ImGui::Button("Spawn Hunting Wagon for Player"))
 				{
 					FiberPool::Push([] {
-						int id  = YimMenu::Players::GetSelected().GetId();
-						int veh = SpawnVehicle("huntercart01", PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id));
-						PLAYER::_SET_PLAYER_HUNTING_WAGON(id, veh);
+						int id   = YimMenu::Players::GetSelected().GetId();
+						auto ped = PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id);
+						Vector3 dim1, dim2;
+						MISC::GET_MODEL_DIMENSIONS(MISC::GET_HASH_KEY("huntercart01"), &dim1, &dim2);
+						float offset = dim2.y * 1.6;
+
+						Vector3 dir = ENTITY::GET_ENTITY_FORWARD_VECTOR(ped);
+						float rot   = (ENTITY::GET_ENTITY_ROTATION(ped, 0)).z;
+						Vector3 pos = ENTITY::GET_ENTITY_COORDS(ped, true, true);
+
+						int handle = SpawnVehicle("huntercart01",
+						    Vector3{pos.x + (dir.x * offset), pos.y + (dir.y * offset), pos.z},
+						    ENTITY::GET_ENTITY_ROTATION(ped, 0).z);
+						PLAYER::_SET_PLAYER_HUNTING_WAGON(id, handle);
 						Notifications::Show("Spawned Wagon", "Spawned Hunting Wagon for Player", NotificationType::Success);
 					});
 				}
@@ -217,18 +229,11 @@ namespace YimMenu::Submenus
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
 			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				static bool noescape, driveCircus;
-				ImGui::Checkbox("No Escape", &noescape);
-				ImGui::Checkbox("Drive Circus", &driveCircus);
 				if (ImGui::Button("Circus"))
-					FiberPool::Push([] {
-						int handle = SpawnVehicle("wagonCircus01x", YimMenu::Self::PlayerPed, ENTITY::GET_ENTITY_COORDS(YimMenu::Self::PlayerPed, true, true));
-						if (noescape)
-							ENTITY::SET_ENTITY_INVINCIBLE(handle, true);
-						if (driveCircus)
-						{
-							PED::SET_PED_INTO_VEHICLE(YimMenu::Self::PlayerPed, handle, -1);
-						}
+					FiberPool::Push([=] {
+						float rot = ENTITY::GET_ENTITY_ROTATION(YimMenu::Players::GetSelected().GetPed().GetHandle(), 0).z;
+						Vector3 coords = ENTITY::GET_ENTITY_COORDS(YimMenu::Players::GetSelected().GetPed().GetHandle(), true, true);
+						SpawnVehicle("wagonCircus01x", coords, rot);
 					});
 			}));
 

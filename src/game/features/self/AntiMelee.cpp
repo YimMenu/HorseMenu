@@ -24,7 +24,7 @@ namespace YimMenu::Features
 			{
 				PED::_CLEAR_PED_TARGET_ACTION_DISABLE_FLAG(Self::PlayerPed, i);
 			}
-		};
+		}
 	};
 
 	static AntiMelee _AntiMelee{"antimelee", "Anti Melee", "Disables getting assaulted by other players."};
