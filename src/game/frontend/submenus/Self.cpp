@@ -104,7 +104,7 @@ namespace YimMenu::Submenus
 			ImGui::Text(std::string("Current Model: ").append(ped_model_buf).c_str());
 			ImGui::NewLine();
 
-			if (ImGui::BeginCombo("Ped Types", ped_model_buf.c_str()))
+			if (ImGui::BeginCombo("", ped_model_buf.c_str()))
 			{
 				for (const auto& pedItem : pedModelInfos)
 				{
@@ -138,7 +138,9 @@ namespace YimMenu::Submenus
 			if (ImGui::Button("Spawn Ped"))
 			{
 				FiberPool::Push([=] {
-					SpawnPed(ped_model_buf, blockNewPedMovement, spawnDead, invincible, invisible, scale);
+					Vector3 coords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(YimMenu::Self::PlayerPed, 0.0, 3.0, -0.3);
+					float playerHeading = ENTITY::GET_ENTITY_ROTATION(YimMenu::Self::PlayerPed, 2).x;
+					SpawnPed(ped_model_buf, coords, playerHeading, blockNewPedMovement, spawnDead, invincible, invisible, scale);
 				});
 			}
 		}));
