@@ -12,19 +12,19 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if(!PLAYER::_IS_SECONDARY_SPECIAL_ABILITY_ACTIVE(PLAYER::PLAYER_ID())) // Checks if Eagle Eye is active before toggling it on
+			if(!PLAYER::_IS_SECONDARY_SPECIAL_ABILITY_ACTIVE(YimMenu::Self::Id)) // Checks if Eagle Eye is active before toggling it on
 			{
-				PLAYER::_SECONDARY_SPECIAL_ABILITY_SET_ACTIVE(PLAYER::PLAYER_ID()); // Toggles Eagle Eye on
+				PLAYER::_SECONDARY_SPECIAL_ABILITY_SET_ACTIVE(YimMenu::Self::Id); // Toggles Eagle Eye on
 				Notifications::Show("Eagle Eye", "Infinite Eagle eye has been enabled.", NotificationType::Success);
 				Notifications::Show("WARNING", "When this is active, it will always reactivate eagle eye for you, you still cannot run using it.", NotificationType::Warning);
 			}
-			PLAYER::_MODIFY_INFINITE_TRAIL_VISION(PLAYER::PLAYER_ID(), 1); // Sets Eagle Eye to Infinite
+			PLAYER::_MODIFY_INFINITE_TRAIL_VISION(YimMenu::Self::Id, 1); // Sets Eagle Eye to Infinite
 		}
 
 		virtual void OnDisable() override
 		{
-			PLAYER::_SECONDARY_SPECIAL_ABILITY_SET_DISABLED(PLAYER::PLAYER_ID(), 1); // Disables Eagle Eye
-			PLAYER::_MODIFY_INFINITE_TRAIL_VISION(PLAYER::PLAYER_ID(), 0); // Turns off Infinite Eagle Eye
+			PLAYER::_SECONDARY_SPECIAL_ABILITY_SET_DISABLED(YimMenu::Self::Id, 1); // Disables Eagle Eye
+			PLAYER::_MODIFY_INFINITE_TRAIL_VISION(YimMenu::Self::Id, 0); // Turns off Infinite Eagle Eye
 			Notifications::Show("Eagle Eye", "Infinite Eagle eye has been disabled.", NotificationType::Success);
 		}
 	};
