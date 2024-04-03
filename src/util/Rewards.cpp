@@ -103,16 +103,9 @@ namespace YimMenu::Rewards
 					ScriptMgr::Yield();
 				}
 	
-				Vector3 coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), true, false);
-				float forwardX = ENTITY::GET_ENTITY_FORWARD_X(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(PLAYER::PLAYER_ID()));
-				float forwardY = ENTITY::GET_ENTITY_FORWARD_Y(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(PLAYER::PLAYER_ID()));
+				Vector3 coords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), 0, 2, 0);
 	
-				// Adjust the spawn position using the forward vector
-				float spawnOffset = 2.0f; // Adjust this offset as needed
-				float spawnX = coords.x + forwardX * spawnOffset;
-				float spawnY = coords.y + forwardY * spawnOffset;
-	
-				Object obj = OBJECT::CREATE_OBJECT(hash, spawnX, spawnY, coords.z, 1, 1, 1, 0, 0);
+				Object obj = OBJECT::CREATE_OBJECT(hash, coords.x, coords.y, coords.z, 1, 1, 1, 0, 0);
 				OBJECT::PLACE_OBJECT_ON_GROUND_PROPERLY(obj, 1);
 				ScriptMgr::Yield();
 	
