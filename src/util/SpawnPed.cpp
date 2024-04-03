@@ -7,7 +7,7 @@ namespace YimMenu
 		Hash model = MISC::GET_HASH_KEY(model_name.c_str());
 		if (STREAMING::IS_MODEL_IN_CDIMAGE(model) && STREAMING::IS_MODEL_VALID(model))
 		{
-			for (int i = 0; i < 5 && !STREAMING::HAS_MODEL_LOADED(model); i++)
+			for (int i = 0; i < 30 && !STREAMING::HAS_MODEL_LOADED(model); i++)
 			{
 				STREAMING::REQUEST_MODEL(model, false);
 				ScriptMgr::Yield();
@@ -23,45 +23,30 @@ namespace YimMenu
 			NETWORK::NETWORK_REGISTER_ENTITY_AS_NETWORKED(ped);
 
 			int id = NETWORK::PED_TO_NET(ped);
-			if (NETWORK::NETWORK_DOES_NETWORK_ID_EXIST(id))
+
+			ENTITY::SET_ENTITY_SHOULD_FREEZE_WAITING_ON_COLLISION(ped, true);
+			if (NETWORK::NETWORK_GET_ENTITY_IS_NETWORKED(ped))
 			{
-				ENTITY::SET_ENTITY_SHOULD_FREEZE_WAITING_ON_COLLISION(ped, true);
-				if (NETWORK::NETWORK_GET_ENTITY_IS_NETWORKED(ped))
-				{
-					NETWORK::SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(id, true);
-					NETWORK::IS_NETWORK_ID_OWNED_BY_PARTICIPANT(id);
-				}
+				NETWORK::SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(id, true);
+				NETWORK::IS_NETWORK_ID_OWNED_BY_PARTICIPANT(id);
 			}
+
 			ScriptMgr::Yield();
 
-			if (blockNewPedMovement == true)
-			{
-				ENTITY::FREEZE_ENTITY_POSITION(ped, true);
-			}
 
-			if (spawnDead == true)
-			{
+			ENTITY::FREEZE_ENTITY_POSITION(ped, blockNewPedMovement);
+
+			ENTITY::SET_ENTITY_INVINCIBLE(ped, invincible);
+
+			ENTITY::SET_ENTITY_VISIBLE(ped, !invisible);
+
+
+			PED::_SET_PED_SCALE(ped, (float)scale);
+
+			if (spawnDead)
+
 				PED::APPLY_DAMAGE_TO_PED(ped, ENTITY::GET_ENTITY_HEALTH(ped), 1, 21030, YimMenu::Self::PlayerPed);
-			}
 
-			if (invincible == true)
-			{
-				ENTITY::SET_ENTITY_INVINCIBLE(ped, true);
-			}
-
-			if (invisible == true)
-			{
-				ENTITY::SET_ENTITY_VISIBLE(ped, false);
-			}
-			else
-			{
-				ENTITY::SET_ENTITY_VISIBLE(ped, true);
-			}
-
-			if (scale > 1)
-			{
-				PED::_SET_PED_SCALE(ped, (float)scale);
-			}
 			ScriptMgr::Yield();
 			STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
 			return ped;
