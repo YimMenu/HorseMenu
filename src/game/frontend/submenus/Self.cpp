@@ -8,9 +8,8 @@
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/PedModels.hpp"
 #include "util/Rewards.hpp"
-#include "util/SpawnPed.hpp"
+#include "util/Ped.hpp"
 
 #include <map>
 
@@ -97,60 +96,11 @@ namespace YimMenu::Submenus
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnwagon"_J));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
-		static std::string ped_model_buf;
-		static bool blockNewPedMovement, spawnDead, invincible, invisible = false;
-		static int scale = 1;
-		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([&]() {
-			ImGui::Text(std::string("Current Model: ").append(ped_model_buf).c_str());
-			ImGui::NewLine();
-
-			if (ImGui::BeginCombo("", ped_model_buf.c_str()))
-			{
-				for (const auto& pedItem : pedModelInfos)
-				{
-					bool is_selected = (ped_model_buf == pedItem.model);
-					if (ImGui::Selectable(pedItem.model.c_str(), is_selected))
-					{
-						ped_model_buf = pedItem.model;
-					}
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
-				}
-				ImGui::EndCombo();
-			}
-
-			ImGui::Checkbox("Block New Ped Movement", &blockNewPedMovement);
-
-			ImGui::BeginDisabled(invincible);
-			ImGui::Checkbox("Spawn Dead", &spawnDead);
-			ImGui::EndDisabled();
-
-			ImGui::BeginDisabled(spawnDead);
-			ImGui::Checkbox("Invincible", &invincible);
-			ImGui::EndDisabled();
-
-			ImGui::Checkbox("Invisible", &invisible);
-
-			ImGui::Text("Scale");
-			ImGui::InputInt(" ", &scale);
-		}));
-		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([=] {
-			if (ImGui::Button("Spawn Ped"))
-			{
-				FiberPool::Push([=] {
-					Vector3 coords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(YimMenu::Self::PlayerPed, 0.0, 3.0, -0.3);
-					float playerHeading = ENTITY::GET_ENTITY_ROTATION(YimMenu::Self::PlayerPed, 2).x;
-					SpawnPed(ped_model_buf, coords, playerHeading, blockNewPedMovement, spawnDead, invincible, invisible, scale);
-				});
-			}
-		}));
-
 
 		columns->AddItem(globalsGroup);
 		columns->AddItem(toolsGroup);
 		columns->AddNextColumn();
 		columns->AddItem(movementGroup);
-		columns->AddItem(pedSpawnerGroup);
 		main->AddItem(columns);
 		AddCategory(std::move(main));
 
