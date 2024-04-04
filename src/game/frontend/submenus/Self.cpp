@@ -11,6 +11,8 @@
 #include "util/PedModels.hpp"
 #include "util/Rewards.hpp"
 #include "util/SpawnPed.cpp"
+#include "util/Rewards.hpp"
+#include "util/Ped.hpp"
 
 #include <map>
 
@@ -81,6 +83,7 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J)); // TODO: move this to spoofing or network
+
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
@@ -100,37 +103,11 @@ namespace YimMenu::Submenus
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
-		static std::string ped_model_buf;
-		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([&]() {
-			ImGui::Text(std::string("Current Model: ").append(ped_model_buf).c_str());
-			ImGui::NewLine();
-
-			if (ImGui::BeginCombo("Ped Types", ped_model_buf.c_str()))
-			{
-				for (const auto& pedItem : pedModelInfos)
-				{
-					bool is_selected = (ped_model_buf == pedItem.model);
-					if (ImGui::Selectable(pedItem.model.c_str(), is_selected))
-					{
-						ped_model_buf = pedItem.model;
-					}
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
-				}
-				ImGui::EndCombo();
-			}
-		}));
-		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([&] {
-			if (ImGui::Button("Spawn Ped"))
-				SpawnPed(ped_model_buf, YimMenu::Self::Id, YimMenu::Self::PlayerPed);
-		}));
-
 
 		columns->AddItem(globalsGroup);
 		columns->AddItem(toolsGroup);
 		columns->AddNextColumn();
 		columns->AddItem(movementGroup);
-		columns->AddItem(pedSpawnerGroup);
 		main->AddItem(columns);
 		AddCategory(std::move(main));
 
@@ -176,16 +153,20 @@ namespace YimMenu::Submenus
 				static Rewards::eRewardType selected;
 				std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::GOLD_REWARDS, "Gold Rewards"}, {Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
 
-				for (auto& [type, translation] : reward_translations)
+				if (ImGui::BeginCombo("Rewards", reward_translations[selected].c_str()))
 				{
-					if (ImGui::Selectable(std::string(translation).c_str(), type == selected, ImGuiSelectableFlags_AllowDoubleClick))
+					for (auto& [type, translation] : reward_translations)
 					{
-						selected = type;
+						if (ImGui::Selectable(std::string(translation).c_str(), type == selected, ImGuiSelectableFlags_AllowDoubleClick))
+						{
+							selected = type;
+						}
+						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+						{
+							Rewards::SpawnRequestedRewards({selected});
+						}
 					}
-					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-					{
-						Rewards::SpawnRequestedRewards({selected});
-					}
+					ImGui::EndCombo();
 				}
 
 				if (ImGui::Button("Spawn Selected"))

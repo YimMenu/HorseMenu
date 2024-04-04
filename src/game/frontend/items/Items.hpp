@@ -119,14 +119,15 @@ namespace YimMenu
 	class InputTextWithHint : public UIItem
 	{
 	public:
-		explicit InputTextWithHint(std::string label, std::string hint, std::string* buf, ImGuiInputTextFlags_ flag = ImGuiInputTextFlags_None, std::function<void()> cb = nullptr);
+		explicit InputTextWithHint(std::string label, std::string hint, std::string* buf, int flags = ImGuiInputTextFlags_None, std::function<void()> cb = nullptr, ImGuiInputTextCallback inputCallback = nullptr);
 		void Draw() override;
 
 	private:
 		std::string m_Id;
 		std::string m_Hint;
 		std::string* m_Buf;
-		ImGuiInputTextFlags_ m_Flag;
+		int m_Flags;
 		std::function<void()> m_Callback;
+		ImGuiInputTextCallback m_ImGuiInputTextCallback;
 	};
 }
