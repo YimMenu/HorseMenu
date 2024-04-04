@@ -8,11 +8,7 @@
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/PedModels.hpp"
 #include "util/Rewards.hpp"
-#include "util/SpawnPed.cpp"
-#include "util/Rewards.hpp"
-#include "util/Ped.hpp"
 
 #include <map>
 
@@ -82,7 +78,6 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J)); // TODO: move this to spoofing or network
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));

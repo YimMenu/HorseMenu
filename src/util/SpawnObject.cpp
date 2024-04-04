@@ -18,7 +18,6 @@ namespace YimMenu
 				ScriptMgr::Yield();
 
 				ENTITY::SET_ENTITY_VISIBLE(obj, true);
-				ScriptMgr::Yield();
 
 				NETWORK::NETWORK_REGISTER_ENTITY_AS_NETWORKED(obj);
 				int id = NETWORK::OBJ_TO_NET(obj);
@@ -32,7 +31,6 @@ namespace YimMenu
 				ScriptMgr::Yield();
 
 				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
-				ENTITY::SET_OBJECT_AS_NO_LONGER_NEEDED(&obj);
 			}
 		});
 	}
