@@ -8,8 +8,8 @@
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/Rewards.hpp"
 #include "util/Ped.hpp"
+#include "util/Rewards.hpp"
 
 #include <map>
 
