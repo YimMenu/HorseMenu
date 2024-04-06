@@ -5,20 +5,19 @@
 
 namespace YimMenu::Features
 {
+	// Doesn't work
 	class HorseGodmode : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
 
 		virtual void OnTick() override
 		{
-			Vehicle vehicle = PED::GET_VEHICLE_PED_IS_USING(PLAYER::PLAYER_PED_ID());
-			ENTITY::SET_ENTITY_INVINCIBLE(vehicle, 1);
+			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, true);
 		}
 
         virtual void OnDisable() override
         {
-			Vehicle vehicle = PED::GET_VEHICLE_PED_IS_USING(PLAYER::PLAYER_PED_ID());
-			ENTITY::SET_ENTITY_INVINCIBLE(vehicle, 0);
+			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, false);
         }
 	};
 
