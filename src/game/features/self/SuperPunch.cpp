@@ -15,7 +15,7 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
-			PLAYER::SET_PLAYER_MELEE_WEAPON_DAMAGE_MODIFIER(PLAYER::PLAYER_ID(), 1.0);
+			PLAYER::SET_PLAYER_MELEE_WEAPON_DAMAGE_MODIFIER(Self::Id, 1.0f);
 		}
 	};
 
