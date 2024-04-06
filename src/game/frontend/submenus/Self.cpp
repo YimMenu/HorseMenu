@@ -8,8 +8,8 @@
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/Rewards.hpp"
 #include "util/Ped.hpp"
+#include "util/Rewards.hpp"
 
 #include <map>
 
@@ -81,6 +81,7 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
@@ -116,6 +117,15 @@ namespace YimMenu::Submenus
 		horseColumns->AddItem(horseGlobalsGroup);
 		horse->AddItem(horseColumns);
 		AddCategory(std::move(horse));
+
+		auto vehicle             = std::make_shared<Category>("Vehicle");
+		auto vehicleColumns      = std::make_shared<Column>(1);
+		auto vehicleGlobalsGroup = std::make_shared<Group>("Globals", GetListBoxDimensions());
+		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
+		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
+		vehicleColumns->AddItem(vehicleGlobalsGroup);
+		vehicle->AddItem(vehicleColumns);
+		AddCategory(std::move(vehicle));
 
 		auto animations = std::make_shared<Category>("Animations");
 
