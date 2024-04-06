@@ -5,7 +5,6 @@
 
 namespace YimMenu::Features
 {
-	//WEAPON::_SET_PED_INFINITE_AMMO_CLIP Changes too many things to be considered, such as granting all ammo types.
 	class AccuracyMax : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
