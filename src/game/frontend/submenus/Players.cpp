@@ -228,14 +228,7 @@ namespace YimMenu::Submenus
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				if (ImGui::Button("Circus"))
-					FiberPool::Push([=] {
-						float rot = ENTITY::GET_ENTITY_ROTATION(YimMenu::Players::GetSelected().GetPed().GetHandle(), 0).z;
-						Vector3 coords = ENTITY::GET_ENTITY_COORDS(YimMenu::Players::GetSelected().GetPed().GetHandle(), true, true);
-						SpawnVehicle("wagonCircus01x", coords, rot);
-					});
-			}));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("circus"_J));
 
 			toxic->AddItem(std::make_shared<ImGuiItem>([] {
 				if (ImGui::Button("Test"))
