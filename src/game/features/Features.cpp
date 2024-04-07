@@ -91,17 +91,13 @@ namespace YimMenu
 		});
 	}
 
-	bool TryFirstLoad()
+	void TryFirstLoad()
 	{
 		if (!Features::_IsFirstLoadComplete.GetState())
 		{
 			Commands::GetCommand<BoolCommand>("detectspoofednames"_J)->SetState(true);
 			Features::_IsFirstLoadComplete.SetState(true);
-
-			return true;
 		}
-
-		return false;
 	}
 
 	void FeatureLoop()
