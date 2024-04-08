@@ -11,7 +11,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-            NETWORK::NETWORK_SESSION_LEAVE_SESSION();
+            		NETWORK::NETWORK_SESSION_LEAVE_SESSION();
 			Notifications::Show("Session", "Quitting to Main Menu...", NotificationType::Warning);
 		}
 	};
