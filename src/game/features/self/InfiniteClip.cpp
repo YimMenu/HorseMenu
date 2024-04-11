@@ -14,9 +14,8 @@ namespace YimMenu::Features
 		{
 			Hash current_weapon = WEAPON::_GET_PED_CURRENT_HELD_WEAPON(Self::PlayerPed);
 			int current_clip_ammo{};
-			Hash fishing_rod = 0xaba87754;
 			
-			if (current_weapon != fishing_rod)
+			if (current_weapon != "WEAPON_FISHINGROD"_J)
 			{
 				WEAPON::GET_AMMO_IN_CLIP(Self::PlayerPed, &current_clip_ammo, current_weapon);
 			
