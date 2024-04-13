@@ -1,6 +1,4 @@
 #pragma once
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
 
 #include <AsyncLogger/Logger.hpp>
 #include <MinHook.h>
@@ -17,12 +15,12 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <nlohmann/json.hpp>
+#include <stack>
 #include <string_view>
 #include <thread>
 #include <vector>
-#include <stack>
 
-#include <nlohmann/json.hpp>
 
 using namespace al;
 #include "core/logger/LogHelper.hpp"
