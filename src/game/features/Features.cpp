@@ -1,14 +1,16 @@
 #include "Features.hpp"
-#include "game/rdr/Natives.hpp"
+
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Players.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/frontend/GUI.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "game/frontend/ContextMenu.hpp"
+#include "game/frontend/GUI.hpp"
+#include "game/rdr/Enums.hpp"
+#include "game/rdr/Natives.hpp"
+
 
 namespace YimMenu
 {
@@ -85,6 +87,8 @@ namespace YimMenu
 
 	void FeatureLoop()
 	{
+		g_GameVersion =
+		    std::stoi(std::string(DEBUG::GET_GAME_VERSION_NAME()).substr(0, std::string(DEBUG::GET_GAME_VERSION_NAME()).find_first_not_of("0123456789."))) * 10;
 		while (true)
 		{
 			Players::Tick();

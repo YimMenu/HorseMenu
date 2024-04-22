@@ -1,9 +1,11 @@
 #pragma once
 #include "Pattern.hpp"
 #include "PointerCalculator.hpp"
+#include "game/pointers/PointerCache.hpp"
 
 #include <functional>
 #include <vector>
+
 
 namespace YimMenu
 {
@@ -15,6 +17,7 @@ namespace YimMenu
 	private:
 		const Module* m_Module;
 		std::vector<std::pair<const IPattern*, PatternFunc>> m_Patterns;
+
 
 	public:
 		PatternScanner(const Module* module);

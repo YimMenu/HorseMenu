@@ -1,4 +1,7 @@
 #pragma once
+#include "PointerCache.hpp"
+#include "core/filemgr/File.hpp"
+#include "core/filemgr/FileMgr.hpp"
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
 
@@ -8,6 +11,7 @@
 #include <script/scrNativeHandler.hpp>
 #include <vulkan/vulkan.h>
 #include <windows.h>
+
 
 class CNetGamePlayer;
 class CVehicle;
@@ -36,7 +40,7 @@ namespace YimMenu
 		using GetSyncTreeForType        = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
 		using GetNetworkPlayerFromPid   = CNetGamePlayer* (*)(uint8_t player);
 		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
-		using GetNetObjectById        = rage::netObject*(*)(uint16_t id);
+		using GetNetObjectById          = rage::netObject* (*)(uint16_t id);
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
 	};
 
@@ -129,6 +133,8 @@ namespace YimMenu
 	{
 		bool Init();
 		void Restore();
+		// BUMP VERSION EVERYTIME AN UPDATE IS MADE TO POINTERS
+		PointerCache Cache{1};
 	};
 
 	inline YimMenu::Pointers Pointers;

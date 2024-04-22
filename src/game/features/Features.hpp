@@ -16,9 +16,10 @@ namespace YimMenu
 	}
 
 	// TODO: move these out
-	inline bool g_Spectating = false;
-	inline int g_SpectateId = -1;
+	inline bool g_Spectating    = false;
+	inline int g_SpectateId     = -1;
 	inline bool g_BlockControls = false;
+	inline uint32_t g_GameVersion;
 
 	void FeatureLoop();
 	void BlockControlsForUI();
