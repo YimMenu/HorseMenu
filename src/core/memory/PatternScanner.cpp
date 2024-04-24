@@ -24,10 +24,16 @@ namespace YimMenu
 		Pointers.Cache.Load();
 		bool scanSuccess = true;
 		std::vector<std::future<bool>> jobs;
+		bool forceUpdate = false;
+		if (Pointer.Cache.IsCacheOutdated())
+		{
+			forceUpdate = true;
+			Pointer.Cache.IncrementCacheVersion();
+		}
 		for (const auto& [pattern, func] : m_Patterns)
 		{
 			uintptr_t cachedPointer = Pointers.Cache.GetData(pattern->Name().data());
-			if (cachedPointer != 0)
+			if (cachedPointer != 0 && !forceUpdate)
 				std::invoke(func, cachedPointer);
 			else
 				jobs.emplace_back(std::async(&PatternScanner::ScanInternal, this, pattern, func));

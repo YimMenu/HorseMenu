@@ -103,8 +103,32 @@ namespace YimMenu
 		return value;
 	}
 
-	constexpr uint32_t PointerCache::GetCacheVersion() const
+	uint32_t PointerCache::GetCacheVersion() const
 	{
 		return m_Version;
+	}
+
+	uint32_t PointerCache::GetCacheFileVersion() const
+	{
+		// If it is not present, use the GetOrUpdate to create it
+		if (GetData("version") == 0)
+			GetOrUpdate("version", m_Version);
+
+		return GetData("version");
+	}
+
+	void PointerCache::SetCacheVersion(const uint32_t version)
+	{
+		m_Version = version;
+	}
+
+	inline bool PointerCache::IsCacheOutdated() const
+	{
+		return GetCacheVersion() != GetCacheFileVersion();
+	}
+
+	inline void PointerCache::IncrementCacheVersion()
+	{
+		m_Version++;
 	}
 }

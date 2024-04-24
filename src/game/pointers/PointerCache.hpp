@@ -25,7 +25,11 @@ namespace YimMenu
 		uintptr_t GetData(std::string name) const;
 		uintptr_t GetOrUpdate(std::string name, uintptr_t value);
 
-		constexpr uint32_t GetCacheVersion() const;
+		uint32_t GetCacheVersion() const;
+		uint32_t GetCacheFileVersion() const;
+		void SetCacheVersion(uint32_t version);
+		bool IsCacheOutdated() const;
+		inline void IncrementCacheVersion();
 	};
 
 }
