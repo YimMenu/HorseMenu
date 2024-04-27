@@ -25,19 +25,32 @@ namespace YimMenu
 		bool scanSuccess = true;
 		std::vector<std::future<bool>> jobs;
 		bool forceUpdate = false;
-		if (Pointer.Cache.IsCacheOutdated())
+		if (Pointers.Cache.IsCacheOutdated())
 		{
+			LOG(INFO) << "CACHE OUTDATED";
 			forceUpdate = true;
-			Pointer.Cache.IncrementCacheVersion();
 		}
+
 		for (const auto& [pattern, func] : m_Patterns)
 		{
 			uintptr_t cachedPointer = Pointers.Cache.GetData(pattern->Name().data());
 			if (cachedPointer != 0 && !forceUpdate)
+			{
+				LOG(INFO) << "USING CACHED PTR";
 				std::invoke(func, cachedPointer);
+			}
 			else
+			{
+				LOG(INFO) << "QUEUEING PTR SCAN...";
 				jobs.emplace_back(std::async(&PatternScanner::ScanInternal, this, pattern, func));
+			}
 		}
+		if (forceUpdate)
+		{
+			LOG(INFO) << "CALLIGN INCREMENT";
+			Pointers.Cache.IncrementCacheVersion();
+		}
+
 
 		for (auto& job : jobs)
 		{

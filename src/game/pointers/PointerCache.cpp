@@ -67,7 +67,7 @@ namespace YimMenu
 			LOG(WARNING) << "Unable  to save Pointer Cache!";
 	}
 
-	uintptr_t PointerCache::GetData(std::string name) const
+	uintptr_t PointerCache::GetData(std::string name)
 	{
 		for (const auto& pair : m_Data)
 		{
@@ -103,32 +103,42 @@ namespace YimMenu
 		return value;
 	}
 
-	uint32_t PointerCache::GetCacheVersion() const
+	uint32_t PointerCache::GetCacheVersion()
 	{
+		LOG(INFO) << "GOT CACHE VERSION";
 		return m_Version;
 	}
 
-	uint32_t PointerCache::GetCacheFileVersion() const
+	uint32_t PointerCache::GetCacheFileVersion()
 	{
 		// If it is not present, use the GetOrUpdate to create it
-		if (GetData("version") == 0)
-			GetOrUpdate("version", m_Version);
+		LOG(INFO) << "GETTING FIRST VER";
+		uint32_t fileVersion = GetData("version");
+		if (fileVersion == 0)
+		{
+			LOG(INFO) << "SETTING VER";
+			fileVersion = GetOrUpdate("version", m_Version);
+		}
 
-		return GetData("version");
+		LOG(INFO) << "RETURNING...";
+		return fileVersion;
 	}
 
-	void PointerCache::SetCacheVersion(const uint32_t version)
+	void PointerCache::SetCacheVersion(uint32_t version)
 	{
+		LOG(INFO) << "SETTING VERSION...";
 		m_Version = version;
 	}
 
-	inline bool PointerCache::IsCacheOutdated() const
+	bool PointerCache::IsCacheOutdated()
 	{
+		LOG(INFO) << "CHECKING IF OUTDATED";
 		return GetCacheVersion() != GetCacheFileVersion();
 	}
 
-	inline void PointerCache::IncrementCacheVersion()
+	void PointerCache::IncrementCacheVersion()
 	{
+		LOG(INFO) << "BUMPING VER...";
 		m_Version++;
 	}
 }

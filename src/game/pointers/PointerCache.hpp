@@ -22,14 +22,14 @@ namespace YimMenu
 		void Load();
 		void Save() const;
 
-		uintptr_t GetData(std::string name) const;
+		uintptr_t GetData(std::string name);
 		uintptr_t GetOrUpdate(std::string name, uintptr_t value);
 
-		uint32_t GetCacheVersion() const;
-		uint32_t GetCacheFileVersion() const;
+		uint32_t GetCacheVersion();
+		uint32_t GetCacheFileVersion();
 		void SetCacheVersion(uint32_t version);
-		bool IsCacheOutdated() const;
-		inline void IncrementCacheVersion();
+		bool IsCacheOutdated();
+		void IncrementCacheVersion();
 	};
 
 }
