@@ -29,6 +29,7 @@ namespace YimMenu
 		{
 			LOG(INFO) << "CACHE OUTDATED";
 			forceUpdate = true;
+			Pointers.Cache.IncrementCacheVersion();
 		}
 
 		for (const auto& [pattern, func] : m_Patterns)
@@ -44,11 +45,6 @@ namespace YimMenu
 				LOG(INFO) << "QUEUEING PTR SCAN...";
 				jobs.emplace_back(std::async(&PatternScanner::ScanInternal, this, pattern, func));
 			}
-		}
-		if (forceUpdate)
-		{
-			LOG(INFO) << "CALLIGN INCREMENT";
-			Pointers.Cache.IncrementCacheVersion();
 		}
 
 

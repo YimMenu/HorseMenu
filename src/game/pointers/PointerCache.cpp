@@ -4,11 +4,16 @@ namespace YimMenu
 {
 	using json = nlohmann::json;
 
-	PointerCache::PointerCache(uint32_t version) :
+	PointerCache::PointerCache(uintptr_t version) :
 	    // FileMgr seems to bug out, so this is the way it must be done for now
 	    m_File(std::filesystem::path(std::getenv("appdata")) / "HorseMenu" / "pointers.json"),
 	    m_Version(version)
 	{
+	}
+
+	PointerCache::~PointerCache()
+	{
+		Unload();
 	}
 
 	void PointerCache::Load()
@@ -64,7 +69,7 @@ namespace YimMenu
 			fileStream.close();
 		}
 		else
-			LOG(WARNING) << "Unable  to save Pointer Cache!";
+			LOG(WARNING) << "Unable to save Pointer Cache!";
 	}
 
 	uintptr_t PointerCache::GetData(std::string name)
@@ -103,42 +108,36 @@ namespace YimMenu
 		return value;
 	}
 
-	uint32_t PointerCache::GetCacheVersion()
+	uintptr_t PointerCache::GetCacheVersion()
 	{
-		LOG(INFO) << "GOT CACHE VERSION";
 		return m_Version;
 	}
 
-	uint32_t PointerCache::GetCacheFileVersion()
+	uintptr_t PointerCache::GetCacheFileVersion()
 	{
 		// If it is not present, use the GetOrUpdate to create it
-		LOG(INFO) << "GETTING FIRST VER";
 		uint32_t fileVersion = GetData("version");
 		if (fileVersion == 0)
 		{
-			LOG(INFO) << "SETTING VER";
 			fileVersion = GetOrUpdate("version", m_Version);
 		}
 
-		LOG(INFO) << "RETURNING...";
 		return fileVersion;
-	}
-
-	void PointerCache::SetCacheVersion(uint32_t version)
-	{
-		LOG(INFO) << "SETTING VERSION...";
-		m_Version = version;
 	}
 
 	bool PointerCache::IsCacheOutdated()
 	{
-		LOG(INFO) << "CHECKING IF OUTDATED";
 		return GetCacheVersion() != GetCacheFileVersion();
 	}
 
 	void PointerCache::IncrementCacheVersion()
 	{
-		LOG(INFO) << "BUMPING VER...";
-		m_Version++;
+		GetOrUpdate("version", m_Version);
+	}
+
+	void PointerCache::Unload()
+	{
+		Save();
+		m_Data.clear();
 	}
 }

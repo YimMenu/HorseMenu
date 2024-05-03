@@ -4,6 +4,7 @@
 #include "game/features/Features.hpp"
 
 #include <iostream>
+#include <mutex>
 #include <nlohmann/json.hpp>
 
 
@@ -14,20 +15,21 @@ namespace YimMenu
 	private:
 		std::filesystem::path m_File;
 		std::vector<std::pair<std::string, uintptr_t>> m_Data;
-		std::uint32_t m_Version;
+		std::uintptr_t m_Version;
 
 	public:
-		PointerCache(uint32_t version);
+		PointerCache(uintptr_t version);
+		~PointerCache();
 
 		void Load();
 		void Save() const;
+		void Unload();
 
 		uintptr_t GetData(std::string name);
 		uintptr_t GetOrUpdate(std::string name, uintptr_t value);
 
-		uint32_t GetCacheVersion();
-		uint32_t GetCacheFileVersion();
-		void SetCacheVersion(uint32_t version);
+		uintptr_t GetCacheVersion();
+		uintptr_t GetCacheFileVersion();
 		bool IsCacheOutdated();
 		void IncrementCacheVersion();
 	};

@@ -74,6 +74,7 @@ namespace YimMenu
 		LOG(INFO) << "FiberPool Uninitialized";
 
 	unload:
+		Pointers.Cache.Unload();
 		Hooking::Destroy();
 		Renderer::Destroy();
 		Pointers.Restore();
