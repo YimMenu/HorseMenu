@@ -87,8 +87,6 @@ namespace YimMenu
 
 	void FeatureLoop()
 	{
-		g_GameVersion =
-		    std::stoi(std::string(DEBUG::GET_GAME_VERSION_NAME()).substr(0, std::string(DEBUG::GET_GAME_VERSION_NAME()).find_first_not_of("0123456789."))) * 10;
 		while (true)
 		{
 			Players::Tick();
