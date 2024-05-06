@@ -5,6 +5,7 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/Hooking.hpp"
 #include "core/memory/ModuleMgr.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
@@ -47,6 +48,9 @@ namespace YimMenu
 
 		GUI::Init();
 
+		g_PlayerDatabase.Load();
+		LOG(INFO) << "Player Database Initialized";
+
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
 		ScriptMgr::AddScript(std::make_unique<Script>(&ContextMenuTick));
@@ -66,6 +70,8 @@ namespace YimMenu
 		}
 
 		LOG(INFO) << "Unloading";
+
+		g_PlayerDatabase.Save();
 
 		ScriptMgr::Destroy();
 		LOG(INFO) << "ScriptMgr Uninitialized";
