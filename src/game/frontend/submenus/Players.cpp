@@ -1,6 +1,7 @@
 #include "Players.hpp"
 
 #include "core/commands/Commands.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
@@ -9,7 +10,6 @@
 #include "util/teleport.hpp"
 
 #include <string>
-
 
 
 // remove after testing
@@ -22,6 +22,7 @@
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
 
+#include <network/rlGamerInfo.hpp>
 #include <script/scrThread.hpp>
 
 
@@ -57,6 +58,12 @@ namespace YimMenu::Submenus
 				{
 					YimMenu::Players::SetSelected(id);
 				}
+			}
+			if (ImGui::Button("Add to Player Database"))
+			{
+				auto plyr = YimMenu::Players::GetSelected();
+				// Use Player::GetRID() once #116 is merged
+				g_PlayerDatabase.AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
 			}
 			ImGui::End();
 		}

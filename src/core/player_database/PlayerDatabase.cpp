@@ -35,14 +35,14 @@ namespace YimMenu
 
 			for (const auto& item : jsonData)
 			{
-				persistent_player player;
-				player.rid         = item["rid"];
-				player.name        = item["name"];
-				player.is_modder   = item["is_modder"];
-				player.is_admin    = item["is_admin"];
-				player.infractions = item["infractions"].get<std::unordered_set<int>>();
+				auto player         = std::make_shared<persistent_player>();
+				player->rid         = item["rid"];
+				player->name        = item["name"];
+				player->is_modder   = item["is_modder"];
+				player->is_admin    = item["is_admin"];
+				player->infractions = item["infractions"].get<std::unordered_set<int>>();
 
-				m_Data.push_back(std::make_pair(player.rid, player));
+				m_Data.push_back(std::make_pair(player->rid, player));
 			}
 		}
 	}
@@ -54,12 +54,12 @@ namespace YimMenu
 		for (const auto& pair : m_Data)
 		{
 			json item;
-			const persistent_player& player = pair.second;
-			item["rid"]                     = player.rid;
-			item["name"]                    = player.name;
-			item["is_modder"]               = player.is_modder;
-			item["is_admin"]                = player.is_admin;
-			item["infractions"]             = player.infractions;
+			const auto& player  = pair.second;
+			item["rid"]         = player->rid;
+			item["name"]        = player->name;
+			item["is_modder"]   = player->is_modder;
+			item["is_admin"]    = player->is_admin;
+			item["infractions"] = player->infractions;
 			data.push_back(item);
 		}
 
@@ -73,64 +73,54 @@ namespace YimMenu
 			LOG(WARNING) << "Unable to save Player Database!";
 	}
 
-	persistent_player PlayerDatabase::GetPlayer(uint64_t rid)
+	std::shared_ptr<persistent_player> PlayerDatabase::GetPlayer(uint64_t rid)
 	{
 		for (const auto& pair : m_Data)
 		{
-			if (pair.second.rid == rid)
+			if (pair.second->rid == rid)
 			{
 				return pair.second;
 			}
 		}
 
-		return persistent_player();
+		return nullptr;
 	}
 
 	void PlayerDatabase::AddPlayer(uint64_t rid, std::string name)
 	{
-		auto it = std::find_if(m_Data.begin(), m_Data.end(), [rid](const auto& pair) {
-			return pair.first == rid;
-		});
-		if (it == m_Data.end())
+		if (GetPlayer(rid) == nullptr)
 		{
-			persistent_player player;
-			player.rid  = rid;
-			player.name = name;
+			auto player  = std::make_shared<persistent_player>();
+			player->rid  = rid;
+			player->name = name;
 			m_Data.push_back(std::make_pair(rid, player));
 		}
 	}
 
-	persistent_player PlayerDatabase::GetOrCreatePlayer(uint64_t rid)
+	std::shared_ptr<persistent_player> PlayerDatabase::GetOrCreatePlayer(uint64_t rid)
 	{
-		auto it = std::find_if(m_Data.begin(), m_Data.end(), [rid](const auto& pair) {
-			return pair.first == rid;
-		});
-		if (it != m_Data.end())
+		auto player = GetPlayer(rid);
+		if (!player)
 		{
-			return it->second;
-		}
-		else
-		{
-			// Add overloads to AddPlayer to allow use of AddPlayer here
-			persistent_player player;
-			player.rid = rid;
+			player      = std::make_shared<persistent_player>();
+			player->rid = rid;
 			m_Data.push_back(std::make_pair(rid, player));
-			return player;
 		}
+		return player;
 	}
 
-	std::vector<std::pair<uint64_t, persistent_player>> PlayerDatabase::GetAllPlayers() const
+	std::vector<std::pair<uint64_t, std::shared_ptr<persistent_player>>> PlayerDatabase::GetAllPlayers() const
 	{
 		return m_Data;
 	}
 
-	void PlayerDatabase::SetSelected(Player player)
+	void PlayerDatabase::SetSelected(std::shared_ptr<persistent_player> player)
 	{
 		m_Selected = player;
 	}
 
-	persistent_player PlayerDatabase::GetSelected() const
+	std::shared_ptr<persistent_player> PlayerDatabase::GetSelected()
 	{
-		return GetOrCreatePlayer(m_Selected.GetGamerInfo().m_GamerHandle.m_rockstar_id);
+		return m_Selected;
 	}
 }
