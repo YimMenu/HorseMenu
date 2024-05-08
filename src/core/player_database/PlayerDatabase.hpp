@@ -34,6 +34,15 @@ namespace YimMenu
 		std::vector<std::pair<uint64_t, std::shared_ptr<persistent_player>>> GetAllPlayers() const;
 		void SetSelected(std::shared_ptr<persistent_player> player);
 		std::shared_ptr<persistent_player> GetSelected();
+		std::string ConvertInfractionToDescription(int infraction);
+
+		enum class eInfraction
+		{
+			TRIED_CRASH_PLAYER,
+			TRIED_KICK_PLAYER,
+		};
+
+		std::unordered_map<eInfraction, std::string> InfractionDescriptions = {{eInfraction::TRIED_CRASH_PLAYER, "Tried to crash you!"}, {eInfraction::TRIED_KICK_PLAYER, "Tried to kick you!"}};
 	};
 
 	struct persistent_player
@@ -43,9 +52,10 @@ namespace YimMenu
 		bool is_modder  = false;
 		bool is_admin   = false;
 		bool block_join = false;
+		bool trust      = false;
 		std::unordered_set<int> infractions;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(persistent_player, rid, name, is_modder, is_admin, block_join, infractions);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(persistent_player, rid, name, is_modder, is_admin, block_join, trust, infractions);
 	};
 
 

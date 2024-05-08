@@ -39,6 +39,8 @@ namespace YimMenu
 				m_Data.push_back(std::make_pair(std::stoul(key), player));
 			}
 		}
+
+		m_Selected = nullptr;
 	}
 
 	void PlayerDatabase::Save() const
@@ -111,5 +113,9 @@ namespace YimMenu
 	std::shared_ptr<persistent_player> PlayerDatabase::GetSelected()
 	{
 		return m_Selected;
+	}
+	std::string PlayerDatabase::ConvertInfractionToDescription(int infraction)
+	{
+		return InfractionDescriptions[static_cast<eInfraction>(infraction)];
 	}
 }
