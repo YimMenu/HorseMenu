@@ -73,7 +73,6 @@ namespace YimMenu::Hooks
 		extern bool HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern int AddObjectToCreationQueue(void* mgr, eNetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern bool HandleJoinRequest(int64_t network, int64_t session, rage::rlGamerInfo* player_info, rage::CJoinRequestContext* ctx);
-		extern bool WriteJoinResponseData(rage::CMsgJoinResponse* response, void* data, int size, uint32_t* size_used);
 	}
 
 	namespace Voice
