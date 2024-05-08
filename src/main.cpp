@@ -71,8 +71,6 @@ namespace YimMenu
 
 		LOG(INFO) << "Unloading";
 
-		g_PlayerDatabase.Save();
-
 		ScriptMgr::Destroy();
 		LOG(INFO) << "ScriptMgr Uninitialized";
 
