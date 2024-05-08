@@ -59,12 +59,6 @@ namespace YimMenu::Submenus
 					YimMenu::Players::SetSelected(id);
 				}
 			}
-			if (ImGui::Button("Add to Player Database"))
-			{
-				auto plyr = YimMenu::Players::GetSelected();
-				// Use Player::GetRID() once #116 is merged
-				g_PlayerDatabase.AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
-			}
 			ImGui::End();
 		}
 		else
@@ -101,6 +95,12 @@ namespace YimMenu::Submenus
 				else
 				{
 					YimMenu::Players::SetSelected(Self::Id);
+				}
+				if (ImGui::Button("Add to Player Database"))
+				{
+					auto plyr = YimMenu::Players::GetSelected();
+					// Use Player::GetRID() once #116 is merged
+					g_PlayerDatabase.AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
 				}
 			}));
 

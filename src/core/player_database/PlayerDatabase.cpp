@@ -33,16 +33,10 @@ namespace YimMenu
 			fileStream >> jsonData;
 			fileStream.close();
 
-			for (const auto& item : jsonData)
+			for (auto& [key, value] : jsonData.items())
 			{
-				auto player         = std::make_shared<persistent_player>();
-				player->rid         = item["rid"];
-				player->name        = item["name"];
-				player->is_modder   = item["is_modder"];
-				player->is_admin    = item["is_admin"];
-				player->infractions = item["infractions"].get<std::unordered_set<int>>();
-
-				m_Data.push_back(std::make_pair(player->rid, player));
+				auto player = std::make_shared<persistent_player>(value.get<persistent_player>());
+				m_Data.push_back(std::make_pair(std::stoul(key), player));
 			}
 		}
 	}
@@ -51,22 +45,15 @@ namespace YimMenu
 	{
 		json data;
 
-		for (const auto& pair : m_Data)
+		for (auto& [rid, player] : m_Data)
 		{
-			json item;
-			const auto& player  = pair.second;
-			item["rid"]         = player->rid;
-			item["name"]        = player->name;
-			item["is_modder"]   = player->is_modder;
-			item["is_admin"]    = player->is_admin;
-			item["infractions"] = player->infractions;
-			data.push_back(item);
+			data[std::to_string(rid)] = *player;
 		}
 
 		std::ofstream fileStream(m_File);
 		if (fileStream.is_open())
 		{
-			fileStream << data << std::endl;
+			fileStream << std::setw(4) << data << std::endl;
 			fileStream.close();
 		}
 		else
@@ -94,6 +81,7 @@ namespace YimMenu
 			player->rid  = rid;
 			player->name = name;
 			m_Data.push_back(std::make_pair(rid, player));
+			Save();
 		}
 	}
 
@@ -105,6 +93,7 @@ namespace YimMenu
 			player      = std::make_shared<persistent_player>();
 			player->rid = rid;
 			m_Data.push_back(std::make_pair(rid, player));
+			Save();
 		}
 		return player;
 	}

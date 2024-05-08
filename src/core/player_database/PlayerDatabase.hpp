@@ -44,6 +44,8 @@ namespace YimMenu
 		bool is_admin   = false;
 		bool block_join = false;
 		std::unordered_set<int> infractions;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(persistent_player, rid, name, is_modder, is_admin, block_join, infractions);
 	};
 
 
