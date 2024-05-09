@@ -42,7 +42,16 @@ namespace rage
 		uint32_t m_network_time;     //0x0014
 		char pad_0018[72];           //0x0018
 	};                               //Size: 0x0060
+	class CPlayerCameraDataNode
+	{
+	public:
+		float m_camera_x;            // 0x100
+		float m_camera_z;            // 0x104
+		bool m_is_long_range_target; // 0x3F
+	};
 	class rlGamerInfo;
+	class netConnectionMgr;
+	class netPeerAddress;
 }
 
 namespace YimMenu
@@ -63,6 +72,7 @@ namespace YimMenu
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
 		using HandleJoinRequest = bool (*)(int64_t network, int64_t session, rage::rlGamerInfo* player_info, rage::CJoinRequestContext* ctx);
 		using WriteJoinResponseData = bool (*)(rage::CMsgJoinResponse* response, void* data, int size, uint32_t* size_used);
+		using SendPacket = bool (*)(void* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
 	};
 
 	struct PointerData
@@ -77,6 +87,10 @@ namespace YimMenu
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
 		Functions::GetLocalPed GetLocalPed;
+		Functions::SendPacket SendPacket;
+		PVOID WritePlayerCameraDataNode;
+		PVOID WritePlayerAppearanceDataNode;
+		PVOID WritePlayerGameStateDataNode;
 
 		// Security
 		PVOID SendMetric;

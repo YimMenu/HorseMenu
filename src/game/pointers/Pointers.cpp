@@ -273,6 +273,25 @@ namespace YimMenu
 			WriteJoinResponseData = ptr.As<Functions::WriteJoinResponseData>();
 		});
 
+		constexpr auto sendPacketPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 48 20 55 41 54 41 55 41 56 41 57 48 8D A8 98">("SendPacket");
+		scanner.Add(sendPacketPtrn, [this](PointerCalculator ptr) {
+			SendPacket = ptr.As<Functions::SendPacket>();
+		});
+
+		constexpr auto writePlayerCameraDataNode = Pattern<"40 55 53 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 78 4C 8B A9">("WritePlayerCameraDataNode");
+		scanner.Add(writePlayerCameraDataNode, [this](PointerCalculator ptr) {
+			WritePlayerCameraDataNode = ptr.As<PVOID>();
+		});
+
+		constexpr auto writePlayerAppearanceNode = Pattern<"40 55 53 56 57 41 55 41 56 41 57 48 8B EC 48 83 EC 50 4C 8B B9">("WritePlayerAppearanceNode");
+		scanner.Add(writePlayerAppearanceNode, [this](PointerCalculator ptr) {
+			WritePlayerAppearanceDataNode = ptr.As<PVOID>();
+		});
+
+		constexpr auto writePlayerGameStateDataNode = Pattern<"48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 54 41 56 41 57 48 83 EC ? 48 8B A9 ? ? ? ? 48 8B F1">("WritePlayerGameStateDataNode");
+		scanner.Add(writePlayerGameStateDataNode, [this](PointerCalculator ptr) {
+			WritePlayerGameStateDataNode = ptr.As<PVOID>();
+		});
 
 		if (!scanner.Scan())
 		{

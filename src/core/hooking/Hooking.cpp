@@ -55,6 +55,7 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Info::PlayerHasLeft>(new DetourHook("PlayerHasLeft", Pointers.PlayerHasLeft, Hooks::Info::PlayerHasLeft));
 
 		BaseHook::Add<Hooks::Spoofing::WritePlayerHealthData>(new DetourHook("WritePlayerHealthData", Pointers.WritePlayerHealthData, Hooks::Spoofing::WritePlayerHealthData));
+		BaseHook::Add<Hooks::Spoofing::WritePlayerCameraDataNode>(new DetourHook("WritePlayerCameraDataNode", Pointers.WritePlayerCameraDataNode, Hooks::Spoofing::WritePlayerCameraDataNode));
 	}
 
 	Hooking::~Hooking()

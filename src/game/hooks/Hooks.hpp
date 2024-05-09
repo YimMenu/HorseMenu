@@ -14,6 +14,7 @@ namespace rage
 	class CJoinRequestContext;
 	class CMsgJoinResponse;
 	class rlGamerInfo;
+	class CPlayerCameraDataNode;
 }
 class CNetGamePlayer;
 enum class NetEventType;
@@ -100,5 +101,6 @@ namespace YimMenu::Hooks
 	namespace Spoofing
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
+		extern void WritePlayerCameraDataNode(rage::netObject* player, rage::CPlayerCameraDataNode* node);
 	}
 }

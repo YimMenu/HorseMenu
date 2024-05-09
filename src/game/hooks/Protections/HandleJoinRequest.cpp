@@ -19,6 +19,8 @@ namespace YimMenu::Hooks
 {
 	bool Protections::HandleJoinRequest(int64_t network, int64_t session, rage::rlGamerInfo* player_info, rage::CJoinRequestContext* ctx)
 	{
+		LOG(VERBOSE) << "HandleJoinRequest called!";
+
 		// Use Player::GetRID() once #116 is merged
 		if (auto player = g_PlayerDatabase.GetPlayer(player_info->m_GamerHandle.m_rockstar_id); player && player->block_join)
 		{
