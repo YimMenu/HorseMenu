@@ -96,11 +96,16 @@ namespace YimMenu::Submenus
 				{
 					YimMenu::Players::SetSelected(Self::Id);
 				}
-				if (ImGui::Button("Add to Player Database"))
+				if (ImGui::Button("Add to Player Database") && YimMenu::Players::GetSelected().IsValid())
 				{
 					auto plyr = YimMenu::Players::GetSelected();
 					// Use Player::GetRID() once #116 is merged
 					g_PlayerDatabase.AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
+				}
+
+				if (YimMenu::Players::GetSelected().IsHost())
+				{
+					ImGui::Text("Host");
 				}
 			}));
 

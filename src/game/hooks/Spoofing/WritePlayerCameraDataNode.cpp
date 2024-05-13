@@ -2,6 +2,7 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "game/hooks/Hooks.hpp"
+#include "game/pointers/Pointers.hpp"
 
 namespace rage
 {
@@ -18,7 +19,9 @@ namespace YimMenu::Hooks
 {
 	void Spoofing::WritePlayerCameraDataNode(rage::netObject* player, rage::CPlayerCameraDataNode* node)
 	{
-		LOG(VERBOSE) << "WROTE CAMERA DATA";
+		//LOG(VERBOSE) << "WROTE CAMERA DATA";
+		//LOG(VERBOSE) << node;
+
 		BaseHook::Get<Spoofing::WritePlayerCameraDataNode, DetourHook<decltype(&Spoofing::WritePlayerCameraDataNode)>>()->Original()(player, node);
 	}
 }

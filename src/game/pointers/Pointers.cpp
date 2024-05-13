@@ -268,14 +268,14 @@ namespace YimMenu
 			HandleJoinRequest = ptr.As<Functions::HandleJoinRequest>();
 		});
 
-		constexpr auto writeJoinResponseDataPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 41 56 48 83 EC 50 4C 8B F1 49 8B F1 48 8D 48 C8 41 8B D8 48 8B FA E8 ?? ?? ?? ?? 44 8B C3 48 8D 4C 24 20 48 8B D7 E8 ?? ?? ?? ?? 8B 0D ?? ?? ?? ?? 48 8D 54 24 20 E8 ?? ?? ?? ?? 33 DB 84 C0 74 2F 41 8B">("WriteJoinResponseData");
+		constexpr auto writeJoinResponseDataPtrn = Pattern<"48 8D 4C 24 30 E8 ?? ?? ?? ?? 84 C0 74 04 B0 01 EB 02 32 C0 48 83 C4 20">("WriteJoinResponseData");
 		scanner.Add(writeJoinResponseDataPtrn, [this](PointerCalculator ptr) {
-			WriteJoinResponseData = ptr.As<Functions::WriteJoinResponseData>();
+			WriteJoinResponseData = ptr.Add(1).Rip().As<Functions::WriteJoinResponseData>();
 		});
 
-		constexpr auto sendPacketPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 48 20 55 41 54 41 55 41 56 41 57 48 8D A8 98">("SendPacket");
+		constexpr auto sendPacketPtrn = Pattern<"8B 44 24 60 48 8B D6 48 8B CD">("SendPacket");
 		scanner.Add(sendPacketPtrn, [this](PointerCalculator ptr) {
-			SendPacket = ptr.As<Functions::SendPacket>();
+			SendPacket = ptr.Add(10).Rip().As<Functions::SendPacket>();
 		});
 
 		constexpr auto writePlayerCameraDataNode = Pattern<"40 55 53 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 78 4C 8B A9">("WritePlayerCameraDataNode");
@@ -283,7 +283,7 @@ namespace YimMenu
 			WritePlayerCameraDataNode = ptr.As<PVOID>();
 		});
 
-		constexpr auto writePlayerAppearanceNode = Pattern<"40 55 53 56 57 41 55 41 56 41 57 48 8B EC 48 83 EC 50 4C 8B B9">("WritePlayerAppearanceNode");
+		constexpr auto writePlayerAppearanceNode = Pattern<"40 55 53 56 57 41 55 41 56 41 57 48 8B EC 48 83 EC 50 4C 8B B9">("WritePlayerAppearanceDataNode");
 		scanner.Add(writePlayerAppearanceNode, [this](PointerCalculator ptr) {
 			WritePlayerAppearanceDataNode = ptr.As<PVOID>();
 		});
@@ -291,6 +291,16 @@ namespace YimMenu
 		constexpr auto writePlayerGameStateDataNode = Pattern<"48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 54 41 56 41 57 48 83 EC ? 48 8B A9 ? ? ? ? 48 8B F1">("WritePlayerGameStateDataNode");
 		scanner.Add(writePlayerGameStateDataNode, [this](PointerCalculator ptr) {
 			WritePlayerGameStateDataNode = ptr.As<PVOID>();
+		});
+
+		constexpr auto getGamerOnlineState = Pattern<"E8 ?? ?? ?? ?? 84 C0 75 11 BF EE 03 00 00">("GetGamerOnlineState");
+		scanner.Add(getGamerOnlineState, [this](PointerCalculator ptr) {
+			GetGamerOnlineState = ptr.As<Functions::GetGamerOnlineState>();
+		});
+
+		constexpr auto startGetSessionByGamerHandle = Pattern<"48 89 5C 24 20 8B C8 E8">("StartGetSessionByGamerHandle");
+		scanner.Add(startGetSessionByGamerHandle, [this](PointerCalculator ptr) {
+			StartGetSessionByGamerHandle = ptr.Add(3).Rip().As<Functions::StartGetSessionByGamerHandle>();
 		});
 
 		if (!scanner.Scan())

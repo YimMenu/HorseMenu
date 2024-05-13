@@ -7,6 +7,8 @@
 #include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
+// remove scriptmgr include after testing
+#include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/pointers/Pointers.hpp"
@@ -16,38 +18,39 @@
 
 namespace YimMenu::Submenus
 {
+	std::shared_ptr<persistent_player> current_player;
+	static char search[64];
+	static char name_buf[32];
+
 	void draw_player_db_entry(std::shared_ptr<persistent_player> player, const std::string& lower_search)
 	{
-		if (player && player->name.find(lower_search) != std::string::npos)
+		std::string name = player->name;
+		std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+		if (lower_search.empty() || name.find(lower_search) != std::string::npos)
 		{
-			if (ImGui::Selectable(player->name.c_str()))
+			ImGui::PushID(player->rid);
+
+			//float circle_size = 7.5f;
+			//auto cursor_pos   = ImGui::GetCursorScreenPos();
+
+			//render status circle
+			//ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(cursor_pos.x + 4.f + circle_size, cursor_pos.y + 4.f + circle_size), circle_size, ImColor(get_player_color(*player)));
+
+			//we need some padding
+			//ImVec2 cursor = ImGui::GetCursorPos();
+			//ImGui::SetCursorPos(ImVec2(cursor.x + 25.f, cursor.y));
+
+			if (ImGui::Selectable(player->name.c_str(), player == g_PlayerDatabase.GetSelected()))
 			{
 				g_PlayerDatabase.SetSelected(player);
+				current_player = player;
+				strncpy(name_buf, current_player->name.data(), sizeof(name_buf));
 			}
 
-			if (auto selected = g_PlayerDatabase.GetSelected())
-			{
-				if (selected->rid == player->rid)
-				{
-					ImGui::InputScalar("RID", ImGuiDataType_U64, &player->rid);
-					ImGui::Checkbox("Is Modder", &player->is_modder);
-					ImGui::Checkbox("Is Admin", &player->is_admin);
-					ImGui::Checkbox("Block Join", &player->block_join);
-					ImGui::Checkbox("Trust", &player->trust);
-
-					if (!player->infractions.empty())
-					{
-						ImGui::Text("Infractions:");
-						for (const auto& infraction : player->infractions)
-						{
-							ImGui::BulletText(g_PlayerDatabase.ConvertInfractionToDescription(infraction).c_str());
-						}
-					}
-				}
-			}
+			ImGui::PopID();
 		}
 	}
-
 
 	Network::Network() :
 	    Submenu::Submenu("Network")
@@ -62,33 +65,66 @@ namespace YimMenu::Submenus
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
 		database->AddItem(std::make_shared<ImGuiItem>([] {
-			static char search[64];
-			ImGui::InputText("##search", search, sizeof(search));
+			ImGui::SetNextItemWidth(300.f);
+			ImGui::InputText("Player Name", search, sizeof(search));
 
-			if (ImGui::BeginListBox("###players"))
+
+			if (ImGui::BeginListBox("###players", {180, static_cast<float>(Pointers.ScreenResY - 400 - 38 * 4)}))
 			{
-				auto players = g_PlayerDatabase.GetAllPlayers();
-				if (players.size() > 0)
-				{
-					std::string lower_search = search;
-					std::transform(lower_search.begin(), lower_search.end(), lower_search.begin(), tolower);
+				auto& item_arr = g_PlayerDatabase.GetAllPlayers();
 
-					for (auto& player : players | std::ranges::views::values)
-					{
-						std::string player_name_lower = player->name;
-						std::transform(player_name_lower.begin(), player_name_lower.end(), player_name_lower.begin(), tolower);
-						if (player_name_lower.find(lower_search) != std::string::npos)
-						{
-							draw_player_db_entry(player, lower_search);
-						}
-					}
-				}
-				else
+				std::string lower_search = search;
+				std::transform(lower_search.begin(), lower_search.end(), lower_search.begin(), ::tolower);
+
+				for (auto& player : item_arr)
 				{
-					ImGui::Text("No Stored Players");
+					draw_player_db_entry(player.second, lower_search);
 				}
 
 				ImGui::EndListBox();
+			}
+
+			if (ImGui::Button("Test"))
+				FiberPool::Push([=] {
+					auto plyr = g_PlayerDatabase.GetPlayer(146361626);
+					if (plyr != nullptr)
+					{
+						LOG(VERBOSE) << plyr->name;
+					}
+					else
+					{
+						LOG(VERBOSE) << "NULLPTR";
+					}
+				});
+
+			if (auto selected = g_PlayerDatabase.GetSelected())
+			{
+				ImGui::SameLine();
+				if (ImGui::BeginChild("###selected_player", {500, static_cast<float>(Pointers.ScreenResY - 388 - 38 * 4)}, false, ImGuiWindowFlags_NoBackground))
+				{
+					if (ImGui::InputText("Name", name_buf, sizeof(name_buf)))
+					{
+						current_player->name = name_buf;
+					}
+
+					if (ImGui::InputScalar("RID", ImGuiDataType_S64, &current_player->rid)
+					    || ImGui::Checkbox("Is Modder", &current_player->is_modder)
+					    || ImGui::Checkbox("Trust", &current_player->trust)
+					    || ImGui::Checkbox("Block Join", &current_player->block_join))
+					{
+						g_PlayerDatabase.Save();
+					}
+
+					if (!selected->infractions.empty())
+					{
+						ImGui::Text("Infractions");
+
+						for (auto& infraction : current_player->infractions)
+						{
+							ImGui::BulletText(g_PlayerDatabase.ConvertInfractionToDescription(infraction).c_str());
+						}
+					}
+				}
 			}
 		}));
 		AddCategory(std::move(session));

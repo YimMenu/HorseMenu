@@ -11,6 +11,7 @@ namespace YimMenu
 
 	void PlayerDatabase::Load()
 	{
+		m_Selected = nullptr;
 		if (!std::filesystem::exists(m_File))
 		{
 			LOG(VERBOSE) << "Player Database Doesn't Exist";
@@ -35,21 +36,37 @@ namespace YimMenu
 
 			for (auto& [key, value] : jsonData.items())
 			{
-				auto player = std::make_shared<persistent_player>(value.get<persistent_player>());
-				m_Data.push_back(std::make_pair(std::stoul(key), player));
+				auto player = value.get<std::shared_ptr<persistent_player>>();
+				LOG(VERBOSE) << "RID: " << player->rid << "NAME: " << player->name;
+				m_Data[std::stoll(key)] = player;
+
+				auto it = m_Data.find(std::stoll(key));
+				if (it != m_Data.end())
+				{
+					std::shared_ptr<persistent_player> dbgPlayer = it->second;
+					LOG(VERBOSE) << "RID AFTER SAVE: " << dbgPlayer->rid << "NAME AFTER SAVE: " << dbgPlayer->name;
+				}
+				else
+				{
+					LOG(VERBOSE) << "FAILED TO FIND";
+				}
+			}
+
+			auto all = GetAllPlayers();
+			for (auto& [rid, player] : all)
+			{
+				LOG(VERBOSE) << "RID: " << rid << "NAME: " << player->name;
 			}
 		}
-
-		m_Selected = nullptr;
 	}
 
-	void PlayerDatabase::Save() const
+	void PlayerDatabase::Save()
 	{
 		json data;
 
 		for (auto& [rid, player] : m_Data)
 		{
-			data[std::to_string(rid)] = *player;
+			data[std::to_string(rid)] = player;
 		}
 
 		std::ofstream fileStream(m_File);
@@ -82,7 +99,7 @@ namespace YimMenu
 			auto player  = std::make_shared<persistent_player>();
 			player->rid  = rid;
 			player->name = name;
-			m_Data.push_back(std::make_pair(rid, player));
+			m_Data[rid]  = player;
 			Save();
 		}
 	}
@@ -94,13 +111,13 @@ namespace YimMenu
 		{
 			player      = std::make_shared<persistent_player>();
 			player->rid = rid;
-			m_Data.push_back(std::make_pair(rid, player));
+			m_Data[rid] = player;
 			Save();
 		}
 		return player;
 	}
 
-	std::vector<std::pair<uint64_t, std::shared_ptr<persistent_player>>> PlayerDatabase::GetAllPlayers() const
+	std::unordered_map<uint64_t, std::shared_ptr<persistent_player>>& PlayerDatabase::GetAllPlayers()
 	{
 		return m_Data;
 	}

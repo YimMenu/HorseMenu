@@ -52,6 +52,7 @@ namespace rage
 	class rlGamerInfo;
 	class netConnectionMgr;
 	class netPeerAddress;
+	class rlGamerHandle;
 }
 
 namespace YimMenu
@@ -73,6 +74,8 @@ namespace YimMenu
 		using HandleJoinRequest = bool (*)(int64_t network, int64_t session, rage::rlGamerInfo* player_info, rage::CJoinRequestContext* ctx);
 		using WriteJoinResponseData = bool (*)(rage::CMsgJoinResponse* response, void* data, int size, uint32_t* size_used);
 		using SendPacket = bool (*)(void* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
+		using GetGamerOnlineState = bool (*)(int profile_index, rage::rlGamerHandle* handles, uint32_t count, int* online_state, int* status);
+		using StartGetSessionByGamerHandle = bool (*)(int profile_index, rage::rlGamerHandle* handles, int count, void* result, int unk, bool* success, int* state);
 	};
 
 	struct PointerData
@@ -116,6 +119,8 @@ namespace YimMenu
 		PVOID PlayerHasJoined;
 		PVOID PlayerHasLeft;
 		Functions::GetNetworkPlayerFromPid GetNetPlayerFromPid;
+		Functions::GetGamerOnlineState GetGamerOnlineState;
+		Functions::StartGetSessionByGamerHandle StartGetSessionByGamerHandle;
 
 		// Voice
 		PVOID EnumerateAudioDevices;

@@ -102,5 +102,7 @@ namespace YimMenu::Hooks
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
 		extern void WritePlayerCameraDataNode(rage::netObject* player, rage::CPlayerCameraDataNode* node);
+		extern void WritePlayerAppearanceDataNode(rage::netObject* player, void* node);
+		extern void WritePlayerGameStateDataNode(rage::netObject* player, void* node);
 	}
 }

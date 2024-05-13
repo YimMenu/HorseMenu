@@ -7,9 +7,27 @@
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
-#include <vector>
 
+
+namespace nlohmann
+{
+	template<typename T>
+	struct adl_serializer<std::shared_ptr<T>>
+	{
+		static void to_json(json& j, const std::shared_ptr<T>& value)
+		{
+			j = *value;
+		}
+
+		static void from_json(const json& j, std::shared_ptr<T>& value)
+		{
+			value  = std::make_shared<T>();
+			*value = j.get<T>();
+		}
+	};
+}
 
 namespace YimMenu
 {
@@ -19,19 +37,19 @@ namespace YimMenu
 	{
 	private:
 		std::filesystem::path m_File;
-		std::vector<std::pair<uint64_t /*rid*/, std::shared_ptr<persistent_player>>> m_Data;
-		std::shared_ptr<persistent_player> m_Selected;
+		std::unordered_map<uint64_t /*rid*/, std::shared_ptr<persistent_player>> m_Data;
+		std::shared_ptr<persistent_player> m_Selected = nullptr;
 
 	public:
 		PlayerDatabase();
 
 		void Load();
-		void Save() const;
+		void Save();
 
 		std::shared_ptr<persistent_player> GetPlayer(uint64_t rid);
 		void AddPlayer(uint64_t rid, std::string name);
 		std::shared_ptr<persistent_player> GetOrCreatePlayer(uint64_t rid);
-		std::vector<std::pair<uint64_t, std::shared_ptr<persistent_player>>> GetAllPlayers() const;
+		std::unordered_map<uint64_t, std::shared_ptr<persistent_player>>& GetAllPlayers();
 		void SetSelected(std::shared_ptr<persistent_player> player);
 		std::shared_ptr<persistent_player> GetSelected();
 		std::string ConvertInfractionToDescription(int infraction);
