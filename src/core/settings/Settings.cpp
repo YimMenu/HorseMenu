@@ -40,7 +40,7 @@ namespace YimMenu
 		for (auto& serializer : m_StateSerializers)
 			LoadComponentImpl(serializer);
 
-		LOG(VERBOSE) << "m_InitialLoadDone = true";
+		LOG(VERBOSE) << "Initial Settings Load Completed";
 		m_InitialLoadDone = true;
 	}
 
