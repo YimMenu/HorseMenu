@@ -78,6 +78,8 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
+
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
@@ -94,7 +96,8 @@ namespace YimMenu::Submenus
 		}));
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
-		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnwagon"_J));
+		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnbountywagon"_J));
+		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 
@@ -113,7 +116,16 @@ namespace YimMenu::Submenus
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsebarsfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsecoresfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseagitationlow"_J));
+		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("flaminghooves"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<CommandItem>("tpmounttoself"_J));
+		static int horseScale = 1;
+		horseGlobalsGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			ImGui::Text("Horse Scale");
+			if (ImGui::InputInt(" ", &horseScale))
+				FiberPool::Push([] {
+					PED::_SET_PED_SCALE(YimMenu::Self::Mount, (float)horseScale);
+				});
+		}));
 		horseColumns->AddItem(horseGlobalsGroup);
 		horse->AddItem(horseColumns);
 		AddCategory(std::move(horse));
