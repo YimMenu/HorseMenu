@@ -303,6 +303,16 @@ namespace YimMenu
 			StartGetSessionByGamerHandle = ptr.Add(3).Rip().As<Functions::StartGetSessionByGamerHandle>();
 		});
 
+		constexpr auto queuePacketPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 4C 8B F1 4D">("QueuePacket");
+		scanner.Add(queuePacketPtrn, [this](PointerCalculator ptr) {
+			QueuePacket = ptr.As<Functions::QueuePacket>();
+		});
+
+		constexpr auto recieveNetMessagePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 20 4C 8B 71 38">("RecieveNetMessage");
+		scanner.Add(recieveNetMessagePtrn, [this](PointerCalculator ptr) {
+			ReceiveNetMessage = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

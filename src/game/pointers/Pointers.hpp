@@ -50,7 +50,7 @@ namespace rage
 		bool m_is_long_range_target; // 0x3F
 	};
 	class rlGamerInfo;
-	class netConnectionMgr;
+	class netConnectionManager;
 	class netPeerAddress;
 	class rlGamerHandle;
 }
@@ -73,7 +73,8 @@ namespace YimMenu
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
 		using HandleJoinRequest = bool (*)(int64_t network, int64_t session, rage::rlGamerInfo* player_info, rage::CJoinRequestContext* ctx);
 		using WriteJoinResponseData = bool (*)(rage::CMsgJoinResponse* response, void* data, int size, uint32_t* size_used);
-		using SendPacket = bool (*)(void* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
+		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
+		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, void* data, int size, int flags, void* unk);
 		using GetGamerOnlineState = bool (*)(int profile_index, rage::rlGamerHandle* handles, uint32_t count, int* online_state, int* status);
 		using StartGetSessionByGamerHandle = bool (*)(int profile_index, rage::rlGamerHandle* handles, int count, void* result, int unk, bool* success, int* state);
 	};
@@ -91,6 +92,7 @@ namespace YimMenu
 		rage::scrThread** CurrentScriptThread;
 		Functions::GetLocalPed GetLocalPed;
 		Functions::SendPacket SendPacket;
+		Functions::QueuePacket QueuePacket;
 		PVOID WritePlayerCameraDataNode;
 		PVOID WritePlayerAppearanceDataNode;
 		PVOID WritePlayerGameStateDataNode;
@@ -114,6 +116,7 @@ namespace YimMenu
 		PVOID AddObjectToCreationQueue;
 		Functions::HandleJoinRequest HandleJoinRequest;
 		Functions::WriteJoinResponseData WriteJoinResponseData;
+		PVOID ReceiveNetMessage;
 
 		// Player Stuff
 		PVOID PlayerHasJoined;

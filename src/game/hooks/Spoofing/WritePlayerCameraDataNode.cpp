@@ -19,9 +19,6 @@ namespace YimMenu::Hooks
 {
 	void Spoofing::WritePlayerCameraDataNode(rage::netObject* player, rage::CPlayerCameraDataNode* node)
 	{
-		//LOG(VERBOSE) << "WROTE CAMERA DATA";
-		//LOG(VERBOSE) << node;
-
 		BaseHook::Get<Spoofing::WritePlayerCameraDataNode, DetourHook<decltype(&Spoofing::WritePlayerCameraDataNode)>>()->Original()(player, node);
 	}
 }

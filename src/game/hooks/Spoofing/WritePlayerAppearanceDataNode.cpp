@@ -12,9 +12,6 @@ namespace YimMenu::Hooks
 {
 	void Spoofing::WritePlayerAppearanceDataNode(rage::netObject* player, void* node)
 	{
-		//LOG(VERBOSE) << "WROTE APPEARANCE";
-		//LOG(VERBOSE) << node;
-
 		BaseHook::Get<Spoofing::WritePlayerAppearanceDataNode, DetourHook<decltype(&Spoofing::WritePlayerAppearanceDataNode)>>()
 		    ->Original()(player, node);
 	}

@@ -15,6 +15,17 @@ namespace rage
 	class CMsgJoinResponse;
 	class rlGamerInfo;
 	class CPlayerCameraDataNode;
+	class netConnectionManager;
+	class InFrame
+	{
+	public:
+		char pad_0[40];  // Padding to reach the first accessed member at offset 40
+		uint32_t unk;    // Accessed as *(unsigned int *)&frame[40]
+		char pad_44[12]; // Padding to reach the next accessed member at offset 56
+		void* data;      // Likely the data pointer, accessed as *(_QWORD *)&frame[56]
+		char pad_64[8];  // Padding to reach the next accessed member at offset 64
+		uint32_t length; // Likely the length, accessed as *(_DWORD *)&frame[64]
+	};
 }
 class CNetGamePlayer;
 enum class NetEventType;
@@ -74,6 +85,7 @@ namespace YimMenu::Hooks
 		extern bool HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern int AddObjectToCreationQueue(void* mgr, eNetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern bool HandleJoinRequest(int64_t network, int64_t session, rage::rlGamerInfo* player_info, rage::CJoinRequestContext* ctx);
+		extern bool ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame);
 	}
 
 	namespace Voice

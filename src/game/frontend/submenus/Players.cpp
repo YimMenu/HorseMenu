@@ -102,11 +102,6 @@ namespace YimMenu::Submenus
 					// Use Player::GetRID() once #116 is merged
 					g_PlayerDatabase.AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
 				}
-
-				if (YimMenu::Players::GetSelected().IsHost())
-				{
-					ImGui::Text("Host");
-				}
 			}));
 
 			// TODO: refactor teleport items
@@ -328,6 +323,8 @@ namespace YimMenu::Submenus
 			kick->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
+
+			kick->AddItem(std::make_shared<PlayerCommandItem>("oomkick"_J));
 
 			AddCategory(std::move(kick));
 		}

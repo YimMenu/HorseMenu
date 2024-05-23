@@ -1334,56 +1334,92 @@ enum class ExplosionTypes
 	GLASS_SMASHING_SOUND_TOXIC_GAS_CLOUD
 };
 
-enum class eCarryingFlags 
+enum class eCarryingFlags
 {
-    CARRYING_FLAG_CAN_BE_HOGTIED,
-    CARRYING_FLAG_CAN_BE_CUT_FREE,
-    CARRYING_FLAG_CAN_BE_CARRIED_ON_FOOT,
-    CARRYING_FLAG_CAN_BE_CARRIED_ON_MOUNT,
-    CARRYING_FLAG_CAN_BE_DROPPED,
-    CARRYING_FLAG_CAN_FLEE_FROM_TARGET_ON_CUT_FREE,
-    CARRYING_FLAG_CAN_FIGHT_TARGET_ON_CUT_FREE,
-    CARRYING_FLAG_CAN_BE_CARRIED_WHEN_DEAD,
-    CARRYING_FLAG_CAN_BE_ATTACKED_BY_AI_WHEN_PERFORMING_A_CARRY_ACTION,
-    CARRYING_FLAG_CAN_CARRY_ANYTHING,
-    CARRYING_FLAG_MAP_BLIP_ENABLED,
-    CARRYING_FLAG_CAN_BE_CARRIED_BY_HUMAN_AI,
-    CARRYING_FLAG_CAN_BE_TARGETED_WHEN,
+	CARRYING_FLAG_CAN_BE_HOGTIED,
+	CARRYING_FLAG_CAN_BE_CUT_FREE,
+	CARRYING_FLAG_CAN_BE_CARRIED_ON_FOOT,
+	CARRYING_FLAG_CAN_BE_CARRIED_ON_MOUNT,
+	CARRYING_FLAG_CAN_BE_DROPPED,
+	CARRYING_FLAG_CAN_FLEE_FROM_TARGET_ON_CUT_FREE,
+	CARRYING_FLAG_CAN_FIGHT_TARGET_ON_CUT_FREE,
+	CARRYING_FLAG_CAN_BE_CARRIED_WHEN_DEAD,
+	CARRYING_FLAG_CAN_BE_ATTACKED_BY_AI_WHEN_PERFORMING_A_CARRY_ACTION,
+	CARRYING_FLAG_CAN_CARRY_ANYTHING,
+	CARRYING_FLAG_MAP_BLIP_ENABLED,
+	CARRYING_FLAG_CAN_BE_CARRIED_BY_HUMAN_AI,
+	CARRYING_FLAG_CAN_BE_TARGETED_WHEN,
 	CARRIABLE_OR_TRANSITIONING_TO_CARRIABLE,
-    CARRYING_FLAG_CAN_BE_PLACED_ON_MOUNT,
-    CARRYING_FLAG_CAN_BE_CARRIED_WHEN_DEAD_IF_AMBIENT,
-    CARRYING_FLAG_DISABLE_PROMPT_LOS_CHECKS,
-    CARRYING_FLAG_IS_INSTANT_PICKUP,
-    CARRYING_FLAG_IS_AUTO_PICKUP,
-    CARRYING_FLAG_FORCE_ALLOW_WARP_TO_SAFE_GROUND_LOCATION,
-    CARRYING_FLAG_PICKUPS_IGNORE_HEIGHT_RESTRICTIONS,
-    CARRYING_FLAG_CLEAN_UP_WHEN_NOT_CARRIED,
-    CARRYING_FLAG_BLOCK_KNOCK_OFF_PED_VARIATIONS_FROM_CARRIABLE_INTERACTIONS,
-    CARRYING_FLAG_HIT_WHEN_CARRIABLE,
-    DISABLE_STOW_PELTS,
-    CARRYING_FLAG_DISABLE_CARRIABLE_INTERACTIONS_ON_THIS_MOUNT,
-    CARRYING_FLAG_FORCE_HIDE_PROMPT_GROUP
+	CARRYING_FLAG_CAN_BE_PLACED_ON_MOUNT,
+	CARRYING_FLAG_CAN_BE_CARRIED_WHEN_DEAD_IF_AMBIENT,
+	CARRYING_FLAG_DISABLE_PROMPT_LOS_CHECKS,
+	CARRYING_FLAG_IS_INSTANT_PICKUP,
+	CARRYING_FLAG_IS_AUTO_PICKUP,
+	CARRYING_FLAG_FORCE_ALLOW_WARP_TO_SAFE_GROUND_LOCATION,
+	CARRYING_FLAG_PICKUPS_IGNORE_HEIGHT_RESTRICTIONS,
+	CARRYING_FLAG_CLEAN_UP_WHEN_NOT_CARRIED,
+	CARRYING_FLAG_BLOCK_KNOCK_OFF_PED_VARIATIONS_FROM_CARRIABLE_INTERACTIONS,
+	CARRYING_FLAG_HIT_WHEN_CARRIABLE,
+	DISABLE_STOW_PELTS,
+	CARRYING_FLAG_DISABLE_CARRIABLE_INTERACTIONS_ON_THIS_MOUNT,
+	CARRYING_FLAG_FORCE_HIDE_PROMPT_GROUP
 };
 
-enum class eLassoFlags 
+enum class eLassoFlags
 {
-    LHF_CAN_BE_LASSOED,
-    LHF_CAN_BE_LASSOED_WHEN_DEAD,
-    LHF_CAN_BE_LASSOED_BY_FRIENDLY_AI,
-    LHF_CAN_BE_LASSOED_BY_FRIENDLY_PLAYERS,
-    LHF_CAN_RUN_PRIMARY_LASSO_REACT_TASK,
-    LHF_SHOULD_FLEE_ON_ATTACH,
-    LHF_SHOULD_ATTACK_ON_ATTACH,
-    LHF_CAN_BE_REELED_IN,
-    LHF_DISABLE_IN_MP,
-    LHF_CAN_PULL_OVER_PLAYER,
-    LHF_CAN_BE_LASSOED_WHEN_DEAD_IN_WATER,
-    LHF_CAN_NOT_LASSO_PLAYERS
+	LHF_CAN_BE_LASSOED,
+	LHF_CAN_BE_LASSOED_WHEN_DEAD,
+	LHF_CAN_BE_LASSOED_BY_FRIENDLY_AI,
+	LHF_CAN_BE_LASSOED_BY_FRIENDLY_PLAYERS,
+	LHF_CAN_RUN_PRIMARY_LASSO_REACT_TASK,
+	LHF_SHOULD_FLEE_ON_ATTACH,
+	LHF_SHOULD_ATTACK_ON_ATTACH,
+	LHF_CAN_BE_REELED_IN,
+	LHF_DISABLE_IN_MP,
+	LHF_CAN_PULL_OVER_PLAYER,
+	LHF_CAN_BE_LASSOED_WHEN_DEAD_IN_WATER,
+	LHF_CAN_NOT_LASSO_PLAYERS
 };
 
 enum class ScriptEvent
 {
-	SCRIPT_EVENT_NOTORIETY_FORCE_PASSIVE = 36,
+	SCRIPT_EVENT_NOTORIETY_FORCE_PASSIVE           = 36,
 	SCRIPT_EVENT_NOTORIETY_FORCE_NOT_PASSIVE_HORSE = 37,
-	SCRIPT_EVENT_PERSONA_HONOR = 188
+	SCRIPT_EVENT_PERSONA_HONOR                     = 188
+};
+
+enum class NetMessage : uint32_t
+{
+	MsgInvalid                                     = 0x0,
+	MsgJoinResponse                                = 0x61,
+	MsgJoinResponse2                               = 0x1C,
+	MsgPackedEvents                                = 0x70,
+	MsgPackedEventReliablesMsgs                    = 0x71,
+	MsgMergeSessionDistributeObjectIdRemappings    = 0x27,
+	MsgMergeSessionDistributeObjectIdRemappingsAck = 0x28,
+	MsgRemoveGamersFromSessionCmd                  = 0x64,
+	CMsgTextMsg                                    = 0x40,
+	MsgClockInfoRequest                            = 0x21,
+	MsgClockInfo                                   = 0x22,
+	MsgCloneSync                                   = 0x75,
+	MsgPackedCloneSyncACKs                         = 0x76,
+	MsgPackedReliables                             = 0x77,
+	MsgNetArrayMgrUpdate                           = 0x6D,
+	MsgNetArrayMgrUpdateAck                        = 0x6E,
+	MsgNetArrayMgrSplitUpdateAck                   = 0x6F,
+	MsgScriptBotJoin                               = 0x84,
+	MsgScriptBotJoinAck                            = 0x85,
+	MsgScriptBotHandshake                          = 0x86,
+	MsgScriptBotHandshakeAck                       = 0x87,
+	MsgScriptBotLeave                              = 0x88,
+	MsgScriptJoin                                  = 0x7D, // guesstimated
+	MsgScriptJoinAck                               = 0x7E, // guesstimated
+	MsgScriptHandshake                             = 0x80, // guesstimated
+	MsgScriptHandshakeAck                          = 0x81, // guesstimated
+	MsgScriptLeave                                 = 0x82, // guesstimated
+	MsgScriptLeaveAck                              = 0x83, // guesstimated
+	MsgScriptMigrateHost                           = 0x89, // guesstimated
+	MsgScriptMigrateHostFailAck                    = 0x8A, // guesstimated
+	MsgScriptHostRequest                           = 0x8B, // guesstimated
+	MsgScriptVerifyHostAck                         = 0x90, // guesstimated
 };
