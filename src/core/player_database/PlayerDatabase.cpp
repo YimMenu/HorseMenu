@@ -10,6 +10,8 @@ namespace YimMenu
 		Load();
 
 		g_PlayerDatabase = this;
+
+		LOG(INFO) << "Player Database Initialized";
 	}
 
 	PlayerDatabase::~PlayerDatabase()
