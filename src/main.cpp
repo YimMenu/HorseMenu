@@ -21,13 +21,15 @@ namespace YimMenu
 	DWORD Main(void*)
 	{
 		const auto documents = std::filesystem::path(std::getenv("appdata")) / "HorseMenu";
-		FileMgr::Init(documents); // TODO
+		FileMgr::Init(documents);
 
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
 		g_HotkeySystem.RegisterCommands();
 		CustomTeleport::FetchSavedLocations();
 		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
+
+		auto PlayerDatabaseInstance = std::make_unique<PlayerDatabase>();
 
 		if (!ModuleMgr.LoadModules())
 			goto unload;
@@ -47,9 +49,6 @@ namespace YimMenu
 		LOG(INFO) << "FiberPool Initialized";
 
 		GUI::Init();
-
-		g_PlayerDatabase.Load();
-		LOG(INFO) << "Player Database Initialized";
 
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
@@ -76,6 +75,8 @@ namespace YimMenu
 
 		FiberPool::Destroy();
 		LOG(INFO) << "FiberPool Uninitialized";
+
+		PlayerDatabaseInstance.reset();
 
 	unload:
 		Hooking::Destroy();

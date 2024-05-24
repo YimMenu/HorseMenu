@@ -100,7 +100,7 @@ namespace YimMenu::Submenus
 				{
 					auto plyr = YimMenu::Players::GetSelected();
 					// Use Player::GetRID() once #116 is merged
-					g_PlayerDatabase.AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
+					g_PlayerDatabase->AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
 				}
 			}));
 

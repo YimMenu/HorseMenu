@@ -7,6 +7,16 @@ namespace YimMenu
 	PlayerDatabase::PlayerDatabase() :
 	    m_File(std::filesystem::path(std::getenv("appdata")) / "HorseMenu" / "database.json")
 	{
+		Load();
+
+		g_PlayerDatabase = this;
+	}
+
+	PlayerDatabase::~PlayerDatabase()
+	{
+		LOG(INFO) << "Player Database Uninitialized";
+
+		g_PlayerDatabase = nullptr;
 	}
 
 	void PlayerDatabase::Load()

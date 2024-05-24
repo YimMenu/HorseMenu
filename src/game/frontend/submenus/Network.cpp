@@ -41,9 +41,9 @@ namespace YimMenu::Submenus
 			//ImVec2 cursor = ImGui::GetCursorPos();
 			//ImGui::SetCursorPos(ImVec2(cursor.x + 25.f, cursor.y));
 
-			if (ImGui::Selectable(player->name.c_str(), player == g_PlayerDatabase.GetSelected()))
+			if (ImGui::Selectable(player->name.c_str(), player == g_PlayerDatabase->GetSelected()))
 			{
-				g_PlayerDatabase.SetSelected(player);
+				g_PlayerDatabase->SetSelected(player);
 				current_player = player;
 				strncpy(name_buf, current_player->name.data(), sizeof(name_buf));
 			}
@@ -71,7 +71,7 @@ namespace YimMenu::Submenus
 
 			if (ImGui::BeginListBox("###players", {180, static_cast<float>(Pointers.ScreenResY - 400 - 38 * 4)}))
 			{
-				auto& item_arr = g_PlayerDatabase.GetAllPlayers();
+				auto& item_arr = g_PlayerDatabase->GetAllPlayers();
 
 				std::string lower_search = search;
 				std::transform(lower_search.begin(), lower_search.end(), lower_search.begin(), ::tolower);
@@ -83,21 +83,7 @@ namespace YimMenu::Submenus
 
 				ImGui::EndListBox();
 			}
-
-			if (ImGui::Button("Test"))
-				FiberPool::Push([=] {
-					auto plyr = g_PlayerDatabase.GetPlayer(146361626);
-					if (plyr != nullptr)
-					{
-						LOG(VERBOSE) << plyr->name;
-					}
-					else
-					{
-						LOG(VERBOSE) << "NULLPTR";
-					}
-				});
-
-			if (auto selected = g_PlayerDatabase.GetSelected())
+			if (auto selected = g_PlayerDatabase->GetSelected())
 			{
 				ImGui::SameLine();
 				if (ImGui::BeginChild("###selected_player", {500, static_cast<float>(Pointers.ScreenResY - 388 - 38 * 4)}, false, ImGuiWindowFlags_NoBackground))
@@ -112,7 +98,7 @@ namespace YimMenu::Submenus
 					    || ImGui::Checkbox("Trust", &current_player->trust)
 					    || ImGui::Checkbox("Block Join", &current_player->block_join))
 					{
-						g_PlayerDatabase.Save();
+						g_PlayerDatabase->Save();
 					}
 
 					if (!selected->infractions.empty())
@@ -121,7 +107,7 @@ namespace YimMenu::Submenus
 
 						for (auto& infraction : current_player->infractions)
 						{
-							ImGui::BulletText(g_PlayerDatabase.ConvertInfractionToDescription(infraction).c_str());
+							ImGui::BulletText(g_PlayerDatabase->ConvertInfractionToDescription(infraction).c_str());
 						}
 					}
 				}

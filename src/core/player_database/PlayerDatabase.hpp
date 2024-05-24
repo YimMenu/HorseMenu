@@ -42,6 +42,7 @@ namespace YimMenu
 
 	public:
 		PlayerDatabase();
+		~PlayerDatabase();
 
 		void Load();
 		void Save();
@@ -77,7 +78,7 @@ namespace YimMenu
 	};
 
 
-	static PlayerDatabase g_PlayerDatabase;
+	inline PlayerDatabase* g_PlayerDatabase;
 
 
 }
