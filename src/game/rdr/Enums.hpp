@@ -1390,15 +1390,15 @@ enum class ScriptEvent
 
 enum class NetMessage : uint32_t
 {
-	MsgInvalid                                     = 0x0,
+	MsgInvalid                                     = 0xFFFF,
 	MsgJoinResponse                                = 0x61,
 	MsgJoinResponse2                               = 0x1C,
 	MsgPackedEvents                                = 0x70,
 	MsgPackedEventReliablesMsgs                    = 0x71,
 	MsgMergeSessionDistributeObjectIdRemappings    = 0x27,
 	MsgMergeSessionDistributeObjectIdRemappingsAck = 0x28,
-	MsgRemoveGamersFromSessionCmd                  = 0x64,
-	CMsgTextMsg                                    = 0x40,
+	MsgRemoveGamersFromSessionCmd                  = 0x64, //unused
+	CMsgTextMsg                                    = 0x40, // unused
 	MsgClockInfoRequest                            = 0x21,
 	MsgClockInfo                                   = 0x22,
 	MsgCloneSync                                   = 0x75,

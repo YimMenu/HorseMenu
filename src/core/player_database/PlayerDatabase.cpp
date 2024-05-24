@@ -81,12 +81,10 @@ namespace YimMenu
 
 	std::shared_ptr<persistent_player> PlayerDatabase::GetPlayer(uint64_t rid)
 	{
-		for (const auto& pair : m_Data)
+		auto it = m_Data.find(rid);
+		if (it != m_Data.end())
 		{
-			if (pair.second->rid == rid)
-			{
-				return pair.second;
-			}
+			return it->second;
 		}
 
 		return nullptr;

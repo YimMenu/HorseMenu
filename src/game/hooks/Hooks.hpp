@@ -19,12 +19,10 @@ namespace rage
 	class InFrame
 	{
 	public:
-		char pad_0[40];  // Padding to reach the first accessed member at offset 40
-		uint32_t unk;    // Accessed as *(unsigned int *)&frame[40]
-		char pad_44[12]; // Padding to reach the next accessed member at offset 56
-		void* data;      // Likely the data pointer, accessed as *(_QWORD *)&frame[56]
-		char pad_64[8];  // Padding to reach the next accessed member at offset 64
-		uint32_t length; // Likely the length, accessed as *(_DWORD *)&frame[64]
+		char pad_0[0x78];
+		uint32_t length;
+		char pad_1[8];
+		void* data;
 	};
 }
 class CNetGamePlayer;

@@ -14,7 +14,6 @@ namespace YimMenu::Features
 
 namespace YimMenu
 {
-	// this is straight copied from yimmenu, so lets hope it works
 	bool GetMessageType(NetMessage& msgType, rage::datBitBuffer& buffer)
 	{
 		uint32_t pos;
@@ -29,10 +28,10 @@ namespace YimMenu
 		}
 		length = extended ? 16 : 8;
 		if ((buffer.m_FlagBits & 1) == 0 ? (pos = buffer.m_CurBit) : (pos = buffer.m_MaxBit),
-		    length + buffer.m_BitsRead <= pos && buffer.ReadDword((int*)&msgType, length))
-			return true;
-		else
+		    length + buffer.m_BitsRead > pos && !buffer.ReadDword((int*)&msgType, length))
 			return false;
+		else
+			return true;
 	}
 }
 
@@ -41,8 +40,11 @@ namespace YimMenu::Hooks
 	bool Protections::ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame)
 	{
 		if (frame->data == nullptr || frame->length == 0)
+		{
+			LOG(VERBOSE) << "RETURNING ORIGINAL DUE TO NULLPTR OR NO LENGTH";
 			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
 			    ->Original()(netConnectionManager, a2, frame);
+		}
 
 		rage::datBitBuffer buffer(frame->data, frame->length);
 		buffer.m_FlagBits = 1;
@@ -65,6 +67,7 @@ namespace YimMenu::Hooks
 			             << " " << uintptr_t(uint32_t(msg_type)) << "LENGTH = "
 			             << " " << frame->length;
 		}
+
 
 		return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(netConnectionManager, a2, frame);
 	}

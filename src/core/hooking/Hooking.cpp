@@ -60,6 +60,7 @@ namespace YimMenu
 		    new DetourHook("WritePlayerAppearanceDataNode", Pointers.WritePlayerAppearanceDataNode, Hooks::Spoofing::WritePlayerAppearanceDataNode));
 		BaseHook::Add<Hooks::Spoofing::WritePlayerGameStateDataNode>(
 		    new DetourHook("WritePlayerGameStateDataNode", Pointers.WritePlayerGameStateDataNode, Hooks::Spoofing::WritePlayerGameStateDataNode));
+		BaseHook::Add<Hooks::Protections::ReceiveNetMessage>(new DetourHook("ReceiveNetMessage", Pointers.ReceiveNetMessage, Hooks::Protections::ReceiveNetMessage));
 	}
 
 	Hooking::~Hooking()
