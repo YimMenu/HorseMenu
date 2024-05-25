@@ -54,11 +54,16 @@ namespace YimMenu
 		void SetSelected(std::shared_ptr<persistent_player> player);
 		std::shared_ptr<persistent_player> GetSelected();
 		std::string ConvertInfractionToDescription(int infraction);
+		void AddInfraction(std::shared_ptr<persistent_player> player, int infraction);
 
 		enum class eInfraction
 		{
 			TRIED_CRASH_PLAYER,
 			TRIED_KICK_PLAYER,
+			REMOTE_NATIVE_CALL,
+			TRIED_ATTACH,
+			REMOTE_TELEPORT,
+			INVALID_PROPSET,
 		};
 
 		std::unordered_map<eInfraction, std::string> InfractionDescriptions = {{eInfraction::TRIED_CRASH_PLAYER, "Tried to crash you!"}, {eInfraction::TRIED_KICK_PLAYER, "Tried to kick you!"}};

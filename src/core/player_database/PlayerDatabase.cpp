@@ -48,26 +48,8 @@ namespace YimMenu
 
 			for (auto& [key, value] : jsonData.items())
 			{
-				auto player = value.get<std::shared_ptr<persistent_player>>();
-				LOG(VERBOSE) << "RID: " << player->rid << "NAME: " << player->name;
+				auto player             = value.get<std::shared_ptr<persistent_player>>();
 				m_Data[std::stoll(key)] = player;
-
-				auto it = m_Data.find(std::stoll(key));
-				if (it != m_Data.end())
-				{
-					std::shared_ptr<persistent_player> dbgPlayer = it->second;
-					LOG(VERBOSE) << "RID AFTER SAVE: " << dbgPlayer->rid << "NAME AFTER SAVE: " << dbgPlayer->name;
-				}
-				else
-				{
-					LOG(VERBOSE) << "FAILED TO FIND";
-				}
-			}
-
-			auto all = GetAllPlayers();
-			for (auto& [rid, player] : all)
-			{
-				LOG(VERBOSE) << "RID: " << rid << "NAME: " << player->name;
 			}
 		}
 	}
@@ -141,8 +123,15 @@ namespace YimMenu
 	{
 		return m_Selected;
 	}
+
 	std::string PlayerDatabase::ConvertInfractionToDescription(int infraction)
 	{
 		return InfractionDescriptions[static_cast<eInfraction>(infraction)];
+	}
+
+	void PlayerDatabase::AddInfraction(std::shared_ptr<persistent_player> player, int infraction)
+	{
+		player->infractions.insert((int)infraction);
+		Save();
 	}
 }

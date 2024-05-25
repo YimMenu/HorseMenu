@@ -101,7 +101,7 @@ namespace YimMenu::Submenus
 						g_PlayerDatabase->Save();
 					}
 
-					if (!selected->infractions.empty())
+					if (!current_player->infractions.empty())
 					{
 						ImGui::Text("Infractions");
 

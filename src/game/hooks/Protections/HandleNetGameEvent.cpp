@@ -1,12 +1,16 @@
+#include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
+#include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-#include "game/backend/Protections.hpp"
-#include "core/commands/BoolCommand.hpp"
+
 #include <network/CNetGamePlayer.hpp>
-#include <rage/datBitBuffer.hpp>
 #include <network/netObject.hpp>
+#include <network/rlGamerInfo.hpp>
+#include <rage/datBitBuffer.hpp>
+
 
 namespace
 {
@@ -80,6 +84,9 @@ namespace YimMenu::Hooks
 		{
 			LOG(WARNING) << "Blocked remote native call from " << sourcePlayer->GetName();
 			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			g_PlayerDatabase->AddInfraction(
+			    g_PlayerDatabase->GetOrCreatePlayer(sourcePlayer->GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+			    (int)PlayerDatabase::eInfraction::REMOTE_NATIVE_CALL);
 			return;
 		}
 
