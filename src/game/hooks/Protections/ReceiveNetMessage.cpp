@@ -46,6 +46,7 @@ namespace YimMenu::Hooks
 			    ->Original()(netConnectionManager, a2, frame);
 		}
 
+		LOG(VERBOSE) << "TRYING TO BUFF";
 		rage::datBitBuffer buffer(frame->data, frame->length);
 		buffer.m_FlagBits = 1;
 
