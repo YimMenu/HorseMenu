@@ -11,7 +11,7 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/Storage.hpp"
+#include "util/Storage/Spoofing.hpp"
 
 #include <map>
 #include <string>
@@ -55,19 +55,19 @@ namespace YimMenu::Submenus
 				ImGui::SetTooltip("This effect is local");
 			}
 
-			if (!g_Storage.spoofed_name.empty())
+			if (!g_SpoofingStorage.spoofed_name.empty())
 				if (ImGui::Button("Show Locally"))
 				{
 					FiberPool::Push([=] {
-						HUD::_CREATE_MP_GAMER_TAG(YimMenu::Self::Id, g_Storage.spoofed_name.c_str(), 0, 0, "", 0);
-						HUD::_CREATE_MP_GAMER_TAG_ON_ENTITY(YimMenu::Self::Id, g_Storage.spoofed_name.c_str());
+						HUD::_CREATE_MP_GAMER_TAG(YimMenu::Self::Id, g_SpoofingStorage.spoofed_name.c_str(), 0, 0, "", 0);
+						HUD::_CREATE_MP_GAMER_TAG_ON_ENTITY(YimMenu::Self::Id, g_SpoofingStorage.spoofed_name.c_str());
 					});
 				}
 
 			if (ImGui::Button("Set Spoofed Name"))
 			{
 				std::string concat_name = std::string(color_spoof_buf) + name_input_buf;
-				g_Storage.spoofed_name  = concat_name;
+				g_SpoofingStorage.spoofed_name  = concat_name;
 			}
 			if (ImGui::IsItemHovered())
 			{

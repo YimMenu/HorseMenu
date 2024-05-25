@@ -3,9 +3,9 @@
 
 namespace YimMenu
 {
-	struct Storage
+	struct Spoofing
 	{
 		std::string spoofed_name;
 	};
-	inline YimMenu::Storage g_Storage;
+	inline YimMenu::Spoofing g_SpoofingStorage;
 }
