@@ -105,9 +105,21 @@ namespace YimMenu::Submenus
 					{
 						ImGui::Text("Infractions");
 
-						for (auto& infraction : current_player->infractions)
+						std::unordered_map<int, int /*count*/> count_map;
+
+						for (const auto& item : current_player->infractions)
 						{
-							ImGui::BulletText(g_PlayerDatabase->ConvertInfractionToDescription(infraction).c_str());
+							count_map[item]++;
+						}
+
+						for (const auto& pair : count_map)
+						{
+							// TODO: find a better way to do this
+							ImGui::BulletText(std::string(g_PlayerDatabase->ConvertInfractionToDescription(pair.first))
+							                      .append(" - ")
+							                      .append("x")
+							                      .append(std::to_string(pair.second))
+							                      .c_str());
 						}
 					}
 				}
