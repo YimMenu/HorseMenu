@@ -37,6 +37,7 @@ namespace YimMenu
 
 namespace YimMenu::Hooks
 {
+	// fix this, it crashes on load. likely a inframe issue
 	bool Protections::ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame)
 	{
 		if (frame->data == nullptr || frame->length == 0)
