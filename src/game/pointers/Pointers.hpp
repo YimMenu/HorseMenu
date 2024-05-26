@@ -20,6 +20,7 @@ namespace rage
 	class netEventMgr;
 	class netSyncTree;
 	class netObject;
+	// straight copied from yimmenu, probably the same size - we dont use this as of right now. class can be reversed if we ever need it
 	class CJoinRequestContext
 	{
 	public:
@@ -96,6 +97,7 @@ namespace YimMenu
 		PVOID WritePlayerCameraDataNode;
 		PVOID WritePlayerAppearanceDataNode;
 		PVOID WritePlayerGameStateDataNode;
+		PVOID GetUnkValue;
 
 		// Security
 		PVOID SendMetric;

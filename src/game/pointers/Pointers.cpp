@@ -313,6 +313,11 @@ namespace YimMenu
 			ReceiveNetMessage = ptr.As<PVOID>();
 		});
 
+		constexpr auto getUnkValuePtrn = Pattern<"48 8B 81 10 0C 00 00 8B">("GetUnkValue");
+		scanner.Add(getUnkValuePtrn, [this](PointerCalculator ptr) {
+			GetUnkValue = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
