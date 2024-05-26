@@ -64,6 +64,7 @@ namespace YimMenu::Submenus
 		session->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
+		spoofing->AddItem(std::make_shared<BoolCommandItem>("spoofmodel"_J));
 		database->AddItem(std::make_shared<ImGuiItem>([] {
 			ImGui::SetNextItemWidth(300.f);
 			ImGui::InputText("Player Name", search, sizeof(search));

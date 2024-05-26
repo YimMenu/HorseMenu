@@ -84,6 +84,7 @@ namespace YimMenu::Hooks
 		extern int AddObjectToCreationQueue(void* mgr, eNetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern bool HandleJoinRequest(int64_t network, int64_t session, rage::rlGamerInfo* player_info, rage::CJoinRequestContext* ctx);
 		extern bool ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame);
+		extern int GetUnkValue(int64_t* a1, unsigned int* a2);
 	}
 
 	namespace Voice
@@ -112,7 +113,7 @@ namespace YimMenu::Hooks
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
 		extern void WritePlayerCameraDataNode(rage::netObject* player, rage::CPlayerCameraDataNode* node);
-		extern void WritePlayerAppearanceDataNode(rage::netObject* player, void* node);
+		extern void WritePlayerAppearanceDataNode(rage::netObject* player, int64_t* node);
 		extern void WritePlayerGameStateDataNode(rage::netObject* player, void* node);
 	}
 }
