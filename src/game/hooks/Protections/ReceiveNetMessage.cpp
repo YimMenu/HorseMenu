@@ -40,6 +40,7 @@ namespace YimMenu::Hooks
 	// fix this, it crashes on load. likely a inframe issue
 	bool Protections::ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame)
 	{
+		/*
 		if (frame->data == nullptr || frame->length == 0)
 		{
 			LOG(VERBOSE) << "RETURNING ORIGINAL DUE TO NULLPTR OR NO LENGTH";
@@ -69,6 +70,9 @@ namespace YimMenu::Hooks
 			             << " " << uintptr_t(uint32_t(msg_type)) << "LENGTH = "
 			             << " " << frame->length;
 		}
+		*/
+
+		LOG(INFO) << "CALLED, RETURNING ORIGINAL";
 
 
 		return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(netConnectionManager, a2, frame);
