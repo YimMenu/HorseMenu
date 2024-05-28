@@ -3,12 +3,14 @@
 #include "game/hooks/Hooks.hpp"
 
 
+#pragma pack(push, 1)
 class CPlayerAppearanceNode
 {
 public:
 	char pad_0[0x5C];
 	uint32_t model_hash;
 };
+#pragma pack(pop)
 
 
 namespace YimMenu::Features
@@ -26,7 +28,7 @@ namespace YimMenu::Hooks
 		if (Features::_SpoofModel.GetState())
 		{
 			auto data_node        = reinterpret_cast<CPlayerAppearanceNode*>(node);
-			data_node->model_hash = 0x9233448C;
+			data_node->model_hash = "A_M_M_JAMESONGUARD_01"_J;
 		}
 	}
 }

@@ -16,14 +16,30 @@ namespace rage
 	class rlGamerInfo;
 	class CPlayerCameraDataNode;
 	class netConnectionManager;
+#pragma pack(push, 1)
 	class InFrame
 	{
 	public:
+		enum class EventType
+		{
+			ConnectionClosed  = 3,
+			FrameReceived     = 4,
+			BandwidthExceeded = 6,
+			OutOfMemory       = 7
+		};
+
+		virtual ~InFrame() = default;
+
+		virtual void destroy()             = 0;
+		virtual EventType get_event_type() = 0;
+		virtual uint32_t _0x18()           = 0;
+
 		char pad_0[0x78];
 		uint32_t length;
 		char pad_1[8];
 		void* data;
 	};
+#pragma pack(pop)
 }
 class CNetGamePlayer;
 enum class NetEventType;

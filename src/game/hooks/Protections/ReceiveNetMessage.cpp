@@ -16,6 +16,7 @@ namespace YimMenu
 {
 	bool GetMessageType(NetMessage& msgType, rage::datBitBuffer& buffer)
 	{
+		LOG(VERBOSE) << "RUNNING GETMESSAGETYPE";
 		uint32_t pos;
 		uint32_t magic;
 		uint32_t length;
@@ -37,10 +38,16 @@ namespace YimMenu
 
 namespace YimMenu::Hooks
 {
-	// fix this, it crashes on load. likely a inframe issue
+	// datBitBuffer causes crash on load
 	bool Protections::ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame)
 	{
-		/*
+		if (frame->get_event_type() != rage::InFrame::EventType::FrameReceived)
+		{
+			LOG(VERBOSE) << (int)frame->get_event_type();
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
+			    ->Original()(netConnectionManager, a2, frame);
+		}
+
 		if (frame->data == nullptr || frame->length == 0)
 		{
 			LOG(VERBOSE) << "RETURNING ORIGINAL DUE TO NULLPTR OR NO LENGTH";
@@ -48,12 +55,17 @@ namespace YimMenu::Hooks
 			    ->Original()(netConnectionManager, a2, frame);
 		}
 
+		LOG(VERBOSE) << "FRAME INFO: "
+		             << "DATA = " << frame->data << " LEN = " << frame->length;
+
 		LOG(VERBOSE) << "TRYING TO BUFF";
 		rage::datBitBuffer buffer(frame->data, frame->length);
-		buffer.m_FlagBits = 1;
+		LOG(VERBOSE) << "WRITING DATA TO LOG";
+		LOG(VERBOSE) << buffer.m_Data;
 
 		NetMessage msg_type;
 
+		LOG(VERBOSE) << "Getting Message Type";
 		if (!GetMessageType(msg_type, buffer))
 			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
 			    ->Original()(netConnectionManager, a2, frame);
@@ -70,9 +82,8 @@ namespace YimMenu::Hooks
 			             << " " << uintptr_t(uint32_t(msg_type)) << "LENGTH = "
 			             << " " << frame->length;
 		}
-		*/
 
-		LOG(INFO) << "CALLED, RETURNING ORIGINAL";
+		//LOG(INFO) << "CALLED, RETURNING ORIGINAL";
 
 
 		return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(netConnectionManager, a2, frame);
