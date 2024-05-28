@@ -1,14 +1,22 @@
 #include "Features.hpp"
-#include "game/rdr/Natives.hpp"
+
+#include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Players.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/frontend/GUI.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "game/frontend/ContextMenu.hpp"
+#include "game/frontend/GUI.hpp"
+#include "game/rdr/Enums.hpp"
+#include "game/rdr/Natives.hpp"
+
+
+namespace YimMenu::Features
+{
+	BoolCommand _IsFirstLoadComplete{"firstloadcomplete", "Is First Load Complete", "Used to detect if the first load has been completed or not."};
+}
 
 namespace YimMenu
 {
@@ -83,8 +91,19 @@ namespace YimMenu
 		});
 	}
 
+	void TryFirstLoad()
+	{
+		if (!Features::_IsFirstLoadComplete.GetState())
+		{
+			Commands::GetCommand<BoolCommand>("detectspoofednames"_J)->SetState(true);
+			Features::_IsFirstLoadComplete.SetState(true);
+		}
+	}
+
 	void FeatureLoop()
 	{
+		TryFirstLoad();
+
 		while (true)
 		{
 			Players::Tick();
