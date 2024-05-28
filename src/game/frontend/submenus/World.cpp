@@ -1,9 +1,10 @@
 #include "World.hpp"
 
+#include "game/backend/FiberPool.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "util/Ped.hpp"
 #include "util/libraries/PedModels.hpp"
-#include "game/backend/FiberPool.hpp"
+
 
 namespace YimMenu::Submenus
 {
@@ -41,6 +42,9 @@ namespace YimMenu::Submenus
 				data->InsertChars(0, newText.c_str());
 			}
 		}
+
+		// remove this after done debugging
+		return 1;
 	}
 
 	void PedSpawnerGroup()
@@ -48,7 +52,8 @@ namespace YimMenu::Submenus
 		static std::string pedModelBuffer;
 		static float scale = 1;
 		static bool dead, invis, godmode, freeze;
-		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback).Draw();
+		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback)
+		    .Draw();
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Press Tab to auto fill");
 		if (!pedModelBuffer.empty() && !is_ped_model_in_ped_model_list(pedModelBuffer))
@@ -86,7 +91,7 @@ namespace YimMenu::Submenus
 	World::World() :
 	    Submenu::Submenu("World")
 	{
-		auto spawners         = std::make_shared<Category>("Spawners");
+		auto spawners        = std::make_shared<Category>("Spawners");
 		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner", GetListBoxDimensions());
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {

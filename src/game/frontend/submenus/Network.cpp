@@ -21,6 +21,8 @@ namespace YimMenu::Submenus
 	std::shared_ptr<persistent_player> current_player;
 	static char search[64];
 	static char name_buf[32];
+	static char new_player_name_buf[32];
+	static uint64_t new_player_rid;
 
 	void draw_player_db_entry(std::shared_ptr<persistent_player> player, const std::string& lower_search)
 	{
@@ -124,6 +126,14 @@ namespace YimMenu::Submenus
 						}
 					}
 				}
+			}
+			ImGui::NewLine();
+			ImGui::InputText("Player Name", new_player_name_buf, sizeof(new_player_name_buf));
+			ImGui::InputScalar("RID", ImGuiDataType_U64, &new_player_rid);
+			if (ImGui::Button("Add"))
+			{
+				current_player       = g_PlayerDatabase->GetOrCreatePlayer(new_player_rid);
+				current_player->name = new_player_name_buf;
 			}
 		}));
 		AddCategory(std::move(session));
