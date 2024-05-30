@@ -1,0 +1,88 @@
+name: Bug report
+description: Create a report to help us improve
+title: "[Bug]: "
+labels: bug
+body:
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Logs and/or screenshots
+      description: |
+        For a bug report to be valid, please include the logs for HorseMenu.
+        They can be found under `%appdata%/HorseMenu/cout.log`, even if you think the log file is useless we'd still like for you to include it here.
+
+        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+      value: |
+        ```
+        <paste your logs here>
+        ```
+    validations:
+      required: false
+  - type: dropdown
+    attributes:
+      label: Store
+      description: Which launcher/store do you use to launch your game?
+      multiple: false
+      options:
+        - Steam
+        - Epic Games
+        - Rockstar
+        - Other (please mention in "Additional context")
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Language
+      description: Which language do you have Red Dead Redemption 2 set to?
+      multiple: false
+      options:
+        - English
+        - French
+        - Italian
+        - German
+        - Spanish
+        - Japanese
+        - Russian
+        - Polish
+        - Brazilian Portuguese
+        - Traditional Chinese
+        - Simplified Chinese
+        - Latin American Spanish
+        - Korean
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+    validations:
+      required: false
+  - type: checkboxes
+    attributes:
+      label: Build
+      description: We want to confirm that this issue exists on the latest version of HorseMenu, not a fork or your own version of HorseMenu.
+      options:
+        - label: I've confirmed the issue exists on the latest version of HorseMenu
+          required: true
