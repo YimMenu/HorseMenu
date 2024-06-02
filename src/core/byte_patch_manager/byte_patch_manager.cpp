@@ -6,7 +6,7 @@ namespace YimMenu
 	{
 		// put patches here
 
-		LOG(INFO) << "Byte patch manager initialized";
+		LOG(INFO) << "Byte Patch Manager initialized";
 	}
 
 	void Byte_Patch_Manager::Init()
