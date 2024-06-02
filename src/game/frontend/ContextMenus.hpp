@@ -77,23 +77,10 @@ namespace YimMenu
 
 	inline ContextOperationsMenu ContextMenuPeds = ContextOperationsMenu("Peds",
 	    {
-	        ContextMenuOperation{"Set Selected",
+	        ContextMenuOperation{"Explode",
 	            [&](Entity entity) {
-		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
-			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
-				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
-				            {
-					            YimMenu::Players::SetSelected(id);
-					            break;
-				            }
-	            }},
-	        {"Explode",
-	            [&](Entity entity) {
-		            if (!PED::IS_PED_A_PLAYER(entity.GetHandle()))
-		            {
-			            auto pedCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
-			            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
-		            }
+		            auto pedCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
 	            }},
 	        {"Kill",
 	            [&](Entity entity) {
