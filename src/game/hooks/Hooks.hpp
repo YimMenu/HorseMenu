@@ -22,8 +22,8 @@ namespace rage
 	public:
 		enum class EventType
 		{
-			ConnectionClosed  = 3,
-			FrameReceived     = 4,
+			ConnectionClosed  = 4,
+			FrameReceived     = 5,
 			BandwidthExceeded = 6,
 			OutOfMemory       = 7
 		};
