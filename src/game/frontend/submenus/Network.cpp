@@ -64,10 +64,26 @@ namespace YimMenu::Submenus
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
 		session->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
+		session->AddItem(std::make_shared<BoolCommandItem>("locklobby"_J));
+		// remove code below before PR
+		session->AddItem(std::make_shared<ImGuiItem>([] {
+			if (ImGui::Button("Get Host"))
+				FiberPool::Push([] {
+					for (auto& player : YimMenu::Players::GetPlayers())
+					{
+						if (player.second.IsHost())
+						{
+							Notifications::Show("Host", player.second.GetName());
+							break;
+						}
+					}
+				});
+		}));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("spoofmodel"_J));
 		database->AddItem(std::make_shared<ImGuiItem>([] {
+			static bool show_new_player = true;
 			ImGui::SetNextItemWidth(300.f);
 			ImGui::InputText("Player Name", search, sizeof(search));
 
@@ -88,6 +104,7 @@ namespace YimMenu::Submenus
 			}
 			if (auto selected = g_PlayerDatabase->GetSelected())
 			{
+				show_new_player = false;
 				ImGui::SameLine();
 				if (ImGui::BeginChild("###selected_player", {500, static_cast<float>(Pointers.ScreenResY - 388 - 38 * 4)}, false, ImGuiWindowFlags_NoBackground))
 				{
@@ -127,13 +144,16 @@ namespace YimMenu::Submenus
 					}
 				}
 			}
-			ImGui::NewLine();
-			ImGui::InputText("Player Name", new_player_name_buf, sizeof(new_player_name_buf));
-			ImGui::InputScalar("RID", ImGuiDataType_U64, &new_player_rid);
-			if (ImGui::Button("Add"))
+			if (show_new_player)
 			{
-				current_player       = g_PlayerDatabase->GetOrCreatePlayer(new_player_rid);
-				current_player->name = new_player_name_buf;
+				ImGui::NewLine();
+				ImGui::InputText("Player Name", new_player_name_buf, sizeof(new_player_name_buf));
+				ImGui::InputScalar("RID", ImGuiDataType_U64, &new_player_rid);
+				if (ImGui::Button("Add"))
+				{
+					current_player       = g_PlayerDatabase->GetOrCreatePlayer(new_player_rid);
+					current_player->name = new_player_name_buf;
+				}
 			}
 		}));
 		AddCategory(std::move(session));
