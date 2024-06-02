@@ -1,5 +1,6 @@
 #include "Players.hpp"
 
+#include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
@@ -23,10 +24,15 @@
 
 #include <script/scrThread.hpp>
 
+namespace YimMenu::Features
+{
+	BoolCommand _PopPlayerList{"popplayerlist", "Pop Player List", "Removes the player list in certain interactions"};
+}
+
 
 namespace YimMenu::Submenus
 {
-	bool popPlayerList = true; //TODO make optional
+	bool popPlayerList = Features::_PopPlayerList.GetState();
 	void drawPlayerList(bool external, float offset = 15.0f)
 	{
 		struct ComparePlayerNames

@@ -5,7 +5,6 @@
 
 namespace YimMenu::Features
 {
-	// TODO: this should be moved out of self
 	class KeepHorseBarsFilled : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
