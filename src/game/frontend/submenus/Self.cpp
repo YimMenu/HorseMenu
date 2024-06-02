@@ -8,8 +8,8 @@
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/Rewards.hpp"
 #include "util/Ped.hpp"
+#include "util/Rewards.hpp"
 
 #include <map>
 
@@ -80,7 +80,7 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("colorfullantern"_J));
 
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
@@ -96,6 +96,7 @@ namespace YimMenu::Submenus
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnwagon"_J));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
+		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
 
 		columns->AddItem(globalsGroup);
 		columns->AddItem(toolsGroup);
