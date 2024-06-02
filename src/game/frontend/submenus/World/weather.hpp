@@ -1,5 +1,6 @@
+#pragma once
 
-#include "core/commands/LoopedCommand.hpp"
+#include "core/commands/Command.hpp"
 #include "game/features/Features.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
@@ -33,16 +34,18 @@ void ChangeWeather(const char* weather)
 {
 	MISC::_SET_OVERRIDE_WEATHER(MISC::GET_HASH_KEY(weather));
 }
+
 void ChangeTime(int H = 12, int M = 0, int S = 0, int transition = 0, bool freeze = false)
 {
 	NETWORK::_NETWORK_CLOCK_TIME_OVERRIDE(H, M, S, transition, freeze);
 }
 
+// TODO: Move this
 namespace YimMenu
 {
 	namespace Features
 	{
-		class ForceLightning: public Command
+		class ForceLightning : public Command
 		{
 		public:
 			using Command::Command;
@@ -51,10 +54,9 @@ namespace YimMenu
 			{
 				MISC::FORCE_LIGHTNING_FLASH();
 			}
-			
 		};
 
-	
-		static ForceLightning _forcelighting{"forcelighting", "force lighting", "spawn's lighting "};
+
+		static ForceLightning _forcelighting{"forcelighting", "Force Lightning", "Forces Lightning to Strike You!"};
 	}
 }

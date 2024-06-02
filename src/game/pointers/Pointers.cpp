@@ -10,7 +10,7 @@
 
 namespace YimMenu
 {
-	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes) //TODO: make service
+	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes)
 	{
 		DWORD oldProtect;
 		VirtualProtect(address, numBytes, PAGE_EXECUTE_READWRITE, &oldProtect);

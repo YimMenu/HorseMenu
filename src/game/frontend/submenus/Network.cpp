@@ -17,7 +17,6 @@
 #include <string>
 
 
-
 namespace YimMenu::Submenus
 {
 	Network::Network() :
@@ -35,7 +34,7 @@ namespace YimMenu::Submenus
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
 		static std::string name_input_buf, color_spoof_buf = "";
 		nameChangerGroup->AddItem(std::make_shared<ImGuiItem>([=] {
-			static std::map<std::string, std::string> color_translations = {{"~e~", "Red"}, {"~f~", "Off White"}, {"~p~", "White"}, {"~o~", "Yellow"}, {"~q~", "Pure White"}, {"~d~", "Orange"}, {"~m~", "Light Grey"}, {"~t~", "Grey"}, {"~v~", "Black"}, {"~pa~", "Blue"}, {"~t1~", "Purple"}, {"~t2~", "Orange"}, {"~t3~", "Teal"}, {"~t4~", "Light Yellow"}, {"~t5~", "Pink"}, {"~t6~", "Green"}, {"~t7~", "Dark Blue"}, {"~t8~", "Red"}, {"", "None"}};
+			static std::map<std::string, std::string> color_translations = {{"~e~", "Red"}, {"~f~", "Off White"}, {"~p~", "White"}, {"~o~", "Yellow"}, {"~q~", "Pure White"}, {"~d~", "Orange"}, {"~m~", "Light Grey"}, {"~t~", "Grey"}, {"~v~", "Black"}, {"~pa~", "Blue"}, {"~t1~", "Purple"}, {"~t2~", "Orange"}, {"~t3~", "Teal"}, {"~t4~", "Light Yellow"}, {"~t5~", "Pink"}, {"~t6~", "Green"}, {"~t7~", "Dark Blue"}, {"", "None"}};
 
 
 			InputTextWithHint("New Name", "Enter New Name", &name_input_buf).Draw();
@@ -68,8 +67,8 @@ namespace YimMenu::Submenus
 
 			if (ImGui::Button("Set Spoofed Name"))
 			{
-				std::string concat_name = std::string(color_spoof_buf) + name_input_buf;
-				g_SpoofingStorage.spoofed_name  = concat_name;
+				std::string concat_name        = std::string(color_spoof_buf) + name_input_buf;
+				g_SpoofingStorage.spoofed_name = concat_name;
 			}
 			if (ImGui::IsItemHovered())
 			{

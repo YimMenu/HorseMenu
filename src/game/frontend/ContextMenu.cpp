@@ -1,12 +1,13 @@
 #include "ContextMenu.hpp"
 
 #include "ContextMenus.hpp"
+#include "core/commands/BoolCommand.hpp"
+#include "core/commands/Commands.hpp"
+#include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-#include "game/backend/FiberPool.hpp"
-#include "core/commands/BoolCommand.hpp"
-#include "core/commands/Commands.hpp"
+
 
 namespace YimMenu::Features
 {
@@ -77,7 +78,7 @@ namespace YimMenu
 						if (m_Entity.IsPlayer())
 							switchToMenu(ContextMenuPlayers);
 						else
-							switchToMenu(ContextMenuDefault); // TODO: Create Ped menu
+							switchToMenu(ContextMenuPeds);
 					}
 					else if (m_Entity.IsVehicle())
 					{
