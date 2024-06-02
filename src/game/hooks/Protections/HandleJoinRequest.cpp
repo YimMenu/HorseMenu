@@ -28,7 +28,7 @@ namespace YimMenu::Hooks
 
 		// Use Player::GetRID() once #116 is merged
 		if (auto player = g_PlayerDatabase->GetPlayer(player_info->m_GamerHandle.m_rockstar_id);
-		    player && player->block_join || Features::_LockLobby.GetState())
+		    player != nullptr && player->block_join || Features::_LockLobby.GetState())
 		{
 			rage::CMsgJoinResponse response{};
 			response.m_status_code = 1;
