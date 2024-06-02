@@ -90,6 +90,13 @@ namespace YimMenu::Hooks
 			return;
 		}
 
+		if (type == NetEventType::KICK_VOTES_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked Kick Vote from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
 		if (type == NetEventType::GIVE_CONTROL_EVENT && sourcePlayer)
 		{
 			YimMenu::Protections::SetSyncingPlayer(sourcePlayer);
