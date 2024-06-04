@@ -54,7 +54,12 @@ namespace YimMenu::Submenus
 			ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 			for (auto& [id, player] : sortedPlayers)
 			{
-				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
+				std::string display_name = player.GetName();
+				if (player.IsHost())
+				{
+					display_name.append(" - *H*");
+				}
+				if (ImGui::Selectable(display_name.c_str(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
 				}
