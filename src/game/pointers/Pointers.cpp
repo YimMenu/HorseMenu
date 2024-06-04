@@ -313,7 +313,7 @@ namespace YimMenu
 			ReceiveNetMessage = ptr.As<PVOID>();
 		});
 
-		constexpr auto handlePresenceEventPtrn = Pattern<"E8 ?? ?? ?? ?? 4C 8D 9C 24 B0 10 00 00 49 8B 5B 10">("HandlePresenceEvent");
+		constexpr auto handlePresenceEventPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 70 20 55 48 8D 68 A9 48 81 EC B0 00 00 00 4C">("HandlePresenceEvent");
 		scanner.Add(handlePresenceEventPtrn, [this](PointerCalculator ptr) {
 			HandlePresenceEvent = ptr.As<PVOID>();
 		});
