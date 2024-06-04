@@ -61,7 +61,7 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Spoofing::WritePlayerGameStateDataNode>(
 		    new DetourHook("WritePlayerGameStateDataNode", Pointers.WritePlayerGameStateDataNode, Hooks::Spoofing::WritePlayerGameStateDataNode));
 		BaseHook::Add<Hooks::Protections::ReceiveNetMessage>(new DetourHook("ReceiveNetMessage", Pointers.ReceiveNetMessage, Hooks::Protections::ReceiveNetMessage));
-		BaseHook::Add<Hooks::Protections::GetUnkValue>(new DetourHook("GetUnkValue", Pointers.GetUnkValue, Hooks::Protections::GetUnkValue));
+		BaseHook::Add<Hooks::Protections::HandlePresenceEvent>(new DetourHook("HandlePresenceEvent", Pointers.HandlePresenceEvent, Hooks::Protections::HandlePresenceEvent));
 	}
 
 	Hooking::~Hooking()

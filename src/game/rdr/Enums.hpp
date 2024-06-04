@@ -1422,9 +1422,10 @@ enum class NetMessage : uint32_t
 	MsgScriptMigrateHostFailAck                    = 0x8A, // guesstimated
 	MsgScriptHostRequest                           = 0x8B, // guesstimated
 	MsgScriptVerifyHostAck                         = 0x90, // guesstimated
+	MsgUnkResponseReliable                         = 0x59,
 };
 
-enum eWeaponHash : uint32_t
+enum class eWeaponHash : uint32_t
 {
 	WEAPON_BOW                                   = 2292731996, // Bow
 	WEAPON_BOW_CHARLES                           = 2031861036, // Charles' Bow
@@ -1537,4 +1538,35 @@ enum eWeaponHash : uint32_t
 	WEAPON_TURRET_MAXIM                          = 3101324918, // Maxim Gun
 	WEAPON_TURRET_REVOLVING_CANNON               = 2465730487, // Revolving Cannon
 	WEAPON_UNARMED                               = 2725352035, // Unarmed
+};
+
+enum class ePresenceEvents : uint32_t
+{
+	PRESENCE_STAT_UPDATE                  = 0xedf54ce2,
+	PRESENCE_FRIEND_CREW_JOINED           = 0x12859620,
+	PRESENCE_FRIEND_CREATED_CREW          = 0x3f1009b2,
+	PRESENCE_MISSION_VERIFIED             = 0x8c571656,
+	PRESENCE_ROCKSTAR_MESSAGE             = 0x70e4d0e1,
+	PRESENCE_CREW_MESSAGE                 = 0xcbb12972,
+	PRESENCE_GAME_AWARD                   = 0xd36120ce,
+	PRESENCE_VOICE_INVITE                 = 0xb7aecb0c,
+	PRESENCE_VOICE_RESPONSE               = 0x7ec656f7,
+	PRESENCE_SESSION_SERVER_INFO_REQUEST  = 0x472fdbcd,
+	PRESENCE_SESSION_SERVER_INFO_RESPONSE = 0x6357fabb,
+	PRESENCE_INVITE                       = 0xfbcc029b,
+	PRESENCE_INVITE_CANCEL                = 0x193994f5,
+	PRESENCE_INVITE_REQUEST_RESULT_EVENT  = 0xe89a4022,
+	PRESENCE_INVITE_RESPONSE              = 0x391da84f,
+	PRESENCE_INVITE_UPDATE_EVENT          = 0x4d9b285a,
+	PRESENCE_INVITE_SERVER_INFO           = 0xf3b22733,
+	PRESENCE_JOIN_REQUEST                 = 0x5e61ebb6, // block this for block join?
+	PRESENCE_JOIN_RESPONSE                = 0x606d1ddb,
+	PRESENCE_ADMIN_JOIN_EVENT             = 0xc167b73,
+	PRESENCE_NEWS                         = 0x6eaf6b7d,
+	PRESENCE_FORCE_SESSION_UPDATE         = 0xecaa6fa0,
+	PRESENCE_GAME_TRIGGER_EVENT           = 0x28c617d9,
+	PRESENCE_TEXT_MESSAGE                 = 0x1a8a9221,
+	PRESENCE_GAME_SERVER_AWARD            = 0x76849aa6,
+	PRESENCE_ASSET_DATA_REQUEST           = 0xb179d727,
+	PRESENCE_ASSET_DATA_RESPONSE          = 0xbd14ef85
 };

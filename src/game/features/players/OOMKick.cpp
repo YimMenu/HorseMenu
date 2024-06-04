@@ -13,10 +13,10 @@ namespace YimMenu::Features
 		{
 			Packet msg{};
 
-			msg.write_message(NetMessage::MsgScriptMigrateHost);
+			msg.write_message(NetMessage::MsgUnkResponseReliable);
 			auto msg_id = player.GetHandle()->m_MessageId;
 
-			for (int i = 0; i < 3000; i++)
+			for (int i = 0; i < 10000; i++)
 			{
 				msg.Send(msg_id);
 			}

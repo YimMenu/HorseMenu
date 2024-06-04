@@ -313,9 +313,9 @@ namespace YimMenu
 			ReceiveNetMessage = ptr.As<PVOID>();
 		});
 
-		constexpr auto getUnkValuePtrn = Pattern<"48 8B 81 10 0C 00 00 8B">("GetUnkValue");
-		scanner.Add(getUnkValuePtrn, [this](PointerCalculator ptr) {
-			GetUnkValue = ptr.As<PVOID>();
+		constexpr auto handlePresenceEventPtrn = Pattern<"E8 ?? ?? ?? ?? 4C 8D 9C 24 B0 10 00 00 49 8B 5B 10">("HandlePresenceEvent");
+		scanner.Add(handlePresenceEventPtrn, [this](PointerCalculator ptr) {
+			HandlePresenceEvent = ptr.As<PVOID>();
 		});
 
 		if (!scanner.Scan())

@@ -100,7 +100,7 @@ namespace YimMenu::Hooks
 		extern int AddObjectToCreationQueue(void* mgr, eNetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern bool HandleJoinRequest(int64_t network, int64_t session, rage::rlGamerInfo* player_info, rage::CJoinRequestContext* ctx);
 		extern bool ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame);
-		extern int GetUnkValue(int64_t* a1, unsigned int* a2);
+		extern bool HandlePresenceEvent(uint64_t a1, uint64_t a2, uint64_t a3, const char** payload, uint64_t a5);
 	}
 
 	namespace Voice

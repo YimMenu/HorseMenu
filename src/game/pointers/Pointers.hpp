@@ -97,7 +97,7 @@ namespace YimMenu
 		PVOID WritePlayerCameraDataNode;
 		PVOID WritePlayerAppearanceDataNode;
 		PVOID WritePlayerGameStateDataNode;
-		PVOID GetUnkValue;
+		PVOID HandlePresenceEvent;
 
 		// Security
 		PVOID SendMetric;

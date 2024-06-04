@@ -14,7 +14,7 @@ namespace YimMenu::Features
 			Hash currentWeapon;
 			WEAPON::GET_CURRENT_PED_WEAPON(Self::PlayerPed, &currentWeapon, false, 0, false);
 
-			if (currentWeapon != WEAPON_MELEE_LANTERN_ELECTRIC)
+			if ((uint32_t)currentWeapon != (uint32_t)eWeaponHash::WEAPON_MELEE_LANTERN_ELECTRIC)
 				return;
 
 			Entity weaponEntity = WEAPON::GET_CURRENT_PED_WEAPON_ENTITY_INDEX(Self::PlayerPed, 0); // 0 is the hand attach point
