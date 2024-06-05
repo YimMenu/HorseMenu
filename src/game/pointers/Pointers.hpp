@@ -43,13 +43,6 @@ namespace rage
 		uint32_t m_network_time;     //0x0014 - unsure
 		char pad_0018[72];           //0x0018 - unsure
 	};
-	class CPlayerCameraDataNode
-	{
-	public:
-		float m_camera_x;            // 0x100
-		float m_camera_z;            // 0x104
-		bool m_is_long_range_target; // 0x3F
-	};
 	class rlGamerInfo;
 	class netConnectionManager;
 	class netPeerAddress;
@@ -94,9 +87,6 @@ namespace YimMenu
 		Functions::GetLocalPed GetLocalPed;
 		Functions::SendPacket SendPacket;
 		Functions::QueuePacket QueuePacket;
-		PVOID WritePlayerCameraDataNode;
-		PVOID WritePlayerAppearanceDataNode;
-		PVOID WritePlayerGameStateDataNode;
 		PVOID HandlePresenceEvent;
 
 		// Security

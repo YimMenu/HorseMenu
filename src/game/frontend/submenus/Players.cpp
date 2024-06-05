@@ -57,7 +57,7 @@ namespace YimMenu::Submenus
 				std::string display_name = player.GetName();
 				if (player.IsHost())
 				{
-					display_name.append(" - *H*");
+					display_name.append(" - Host");
 				}
 				if (ImGui::Selectable(display_name.c_str(), (YimMenu::Players::GetSelected() == player)))
 				{

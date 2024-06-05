@@ -1423,6 +1423,7 @@ enum class NetMessage : uint32_t
 	MsgScriptHostRequest                           = 0x8B, // guesstimated
 	MsgScriptVerifyHostAck                         = 0x90, // guesstimated
 	MsgUnkResponseReliable                         = 0x59,
+	MsgAddGamerToSessionCmd                        = 0x56,
 };
 
 enum class eWeaponHash : uint32_t

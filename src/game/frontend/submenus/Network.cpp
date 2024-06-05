@@ -81,7 +81,6 @@ namespace YimMenu::Submenus
 		}));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
-		spoofing->AddItem(std::make_shared<BoolCommandItem>("spoofmodel"_J));
 		database->AddItem(std::make_shared<ImGuiItem>([] {
 			static bool show_new_player = true;
 			ImGui::SetNextItemWidth(300.f);

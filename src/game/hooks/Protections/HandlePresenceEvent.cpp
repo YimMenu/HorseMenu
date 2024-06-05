@@ -18,6 +18,7 @@ namespace YimMenu::Hooks
 {
 	bool Protections::HandlePresenceEvent(uint64_t a1, uint64_t a2, uint64_t a3, const char** payload, uint64_t a5)
 	{
+		LOG(VERBOSE) << "CALLED";
 		try
 		{
 			const char* key = "gm.evt";
@@ -29,7 +30,7 @@ namespace YimMenu::Hooks
 			{
 				if (json["gta5.game.event"].is_null())
 				{
-					return true;
+					return true; // block it
 				}
 
 				key = "gta5.game.event";
@@ -66,6 +67,16 @@ namespace YimMenu::Hooks
 			{
 				Notifications::Show("Presence Event", std::string("Blocked Text Message from ").append(sender), NotificationType::Warning);
 				return true;
+			}
+			case (uint32_t)ePresenceEvents::PRESENCE_JOIN_REQUEST:
+			{
+				Notifications::Show("Presence Event", std::string("Blocked Join from ").append(sender), NotificationType::Warning);
+				return true;
+			}
+			case (uint32_t)ePresenceEvents::PRESENCE_STAT_UPDATE:
+			{
+				Notifications::Show("Presence Event", std::string("Received Stat Update"), NotificationType::Warning);
+				break;
 			}
 			}
 		}

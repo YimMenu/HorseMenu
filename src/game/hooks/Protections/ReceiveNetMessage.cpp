@@ -19,28 +19,36 @@ namespace YimMenu
 	bool GetMessageType(NetMessage& msgType, rage::datBitBuffer& buffer)
 	{
 		LOG(VERBOSE) << "RUNNING GETMESSAGETYPE";
-		uint32_t pos;
-		uint32_t magic;
-		uint32_t length;
-		uint32_t extended{};
-		if ((buffer.m_FlagBits & 2) != 0 || (buffer.m_FlagBits & 1) == 0 ? (pos = buffer.m_CurBit) : (pos = buffer.m_MaxBit),
-		    buffer.m_BitsRead + 15 > pos || !buffer.ReadDword((int*)&magic, 14) || magic != 0x3246 || !buffer.ReadDword((int*)&extended, 1))
+		try
 		{
-			LOG(VERBOSE) << "FAILED FIRST";
-			msgType = NetMessage::MsgInvalid;
-			return false;
+			int pos;
+			int magic;
+			int length;
+			int extended{};
+			if ((buffer.m_FlagBits & 2) != 0 || (buffer.m_FlagBits & 1) == 0 ? (pos = buffer.m_CurBit) : (pos = buffer.m_MaxBit),
+			    buffer.m_BitsRead + 15 > pos || !buffer.ReadDword(&magic, 14) || magic != 0x3246 || !buffer.ReadDword(&extended, 1))
+			{
+				msgType = NetMessage::MsgInvalid;
+				return false;
+			}
+			length = extended ? 16 : 8;
+			if ((buffer.m_FlagBits & 1) != 0 ? (pos = buffer.m_MaxBit) : (pos = buffer.m_CurBit),
+			    length + buffer.m_BitsRead > pos || !buffer.ReadDword((int*)&msgType, length))
+			{
+				LOG(VERBOSE) << "Failed SECOND";
+				return false;
+			}
+			else
+			{
+				// debug notif
+				Notifications::Show("ReceiveNetMessage", std::string("Passed through with a hash of").append(std::to_string((uint32_t)msgType)));
+				return true;
+			}
 		}
-		length = extended ? 16 : 8;
-		if ((buffer.m_FlagBits & 1) == 0 ? (pos = buffer.m_CurBit) : (pos = buffer.m_MaxBit),
-		    length + buffer.m_BitsRead > pos || !buffer.ReadDword((int*)&msgType, length))
+		catch (std::exception& e)
 		{
-			LOG(VERBOSE) << "Failed SECOND";
+			LOG(VERBOSE) << "GetMessageType failed with exception: " << e.what();
 			return false;
-		}
-		else
-		{
-			Notifications::Show("ReceiveNetMessage", std::string("Passed through with a hash of").append(std::to_string((uint32_t)msgType)));
-			return true;
 		}
 	}
 }
@@ -68,10 +76,8 @@ namespace YimMenu::Hooks
 		LOG(VERBOSE) << "FRAME INFO: "
 		             << "DATA = " << frame->data << " LEN = " << frame->length;
 
-		LOG(VERBOSE) << "TRYING TO BUFF";
 		rage::datBitBuffer buffer(frame->data, frame->length);
-		LOG(VERBOSE) << "WRITING DATA TO LOG";
-		LOG(VERBOSE) << buffer.m_Data;
+		buffer.m_FlagBits |= 1;
 
 		NetMessage msg_type;
 
@@ -95,9 +101,9 @@ namespace YimMenu::Hooks
 			             << " " << (uint32_t)msg_type << "LENGTH = "
 			             << " " << frame->length;
 		}
+		*/
 
 		//LOG(INFO) << "CALLED, RETURNING ORIGINAL";
-		*/
 		return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(netConnectionManager, a2, frame);
 	}
 }
