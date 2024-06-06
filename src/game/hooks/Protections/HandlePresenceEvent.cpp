@@ -16,12 +16,13 @@ namespace YimMenu::Features
 
 namespace YimMenu::Hooks
 {
-	bool Protections::HandlePresenceEvent(uint64_t a1, uint64_t a2, uint64_t a3, const char** payload, uint64_t a5)
+	bool Protections::HandlePresenceEvent(uint64_t a1, uint64_t a2, uint64_t a3, int64_t payload_original, uint64_t a5)
 	{
 		LOG(VERBOSE) << "CALLED";
 		try
 		{
-			const char* key = "gm.evt";
+			const auto payload = reinterpret_cast<char**>(payload_original);
+			const char* key    = "gm.evt";
 
 			nlohmann::json json = nlohmann::json::parse(*payload);
 			LOG(VERBOSE) << "RAW JSON";
@@ -87,6 +88,6 @@ namespace YimMenu::Hooks
 		}
 
 		return BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()
-		    ->Original()(a1, a2, a3, payload, a5);
+		    ->Original()(a1, a2, a3, payload_original, a5);
 	}
 }
