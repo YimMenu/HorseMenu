@@ -58,7 +58,6 @@ namespace YimMenu::Hooks
 
 	bool Protections::ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame)
 	{
-		/*
 		if (frame->get_event_type() != rage::InFrame::EventType::FrameReceived)
 		{
 			LOG(VERBOSE) << (int)frame->get_event_type();
@@ -76,8 +75,10 @@ namespace YimMenu::Hooks
 		LOG(VERBOSE) << "FRAME INFO: "
 		             << "DATA = " << frame->data << " LEN = " << frame->length;
 
-		rage::datBitBuffer buffer(frame->data, frame->length);
-		buffer.m_FlagBits |= 1;
+		rage::datBitBuffer buffer(frame->data, frame->length, true);
+		LOG(VERBOSE) << (uint8_t)buffer.m_FlagBits;
+		buffer.m_FlagBits = 1;
+		LOG(VERBOSE) << (uint8_t)buffer.m_FlagBits;
 
 		NetMessage msg_type;
 
@@ -101,7 +102,6 @@ namespace YimMenu::Hooks
 			             << " " << (uint32_t)msg_type << "LENGTH = "
 			             << " " << frame->length;
 		}
-		*/
 
 		//LOG(INFO) << "CALLED, RETURNING ORIGINAL";
 		return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(netConnectionManager, a2, frame);
