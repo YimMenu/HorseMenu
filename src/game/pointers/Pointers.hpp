@@ -47,6 +47,7 @@ namespace rage
 	class netConnectionManager;
 	class netPeerAddress;
 	class rlGamerHandle;
+	class datBitBuffer;
 }
 
 namespace YimMenu
@@ -71,6 +72,10 @@ namespace YimMenu
 		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, void* data, int size, int flags, void* unk);
 		using GetGamerOnlineState = bool (*)(int profile_index, rage::rlGamerHandle* handles, uint32_t count, int* online_state, int* status);
 		using StartGetSessionByGamerHandle = bool (*)(int profile_index, rage::rlGamerHandle* handles, int count, void* result, int unk, bool* success, int* state);
+		using GetMessageType = bool (*)(uint32_t* message_type, rage::datBitBuffer buffer);
+		using GenerateUUID   = bool (*)(uint64_t* uuid);
+		//msg must be in json
+		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
 	};
 
 	struct PointerData
@@ -88,6 +93,11 @@ namespace YimMenu
 		Functions::SendPacket SendPacket;
 		Functions::QueuePacket QueuePacket;
 		PVOID HandlePresenceEvent;
+		Functions::GetMessageType GetMessageType;
+		uint64_t* HostToken;
+		Functions::GenerateUUID GenerateUUID;
+		Functions::PostPresenceMessage PostPresenceMessage;
+
 
 		// Security
 		PVOID SendMetric;
@@ -109,6 +119,7 @@ namespace YimMenu
 		Functions::HandleJoinRequest HandleJoinRequest;
 		Functions::WriteJoinResponseData WriteJoinResponseData;
 		PVOID ReceiveNetMessage;
+		PVOID SendComplaint;
 
 		// Player Stuff
 		PVOID PlayerHasJoined;

@@ -13,7 +13,7 @@ namespace YimMenu::Features
 		{
 			Packet msg{};
 
-			msg.write_message(NetMessage::MsgUnkResponseReliable);
+			msg.write_message(NetMessage::MsgPackedReliables);
 			auto msg_id = player.GetHandle()->m_MessageId;
 
 			for (int i = 0; i < 10000; i++)

@@ -280,7 +280,7 @@ namespace YimMenu
 
 		constexpr auto getGamerOnlineState = Pattern<"E8 ?? ?? ?? ?? 84 C0 75 11 BF EE 03 00 00">("GetGamerOnlineState");
 		scanner.Add(getGamerOnlineState, [this](PointerCalculator ptr) {
-			GetGamerOnlineState = ptr.As<Functions::GetGamerOnlineState>();
+			GetGamerOnlineState = ptr.Add(1).Rip().As<Functions::GetGamerOnlineState>();
 		});
 
 		constexpr auto startGetSessionByGamerHandle = Pattern<"48 89 5C 24 20 8B C8 E8">("StartGetSessionByGamerHandle");
@@ -293,14 +293,39 @@ namespace YimMenu
 			QueuePacket = ptr.As<Functions::QueuePacket>();
 		});
 
-		constexpr auto recieveNetMessagePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 20 4C 8B 71 38">("RecieveNetMessage");
-		scanner.Add(recieveNetMessagePtrn, [this](PointerCalculator ptr) {
+		constexpr auto receiveNetMessagePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 20 4C 8B 71 38">("ReceiveNetMessage");
+		scanner.Add(receiveNetMessagePtrn, [this](PointerCalculator ptr) {
 			ReceiveNetMessage = ptr.As<PVOID>();
 		});
 
 		constexpr auto handlePresenceEventPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 70 20 55 48 8D 68 A9 48 81 EC B0 00 00 00 4C">("HandlePresenceEvent");
 		scanner.Add(handlePresenceEventPtrn, [this](PointerCalculator ptr) {
 			HandlePresenceEvent = ptr.As<PVOID>();
+		});
+
+		constexpr auto getIdPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 18 57 48 83 EC 20 F6 42 28">("GetMessageType");
+		scanner.Add(getIdPtrn, [this](PointerCalculator ptr) {
+			GetMessageType = ptr.As<Functions::GetMessageType>();
+		});
+
+		constexpr auto hostTokenPtrn = Pattern<"48 8B 05 ?? ?? ?? ?? 48 83 F8 FF">("HostToken");
+		scanner.Add(hostTokenPtrn, [this](PointerCalculator ptr) {
+			HostToken = ptr.Add(3).Rip().As<uint64_t*>();
+		});
+
+		constexpr auto generateUUIDPtrn = Pattern<"E8 ? ? ? ? 84 C0 74 ? 48 8B 44 24 ? 48 89 03 B0 ? EB ? 32 C0 48 83 C4">("GenerateUUID");
+		scanner.Add(generateUUIDPtrn, [this](PointerCalculator ptr) {
+			GenerateUUID = ptr.Add(1).Rip().As<Functions::GenerateUUID>();
+		});
+
+		constexpr auto sendComplaintPtrn = Pattern<"48 89 5C 24 10 48 89 6C 24 20 56 57 41 54 41 56 41 57 48 83 EC 20 4C">("SendComplaint");
+		scanner.Add(sendComplaintPtrn, [this](PointerCalculator ptr) {
+			SendComplaint = ptr.As<PVOID>();
+		});
+
+		constexpr auto postMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 35 C7 44 24 20 D9 7A 70 E1">("PostPresenceMessage");
+		scanner.Add(postMessagePtrn, [this](PointerCalculator ptr) {
+			PostPresenceMessage = ptr.Add(1).Rip().As<Functions::PostPresenceMessage>();
 		});
 
 		if (!scanner.Scan())

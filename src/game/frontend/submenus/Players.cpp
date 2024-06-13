@@ -331,6 +331,7 @@ namespace YimMenu::Submenus
 
 			kick->AddItem(std::make_shared<PlayerCommandItem>("oomkick"_J));
 			kick->AddItem(std::make_shared<PlayerCommandItem>("desync"_J));
+			kick->AddItem(std::make_shared<PlayerCommandItem>("complaintkick"_J));
 
 			AddCategory(std::move(kick));
 		}
