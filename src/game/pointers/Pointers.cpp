@@ -318,9 +318,9 @@ namespace YimMenu
 			GenerateUUID = ptr.Add(1).Rip().As<Functions::GenerateUUID>();
 		});
 
-		constexpr auto sendComplaintPtrn = Pattern<"48 89 5C 24 10 48 89 6C 24 20 56 57 41 54 41 56 41 57 48 83 EC 20 4C">("SendComplaint");
+		constexpr auto sendComplaintPtrn = Pattern<"E8 ?? ?? ?? ?? 89 87 84 00 00 00">("SendComplaint");
 		scanner.Add(sendComplaintPtrn, [this](PointerCalculator ptr) {
-			SendComplaint = ptr.As<PVOID>();
+			SendComplaint = ptr.Add(1).Rip().As<PVOID>();
 		});
 
 		constexpr auto postMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 35 C7 44 24 20 D9 7A 70 E1">("PostPresenceMessage");
