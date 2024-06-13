@@ -59,6 +59,11 @@ namespace YimMenu
 		return m_Handle->IsHost();
 	}
 
+	uint32_t Player::GetMessageId()
+	{
+		return m_Handle->m_MessageId;
+	}
+
 	bool Player::operator==(Player other)
 	{
 		return m_Handle == other.m_Handle;

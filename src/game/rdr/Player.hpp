@@ -34,6 +34,7 @@ namespace YimMenu
 		rage::rlGamerInfo* GetGamerInfo();
 		Ped GetPed();
 		bool IsHost();
+		uint32_t GetMessageId();
 		bool operator==(Player other);
 	};
 	static_assert(sizeof(Player) == 8, "don't add anything else to Player");
