@@ -65,20 +65,7 @@ namespace YimMenu::Submenus
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
 		session->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
 		session->AddItem(std::make_shared<BoolCommandItem>("locklobby"_J));
-		// remove code below before PR
-		session->AddItem(std::make_shared<ImGuiItem>([] {
-			if (ImGui::Button("Get Host"))
-				FiberPool::Push([] {
-					for (auto& player : YimMenu::Players::GetPlayers())
-					{
-						if (player.second.IsHost())
-						{
-							Notifications::Show("Host", player.second.GetName());
-							break;
-						}
-					}
-				});
-		}));
+		session->AddItem(std::make_shared<BoolCommandItem>("spoofhosttoken"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
 		database->AddItem(std::make_shared<ImGuiItem>([] {
@@ -150,8 +137,8 @@ namespace YimMenu::Submenus
 				ImGui::InputScalar("RID", ImGuiDataType_U64, &new_player_rid);
 				if (ImGui::Button("Add"))
 				{
-					current_player       = g_PlayerDatabase->GetOrCreatePlayer(new_player_rid);
-					current_player->name = new_player_name_buf;
+					current_player = g_PlayerDatabase->GetOrCreatePlayer(new_player_rid, new_player_name_buf);
+					memset(new_player_name_buf, 0, sizeof(new_player_name_buf));
 				}
 			}
 		}));

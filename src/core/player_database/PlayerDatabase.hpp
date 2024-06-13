@@ -49,7 +49,7 @@ namespace YimMenu
 
 		std::shared_ptr<persistent_player> GetPlayer(uint64_t rid);
 		void AddPlayer(uint64_t rid, std::string name);
-		std::shared_ptr<persistent_player> GetOrCreatePlayer(uint64_t rid);
+		std::shared_ptr<persistent_player> GetOrCreatePlayer(uint64_t rid, std::string name = "Unknown Player");
 		std::unordered_map<uint64_t, std::shared_ptr<persistent_player>>& GetAllPlayers();
 		void SetSelected(std::shared_ptr<persistent_player> player);
 		std::shared_ptr<persistent_player> GetSelected();

@@ -216,7 +216,8 @@ namespace
 				    std::string("Blocked possible unknown ped crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
@@ -228,7 +229,8 @@ namespace
 				    std::string("Blocked mismatched ped model crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
@@ -244,7 +246,8 @@ namespace
 				    std::string("Blocked invalid object crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
@@ -255,7 +258,8 @@ namespace
 				    std::string("Blocked mismatched object model crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
@@ -271,7 +275,8 @@ namespace
 				    std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
@@ -283,7 +288,8 @@ namespace
 				    std::string("Blocked player model switch crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
@@ -296,7 +302,8 @@ namespace
 			{
 				LOG(WARNING) << "Blocked mismatched vehicle model crash from " << Protections::GetSyncingPlayer().GetName();
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
@@ -322,8 +329,22 @@ namespace
 					    std::string("Blocked attachment from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
 					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
-					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+					                                    Protections::GetSyncingPlayer().GetName()),
 					    (int)PlayerDatabase::eInfraction::TRIED_ATTACH);
+					return true;
+				}
+
+				if (data.m_IsAttached && data.m_AttachObjectId == 1535)
+				{
+					LOG(WARNING) << "Blocked Attachment Crash from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections",
+					    std::string("Blocked Attachment Crash from ").append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
+					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
+					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+					                                    Protections::GetSyncingPlayer().GetName()),
+					    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 					return true;
 				}
 			}
@@ -358,9 +379,6 @@ namespace
 			{
 				// TODO: really bad protection
 				LOG(WARNING) << "Blocked unknown task crash from " << Protections::GetSyncingPlayer().GetName();
-				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
-				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
 
@@ -378,7 +396,8 @@ namespace
 					    std::string("Blocked ped attachment from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
 					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
-					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+					                                    Protections::GetSyncingPlayer().GetName()),
 					    (int)PlayerDatabase::eInfraction::TRIED_ATTACH);
 					return true;
 				}
@@ -399,7 +418,8 @@ namespace
 				    std::string("Blocked invalid propset from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::INVALID_PROPSET);
 				return true;
 			}

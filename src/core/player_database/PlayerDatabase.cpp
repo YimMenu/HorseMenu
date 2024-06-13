@@ -96,14 +96,15 @@ namespace YimMenu
 		}
 	}
 
-	std::shared_ptr<persistent_player> PlayerDatabase::GetOrCreatePlayer(uint64_t rid)
+	std::shared_ptr<persistent_player> PlayerDatabase::GetOrCreatePlayer(uint64_t rid, std::string name)
 	{
 		auto player = GetPlayer(rid);
 		if (!player)
 		{
-			player      = std::make_shared<persistent_player>();
-			player->rid = rid;
-			m_Data[rid] = player;
+			player       = std::make_shared<persistent_player>();
+			player->rid  = rid;
+			player->name = name;
+			m_Data[rid]  = player;
 			Save();
 		}
 		return player;
