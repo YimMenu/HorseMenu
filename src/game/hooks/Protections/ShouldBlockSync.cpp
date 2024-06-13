@@ -363,7 +363,8 @@ namespace
 						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
 						g_PlayerDatabase->AddInfraction(
 						    g_PlayerDatabase->GetOrCreatePlayer(
-						        Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+						        Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+						        Protections::GetSyncingPlayer().GetName()),
 						    (int)PlayerDatabase::eInfraction::REMOTE_TELEPORT);
 						return true;
 					}
