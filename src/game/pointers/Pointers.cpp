@@ -318,11 +318,6 @@ namespace YimMenu
 			GenerateUUID = ptr.Add(1).Rip().As<Functions::GenerateUUID>();
 		});
 
-		constexpr auto sendComplaintPtrn = Pattern<"E8 ?? ?? ?? ?? 89 87 84 00 00 00">("SendComplaint");
-		scanner.Add(sendComplaintPtrn, [this](PointerCalculator ptr) {
-			SendComplaint = ptr.Add(1).Rip().As<PVOID>();
-		});
-
 		constexpr auto postMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 35 C7 44 24 20 D9 7A 70 E1">("PostPresenceMessage");
 		scanner.Add(postMessagePtrn, [this](PointerCalculator ptr) {
 			PostPresenceMessage = ptr.Add(1).Rip().As<Functions::PostPresenceMessage>();

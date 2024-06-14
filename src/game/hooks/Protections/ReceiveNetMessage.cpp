@@ -30,7 +30,7 @@ namespace YimMenu::Hooks
 			    ->Original()(netConnectionManager, a2, frame);
 		}
 
-		rage::datBitBuffer buffer(frame->data, frame->length, true);
+		rage::datBitBuffer buffer(frame->data, frame->length);
 		buffer.m_FlagBits |= 1u;
 
 		NetMessage msg_type;

@@ -18,10 +18,11 @@ namespace YimMenu::Hooks
 {
 	bool Protections::HandlePresenceEvent(uint64_t sendType, int64_t* Rids, unsigned int numRockstarIds, const char** payload, int ttlSeconds)
 	{
-		LOG(VERBOSE) << "CALLED";
 		const char* key = "gm.evt";
+		std::string p(*payload);
+		LOG(VERBOSE) << p;
 
-		nlohmann::json json = nlohmann::json::parse(*payload);
+		nlohmann::json json = nlohmann::json::parse(p);
 		LOG(VERBOSE) << "RAW JSON";
 		LOG(VERBOSE) << json.dump();
 		if (json[key].is_null())

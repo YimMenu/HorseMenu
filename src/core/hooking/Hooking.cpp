@@ -45,7 +45,6 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::HandleJoinRequest>(new DetourHook("HandleJoinRequest", Pointers.HandleJoinRequest, Hooks::Protections::HandleJoinRequest));
 		BaseHook::Add<Hooks::Protections::ReceiveNetMessage>(new DetourHook("ReceiveNetMessage", Pointers.ReceiveNetMessage, Hooks::Protections::ReceiveNetMessage));
 		BaseHook::Add<Hooks::Protections::HandlePresenceEvent>(new DetourHook("HandlePresenceEvent", Pointers.HandlePresenceEvent, Hooks::Protections::HandlePresenceEvent));
-		BaseHook::Add<Hooks::Protections::SendComplaint>(new DetourHook("SendComplaint", Pointers.SendComplaint, Hooks::Protections::SendComplaint));
 
 		BaseHook::Add<Hooks::Voice::EnumerateAudioDevices>(new DetourHook("EnumerateAudioDevices", Pointers.EnumerateAudioDevices, Hooks::Voice::EnumerateAudioDevices));
 		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));
