@@ -36,8 +36,6 @@
 	          << " Y: " << ((node->GetData<type>().field)).y << " Z: " << ((node->GetData<type>().field)).z \
 	          << " W: " << ((node->GetData<type>().field)).w;
 #define LOG_FIELD_APPLY(type, field, func) LOG(INFO) << "\t" << #field << ": " << func((node->GetData<type>().field));
-#define LOG_FIELD_F(type, field) LOG(INFO) << "\t" << #field << ": "(float)((node->GetData<type>().field));
-#define LOG_FIELD_BITS(type, field) LOG(INFO) << "\t" << #field << ": " << (float)(node->GetData<type>().field);
 
 namespace YimMenu::Features
 {
@@ -122,18 +120,20 @@ namespace
 			break;
 		case "CVehicleGadgetDataNode"_J:
 			LOG_FIELD_B(CVehicleGadgetNodeData, m_has_position);
-			if (node->GetData<CVehicleGadgetNodeData>().m_has_position)
-			{
-				for (int j = 0; j < 4; j++)
-				{
-					LOG_FIELD_F(CVehicleGadgetNodeData, m_position[j]);
-				}
-			}
+			const auto& position = node->GetData<CVehicleGadgetNodeData>().m_position;
+			LOG(INFO) << "\tm_position: X: " << position[0] << " Y: " << position[1] << " Z: " << position[2] << " W: " << position[3];
 			LOG_FIELD(CVehicleGadgetNodeData, m_num_gadgets);
-			for (int j = 0; j < 2; j++)
+
+			for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
 			{
-				LOG_FIELD_H(CGadgetData, m_type)
-				LOG_FIELD_BITS(CGadgetData, m_data);
+				LOG(INFO) << "m_gadgets[" << i << "].m_type: " << node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_type;
+				uint32_t sum = 0;
+				for (int j = 0; j < sizeof(node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data); j++)
+				{
+					sum += node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data[j];
+				}
+
+				LOG(INFO) << "\tm_data: " << HEX(sum);
 			}
 			break;
 		}
