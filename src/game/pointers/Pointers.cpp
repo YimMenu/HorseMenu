@@ -268,6 +268,31 @@ namespace YimMenu
 			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
 		});
 
+		constexpr auto pedPoolPtrn = Pattern<"0F 28 F0 48 85 DB 74 56 8A 05 ? ? ? ? 84 C0 75 05">("PedPool");
+		scanner.Add(pedPoolPtrn, [this](PointerCalculator ptr) {
+			PedPool = ptr.Add(10).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto objectPoolPtrn = Pattern<"3C 05 75 67">("ObjectPool");
+		scanner.Add(objectPoolPtrn, [this](PointerCalculator ptr) {
+			ObjectPool = ptr.Add(20).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto vehiclePoolPtrn = Pattern<"48 83 EC 20 8A 05 ? ? ? ? 45 33 E4">("VehiclePool");
+		scanner.Add(vehiclePoolPtrn, [this](PointerCalculator ptr) {
+			VehiclePool = ptr.Add(6).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto pickupPoolPtrn = Pattern<"0F 84 ? ? ? ? 8A 05 ? ? ? ? 48 85">("PickupPool");
+		scanner.Add(pickupPoolPtrn, [this](PointerCalculator ptr) {
+			PickupPool = ptr.Add(8).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto fwScriptGuidCreateGuidPtrn = Pattern<"E8 ? ? ? ? B3 01 8B 15">("FwScriptGuidCreateGuid");
+		scanner.Add(fwScriptGuidCreateGuidPtrn, [this](PointerCalculator ptr) {
+			FwScriptGuidCreateGuid = ptr.Sub(141).As<uint32_t (*)(void*)>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

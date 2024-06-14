@@ -7,7 +7,7 @@
 #include "game/backend/Players.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-
+#include "util/Helpers.hpp"
 
 namespace YimMenu::Features
 {
@@ -21,7 +21,7 @@ namespace YimMenu
 		return std::abs(screenPos.x - 0.5) + std::abs(screenPos.y - 0.5);
 	}
 
-	inline int GetEntityHandleClosestToMiddleOfScreen(bool includePlayers, bool includePeds = false, bool includeVehicles = false, bool includeObjects = false)
+	inline int GetEntityHandleClosestToMiddleOfScreen(bool includePlayers, bool includePeds, bool includeVehicles = false, bool includeObjects = false)
 	{
 		int closestHandle{};
 		float distance = 1;
@@ -47,6 +47,15 @@ namespace YimMenu
 			}
 		}
 
+		if (includePeds)
+		{
+			for (Ped ped : Helpers::GetAllPeds())
+			{
+				if (ped.IsValid() || ped.GetPointer<void*>())
+					updateClosestEntity(ped.GetHandle());
+			}
+		}
+
 		return closestHandle;
 	}
 
@@ -60,7 +69,7 @@ namespace YimMenu
 
 			if (m_Enabled)
 			{
-				auto handle = GetEntityHandleClosestToMiddleOfScreen(true);
+				auto handle = GetEntityHandleClosestToMiddleOfScreen(true, true);
 
 				static auto switchToMenu = [&](ContextOperationsMenu menu) -> void {
 					if (m_CurrentOperationsMenu != menu)
