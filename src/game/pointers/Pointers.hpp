@@ -1,6 +1,7 @@
 #pragma once
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
+#include <rage/pools.hpp>
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -55,6 +56,12 @@ namespace YimMenu
 		rage::scrThread** CurrentScriptThread;
 		Functions::GetLocalPed GetLocalPed;
 		Functions::SendNetInfoToLobby SendNetInfoToLobby;
+
+		PoolEncryption* PedPool;
+		PoolEncryption* ObjectPool;
+		PoolEncryption* VehiclePool;
+		PoolEncryption* PickupPool;
+		uint32_t (*FwScriptGuidCreateGuid)(void*);
 
 		// Security
 		PVOID SendMetric;
