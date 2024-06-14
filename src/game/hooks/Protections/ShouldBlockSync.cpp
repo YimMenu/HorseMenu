@@ -18,6 +18,7 @@
 #include <network/sync/pickup/CPickupCreationData.hpp>
 #include <network/sync/player/CPlayerAppearanceData.hpp>
 #include <network/sync/vehicle/CVehicleCreationData.hpp>
+#include <network/sync/vehicle/CVehicleGadgetData.hpp>
 #include <network/sync/vehicle/CVehicleProximityMigrationData.hpp>
 #include <ped/CPed.hpp>
 #include <unordered_set>
@@ -35,6 +36,8 @@
 	          << " Y: " << ((node->GetData<type>().field)).y << " Z: " << ((node->GetData<type>().field)).z \
 	          << " W: " << ((node->GetData<type>().field)).w;
 #define LOG_FIELD_APPLY(type, field, func) LOG(INFO) << "\t" << #field << ": " << func((node->GetData<type>().field));
+#define LOG_FIELD_F(type, field) LOG(INFO) << "\t" << #field << ": "(float)((node->GetData<type>().field));
+#define LOG_FIELD_BITS(type, field) LOG(INFO) << "\t" << #field << ": " << (float)(node->GetData<type>().field);
 
 namespace YimMenu::Features
 {
@@ -116,6 +119,22 @@ namespace
 		case "CPedAttachDataNode"_J:
 			LOG_FIELD_B(CPedAttachData, m_IsAttached);
 			LOG_FIELD(CPedAttachData, m_AttachObjectId);
+			break;
+		case "CVehicleGadgetDataNode"_J:
+			LOG_FIELD_B(CVehicleGadgetNodeData, m_has_position);
+			if (node->GetData<CVehicleGadgetNodeData>().m_has_position)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					LOG_FIELD_F(CVehicleGadgetNodeData, m_position[j]);
+				}
+			}
+			LOG_FIELD(CVehicleGadgetNodeData, m_num_gadgets);
+			for (int j = 0; j < 2; j++)
+			{
+				LOG_FIELD_H(CGadgetData, m_type)
+				LOG_FIELD_BITS(CGadgetData, m_data);
+			}
 			break;
 		}
 	}
