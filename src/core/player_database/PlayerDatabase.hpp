@@ -67,7 +67,14 @@ namespace YimMenu
 			INVALID_PROPSET,
 		};
 
-		std::unordered_map<eInfraction, std::string> InfractionDescriptions = {{eInfraction::TRIED_CRASH_PLAYER, "Tried to crash you!"}, {eInfraction::TRIED_KICK_PLAYER, "Tried to kick you!"}};
+		std::unordered_map<eInfraction, std::string> InfractionDescriptions = {
+		    {eInfraction::TRIED_CRASH_PLAYER, "Tried to crash you!"},
+		    {eInfraction::TRIED_KICK_PLAYER, "Tried to kick you!"},
+		    {eInfraction::REMOTE_NATIVE_CALL, "Tried to call a native!"},
+		    {eInfraction::TRIED_ATTACH, "Tried to attach to you!"},
+		    {eInfraction::REMOTE_TELEPORT, "Tried to teleport to you!"},
+		    {eInfraction::INVALID_PROPSET, "Tried to create an invalid prop set!"},
+		};
 	};
 
 	struct persistent_player
