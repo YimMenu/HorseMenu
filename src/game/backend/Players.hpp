@@ -7,7 +7,6 @@ namespace YimMenu
 	{
 		std::unordered_map<uint8_t, Player> m_Players{};
 		Player m_SelectedPlayer = Player((uint8_t)0);
-		uint8_t m_PlayerToKick  = uint8_t(0);
 
 	public:
 		static void Tick()
@@ -28,17 +27,6 @@ namespace YimMenu
 		static std::unordered_map<uint8_t, Player>& GetPlayers()
 		{
 			return GetInstance().m_Players;
-		}
-
-
-		static uint8_t GetKickTarget()
-		{
-			return GetInstance().m_PlayerToKick;
-		}
-
-		static void SetKickTarget(uint8_t idx)
-		{
-			GetInstance().m_PlayerToKick = idx;
 		}
 
 	private:
