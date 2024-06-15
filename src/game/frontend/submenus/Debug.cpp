@@ -1,8 +1,10 @@
 #include "Debug.hpp"
 
 #include "core/filemgr/FileMgr.hpp"
+#include "game/backend/FiberPool.hpp"
 #include "game/features/features.hpp"
 #include "game/frontend/items/Items.hpp"
+#include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 
 
@@ -273,6 +275,14 @@ namespace YimMenu::Submenus
 		debug->AddItem(std::make_shared<BoolCommandItem>("logmetrics"_J));
 		debug->AddItem(std::make_shared<BoolCommandItem>("logpackets"_J));
 		debug->AddItem(std::make_shared<BoolCommandItem>("logpresenceevents"_J));
+		debug->AddItem(std::make_shared<ImGuiItem>([] {
+			if (ImGui::Button("Bail to Loading Screen"))
+			{
+				FiberPool::Push([] {
+					SCRIPTS::BAIL_TO_LANDING_PAGE(0);
+				});
+			}
+		}));
 		AddCategory(std::move(debug));
 	}
 }
