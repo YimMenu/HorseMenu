@@ -107,6 +107,14 @@ namespace YimMenu::Submenus
 					// Use Player::GetRID() once #116 is merged
 					g_PlayerDatabase->AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
 				}
+
+				// remove before pr/merge
+				if (ImGui::Button("View SC Profile"))
+					FiberPool::Push([] {
+						uint64_t handle[18];
+						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+						NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
+					});
 			}));
 
 			// TODO: refactor teleport items
@@ -329,9 +337,8 @@ namespace YimMenu::Submenus
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
-			kick->AddItem(std::make_shared<PlayerCommandItem>("oomkick"_J));
 			kick->AddItem(std::make_shared<PlayerCommandItem>("desync"_J));
-			kick->AddItem(std::make_shared<PlayerCommandItem>("complaintkick"_J));
+
 
 			AddCategory(std::move(kick));
 		}
