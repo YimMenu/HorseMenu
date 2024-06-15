@@ -135,4 +135,18 @@ namespace YimMenu
 		player->infractions.insert((int)infraction);
 		Save();
 	}
+
+	void PlayerDatabase::RemoveRID(uint64_t rockstar_id)
+	{
+		if (m_Selected && m_Selected->rid == rockstar_id)
+		{
+			m_Selected = nullptr;
+		}
+
+		if (auto it = m_Data.find(rockstar_id); it != m_Data.end())
+		{
+			m_Data.erase(it);
+			Save();
+		}
+	}
 }

@@ -23,6 +23,8 @@ namespace YimMenu::Submenus
 	static char name_buf[32];
 	static char new_player_name_buf[32];
 	static uint64_t new_player_rid;
+	static bool show_player_editor = false;
+	static bool show_new_player    = true;
 
 	void draw_player_db_entry(std::shared_ptr<persistent_player> player, const std::string& lower_search)
 	{
@@ -48,6 +50,8 @@ namespace YimMenu::Submenus
 				g_PlayerDatabase->SetSelected(player);
 				current_player = player;
 				strncpy(name_buf, current_player->name.data(), sizeof(name_buf));
+				show_new_player    = false;
+				show_player_editor = true;
 			}
 
 			ImGui::PopID();
@@ -64,14 +68,14 @@ namespace YimMenu::Submenus
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
 		session->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
-		session->AddItem(std::make_shared<BoolCommandItem>("locklobby"_J));
 		session->AddItem(std::make_shared<BoolCommandItem>("spoofhosttoken"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
 		database->AddItem(std::make_shared<ImGuiItem>([] {
-			static bool show_new_player = true;
 			ImGui::SetNextItemWidth(300.f);
+			ImGui::PushID(3);
 			ImGui::InputText("Player Name", search, sizeof(search));
+			ImGui::PopID();
 
 
 			if (ImGui::BeginListBox("###players", {180, static_cast<float>(Pointers.ScreenResY - 400 - 38 * 4)}))
@@ -88,15 +92,16 @@ namespace YimMenu::Submenus
 
 				ImGui::EndListBox();
 			}
-			if (auto selected = g_PlayerDatabase->GetSelected())
+			if (auto selected = g_PlayerDatabase->GetSelected() && show_player_editor)
 			{
-				show_new_player = false;
+				ImGui::PushID(1);
 				ImGui::SameLine();
 				if (ImGui::BeginChild("###selected_player", {500, static_cast<float>(Pointers.ScreenResY - 388 - 38 * 4)}, false, ImGuiWindowFlags_NoBackground))
 				{
 					if (ImGui::InputText("Name", name_buf, sizeof(name_buf)))
 					{
 						current_player->name = name_buf;
+						g_PlayerDatabase->Save();
 					}
 
 					if (ImGui::InputScalar("RID", ImGuiDataType_S64, &current_player->rid)
@@ -128,10 +133,23 @@ namespace YimMenu::Submenus
 							                      .c_str());
 						}
 					}
+
+					if (ImGui::Button("Hide Editor"))
+					{
+						show_player_editor = false;
+						show_new_player    = true;
+					}
+
+					if (ImGui::Button("Delete Player"))
+					{
+						g_PlayerDatabase->RemoveRID(current_player->rid);
+					}
+					ImGui::PopID();
 				}
 			}
 			if (show_new_player)
 			{
+				ImGui::PushID(2);
 				ImGui::NewLine();
 				ImGui::InputText("Player Name", new_player_name_buf, sizeof(new_player_name_buf));
 				ImGui::InputScalar("RID", ImGuiDataType_U64, &new_player_rid);
@@ -140,6 +158,7 @@ namespace YimMenu::Submenus
 					current_player = g_PlayerDatabase->GetOrCreatePlayer(new_player_rid, new_player_name_buf);
 					memset(new_player_name_buf, 0, sizeof(new_player_name_buf));
 				}
+				ImGui::PopID();
 			}
 		}));
 		AddCategory(std::move(session));

@@ -55,6 +55,7 @@ namespace YimMenu
 		std::shared_ptr<persistent_player> GetSelected();
 		std::string ConvertInfractionToDescription(int infraction);
 		void AddInfraction(std::shared_ptr<persistent_player> player, int infraction);
+		void RemoveRID(uint64_t rockstar_id);
 
 		enum class eInfraction
 		{

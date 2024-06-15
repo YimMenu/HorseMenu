@@ -42,7 +42,6 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::ResetSyncNodes>(new DetourHook("ResetSyncNodes", Pointers.ResetSyncNodes, Hooks::Protections::ResetSyncNodes));
 		BaseHook::Add<Hooks::Protections::HandleScriptedGameEvent>(new DetourHook("HandleScriptedGameEvent", Pointers.HandleScriptedGameEvent, Hooks::Protections::HandleScriptedGameEvent));
 		BaseHook::Add<Hooks::Protections::AddObjectToCreationQueue>(new DetourHook("AddObjectToCreationQueue", Pointers.AddObjectToCreationQueue, Hooks::Protections::AddObjectToCreationQueue));
-		BaseHook::Add<Hooks::Protections::HandleJoinRequest>(new DetourHook("HandleJoinRequest", Pointers.HandleJoinRequest, Hooks::Protections::HandleJoinRequest));
 		BaseHook::Add<Hooks::Protections::ReceiveNetMessage>(new DetourHook("ReceiveNetMessage", Pointers.ReceiveNetMessage, Hooks::Protections::ReceiveNetMessage));
 		BaseHook::Add<Hooks::Protections::HandlePresenceEvent>(new DetourHook("HandlePresenceEvent", Pointers.HandlePresenceEvent, Hooks::Protections::HandlePresenceEvent));
 		BaseHook::Add<Hooks::Protections::PPostMessage>(new DetourHook("PostMessage", Pointers.PostPresenceMessage, Hooks::Protections::PPostMessage));

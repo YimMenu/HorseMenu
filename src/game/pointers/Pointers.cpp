@@ -263,16 +263,6 @@ namespace YimMenu
 			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
 		});
 
-		constexpr auto handleJoinRequestPtrn = Pattern<"40 53 48 83 EC 20 48 8D 41 08">("HandleJoinRequest");
-		scanner.Add(handleJoinRequestPtrn, [this](PointerCalculator ptr) {
-			HandleJoinRequest = ptr.As<Functions::HandleJoinRequest>();
-		});
-
-		constexpr auto writeJoinResponseDataPtrn = Pattern<"48 8D 4C 24 30 E8 ?? ?? ?? ?? 84 C0 74 04 B0 01 EB 02 32 C0 48 83 C4 20">("WriteJoinResponseData");
-		scanner.Add(writeJoinResponseDataPtrn, [this](PointerCalculator ptr) {
-			WriteJoinResponseData = ptr.Add(1).Rip().As<Functions::WriteJoinResponseData>();
-		});
-
 		constexpr auto sendPacketPtrn = Pattern<"8B 44 24 60 48 8B D6 48 8B CD">("SendPacket");
 		scanner.Add(sendPacketPtrn, [this](PointerCalculator ptr) {
 			SendPacket = ptr.Add(10).Rip().As<Functions::SendPacket>();

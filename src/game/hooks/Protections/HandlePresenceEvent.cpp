@@ -74,7 +74,10 @@ namespace YimMenu::Hooks
 				return true;
 			}
 			else
+			{
+				Notifications::Show("Presence Event", std::string(sender_str).append(" is joining"), NotificationType::Warning);
 				break;
+			}
 		}
 		case (uint32_t)ePresenceEvents::PRESENCE_STAT_UPDATE:
 		{
