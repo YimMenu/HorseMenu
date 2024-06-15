@@ -1427,6 +1427,8 @@ enum class NetMessage : uint32_t
 	MsgReassignResponse                            = 0x7A,
 	MsgReassignNegotiate                           = 0x78,
 	MsgReassignConfirm                             = 0x79,
+	MsgRequestObjectIds                            = 0x72,
+	MsgInformObjectIds                             = 0x73
 };
 
 enum class eWeaponHash : uint32_t
@@ -1563,7 +1565,7 @@ enum class ePresenceEvents : uint32_t
 	PRESENCE_INVITE_RESPONSE              = 0x391da84f,
 	PRESENCE_INVITE_UPDATE_EVENT          = 0x4d9b285a,
 	PRESENCE_INVITE_SERVER_INFO           = 0xf3b22733,
-	PRESENCE_JOIN_REQUEST                 = 0x5e61ebb6, // block this for block join?
+	PRESENCE_JOIN_REQUEST                 = 0x5e61ebb6,
 	PRESENCE_JOIN_RESPONSE                = 0x606d1ddb,
 	PRESENCE_ADMIN_JOIN_EVENT             = 0xc167b73,
 	PRESENCE_NEWS                         = 0x6eaf6b7d,
