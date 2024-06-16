@@ -13,6 +13,7 @@
 #include "game/frontend/items/Items.hpp"
 #include "game/pointers/Pointers.hpp"
 
+#include <network/rlGamerHandle.hpp>
 #include <ranges>
 
 
@@ -134,15 +135,15 @@ namespace YimMenu::Submenus
 						}
 					}
 
+					if (ImGui::Button("Delete Player"))
+					{
+						g_PlayerDatabase->RemoveRID(current_player->rid);
+					}
+
 					if (ImGui::Button("Hide Editor"))
 					{
 						show_player_editor = false;
 						show_new_player    = true;
-					}
-
-					if (ImGui::Button("Delete Player"))
-					{
-						g_PlayerDatabase->RemoveRID(current_player->rid);
 					}
 					ImGui::PopID();
 				}
