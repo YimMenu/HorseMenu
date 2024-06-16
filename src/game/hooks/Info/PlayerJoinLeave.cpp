@@ -1,8 +1,9 @@
+#include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "game/hooks/Hooks.hpp"
-#include "core/frontend/Notifications.hpp"
 #include "game/rdr/Natives.hpp"
 #include "network/CNetGamePlayer.hpp"
+
 
 namespace YimMenu::Hooks
 {
