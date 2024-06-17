@@ -329,6 +329,16 @@ namespace
 					    NotificationType::Warning);
 					return true;
 				}
+
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				{
+					LOG(WARNING) << "Blocked physical trailer attachment crash from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections",
+					    std::string("Blocked physical trailer attachment crash from ")
+					        .append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
+					return true;
+				}
 			}
 			break;
 		}
@@ -372,6 +382,15 @@ namespace
 					LOG(WARNING) << "Blocked ped attachment from " << Protections::GetSyncingPlayer().GetName();
 					Notifications::Show("Protections",
 					    std::string("Blocked ped attachment from ").append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
+					return true;
+				}
+
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				{
+					LOG(WARNING) << "Blocked trailer ped attachment crash from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections",
+					    std::string("Blocked trailer ped attachment crash from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
 					return true;
 				}
