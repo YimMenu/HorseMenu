@@ -49,41 +49,38 @@ namespace YimMenu::Hooks
 
 		uint32_t presence_hash = Joaat(event_payload["e"].get<std::string_view>());
 
-		if (Features::_LogPresenceEvents.GetState())
-		{
-			LOG(VERBOSE) << "Hash of Presence Event: " << std::to_string(presence_hash) << " Sender: " << sender_str << " Channel: " << channel;
-		}
-
 		switch (presence_hash)
 		{
 		case (uint32_t)ePresenceEvents::PRESENCE_ADMIN_JOIN_EVENT:
 		{
 			Notifications::Show("Presence Event", std::string("A Rockstar Games Admin ").append(sender_str).append(" is joining your game!"), NotificationType::Warning);
+			LOG(WARNING) << "A Rockstar Games Admin(" << sender_str << ")"
+			             << "is joining your game";
 			break;
 		}
 		case (uint32_t)ePresenceEvents::PRESENCE_TEXT_MESSAGE:
 		{
 			Notifications::Show("Presence Event", std::string("Blocked Text Message from ").append(sender_str), NotificationType::Warning);
+			LOG(WARNING) << "Blocked Text Message from " << sender_str;
 			return true;
 		}
 		case (uint32_t)ePresenceEvents::PRESENCE_JOIN_REQUEST:
 		{
-			if (auto plyr = g_PlayerDatabase->GetPlayer(gamerInfo->m_GamerHandle.m_rockstar_id); plyr != nullptr && plyr->block_join)
-			{
-				Notifications::Show("Presence Event", std::string("Blocked ").append(sender_str).append(" from joining"), NotificationType::Warning);
-				return true;
-			}
-			else
-			{
-				Notifications::Show("Presence Event", std::string(sender_str).append(" is joining"), NotificationType::Warning);
-				break;
-			}
+			Notifications::Show("Presence Event", std::string(sender_str).append(" is joining"), NotificationType::Warning);
+			LOG(WARNING) << "Received Join Request from " << sender_str;
+			break;
 		}
 		case (uint32_t)ePresenceEvents::PRESENCE_STAT_UPDATE:
 		{
-			Notifications::Show("Presence Event", std::string("Received Stat Update"), NotificationType::Warning);
+			Notifications::Show("Presence Event", std::string("Received Stat Update from ").append(sender_str), NotificationType::Warning);
+			LOG(WARNING) << "Received Stat Update from " << sender_str;
 			break;
 		}
+		}
+
+		if (Features::_LogPresenceEvents.GetState())
+		{
+			LOG(VERBOSE) << "Hash of Presence Event: " << std::to_string(presence_hash) << " Sender: " << sender_str << " Channel: " << std::string(channel);
 		}
 
 		return BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()
