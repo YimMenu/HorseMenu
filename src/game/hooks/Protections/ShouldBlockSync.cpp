@@ -347,20 +347,6 @@ namespace
 					    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 					return true;
 				}
-
-				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
-				{
-					LOG(WARNING) << "Blocked Invalid Attachment(Trailer) Crash from " << Protections::GetSyncingPlayer().GetName();
-					Notifications::Show("Protections",
-					    std::string("Blocked Invalid Attachment(Trailer) Crash from ")
-					        .append(Protections::GetSyncingPlayer().GetName()),
-					    NotificationType::Warning);
-					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
-					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
-					                                    Protections::GetSyncingPlayer().GetName()),
-					    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
-					return true;
-				}
 			}
 			break;
 		}
