@@ -15,6 +15,7 @@ namespace YimMenu::Features
 			PED::CLEAR_PED_WETNESS(Self::PlayerPed);
 			PED::CLEAR_PED_ENV_DIRT(Self::PlayerPed);
 			PED::CLEAR_PED_BLOOD_DAMAGE(Self::PlayerPed);
+			PED::CLEAR_PED_DAMAGE_DECAL_BY_ZONE(Self::PlayerPed, 10, "ALL");
 		}
 	};
 

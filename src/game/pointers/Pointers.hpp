@@ -1,6 +1,7 @@
 #pragma once
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
+#include <rage/pools.hpp>
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -20,6 +21,7 @@ namespace rage
 	class netEventMgr;
 	class netSyncTree;
 	class netObject;
+	class rlGamerInfo;
 }
 
 namespace YimMenu
@@ -36,8 +38,9 @@ namespace YimMenu
 		using GetSyncTreeForType        = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
 		using GetNetworkPlayerFromPid   = CNetGamePlayer* (*)(uint8_t player);
 		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
-		using GetNetObjectById        = rage::netObject*(*)(uint16_t id);
+		using GetNetObjectById          = rage::netObject* (*)(uint16_t id);
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
+		using SendNetInfoToLobby        = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
 	};
 
 	struct PointerData
@@ -52,6 +55,13 @@ namespace YimMenu
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
 		Functions::GetLocalPed GetLocalPed;
+		Functions::SendNetInfoToLobby SendNetInfoToLobby;
+
+		PoolEncryption* PedPool;
+		PoolEncryption* ObjectPool;
+		PoolEncryption* VehiclePool;
+		PoolEncryption* PickupPool;
+		uint32_t (*FwScriptGuidCreateGuid)(void*);
 
 		// Security
 		PVOID SendMetric;

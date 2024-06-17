@@ -5,11 +5,8 @@ namespace YimMenu
 	void Byte_Patch_Manager::InitImpl()
 	{
 		// put patches here
-		// example usage:
-		//
-		//BytePatch::Make(Pointers.GetLocalPed,0)->apply();
 
-		LOG(INFO) << "Byte patch manager initialized";
+		LOG(INFO) << "Byte Patch Manager initialized";
 	}
 
 	void Byte_Patch_Manager::Init()

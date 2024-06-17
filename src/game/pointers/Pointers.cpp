@@ -3,19 +3,20 @@
 #include "core/memory/BytePatch.hpp"
 #include "core/memory/ModuleMgr.hpp"
 #include "core/memory/PatternScanner.hpp"
-#include "util/Joaat.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "util/GraphicsValue.hpp"
+#include "util/Joaat.hpp"
+
 
 namespace YimMenu
 {
-	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes) //TODO: make service
+	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes)
 	{
 		DWORD oldProtect;
 		VirtualProtect(address, numBytes, PAGE_EXECUTE_READWRITE, &oldProtect);
 		memcpy(address, bytes, numBytes);
 		VirtualProtect(address, numBytes, oldProtect, &oldProtect);
-	} 
+	}
 
 	bool Pointers::Init()
 	{
@@ -44,14 +45,13 @@ namespace YimMenu
 			GetRendererInfo = ptr.Add(1).Rip().As<Functions::GetRendererInfo>();
 		});
 
-	    constexpr auto gfxInformationPtrn = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
+		constexpr auto gfxInformationPtrn = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
 		scanner.Add(gfxInformationPtrn, [this](PointerCalculator ptr) {
 			auto gfx = ptr.Add(3).Rip().As<GraphicsOptions*>();
 
 			if (gfx->m_hdr)
 			{
 				LOG(WARNING) << "Turn HDR off if your using DX12!";
-
 			}
 
 			if (gfx->m_motion_blur)
@@ -63,13 +63,12 @@ namespace YimMenu
 
 			if (gfx->m_unk)
 			{
-				ScreenResX = gfx->m_screen_resolution_x; 
-				ScreenResY =  gfx->m_screen_resolution_y;
+				ScreenResX = gfx->m_screen_resolution_x;
+				ScreenResY = gfx->m_screen_resolution_y;
 				LOG(INFO) << "Screen Resolution: " << ScreenResX << "x" << ScreenResY;
 			}
+		});
 
-	    });
-		
 		constexpr auto wndProcPtrn = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
 		scanner.Add(wndProcPtrn, [this](PointerCalculator ptr) {
 			WndProc = ptr.As<PVOID>();
@@ -108,8 +107,8 @@ namespace YimMenu
 
 		constexpr auto vmDetectionCallbackPtrn = Pattern<"48 8B 0D ? ? ? ? E8 ? ? ? ? 48 8B 0D ? ? ? ? 8D 7E">("VMDetectionCallback");
 		scanner.Add(vmDetectionCallbackPtrn, [this](PointerCalculator ptr) {
-			auto loc =  ptr.Add(3).Rip().As<uint8_t*>();
-			VmDetectionCallback = (PVOID*)loc;
+			auto loc                = ptr.Add(3).Rip().As<uint8_t*>();
+			VmDetectionCallback     = (PVOID*)loc;
 			RageSecurityInitialized = (bool*)(loc - 6);
 		});
 
@@ -199,7 +198,7 @@ namespace YimMenu
 			ThrowFatalError = ptr.As<PVOID>();
 		});
 
-        constexpr auto networkRequestPtrn = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
+		constexpr auto networkRequestPtrn = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
 		scanner.Add(networkRequestPtrn, [this](PointerCalculator ptr) {
 			NetworkRequest = ptr.As<PVOID>();
 		});
@@ -264,8 +263,38 @@ namespace YimMenu
 			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
 		});
 
+		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 56 57 41 54 41 56 41 57 48 83 EC 50 4D 8B F1 48 8B F9 48 81 C1 A0 00 00 00 4C 8D 48 08 41 8B E8 4C 8B FA 33 DB E8 ?? ?? ?? ?? 84 C0 0F 84 C8">("SendNetInfoToLobby");
+		scanner.Add(sendNetInfoToLobbyPtrn, [this](PointerCalculator ptr) {
+			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
+		});
+
+		constexpr auto pedPoolPtrn = Pattern<"0F 28 F0 48 85 DB 74 56 8A 05 ? ? ? ? 84 C0 75 05">("PedPool");
+		scanner.Add(pedPoolPtrn, [this](PointerCalculator ptr) {
+			PedPool = ptr.Add(10).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto objectPoolPtrn = Pattern<"3C 05 75 67">("ObjectPool");
+		scanner.Add(objectPoolPtrn, [this](PointerCalculator ptr) {
+			ObjectPool = ptr.Add(20).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto vehiclePoolPtrn = Pattern<"48 83 EC 20 8A 05 ? ? ? ? 45 33 E4">("VehiclePool");
+		scanner.Add(vehiclePoolPtrn, [this](PointerCalculator ptr) {
+			VehiclePool = ptr.Add(6).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto pickupPoolPtrn = Pattern<"0F 84 ? ? ? ? 8A 05 ? ? ? ? 48 85">("PickupPool");
+		scanner.Add(pickupPoolPtrn, [this](PointerCalculator ptr) {
+			PickupPool = ptr.Add(8).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto fwScriptGuidCreateGuidPtrn = Pattern<"E8 ? ? ? ? B3 01 8B 15">("FwScriptGuidCreateGuid");
+		scanner.Add(fwScriptGuidCreateGuidPtrn, [this](PointerCalculator ptr) {
+			FwScriptGuidCreateGuid = ptr.Sub(141).As<uint32_t (*)(void*)>();
+		});
+
 		if (!scanner.Scan())
-		{ 
+		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
 
 			return false;

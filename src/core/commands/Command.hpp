@@ -1,6 +1,8 @@
 #pragma once
 #include "util/Joaat.hpp"
+
 #include <nlohmann/json.hpp>
+
 
 namespace YimMenu
 {
@@ -12,7 +14,7 @@ namespace YimMenu
 		std::string m_Description;
 		joaat_t m_Hash;
 
-		int m_NumArgs  = 0; // TODO: currently unused
+		int m_NumArgs = 0; // TODO: currently unused
 
 	protected:
 		virtual void OnCall() = 0;

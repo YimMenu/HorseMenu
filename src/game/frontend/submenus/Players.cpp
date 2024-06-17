@@ -1,5 +1,6 @@
 #include "Players.hpp"
 
+#include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
@@ -9,7 +10,6 @@
 #include "util/teleport.hpp"
 
 #include <string>
-
 
 
 // remove after testing
@@ -24,10 +24,15 @@
 
 #include <script/scrThread.hpp>
 
+namespace YimMenu::Features
+{
+	BoolCommand _PopPlayerList{"popplayerlist", "Pop Player List", "Removes the player list in certain GUI interactions"};
+}
+
 
 namespace YimMenu::Submenus
 {
-	bool popPlayerList = true; //TODO make optional
+	//bool popPlayerList = Features::_PopPlayerList.GetState();
 	void drawPlayerList(bool external, float offset = 15.0f)
 	{
 		struct ComparePlayerNames
@@ -62,12 +67,16 @@ namespace YimMenu::Submenus
 		}
 		else
 		{
-			for (auto& [id, player] : sortedPlayers)
+			if (ImGui::BeginCombo("Players", YimMenu::Players::GetSelected().GetName()))
 			{
-				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
+				for (auto& [id, player] : sortedPlayers)
 				{
-					YimMenu::Players::SetSelected(id);
+					if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
+					{
+						YimMenu::Players::SetSelected(id);
+					}
 				}
+				ImGui::EndCombo();
 			}
 		}
 	}
@@ -95,6 +104,19 @@ namespace YimMenu::Submenus
 				{
 					YimMenu::Players::SetSelected(Self::Id);
 				}
+				if (ImGui::Button("View SC Profile"))
+					FiberPool::Push([] {
+						uint64_t handle[18];
+						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+						NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
+					});
+
+				if (ImGui::Button("Add Friend"))
+					FiberPool::Push([] {
+						uint64_t handle[18];
+						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+						NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
+					});
 			}));
 
 			// TODO: refactor teleport items
@@ -143,21 +165,43 @@ namespace YimMenu::Submenus
 			auto helpful = std::make_shared<Category>("Helpful");
 
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
-				drawPlayerList(popPlayerList);
+				drawPlayerList(!Features::_PopPlayerList.GetState());
 			}));
 
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
+				if (Features::_PopPlayerList.GetState())
+					ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
-				if (ImGui::Button("Spawn Wagon for Player"))
+				if (ImGui::Button("Spawn Bounty Wagon for Player"))
 				{
 					FiberPool::Push([] {
-						SpawnVehicle("wagonarmoured01x",
-						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
-						Notifications::Show("Spawned Wagon", "Spawned Wagon for Player", NotificationType::Success);
+						Vector3 coords = ENTITY::GET_ENTITY_COORDS(YimMenu::Players::GetSelected().GetPed().GetHandle(), true, true);
+						float rot = ENTITY::GET_ENTITY_ROTATION(YimMenu::Players::GetSelected().GetPed().GetHandle(), 0).z;
+						SpawnVehicle("wagonarmoured01x", coords, rot);
+						Notifications::Show("Spawned Wagon", "Spawned Bounty Wagon for Player", NotificationType::Success);
 					});
 				};
+				if (ImGui::Button("Spawn Hunting Wagon for Player"))
+				{
+					FiberPool::Push([] {
+						int id   = YimMenu::Players::GetSelected().GetId();
+						auto ped = PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id);
+						Vector3 dim1, dim2;
+						MISC::GET_MODEL_DIMENSIONS(MISC::GET_HASH_KEY("huntercart01"), &dim1, &dim2);
+						float offset = dim2.y * 1.6;
+
+						Vector3 dir = ENTITY::GET_ENTITY_FORWARD_VECTOR(ped);
+						float rot   = (ENTITY::GET_ENTITY_ROTATION(ped, 0)).z;
+						Vector3 pos = ENTITY::GET_ENTITY_COORDS(ped, true, true);
+
+						int handle = SpawnVehicle("huntercart01",
+						    Vector3{pos.x + (dir.x * offset), pos.y + (dir.y * offset), pos.z},
+						    ENTITY::GET_ENTITY_ROTATION(ped, 0).z);
+						PLAYER::_SET_PLAYER_HUNTING_WAGON(id, handle);
+						Notifications::Show("Spawned Wagon", "Spawned Hunting Wagon for Player", NotificationType::Success);
+					});
+				}
 			}));
 
 			AddCategory(std::move(helpful));
@@ -167,11 +211,12 @@ namespace YimMenu::Submenus
 			auto trolling = std::make_shared<Category>("Trolling");
 
 			trolling->AddItem(std::make_shared<ImGuiItem>([] {
-				drawPlayerList(popPlayerList);
+				drawPlayerList(!Features::_PopPlayerList.GetState());
 			}));
 
 			trolling->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
+				if (Features::_PopPlayerList.GetState())
+					ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
 			AddCategory(std::move(trolling));
@@ -194,115 +239,9 @@ namespace YimMenu::Submenus
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
-
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				if (ImGui::Button("Test"))
-				{
-					FiberPool::Push([] {
-						using Scf = void (*)(void* ent, int flg, bool val, bool net);
-						Scf scf   = (Scf)((__int64)GetModuleHandleA(0) + 0x1d0e898);
-						for (int i = 0; i < 0x7F; i++)
-						{
-							if (!(i % 12))
-								ScriptMgr::Yield();
-							scf(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(), i, true, true);
-						}
-					});
-				}
-
-				if (ImGui::Button("Test 2"))
-				{
-					FiberPool::Push([] {
-						using Pd = void (*)(__int16 net);
-						Pd pd    = (Pd)((__int64)GetModuleHandleA(0) + 0x23f4eb8);
-						pd(YimMenu::Players::GetSelected().GetPed().GetNetworkObjectId());
-					});
-				}
-
-				if (ImGui::Button("Test 3"))
-				{
-					FiberPool::Push([] {
-						float test = 2345.0f;
-						PED::_0x09E378C52B1433B5(YimMenu::Players::GetSelected().GetPed().GetHandle(), *(int*)&test, *(int*)&test, *(int*)&test, *(int*)&test);
-					});
-				}
-
-				if (ImGui::Button("Test 4"))
-				{
-					FiberPool::Push([] {
-						using GE = void (*)(__int16 net, bool ghost);
-						GE ge    = (GE)((__int64)GetModuleHandleA(0) + 0x23f43f0);
-						ge(YimMenu::Players::GetSelected().GetPed().GetNetworkObjectId(), true);
-					});
-				}
-
-				if (ImGui::Button("Test 10"))
-				{
-					FiberPool::Push([] {
-						MISC::SET_CHEAT_ACTIVE(4);
-					});
-				}
-
-
-				if (ImGui::Button("Test 11"))
-				{
-					FiberPool::Push([] {
-						using LP = void (*)(void* looter, void*, bool, bool);
-						LP lp    = (LP)((__int64)GetModuleHandleA(0) + 0x23f3324);
-						lp(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(), Pointers.GetLocalPed(), true, true);
-					});
-				}
-
-				if (ImGui::Button("Test 12"))
-				{
-					FiberPool::Push([] {
-						using GM = void* (*)(void*);
-						using SM = void (*)(void*, int, float, void*, bool); // PED::_SET_PED_MOTIVATION
-						GM gm    = (GM)((__int64)GetModuleHandleA(0) + 0xcb8ee8);
-						SM sm    = (SM)((__int64)GetModuleHandleA(0) + 0x9a2ab0);
-						sm(gm(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>()), 10, 999.0f, nullptr, true);
-					});
-				}
-
-				if (ImGui::Button("Test 13"))
-				{
-					FiberPool::Push([] {
-						using CS = void (*)(void*, void*, float);
-						CS cs    = (CS)((__int64)GetModuleHandleA(0) + 0x23f64d0);
-						cs(YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(),
-						    YimMenu::Players::GetSelected().GetPed().GetPointer<void*>(),
-						    -9999.0f); // positive to add
-					});
-				}
-
-				if (ImGui::Button("Test 15"))
-				{
-					FiberPool::Push([] {
-						struct Struct1
-						{
-							SCR_INT Time;
-							SCR_INT Pad[12];
-						};
-
-						struct Struct2
-						{
-							SCR_INT Pad;
-							const char* VarString;
-							SCR_INT Pad2[2];
-						};
-
-						Struct1 s1{};
-						Struct2 s2{};
-
-						s1.Time = 3000;
-
-						auto text    = MISC::VAR_STRING(10, "LITERAL_STRING"s.data(), "~b~Player~s~ left."s.data());
-						s2.VarString = text;
-
-						UIFEED::_UI_FEED_POST_FEED_TICKER(&s1, &s2, false);
-					});
-				}
-			}));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("circus"_J));
 
 			AddCategory(std::move(toxic));
 		}
