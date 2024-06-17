@@ -99,7 +99,7 @@ namespace YimMenu::Submenus
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnwagon"_J));
-		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("eagleeye"_J));
+		//toolsGroup->AddItem(std::make_shared<BoolCommandItem>("eagleeye"_J)); Temporarily Disabled until a solution is found for allowing running while active.
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnbountywagon"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 
