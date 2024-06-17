@@ -337,9 +337,6 @@ namespace YimMenu::Submenus
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
-			kick->AddItem(std::make_shared<PlayerCommandItem>("desync"_J));
-
-
 			AddCategory(std::move(kick));
 		}
 	}

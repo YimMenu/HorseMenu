@@ -1562,7 +1562,7 @@ enum class ePresenceEvents : uint32_t
 	PRESENCE_INVITE                       = 0xfbcc029b,
 	PRESENCE_INVITE_CANCEL                = 0x193994f5,
 	PRESENCE_INVITE_REQUEST_RESULT_EVENT  = 0xe89a4022,
-	PRESENCE_INVITE_RESPONSE              = 0x391da84f,
+	PRESENCE_INVITE_RESPONSE              = 0x391da84f, // used for presence kick
 	PRESENCE_INVITE_UPDATE_EVENT          = 0x4d9b285a,
 	PRESENCE_INVITE_SERVER_INFO           = 0xf3b22733,
 	PRESENCE_JOIN_REQUEST                 = 0x5e61ebb6,
