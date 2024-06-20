@@ -18,6 +18,7 @@
 #include <network/sync/pickup/CPickupCreationData.hpp>
 #include <network/sync/player/CPlayerAppearanceData.hpp>
 #include <network/sync/vehicle/CVehicleCreationData.hpp>
+#include <network/sync/vehicle/CVehicleGadgetData.hpp>
 #include <network/sync/vehicle/CVehicleProximityMigrationData.hpp>
 #include <ped/CPed.hpp>
 #include <unordered_set>
@@ -116,6 +117,24 @@ namespace
 		case "CPedAttachDataNode"_J:
 			LOG_FIELD_B(CPedAttachData, m_IsAttached);
 			LOG_FIELD(CPedAttachData, m_AttachObjectId);
+			break;
+		case "CVehicleGadgetDataNode"_J:
+			LOG_FIELD_B(CVehicleGadgetNodeData, m_has_position);
+			const auto& position = node->GetData<CVehicleGadgetNodeData>().m_position;
+			LOG(INFO) << "\tm_position: X: " << position[0] << " Y: " << position[1] << " Z: " << position[2] << " W: " << position[3];
+			LOG_FIELD(CVehicleGadgetNodeData, m_num_gadgets);
+
+			for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
+			{
+				LOG(INFO) << "m_gadgets[" << i << "].m_type: " << node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_type;
+				uint32_t sum = 0;
+				for (int j = 0; j < sizeof(node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data); j++)
+				{
+					sum += node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data[j];
+				}
+
+				LOG(INFO) << "\tm_data: " << HEX(sum);
+			}
 			break;
 		}
 	}
@@ -310,6 +329,16 @@ namespace
 					    NotificationType::Warning);
 					return true;
 				}
+
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				{
+					LOG(WARNING) << "Blocked physical trailer attachment crash from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections",
+					    std::string("Blocked physical trailer attachment crash from ")
+					        .append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
+					return true;
+				}
 			}
 			break;
 		}
@@ -353,6 +382,15 @@ namespace
 					LOG(WARNING) << "Blocked ped attachment from " << Protections::GetSyncingPlayer().GetName();
 					Notifications::Show("Protections",
 					    std::string("Blocked ped attachment from ").append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
+					return true;
+				}
+
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				{
+					LOG(WARNING) << "Blocked trailer ped attachment crash from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections",
+					    std::string("Blocked trailer ped attachment crash from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
 					return true;
 				}
