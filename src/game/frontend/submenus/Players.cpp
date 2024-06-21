@@ -22,7 +22,9 @@
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
 
+#include <network/netPeerAddress.hpp>
 #include <script/scrThread.hpp>
+
 
 namespace YimMenu::Features
 {
@@ -99,24 +101,46 @@ namespace YimMenu::Submenus
 				{
 					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 					ImGui::Text(YimMenu::Players::GetSelected().GetName());
+
+					auto rid_str = std::to_string(YimMenu::Players::GetSelected().GetRID());
+					ImGui::Text("RID:");
+					ImGui::SameLine();
+					if (ImGui::Button(rid_str.c_str()))
+					{
+						ImGui::SetClipboardText(rid_str.c_str());
+					}
+
+					auto ip = YimMenu::Players::GetSelected().GetExternalIpAddress();
+					ImGui::Text("IP Address:");
+					ImGui::SameLine();
+					auto ip_str = std::string(std::to_string(ip.m_field1))
+					                  .append("." + std::to_string(ip.m_field2))
+					                  .append("." + std::to_string(ip.m_field3))
+					                  .append("." + std::to_string(ip.m_field4));
+					if (ImGui::Button(ip_str.c_str()))
+					{
+						ImGui::SetClipboardText(ip_str.c_str());
+					}
+
+					if (ImGui::Button("View SC Profile"))
+						FiberPool::Push([] {
+							uint64_t handle[18];
+							NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+							NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
+						});
+
+					if (ImGui::Button("Add Friend"))
+						FiberPool::Push([] {
+							uint64_t handle[18];
+							NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+							NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
+						});
 				}
 				else
 				{
 					YimMenu::Players::SetSelected(Self::Id);
+					ImGui::Text("No Valid Players or You aren't in a Session yet!");
 				}
-				if (ImGui::Button("View SC Profile"))
-					FiberPool::Push([] {
-						uint64_t handle[18];
-						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
-						NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
-					});
-
-				if (ImGui::Button("Add Friend"))
-					FiberPool::Push([] {
-						uint64_t handle[18];
-						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
-						NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
-					});
 			}));
 
 			// TODO: refactor teleport items
