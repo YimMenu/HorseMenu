@@ -82,13 +82,19 @@ namespace YimMenu::Submenus
 			if (ImGui::BeginListBox("###players", {180, static_cast<float>(Pointers.ScreenResY - 400 - 38 * 4)}))
 			{
 				auto& item_arr = g_PlayerDatabase->GetAllPlayers();
-
-				std::string lower_search = search;
-				std::transform(lower_search.begin(), lower_search.end(), lower_search.begin(), ::tolower);
-
-				for (auto& player : item_arr)
+				if (item_arr.size() > 0)
 				{
-					draw_player_db_entry(player.second, lower_search);
+					std::string lower_search = search;
+					std::transform(lower_search.begin(), lower_search.end(), lower_search.begin(), ::tolower);
+
+					for (auto& player : item_arr)
+					{
+						draw_player_db_entry(player.second, lower_search);
+					}
+				}
+				else
+				{
+					ImGui::Text("No Players Found!");
 				}
 
 				ImGui::EndListBox();
