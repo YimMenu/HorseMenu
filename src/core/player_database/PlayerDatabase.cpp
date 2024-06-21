@@ -133,6 +133,10 @@ namespace YimMenu
 	void PlayerDatabase::AddInfraction(std::shared_ptr<persistent_player> player, int infraction)
 	{
 		player->infractions.insert((int)infraction);
+		if (!player->is_modder)
+		{
+			player->is_modder = true;
+		}
 		Save();
 	}
 
