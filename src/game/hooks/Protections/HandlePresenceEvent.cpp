@@ -49,6 +49,11 @@ namespace YimMenu::Hooks
 
 		uint32_t presence_hash = Joaat(event_payload["e"].get<std::string_view>());
 
+		if (Features::_LogPresenceEvents.GetState())
+		{
+			LOG(VERBOSE) << "Hash of Presence Event: " << std::to_string(presence_hash) << " Sender: " << sender_str << " Channel: " << std::string(channel);
+		}
+
 		switch (presence_hash)
 		{
 		case (uint32_t)ePresenceEvents::PRESENCE_ADMIN_JOIN_EVENT:
@@ -76,11 +81,14 @@ namespace YimMenu::Hooks
 			LOG(WARNING) << "Received Stat Update from " << sender_str;
 			break;
 		}
-		}
-
-		if (Features::_LogPresenceEvents.GetState())
+		//really bad protection - presence kick uses mutated json members(or something like that) to kick the person. We need to figure out what that is and block it if that is present
+		case (uint32_t)ePresenceEvents::PRESENCE_INVITE_RESPONSE:
 		{
-			LOG(VERBOSE) << "Hash of Presence Event: " << std::to_string(presence_hash) << " Sender: " << sender_str << " Channel: " << std::string(channel);
+			Notifications::Show("Presence Event", std::string("Blocked Kick from ").append(sender_str), NotificationType::Warning);
+			LOG(WARNING) << "Blocked Kick from  " << sender_str;
+			g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(gamerInfo->m_GamerHandle.m_rockstar_id, sender_str), (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
+			return true;
+		}
 		}
 
 		return BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()
