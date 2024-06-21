@@ -1,11 +1,13 @@
 #include "Teleport.hpp"
-#include "game/features/Features.hpp"
-#include "game/frontend/items/Items.hpp"
-#include "game/bigfeatures/CustomTeleport.hpp"
-#include "util/Math.hpp"
-#include "util/Teleport.hpp"
+
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/bigfeatures/CustomTeleport.hpp"
+#include "game/features/Features.hpp"
+#include "game/frontend/items/Items.hpp"
+#include "util/Math.hpp"
+#include "util/Teleport.hpp"
+
 
 namespace YimMenu::Submenus
 {
@@ -156,7 +158,7 @@ namespace YimMenu::Submenus
 							{
 								FiberPool::Push([l] {
 									rage::fvector3 l_ = {l.x, l.y, l.z};
-									YimMenu::Teleport::TeleportEntity(Self::PlayerPed,l_, false);
+									YimMenu::Teleport::TeleportEntity(Self::PlayerPed, l_, false);
 								});
 							}
 						}
@@ -183,12 +185,13 @@ namespace YimMenu::Submenus
 	Teleport::Teleport() :
 	    Submenu::Submenu("Teleport")
 	{
-		auto main = std::make_shared<Category>("Main");
-		auto columns = std::make_shared<Column>(2);
+		auto main      = std::make_shared<Category>("Main");
+		auto columns   = std::make_shared<Column>(2);
 		auto miscGroup = std::make_shared<Group>("Misc", GetListBoxDimensions());
 
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptowaypoint"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptomount"_J));
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 
 		columns->AddItem(miscGroup);
 		main->AddItem(columns);

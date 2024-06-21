@@ -79,7 +79,6 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("colorfullantern"_J));
 
 
