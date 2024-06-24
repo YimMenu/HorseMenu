@@ -14,7 +14,6 @@ namespace rage
 	class CJoinRequestContext;
 	class CMsgJoinResponse;
 	class rlGamerInfo;
-	class CPlayerCameraDataNode;
 	class netConnectionManager;
 #pragma pack(push, 1)
 	class InFrame
