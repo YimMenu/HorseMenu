@@ -142,16 +142,16 @@ namespace YimMenu::Submenus
 							NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
 							NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
 						});
+					if (ImGui::Button("Add to Player Database"))
+					{
+						auto plyr = YimMenu::Players::GetSelected();
+						g_PlayerDatabase->AddPlayer(plyr.GetRID(), plyr.GetName());
+					}
 				}
 				else
 				{
 					YimMenu::Players::SetSelected(Self::Id);
-					ImGui::Text("No Valid Players or You aren't in a Session yet!");
-				}
-				if (ImGui::Button("Add to Player Database") && YimMenu::Players::GetSelected().IsValid())
-				{
-					auto plyr = YimMenu::Players::GetSelected();
-					g_PlayerDatabase->AddPlayer(plyr.GetRID(), plyr.GetName());
+					ImGui::Text("No Players Yet!");
 				}
 			}));
 
