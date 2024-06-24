@@ -25,7 +25,6 @@ namespace YimMenu::Hooks
 			LOG(VERBOSE) << "TTL: " << ttlSeconds;
 		}
 
-
 		return BaseHook::Get<Protections::PPostMessage, DetourHook<decltype(&Protections::PPostMessage)>>()->Original()(localGamerIndex, recipients, numRecipients, msg, ttlSeconds);
 	}
 }
