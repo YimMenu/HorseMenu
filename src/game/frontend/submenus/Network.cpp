@@ -16,10 +16,11 @@
 #include "game/rdr/Natives.hpp"
 #include "util/Storage/Spoofing.hpp"
 
+#include <map>
 #include <network/rlGamerHandle.hpp>
 #include <ranges>
-#include <map>
 #include <string>
+
 
 
 namespace YimMenu::Submenus
@@ -41,16 +42,6 @@ namespace YimMenu::Submenus
 		{
 			ImGui::PushID(player->rid);
 
-			//float circle_size = 7.5f;
-			//auto cursor_pos   = ImGui::GetCursorScreenPos();
-
-			//render status circle
-			//ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(cursor_pos.x + 4.f + circle_size, cursor_pos.y + 4.f + circle_size), circle_size, ImColor(get_player_color(*player)));
-
-			//we need some padding
-			//ImVec2 cursor = ImGui::GetCursorPos();
-			//ImGui::SetCursorPos(ImVec2(cursor.x + 25.f, cursor.y));
-
 			if (ImGui::Selectable(player->name.c_str(), player == g_PlayerDatabase->GetSelected()))
 			{
 				g_PlayerDatabase->SetSelected(player);
@@ -67,14 +58,14 @@ namespace YimMenu::Submenus
 	Network::Network() :
 	    Submenu::Submenu("Network")
 	{
-		auto session  = std::make_shared<Category>("Session");
-		auto spoofing = std::make_shared<Category>("Spoofing");
-		auto database = std::make_shared<Category>("Player Database");
+		auto session          = std::make_shared<Category>("Session");
+		auto spoofing         = std::make_shared<Category>("Spoofing");
+		auto database         = std::make_shared<Category>("Player Database");
 		auto session          = std::make_shared<Category>("Session");
 		auto spoofing         = std::make_shared<Category>("Spoofing");
 		auto nameChangerGroup = std::make_shared<Group>("Name Changer", GetListBoxDimensions());
 		auto spoofingColumns  = std::make_shared<Column>(1);
-        
+
 		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
