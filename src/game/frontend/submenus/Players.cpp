@@ -23,8 +23,8 @@
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
 
-#include <network/rlGamerInfo.hpp>
 #include <network/netPeerAddress.hpp>
+#include <network/rlGamerInfo.hpp>
 #include <script/scrThread.hpp>
 
 
@@ -151,17 +151,8 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Add to Player Database") && YimMenu::Players::GetSelected().IsValid())
 				{
 					auto plyr = YimMenu::Players::GetSelected();
-					// Use Player::GetRID() once #116 is merged
-					g_PlayerDatabase->AddPlayer(plyr.GetGamerInfo()->m_GamerHandle.m_rockstar_id, plyr.GetName());
+					g_PlayerDatabase->AddPlayer(plyr.GetRID(), plyr.GetName());
 				}
-
-				// remove before pr/merge
-				if (ImGui::Button("View SC Profile"))
-					FiberPool::Push([] {
-						uint64_t handle[18];
-						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
-						NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
-					});
 			}));
 
 			// TODO: refactor teleport items
