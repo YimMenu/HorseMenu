@@ -22,7 +22,6 @@
 #include <string>
 
 
-
 namespace YimMenu::Submenus
 {
 	std::shared_ptr<persistent_player> current_player;
@@ -61,8 +60,6 @@ namespace YimMenu::Submenus
 		auto session          = std::make_shared<Category>("Session");
 		auto spoofing         = std::make_shared<Category>("Spoofing");
 		auto database         = std::make_shared<Category>("Player Database");
-		auto session          = std::make_shared<Category>("Session");
-		auto spoofing         = std::make_shared<Category>("Spoofing");
 		auto nameChangerGroup = std::make_shared<Group>("Name Changer", GetListBoxDimensions());
 		auto spoofingColumns  = std::make_shared<Column>(1);
 
