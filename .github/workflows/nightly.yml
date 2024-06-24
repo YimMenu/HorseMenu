@@ -3,7 +3,7 @@ name: Nightly Build
 on:
   schedule:
     # cronjob that triggers every day at 2PM UTC
-    - cron: '0 14 * * *'
+    - cron: "0 14 * * *"
   workflow_dispatch:
 
 jobs:
@@ -27,16 +27,18 @@ jobs:
           arch: amd64
 
       - name: Generate CMake project
-        run: cmake -D CMAKE_BUILD_TYPE=Release -S. -Bbuild -G Ninja
+        run: cmake -D CMAKE_BUILD_TYPE=RelWithDebInfo -D OPTIMIZE=YES -S. -Bbuild -G Ninja
 
       - name: Build 64bit release DLL
-        run: cmake --build ./build --config Release --target HorseMenu --
+        run: cmake --build ./build --config RelWithDebInfo --target HorseMenu --
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: binary
-          path: build/HorseMenu.dll
+          path: |
+            build/HorseMenu.dll
+            build/HorseMenu.pdb
 
       - name: Generate Build Info
         id: var
@@ -62,7 +64,7 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     name: Create Release
-    needs: [ check_date, build_nightly ]
+    needs: [check_date, build_nightly]
     if: ${{ needs.check_date.outputs.should_run != 'false' }}
     steps:
       - uses: actions/checkout@v3

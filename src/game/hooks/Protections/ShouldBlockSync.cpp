@@ -20,6 +20,7 @@
 #include <network/sync/pickup/CPickupCreationData.hpp>
 #include <network/sync/player/CPlayerAppearanceData.hpp>
 #include <network/sync/vehicle/CVehicleCreationData.hpp>
+#include <network/sync/vehicle/CVehicleGadgetData.hpp>
 #include <network/sync/vehicle/CVehicleProximityMigrationData.hpp>
 #include <ped/CPed.hpp>
 #include <unordered_set>
@@ -119,6 +120,24 @@ namespace
 			LOG_FIELD_B(CPedAttachData, m_IsAttached);
 			LOG_FIELD(CPedAttachData, m_AttachObjectId);
 			break;
+		case "CVehicleGadgetDataNode"_J:
+			LOG_FIELD_B(CVehicleGadgetNodeData, m_has_position);
+			const auto& position = node->GetData<CVehicleGadgetNodeData>().m_position;
+			LOG(INFO) << "\tm_position: X: " << position[0] << " Y: " << position[1] << " Z: " << position[2] << " W: " << position[3];
+			LOG_FIELD(CVehicleGadgetNodeData, m_num_gadgets);
+
+			for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
+			{
+				LOG(INFO) << "m_gadgets[" << i << "].m_type: " << node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_type;
+				uint32_t sum = 0;
+				for (int j = 0; j < sizeof(node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data); j++)
+				{
+					sum += node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data[j];
+				}
+
+				LOG(INFO) << "\tm_data: " << HEX(sum);
+			}
+			break;
 		}
 	}
 
@@ -200,6 +219,7 @@ namespace
 	    "a_c_woodpecker_02"_J,
 	};
 
+	std::unordered_set<uint32_t> g_CageModels = {0x99C0CFCF, 0xF3D580D3, 0xEE8254F6, 0xC2D200FE};
 	// note that object can be nullptr here if it hasn't been created yet (i.e. in the creation queue)
 	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
 	{
@@ -261,6 +281,14 @@ namespace
 				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
+				return true;
+			}
+			if (g_CageModels.count(data.m_ModelHash))
+			{
+				LOG(WARNING) << "Blocked potential cage spawn from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections",
+				    std::string("Blocked potential cage spawn from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				return true;
 			}
 			break;
@@ -347,6 +375,16 @@ namespace
 					    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 					return true;
 				}
+
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				{
+					LOG(WARNING) << "Blocked physical trailer attachment crash from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections",
+					    std::string("Blocked physical trailer attachment crash from ")
+					        .append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
+					return true;
+				}
 			}
 			break;
 		}
@@ -400,6 +438,15 @@ namespace
 					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
 					                                    Protections::GetSyncingPlayer().GetName()),
 					    (int)PlayerDatabase::eInfraction::TRIED_ATTACH);
+					return true;
+				}
+
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				{
+					LOG(WARNING) << "Blocked trailer ped attachment crash from " << Protections::GetSyncingPlayer().GetName();
+					Notifications::Show("Protections",
+					    std::string("Blocked trailer ped attachment crash from ").append(Protections::GetSyncingPlayer().GetName()),
+					    NotificationType::Warning);
 					return true;
 				}
 			}

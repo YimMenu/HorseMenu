@@ -3,7 +3,9 @@
 #include "game/pointers/Pointers.hpp"
 
 #include <network/CNetGamePlayer.hpp>
+#include <network/netPeerAddress.hpp>
 #include <player/CPlayerInfo.hpp>
+
 
 namespace YimMenu
 {
@@ -62,6 +64,86 @@ namespace YimMenu
 	uint32_t Player::GetMessageId()
 	{
 		return m_Handle->m_MessageId;
+  }
+
+	uint64_t Player::GetRID()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return 0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_GamerHandle.m_rockstar_id;
+	}
+
+	netAddress Player::GetExternalIpAddress()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return (netAddress)0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_ExternalAddress;
+	}
+
+	netAddress Player::GetInternalIpAddress()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return (netAddress)0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_InternalAddress;
+	}
+
+	netAddress Player::GetRelayIpAddress()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return (netAddress)0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayAddress;
+	}
+
+	netAddress Player::GetUnkIpAddress()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return (netAddress)0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_UnkAddress;
+	}
+
+	uint16_t Player::GetExternalPort()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return 0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_ExternalPort;
+	}
+
+	uint16_t Player::GetInternalPort()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return 0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_InternalPort;
+	}
+
+	uint16_t Player::GetRelayPort()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return 0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayPort;
+	}
+
+	uint16_t Player::GetUnkPort()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return 0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_UnkPort;
+	}
+
+	uint32_t Player::GetRelayState()
+	{
+		if (!IsValid() || !m_Handle->m_PlayerInfo)
+			return 0;
+
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayState;
 	}
 
 	bool Player::operator==(Player other)

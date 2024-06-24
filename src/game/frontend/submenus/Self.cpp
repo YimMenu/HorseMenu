@@ -78,8 +78,13 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
+
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("colorfullantern"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
@@ -92,7 +97,8 @@ namespace YimMenu::Submenus
 		}));
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
-		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnwagon"_J));
+		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnbountywagon"_J));
+		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
@@ -112,10 +118,28 @@ namespace YimMenu::Submenus
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsebarsfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsecoresfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseagitationlow"_J));
+		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("flaminghooves"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<CommandItem>("tpmounttoself"_J));
+		static int horseScale = 1;
+		horseGlobalsGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			ImGui::Text("Horse Scale");
+			if (ImGui::InputInt(" ", &horseScale))
+				FiberPool::Push([] {
+					PED::_SET_PED_SCALE(YimMenu::Self::Mount, (float)horseScale);
+				});
+		}));
 		horseColumns->AddItem(horseGlobalsGroup);
 		horse->AddItem(horseColumns);
 		AddCategory(std::move(horse));
+
+		auto vehicle             = std::make_shared<Category>("Vehicle");
+		auto vehicleColumns      = std::make_shared<Column>(1);
+		auto vehicleGlobalsGroup = std::make_shared<Group>("Globals", GetListBoxDimensions());
+		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
+		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
+		vehicleColumns->AddItem(vehicleGlobalsGroup);
+		vehicle->AddItem(vehicleColumns);
+		AddCategory(std::move(vehicle));
 
 		auto animations = std::make_shared<Category>("Animations");
 

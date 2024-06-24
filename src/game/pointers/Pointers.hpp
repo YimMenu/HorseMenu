@@ -1,6 +1,7 @@
 #pragma once
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
+#include <rage/pools.hpp>
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -50,6 +51,7 @@ namespace YimMenu
 		using GetMessageType = bool (*)(uint32_t* message_type, rage::datBitBuffer buffer);
 		using GenerateUUID   = bool (*)(uint64_t* uuid);
 		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
+		using SendNetInfoToLobby        = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
 	};
 
 	struct PointerData
@@ -71,7 +73,13 @@ namespace YimMenu
 		uint64_t* HostToken;
 		Functions::GenerateUUID GenerateUUID;
 		Functions::PostPresenceMessage PostPresenceMessage;
+		Functions::SendNetInfoToLobby SendNetInfoToLobby;
 
+		PoolEncryption* PedPool;
+		PoolEncryption* ObjectPool;
+		PoolEncryption* VehiclePool;
+		PoolEncryption* PickupPool;
+		uint32_t (*FwScriptGuidCreateGuid)(void*);
 
 		// Security
 		PVOID SendMetric;

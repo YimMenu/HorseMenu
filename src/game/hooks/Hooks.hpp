@@ -40,6 +40,7 @@ namespace rage
 		void* data;
 	};
 #pragma pack(pop)
+	class rlGamerInfo;
 }
 class CNetGamePlayer;
 enum class NetEventType;
@@ -128,5 +129,6 @@ namespace YimMenu::Hooks
 	namespace Spoofing
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
+		extern bool SendNetInfoToLobby(rage::rlGamerInfo* local_player, int64_t a2, int64_t a3, DWORD* a4);
 	}
 }

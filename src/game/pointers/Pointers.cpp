@@ -10,7 +10,7 @@
 
 namespace YimMenu
 {
-	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes) //TODO: make service
+	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes)
 	{
 		DWORD oldProtect;
 		VirtualProtect(address, numBytes, PAGE_EXECUTE_READWRITE, &oldProtect);
@@ -311,6 +311,35 @@ namespace YimMenu
 		constexpr auto postMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 35 C7 44 24 20 D9 7A 70 E1">("PostPresenceMessage");
 		scanner.Add(postMessagePtrn, [this](PointerCalculator ptr) {
 			PostPresenceMessage = ptr.Add(1).Rip().As<Functions::PostPresenceMessage>();
+		
+    constexpr auto sendNetInfoToLobbyPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 56 57 41 54 41 56 41 57 48 83 EC 50 4D 8B F1 48 8B F9 48 81 C1 A0 00 00 00 4C 8D 48 08 41 8B E8 4C 8B FA 33 DB E8 ?? ?? ?? ?? 84 C0 0F 84 C8">("SendNetInfoToLobby");
+		scanner.Add(sendNetInfoToLobbyPtrn, [this](PointerCalculator ptr) {
+			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
+		});
+
+		constexpr auto pedPoolPtrn = Pattern<"0F 28 F0 48 85 DB 74 56 8A 05 ? ? ? ? 84 C0 75 05">("PedPool");
+		scanner.Add(pedPoolPtrn, [this](PointerCalculator ptr) {
+			PedPool = ptr.Add(10).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto objectPoolPtrn = Pattern<"3C 05 75 67">("ObjectPool");
+		scanner.Add(objectPoolPtrn, [this](PointerCalculator ptr) {
+			ObjectPool = ptr.Add(20).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto vehiclePoolPtrn = Pattern<"48 83 EC 20 8A 05 ? ? ? ? 45 33 E4">("VehiclePool");
+		scanner.Add(vehiclePoolPtrn, [this](PointerCalculator ptr) {
+			VehiclePool = ptr.Add(6).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto pickupPoolPtrn = Pattern<"0F 84 ? ? ? ? 8A 05 ? ? ? ? 48 85">("PickupPool");
+		scanner.Add(pickupPoolPtrn, [this](PointerCalculator ptr) {
+			PickupPool = ptr.Add(8).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto fwScriptGuidCreateGuidPtrn = Pattern<"E8 ? ? ? ? B3 01 8B 15">("FwScriptGuidCreateGuid");
+		scanner.Add(fwScriptGuidCreateGuidPtrn, [this](PointerCalculator ptr) {
+			FwScriptGuidCreateGuid = ptr.Sub(141).As<uint32_t (*)(void*)>();
 		});
 
 		if (!scanner.Scan())
