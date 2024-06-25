@@ -7,8 +7,6 @@
 #include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
-// remove scriptmgr include after testing
-#include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/pointers/Pointers.hpp"
