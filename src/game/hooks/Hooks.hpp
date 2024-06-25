@@ -11,8 +11,6 @@ namespace rage
 	class datBitBuffer;
 	class netObject;
 	class netSyncTree;
-	class CJoinRequestContext;
-	class CMsgJoinResponse;
 	class rlGamerInfo;
 	class netConnectionManager;
 	class rlGamerInfo;

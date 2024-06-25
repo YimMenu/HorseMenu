@@ -64,7 +64,7 @@ namespace YimMenu
 	uint32_t Player::GetMessageId()
 	{
 		return m_Handle->m_MessageId;
-  }
+	}
 
 	uint64_t Player::GetRID()
 	{
