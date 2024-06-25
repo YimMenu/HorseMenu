@@ -5,7 +5,9 @@
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Player.hpp"
 
+#include <network/InFrame.hpp>
 #include <rage/datBitBuffer.hpp>
+
 
 
 namespace YimMenu::Features
