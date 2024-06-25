@@ -268,16 +268,6 @@ namespace YimMenu
 			SendPacket = ptr.Add(10).Rip().As<Functions::SendPacket>();
 		});
 
-		constexpr auto getGamerOnlineState = Pattern<"E8 ?? ?? ?? ?? 84 C0 75 11 BF EE 03 00 00">("GetGamerOnlineState");
-		scanner.Add(getGamerOnlineState, [this](PointerCalculator ptr) {
-			GetGamerOnlineState = ptr.Add(1).Rip().As<Functions::GetGamerOnlineState>();
-		});
-
-		constexpr auto startGetSessionByGamerHandle = Pattern<"48 89 5C 24 20 8B C8 E8">("StartGetSessionByGamerHandle");
-		scanner.Add(startGetSessionByGamerHandle, [this](PointerCalculator ptr) {
-			StartGetSessionByGamerHandle = ptr.Add(3).Rip().As<Functions::StartGetSessionByGamerHandle>();
-		});
-
 		constexpr auto queuePacketPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 4C 8B F1 4D">("QueuePacket");
 		scanner.Add(queuePacketPtrn, [this](PointerCalculator ptr) {
 			QueuePacket = ptr.As<Functions::QueuePacket>();

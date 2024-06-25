@@ -47,8 +47,6 @@ namespace YimMenu
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
 		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
 		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, void* data, int size, int flags, void* unk);
-		using GetGamerOnlineState = bool (*)(int profile_index, rage::rlGamerHandle* handles, uint32_t count, int* online_state, int* status);
-		using StartGetSessionByGamerHandle = bool (*)(int profile_index, rage::rlGamerHandle* handles, int count, void* result, int unk, bool* success, int* state);
 		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
 		using SendNetInfoToLobby = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
 	};
@@ -103,8 +101,6 @@ namespace YimMenu
 		PVOID PlayerHasJoined;
 		PVOID PlayerHasLeft;
 		Functions::GetNetworkPlayerFromPid GetNetPlayerFromPid;
-		Functions::GetGamerOnlineState GetGamerOnlineState;
-		Functions::StartGetSessionByGamerHandle StartGetSessionByGamerHandle;
 
 		// Voice
 		PVOID EnumerateAudioDevices;
