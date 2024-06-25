@@ -6,6 +6,7 @@
 
 namespace YimMenu::Features
 {
+	//TODO: fix this
 	class OffTheRadar : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;

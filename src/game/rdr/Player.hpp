@@ -35,6 +35,7 @@ namespace YimMenu
 		rage::rlGamerInfo* GetGamerInfo();
 		Ped GetPed();
 		bool IsHost();
+		uint32_t GetMessageId();
 		uint64_t GetRID();
 		netAddress GetExternalIpAddress();
 		netAddress GetInternalIpAddress();

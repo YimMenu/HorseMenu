@@ -23,6 +23,10 @@ namespace rage
 	class netSyncTree;
 	class netObject;
 	class rlGamerInfo;
+	class netConnectionManager;
+	class netPeerAddress;
+	class rlGamerHandle;
+	class datBitBuffer;
 }
 
 namespace YimMenu
@@ -41,7 +45,10 @@ namespace YimMenu
 		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
 		using GetNetObjectById          = rage::netObject* (*)(uint16_t id);
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
-		using SendNetInfoToLobby        = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
+		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
+		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, void* data, int size, int flags, void* unk);
+		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
+		using SendNetInfoToLobby = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
 	};
 
 	struct PointerData
@@ -56,6 +63,10 @@ namespace YimMenu
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
 		Functions::GetLocalPed GetLocalPed;
+		Functions::SendPacket SendPacket;
+		Functions::QueuePacket QueuePacket;
+		PVOID HandlePresenceEvent;
+		Functions::PostPresenceMessage PostPresenceMessage;
 		Functions::SendNetInfoToLobby SendNetInfoToLobby;
 
 		PoolEncryption* PedPool;
@@ -81,6 +92,8 @@ namespace YimMenu
 		PVOID ResetSyncNodes;
 		PVOID HandleScriptedGameEvent;
 		PVOID AddObjectToCreationQueue;
+		PVOID ReceiveNetMessage;
+		PVOID SendComplaint;
 		PVOID ReceiveServerMessage;
 		PVOID SerializeServerRPC;
 

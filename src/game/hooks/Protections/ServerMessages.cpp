@@ -27,7 +27,6 @@ namespace YimMenu::Hooks
 
 	bool Protections::SerializeServerRPC(rage::ServerRPCSerializer* ser, void* a2, const char* message, void* def, void* structure, const char* rpc_guid, void* a7)
 	{
-		// TODO: remove ret variable and just return original instead of storing it
 		bool ret = BaseHook::Get<SerializeServerRPC, DetourHook<decltype(&SerializeServerRPC)>>()->Original()(ser, a2, message, def, structure, rpc_guid, a7);
 		if (Features::_LogServerMessages.GetState())
 		{

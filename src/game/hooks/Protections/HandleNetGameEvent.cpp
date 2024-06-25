@@ -1,5 +1,6 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
@@ -7,6 +8,7 @@
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/netObject.hpp>
+#include <network/rlGamerInfo.hpp>
 #include <rage/datBitBuffer.hpp>
 
 
@@ -82,6 +84,16 @@ namespace YimMenu::Hooks
 		{
 			LOG(WARNING) << "Blocked remote native call from " << sourcePlayer->GetName();
 			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			g_PlayerDatabase->AddInfraction(
+			    g_PlayerDatabase->GetOrCreatePlayer(sourcePlayer->GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+			    (int)PlayerDatabase::eInfraction::REMOTE_NATIVE_CALL);
+			return;
+		}
+
+		if (type == NetEventType::KICK_VOTES_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked Kick Vote from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 			return;
 		}
 
@@ -95,6 +107,13 @@ namespace YimMenu::Hooks
 		if (type == NetEventType::GIVE_PED_SEQUENCE_TASK_EVENT && sourcePlayer)
 		{
 			LOG(WARNING) << "Blocked Remote Ped Animation from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
+		if (type == NetEventType::EXPLOSION_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked Explosion from " << sourcePlayer->GetName();
 			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 			return;
 		}

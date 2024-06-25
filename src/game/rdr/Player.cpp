@@ -61,6 +61,11 @@ namespace YimMenu
 		return m_Handle->IsHost();
 	}
 
+	uint32_t Player::GetMessageId()
+	{
+		return m_Handle->m_MessageId;
+	}
+
 	uint64_t Player::GetRID()
 	{
 		if (!IsValid() || !m_Handle->m_PlayerInfo)

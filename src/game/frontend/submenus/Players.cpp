@@ -2,6 +2,7 @@
 
 #include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
@@ -23,6 +24,7 @@
 #include "util/VehicleSpawner.hpp"
 
 #include <network/netPeerAddress.hpp>
+#include <network/rlGamerInfo.hpp>
 #include <script/scrThread.hpp>
 
 
@@ -60,7 +62,12 @@ namespace YimMenu::Submenus
 			ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 			for (auto& [id, player] : sortedPlayers)
 			{
-				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
+				std::string display_name = player.GetName();
+				if (player.IsHost())
+				{
+					display_name.append(" - Host");
+				}
+				if (ImGui::Selectable(display_name.c_str(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
 				}
@@ -135,11 +142,16 @@ namespace YimMenu::Submenus
 							NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
 							NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
 						});
+					if (ImGui::Button("Add to Player Database"))
+					{
+						auto plyr = YimMenu::Players::GetSelected();
+						g_PlayerDatabase->AddPlayer(plyr.GetRID(), plyr.GetName());
+					}
 				}
 				else
 				{
 					YimMenu::Players::SetSelected(Self::Id);
-					ImGui::Text("No Valid Players or You aren't in a Session yet!");
+					ImGui::Text("No Players Yet!");
 				}
 			}));
 

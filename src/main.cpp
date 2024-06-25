@@ -5,6 +5,7 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/Hooking.hpp"
 #include "core/memory/ModuleMgr.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
@@ -20,13 +21,15 @@ namespace YimMenu
 	DWORD Main(void*)
 	{
 		const auto documents = std::filesystem::path(std::getenv("appdata")) / "HorseMenu";
-		FileMgr::Init(documents); // TODO
+		FileMgr::Init(documents);
 
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
 		g_HotkeySystem.RegisterCommands();
 		CustomTeleport::FetchSavedLocations();
 		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
+
+		auto PlayerDatabaseInstance = std::make_unique<PlayerDatabase>();
 
 		if (!ModuleMgr.LoadModules())
 			goto unload;
@@ -72,6 +75,8 @@ namespace YimMenu
 
 		FiberPool::Destroy();
 		LOG(INFO) << "FiberPool Uninitialized";
+
+		PlayerDatabaseInstance.reset();
 
 	unload:
 		Hooking::Destroy();
