@@ -81,7 +81,7 @@ namespace YimMenu::Hooks
 			LOG(WARNING) << "Received Stat Update from " << sender_str;
 			break;
 		}
-		//really bad protection - presence kick uses mutated json members(or something like that) to kick the person. We need to figure out what that is and block it if that is present
+		//really bad protection - kick uses invalid json(we block the whole event)
 		case (uint32_t)ePresenceEvents::PRESENCE_INVITE_RESPONSE:
 		{
 			Notifications::Show("Presence Event", std::string("Blocked Kick from ").append(sender_str), NotificationType::Warning);
