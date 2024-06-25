@@ -64,7 +64,6 @@ namespace YimMenu
 			REMOTE_NATIVE_CALL,
 			TRIED_ATTACH,
 			REMOTE_TELEPORT,
-			INVALID_PROPSET,
 		};
 
 		std::unordered_map<eInfraction, std::string> InfractionDescriptions = {
@@ -73,7 +72,6 @@ namespace YimMenu
 		    {eInfraction::REMOTE_NATIVE_CALL, "Tried to call a native!"},
 		    {eInfraction::TRIED_ATTACH, "Tried to attach to you!"},
 		    {eInfraction::REMOTE_TELEPORT, "Tried to teleport to you!"},
-		    {eInfraction::INVALID_PROPSET, "Tried to create an invalid prop set!"},
 		};
 	};
 

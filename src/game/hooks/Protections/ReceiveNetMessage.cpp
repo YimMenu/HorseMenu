@@ -2,7 +2,6 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "game/hooks/Hooks.hpp"
-#include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Player.hpp"
 
@@ -16,26 +15,35 @@ namespace YimMenu::Features
 
 namespace YimMenu::Hooks
 {
+	static bool GetMessageType(eNetMessageType& type, rage::datBitBuffer& buffer)
+	{
+		if (buffer.Read<int>(14) != '2F')
+			return false;
+		bool extended = buffer.Read<bool>(1);
+		type          = buffer.Read<eNetMessageType>(extended ? 16 : 8);
+		return true;
+	}
+
 	bool Protections::ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame)
 	{
-		if (frame->get_event_type() != rage::InFrame::EventType::FrameReceived)
+		if (frame->GetEventType() != rage::InFrame::EventType::FrameReceived)
 		{
 			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
 			    ->Original()(netConnectionManager, a2, frame);
 		}
 
-		if (frame->data == nullptr || frame->length == 0)
+		if (frame->m_Data == nullptr || frame->m_Length == 0)
 		{
 			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
 			    ->Original()(netConnectionManager, a2, frame);
 		}
 
-		rage::datBitBuffer buffer(frame->data, frame->length);
+		rage::datBitBuffer buffer(frame->m_Data, frame->m_Length);
 		buffer.m_FlagBits |= 1u;
 
-		NetMessage msg_type;
+		eNetMessageType msg_type;
 
-		if (!Pointers.GetMessageType((uint32_t*)&msg_type, buffer))
+		if (!GetMessageType(msg_type, buffer))
 		{
 			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
 			    ->Original()(netConnectionManager, a2, frame);
@@ -43,19 +51,10 @@ namespace YimMenu::Hooks
 
 		if (Features::_LogPackets.GetState())
 		{
-			LOG(VERBOSE) << "RECIEVED PACKED: "
+			LOG(VERBOSE) << "RECEIVED PACKET: "
 			             << "TYPE = "
 			             << " " << (uint32_t)msg_type << "LENGTH = "
-			             << " " << frame->length;
-		}
-
-		switch (msg_type)
-		{
-		case NetMessage::MsgScriptMigrateHost:
-		{
-			LOG(VERBOSE) << "MIGRATE SCRIPT HOST";
-			return true;
-		}
+			             << " " << frame->m_Length;
 		}
 
 		return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(netConnectionManager, a2, frame);

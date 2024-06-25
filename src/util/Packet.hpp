@@ -34,18 +34,18 @@ namespace YimMenu
 			m_Buffer.Write<T>(data, length);
 		}
 
-		inline void write_message(NetMessage message)
+		inline void write_message(eNetMessageType message)
 		{
 			write<int>(0x3246, 14);
 			if ((int)message > 0xFF)
 			{
 				write<bool>(true, 1);
-				write<NetMessage>(message, 16);
+				write<eNetMessageType>(message, 16);
 			}
 			else
 			{
 				write<bool>(false, 1);
-				write<NetMessage>(message, 8);
+				write<eNetMessageType>(message, 8);
 			}
 		}
 

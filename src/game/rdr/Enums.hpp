@@ -1388,7 +1388,7 @@ enum class ScriptEvent
 	SCRIPT_EVENT_PERSONA_HONOR                     = 188
 };
 
-enum class NetMessage : uint32_t
+enum class eNetMessageType : uint32_t
 {
 	MsgInvalid                                     = 0xFFFF,
 	MsgJoinResponse                                = 0x61,

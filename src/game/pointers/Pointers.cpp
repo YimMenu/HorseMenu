@@ -293,11 +293,6 @@ namespace YimMenu
 			HandlePresenceEvent = ptr.As<PVOID>();
 		});
 
-		constexpr auto getIdPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 18 57 48 83 EC 20 F6 42 28">("GetMessageType");
-		scanner.Add(getIdPtrn, [this](PointerCalculator ptr) {
-			GetMessageType = ptr.As<Functions::GetMessageType>();
-		});
-
 		constexpr auto hostTokenPtrn = Pattern<"48 8B 05 ?? ?? ?? ?? 48 83 F8 FF">("HostToken");
 		scanner.Add(hostTokenPtrn, [this](PointerCalculator ptr) {
 			HostToken = ptr.Add(3).Rip().As<uint64_t*>();

@@ -359,19 +359,6 @@ namespace
 					return true;
 				}
 
-				if (data.m_IsAttached && data.m_AttachObjectId == 1535)
-				{
-					LOG(WARNING) << "Blocked Attachment Crash from " << Protections::GetSyncingPlayer().GetName();
-					Notifications::Show("Protections",
-					    std::string("Blocked Attachment Crash from ").append(Protections::GetSyncingPlayer().GetName()),
-					    NotificationType::Warning);
-					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
-					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
-					                                    Protections::GetSyncingPlayer().GetName()),
-					    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
-					return true;
-				}
-
 				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
 				{
 					LOG(WARNING) << "Blocked physical trailer attachment crash from " << Protections::GetSyncingPlayer().GetName();
@@ -464,7 +451,7 @@ namespace
 				g_PlayerDatabase->AddInfraction(
 				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
 				        Protections::GetSyncingPlayer().GetName()),
-				    (int)PlayerDatabase::eInfraction::INVALID_PROPSET);
+				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
 			break;

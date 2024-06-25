@@ -67,7 +67,6 @@ namespace YimMenu::Submenus
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
 		session->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
-		session->AddItem(std::make_shared<BoolCommandItem>("spoofhosttoken"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
 		database->AddItem(std::make_shared<ImGuiItem>([] {

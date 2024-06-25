@@ -1,14 +1,15 @@
 #pragma once
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
-#include <rage/pools.hpp>
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <rage/atArray.hpp>
+#include <rage/pools.hpp>
 #include <script/scrNativeHandler.hpp>
 #include <vulkan/vulkan.h>
 #include <windows.h>
+
 
 class CNetGamePlayer;
 class CVehicle;
@@ -48,10 +49,9 @@ namespace YimMenu
 		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, void* data, int size, int flags, void* unk);
 		using GetGamerOnlineState = bool (*)(int profile_index, rage::rlGamerHandle* handles, uint32_t count, int* online_state, int* status);
 		using StartGetSessionByGamerHandle = bool (*)(int profile_index, rage::rlGamerHandle* handles, int count, void* result, int unk, bool* success, int* state);
-		using GetMessageType = bool (*)(uint32_t* message_type, rage::datBitBuffer buffer);
-		using GenerateUUID   = bool (*)(uint64_t* uuid);
+		using GenerateUUID = bool (*)(uint64_t* uuid);
 		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
-		using SendNetInfoToLobby        = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
+		using SendNetInfoToLobby = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
 	};
 
 	struct PointerData
@@ -69,7 +69,6 @@ namespace YimMenu
 		Functions::SendPacket SendPacket;
 		Functions::QueuePacket QueuePacket;
 		PVOID HandlePresenceEvent;
-		Functions::GetMessageType GetMessageType;
 		uint64_t* HostToken;
 		Functions::GenerateUUID GenerateUUID;
 		Functions::PostPresenceMessage PostPresenceMessage;

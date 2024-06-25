@@ -15,7 +15,7 @@ namespace rage
 	class CMsgJoinResponse;
 	class rlGamerInfo;
 	class netConnectionManager;
-#pragma pack(push, 1)
+#pragma pack(push, 8)
 	class InFrame
 	{
 	public:
@@ -29,14 +29,13 @@ namespace rage
 
 		virtual ~InFrame() = default;
 
-		virtual void destroy()             = 0;
-		virtual EventType get_event_type() = 0;
-		virtual uint32_t _0x18()           = 0;
+		virtual void Destroy()           = 0;
+		virtual EventType GetEventType() = 0;
+		virtual uint32_t _0x18()         = 0;
 
-		char pad_0[0x78];
-		uint32_t length;
-		char pad_1[8];
-		void* data;
+		char pad_0[0x70];  // 0x8
+		uint32_t m_Length; // 0x78
+		void* m_Data;      // 0x80
 	};
 #pragma pack(pop)
 	class rlGamerInfo;
