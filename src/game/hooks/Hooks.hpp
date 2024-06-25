@@ -12,6 +12,9 @@ namespace rage
 	class netObject;
 	class netSyncTree;
 	class rlGamerInfo;
+	class ServerMsg;
+	class ServerMsgData;
+	class ServerRPCSerializer;
 }
 class CNetGamePlayer;
 enum class NetEventType;
@@ -70,6 +73,8 @@ namespace YimMenu::Hooks
 		extern void ResetSyncNodes();
 		extern bool HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern int AddObjectToCreationQueue(void* mgr, eNetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
+		extern bool SerializeServerRPC(rage::ServerRPCSerializer* ser, void* a2, const char* message, void* def, void* structure, const char* rpc_guid, void* a7);
+		extern bool ReceiveServerMessage(void* a1, rage::ServerMsg* a2); // doesn't receive all messages
 	}
 
 	namespace Voice

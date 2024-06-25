@@ -26,7 +26,6 @@ namespace YimMenu
 		UIManager::AddSubmenu(std::make_shared<Submenus::Players>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::World>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::Settings>());
-		// Wierd glitch causes menu to crash when clicking debug
 		UIManager::AddSubmenu(std::make_shared<Submenus::Debug>());
 
 		Renderer::AddRendererCallBack(

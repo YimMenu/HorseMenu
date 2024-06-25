@@ -271,6 +271,7 @@ namespace YimMenu::Submenus
 		debug->AddItem(std::make_shared<BoolCommandItem>("logevents"_J));
 		debug->AddItem(std::make_shared<BoolCommandItem>("logtses"_J));
 		debug->AddItem(std::make_shared<BoolCommandItem>("logmetrics"_J));
+		debug->AddItem(std::make_shared<BoolCommandItem>("logservermessages"_J));
 		AddCategory(std::move(debug));
 	}
 }

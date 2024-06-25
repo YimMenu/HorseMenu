@@ -1,14 +1,15 @@
 #pragma once
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
-#include <rage/pools.hpp>
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <rage/atArray.hpp>
+#include <rage/pools.hpp>
 #include <script/scrNativeHandler.hpp>
 #include <vulkan/vulkan.h>
 #include <windows.h>
+
 
 class CNetGamePlayer;
 class CVehicle;
@@ -80,6 +81,8 @@ namespace YimMenu
 		PVOID ResetSyncNodes;
 		PVOID HandleScriptedGameEvent;
 		PVOID AddObjectToCreationQueue;
+		PVOID ReceiveServerMessage;
+		PVOID SerializeServerRPC;
 
 		// Player Stuff
 		PVOID PlayerHasJoined;
