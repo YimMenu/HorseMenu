@@ -14,7 +14,6 @@ namespace YimMenu
 		return ch - 'a' + 10;
 	}
 
-	// remove before merge or change to an overload
 	inline std::string hexStr(unsigned char* data, int len)
 	{
 		std::stringstream ss;
