@@ -49,7 +49,6 @@ namespace YimMenu
 		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, void* data, int size, int flags, void* unk);
 		using GetGamerOnlineState = bool (*)(int profile_index, rage::rlGamerHandle* handles, uint32_t count, int* online_state, int* status);
 		using StartGetSessionByGamerHandle = bool (*)(int profile_index, rage::rlGamerHandle* handles, int count, void* result, int unk, bool* success, int* state);
-		using GenerateUUID = bool (*)(uint64_t* uuid);
 		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
 		using SendNetInfoToLobby = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
 	};
@@ -69,8 +68,6 @@ namespace YimMenu
 		Functions::SendPacket SendPacket;
 		Functions::QueuePacket QueuePacket;
 		PVOID HandlePresenceEvent;
-		uint64_t* HostToken;
-		Functions::GenerateUUID GenerateUUID;
 		Functions::PostPresenceMessage PostPresenceMessage;
 		Functions::SendNetInfoToLobby SendNetInfoToLobby;
 

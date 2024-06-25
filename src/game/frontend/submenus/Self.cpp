@@ -82,7 +82,6 @@ namespace YimMenu::Submenus
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("unlimiteditems"_J));
 
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
@@ -150,6 +149,7 @@ namespace YimMenu::Submenus
 		auto recovery               = std::make_shared<Category>("Recovery");
 		auto recoveryColumns        = std::make_shared<Column>(2);
 		auto spawnCollectiblesGroup = std::make_shared<Group>("Spawn Collectibles", GetListBoxDimensions());
+		auto recoveryOptions        = std::make_shared<Group>("Options", GetListBoxDimensions());
 
 		static auto recoveryCommand = Commands::GetCommand<BoolCommand>("recoveryenabled"_J);
 
@@ -190,7 +190,9 @@ namespace YimMenu::Submenus
 				}
 			}
 		}));
+		recoveryOptions->AddItem(std::make_shared<BoolCommandItem>("unlimiteditems"_J));
 		recoveryColumns->AddItem(spawnCollectiblesGroup);
+		recoveryColumns->AddItem(recoveryOptions);
 		recovery->AddItem(recoveryColumns);
 
 		AddCategory(std::move(recovery));

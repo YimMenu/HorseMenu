@@ -277,6 +277,7 @@ namespace YimMenu::Submenus
 		debug->AddItem(std::make_shared<BoolCommandItem>("logpackets"_J));
 		debug->AddItem(std::make_shared<BoolCommandItem>("logpresenceevents"_J));
 		debug->AddItem(std::make_shared<BoolCommandItem>("logpostmessage"_J));
+		debug->AddItem(std::make_shared<BoolCommandItem>("logservermessages"_J));
 		debug->AddItem(std::make_shared<ImGuiItem>([] {
 			if (ImGui::Button("Bail to Loading Screen"))
 			{
@@ -285,7 +286,6 @@ namespace YimMenu::Submenus
 				});
 			}
 		}));
-		debug->AddItem(std::make_shared<BoolCommandItem>("logservermessages"_J));
 		AddCategory(std::move(debug));
 	}
 }
