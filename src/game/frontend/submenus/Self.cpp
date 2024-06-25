@@ -82,6 +82,7 @@ namespace YimMenu::Submenus
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("unlimiteditems"_J));
 
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));

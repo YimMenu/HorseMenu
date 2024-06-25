@@ -338,6 +338,16 @@ namespace YimMenu
 			FwScriptGuidCreateGuid = ptr.Sub(141).As<uint32_t (*)(void*)>();
 		});
 
+		constexpr auto receiveServerMessagePtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 20 48 8B 02 48 8B F9 48 8B CA 48 8B DA FF 50 ?? 48 8B C8">("ReceiveServerMessage");
+		scanner.Add(receiveServerMessagePtrn, [this](PointerCalculator ptr) {
+			ReceiveServerMessage = ptr.As<PVOID>();
+		});
+
+		constexpr auto serializeServerRPCPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 48 8B 44 24 70">("SerializeServerRPC");
+		scanner.Add(serializeServerRPCPtrn, [this](PointerCalculator ptr) {
+			SerializeServerRPC = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

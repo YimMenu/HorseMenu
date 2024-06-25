@@ -99,6 +99,8 @@ namespace YimMenu
 		PVOID AddObjectToCreationQueue;
 		PVOID ReceiveNetMessage;
 		PVOID SendComplaint;
+		PVOID ReceiveServerMessage;
+		PVOID SerializeServerRPC;
 
 		// Player Stuff
 		PVOID PlayerHasJoined;
