@@ -63,7 +63,7 @@ namespace YimMenu::Hooks
 
 		switch (msg_type)
 		{
-		case eNetMessageType::CMsgTextMsg:
+		case eNetMessageType::MsgTextChat:
 		{
 			char message[256];
 			rage::rlGamerHandle handle{};

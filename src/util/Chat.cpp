@@ -9,7 +9,7 @@ namespace YimMenu
 
 		Player self = Player(Self::Id);
 		Packet msg{};
-		msg.write_message(eNetMessageType::CMsgTextMsg);
+		msg.write_message(eNetMessageType::MsgTextChat);
 		msg.m_Buffer.Write<const char*>(message.c_str(), 256);
 		SerializeGamerHandle(self.GetGamerInfo()->m_GamerHandle, msg.m_Buffer);
 
@@ -26,20 +26,13 @@ namespace YimMenu
 
 	void RenderChatMessage(const std::string& message, const std::string& sender)
 	{
-		try
-		{
-			Guid<4> struct1;
-			struct1[0] = 10000;
+		Guid<4> struct1;
+		struct1[0] = 10000; // Duration
 
-			Guid<4> struct2;
-			struct2.At<const char*>(1) = CreateVarString(message.c_str());
+		Guid<4> struct2;
+		struct2.At<const char*>(1) = CreateVarString(message.c_str());
 
-			UIFEED::_UI_FEED_POST_FEED_TICKER(struct1.get(), struct2.get(), true);
-		}
-		catch (std::exception& ex)
-		{
-			return;
-		}
+		UIFEED::_UI_FEED_POST_FEED_TICKER(struct1.get(), struct2.get(), true);
 	}
 
 	void SerializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer)
