@@ -1,13 +1,15 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
+#include "game/features/Features.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Player.hpp"
+#include "util/Chat.hpp"
 
 #include <network/InFrame.hpp>
+#include <network/rlGamerHandle.hpp>
 #include <rage/datBitBuffer.hpp>
-
 
 
 namespace YimMenu::Features
@@ -57,6 +59,24 @@ namespace YimMenu::Hooks
 			             << "TYPE = "
 			             << " " << (uint32_t)msg_type << "LENGTH = "
 			             << " " << frame->m_Length;
+		}
+
+		switch (msg_type)
+		{
+		case eNetMessageType::CMsgTextMsg:
+		{
+			char message[256];
+			rage::rlGamerHandle handle{};
+			const char* data = buffer.Read<const char*>(sizeof(message));
+			memcpy(message, data, sizeof(message));
+			DeserializeGamerHandle(handle, buffer);
+
+			if (handle.m_rockstar_id != 0)
+			{
+				RenderChatMessage(message, Player(Self::Id).GetName()); // Need to get the real senders name
+				break;
+			}
+		}
 		}
 
 		return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(netConnectionManager, a2, frame);

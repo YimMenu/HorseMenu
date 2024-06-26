@@ -9,7 +9,7 @@ namespace YimMenu
 
 	void Packet::Send(uint32_t msg_id)
 	{
-		Pointers.QueuePacket(Pointers.NetworkPlayerMgr->m_NetConnectionManager, msg_id, m_Data, (m_Buffer.m_CurBit + 7) >> 3, 1, nullptr);
+		Pointers.QueuePacket(Pointers.NetworkPlayerMgr->m_NetConnectionManager, msg_id, 13u, m_Data, (m_Buffer.m_CurBit + 7) >> 3, 1, nullptr);
 	}
 
 	void Packet::Send(Player player, int connection_id)
