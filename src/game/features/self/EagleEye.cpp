@@ -16,8 +16,7 @@ namespace YimMenu::Features
 			{
 				PLAYER::_SECONDARY_SPECIAL_ABILITY_SET_ACTIVE(YimMenu::Self::Id); // Toggles Eagle Eye on
 				PLAYER::_EAGLE_EYE_SET_PLUS_FLAG_DISABLED(YimMenu::Self::Id, false); // Allows running while eagle eye is active
-				Notifications::Show("Eagle Eye", "Infinite Eagle eye has been enabled.", NotificationType::Success);
-				Notifications::Show("WARNING", "When this is active, it will always reactivate eagle eye for you, you still cannot run using it.", NotificationType::Warning);
+				Notifications::Show("Eagle Eye", "Infinite Eagle eye has been enabled.  This allows you to run while eagle eye is active as well.", NotificationType::Success);
 			}
 			PLAYER::_MODIFY_INFINITE_TRAIL_VISION(YimMenu::Self::Id, 1); // Sets Eagle Eye to Infinite
 		}
