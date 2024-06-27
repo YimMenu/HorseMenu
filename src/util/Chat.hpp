@@ -19,8 +19,4 @@ namespace YimMenu
 	void DeserializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer);
 	bool ReadRockstarId(uint64_t* rockstarId, rage::datBitBuffer& buffer);
 	bool WriteRockstarId(uint64_t rockstarId, rage::datBitBuffer& buffer);
-	static const char* CreateVarString(const char* String)
-	{
-		return MISC::VAR_STRING(10, (char*)"LITERAL_STRING", String);
-	}
 }

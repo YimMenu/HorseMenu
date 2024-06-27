@@ -7,6 +7,7 @@
 #include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/pointers/Pointers.hpp"
@@ -59,7 +60,6 @@ namespace YimMenu::Submenus
 		auto session          = std::make_shared<Category>("Session");
 		auto spoofing         = std::make_shared<Category>("Spoofing");
 		auto database         = std::make_shared<Category>("Player Database");
-		auto chat             = std::make_shared<Category>("Chat");
 		auto nameChangerGroup = std::make_shared<Group>("Name Changer", GetListBoxDimensions());
 		auto spoofingColumns  = std::make_shared<Column>(1);
 
@@ -208,19 +208,10 @@ namespace YimMenu::Submenus
 				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally unless enabled above.");
 			}
 		}));
-		chat->AddItem(std::make_shared<ImGuiItem>([=] {
-			static char chat_buf[256];
-			ImGui::InputText("Chat Message", chat_buf, sizeof(chat_buf));
-			if (ImGui::Button("Send"))
-				FiberPool::Push([] {
-					RenderChatMessage(chat_buf, Player(Self::Id).GetName());
-				});
-		}));
 		spoofingColumns->AddItem(nameChangerGroup);
 		spoofing->AddItem(spoofingColumns);
 		AddCategory(std::move(session));
 		AddCategory(std::move(spoofing));
 		AddCategory(std::move(database));
-		AddCategory(std::move(chat));
 	}
 }

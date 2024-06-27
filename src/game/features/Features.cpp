@@ -96,6 +96,7 @@ namespace YimMenu
 		if (!Features::_IsFirstLoadComplete.GetState())
 		{
 			Commands::GetCommand<BoolCommand>("detectspoofednames"_J)->SetState(true);
+			Commands::GetCommand<BoolCommand>("chathelper"_J)->SetState(true);
 			Features::_IsFirstLoadComplete.SetState(true);
 		}
 	}

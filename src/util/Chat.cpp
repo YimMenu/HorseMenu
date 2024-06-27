@@ -2,6 +2,11 @@
 
 namespace YimMenu
 {
+	static const char* CreateVarString(const char* String)
+	{
+		return MISC::VAR_STRING(10, (char*)"LITERAL_STRING", String);
+	}
+
 	void SendChatMessage(const std::string& message)
 	{
 		if (!*Pointers.IsSessionStarted)
@@ -27,12 +32,12 @@ namespace YimMenu
 	void RenderChatMessage(const std::string& message, const std::string& sender)
 	{
 		Guid<4> struct1;
-		struct1[0] = 10000; // Duration
+		struct1.At<int32_t>(0) = 10000; // Duration
 
-		Guid<4> struct2;
-		struct2.At<const char*>(1) = CreateVarString(message.c_str());
+		Guid<3> struct2;
+		struct2.At<const char*>(2) = CreateVarString(std::string(sender).append(" - ").append(message).c_str());
 
-		UIFEED::_UI_FEED_POST_FEED_TICKER(struct1.get(), struct2.get(), true);
+		UIFEED::_UI_FEED_POST_FEED_TICKER(struct1.get(), struct2.get(), 1);
 	}
 
 	void SerializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer)
