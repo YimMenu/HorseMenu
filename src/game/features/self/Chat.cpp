@@ -1,15 +1,16 @@
+#include "util/Chat.hpp"
+
 #include "core/commands/Command.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/Chat.hpp"
 
 
 namespace YimMenu::Features
 {
-	class ChatHelper : public Command
+	class Chat : public Command
 	{
 		using Command::Command;
 
@@ -18,13 +19,22 @@ namespace YimMenu::Features
 		{
 			if (*Pointers.IsSessionStarted && !SCRIPTS::IS_LOADING_SCREEN_VISIBLE())
 			{
+				ScriptMgr::Yield(100ms); // Delay so hotkey key doesn't get mistaken as input
+				bool is_chat_cancelled = false;
 				MISC::DISPLAY_ONSCREEN_KEYBOARD(0, "Chat Message", "", "Enter Chat Message Here", "", "", "", 256);
 				while (MISC::UPDATE_ONSCREEN_KEYBOARD() == 0)
 				{
+					if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+					{
+						MISC::CANCEL_ONSCREEN_KEYBOARD();
+						is_chat_cancelled = true;
+					}
+
 					ScriptMgr::Yield();
 				}
 
-				SendChatMessage(MISC::GET_ONSCREEN_KEYBOARD_RESULT());
+				if (!is_chat_cancelled)
+					SendChatMessage(MISC::GET_ONSCREEN_KEYBOARD_RESULT());
 			}
 			else
 			{
@@ -33,5 +43,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static ChatHelper _ChatHelper{"chathelper", "chathelper", "Background Helper for the Chat Feature"};
+	static Chat _Chat{"chathelper", "Chat", "Use this to open the chat!"};
 }
