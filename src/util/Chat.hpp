@@ -7,10 +7,10 @@
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Player.hpp"
+#include "util/Helpers.hpp"
 
 #include <rage/Guid.hpp>
 #include <rage/datBitBuffer.hpp>
-
 
 
 namespace YimMenu

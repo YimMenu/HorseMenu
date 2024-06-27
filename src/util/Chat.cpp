@@ -15,9 +15,8 @@ namespace YimMenu
 		Player self = Player(Self::Id);
 		Packet msg{};
 		msg.write_message(eNetMessageType::MsgTextChat);
-		msg.m_Buffer.Write<const char*>(message.c_str(), 256);
+		Helpers::WriteBufferString(message.c_str(), 256, &msg.m_Buffer);
 		SerializeGamerHandle(self.GetGamerInfo()->m_GamerHandle, msg.m_Buffer);
-		msg.m_Buffer.WriteQword(self.GetGamerInfo()->m_HostToken, sizeof(self.GetGamerInfo()->m_HostToken) * 8);
 
 		for (auto& player : Players::GetPlayers())
 		{

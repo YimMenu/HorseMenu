@@ -48,7 +48,10 @@ namespace YimMenu
 		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
 		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, int connection_id, void* data, int size, int flags, void* unk);
 		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
-		using SendNetInfoToLobby = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
+		using SendNetInfoToLobby  = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
+		using ReadBitBufferArray  = bool (*)(rage::datBitBuffer* buffer, PVOID read, int bits, int unk);
+		using WriteBitBufferArray = bool (*)(rage::datBitBuffer* buffer, void* val, int bits, int unk);
+		using ReadBitBufferString = bool (*)(rage::datBitBuffer* buffer, char* read, int bits);
 	};
 
 	struct PointerData
@@ -68,6 +71,9 @@ namespace YimMenu
 		PVOID HandlePresenceEvent;
 		Functions::PostPresenceMessage PostPresenceMessage;
 		Functions::SendNetInfoToLobby SendNetInfoToLobby;
+		Functions::ReadBitBufferArray ReadBitBufferArray;
+		Functions::WriteBitBufferArray WriteBitBufferArray;
+		Functions::ReadBitBufferString ReadBitBufferString;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;

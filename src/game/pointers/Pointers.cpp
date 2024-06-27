@@ -328,6 +328,21 @@ namespace YimMenu
 			SerializeServerRPC = ptr.As<PVOID>();
 		});
 
+		constexpr auto readBBArrayPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 41 8B F8 4C">("ReadBitBufferArray");
+		scanner.Add(readBBArrayPtrn, [this](PointerCalculator ptr) {
+			ReadBitBufferArray = ptr.As<Functions::ReadBitBufferArray>();
+		});
+
+		constexpr auto writeBBArrayPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 F6 41 28">("WriteBitBufferArray");
+		scanner.Add(writeBBArrayPtrn, [this](PointerCalculator ptr) {
+			WriteBitBufferArray = ptr.As<Functions::WriteBitBufferArray>();
+		});
+
+		constexpr auto readBBStringPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 18 56 57 41 56 48 83 EC 20 45 8B">("ReadBitBufferString");
+		scanner.Add(readBBStringPtrn, [this](PointerCalculator ptr) {
+			ReadBitBufferString = ptr.As<Functions::ReadBitBufferString>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

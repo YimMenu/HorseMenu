@@ -1,11 +1,15 @@
-#include <rage/fwBasePool.hpp>
-#include <script/types.hpp>
+#pragma once
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/natives.hpp"
 
+#include <rage/datBitBuffer.hpp>
+#include <rage/fwBasePool.hpp>
+#include <script/types.hpp>
+
+
 namespace YimMenu::Helpers
 {
-	rage::fwBasePool* GetPedPool()
+	inline rage::fwBasePool* GetPedPool()
 	{
 		if (Pointers.PedPool->m_IsSet)
 		{
@@ -16,7 +20,7 @@ namespace YimMenu::Helpers
 		return nullptr;
 	}
 
-	rage::fwBasePool* GetObjectPool()
+	inline rage::fwBasePool* GetObjectPool()
 	{
 		if (Pointers.ObjectPool->m_IsSet)
 		{
@@ -27,7 +31,7 @@ namespace YimMenu::Helpers
 		return nullptr;
 	}
 
-	rage::fwBasePool* GetVehiclePool()
+	inline rage::fwBasePool* GetVehiclePool()
 	{
 		if (Pointers.VehiclePool->m_IsSet)
 		{
@@ -38,7 +42,7 @@ namespace YimMenu::Helpers
 		return nullptr;
 	}
 
-	rage::fwBasePool* GetPickupPool()
+	inline rage::fwBasePool* GetPickupPool()
 	{
 		if (Pointers.PickupPool->m_IsSet)
 		{
@@ -139,5 +143,29 @@ namespace YimMenu::Helpers
 		}
 
 		return result;
+	}
+
+	inline bool WriteArray(void* array, int size, rage::datBitBuffer* buffer)
+	{
+		return Pointers.WriteBitBufferArray(buffer, array, size, 0);
+	}
+
+	inline bool ReadArray(PVOID array, int size, rage::datBitBuffer* buffer)
+	{
+		return Pointers.ReadBitBufferArray(buffer, array, size, 0);
+	}
+
+	inline void WriteBufferString(const char* str, int max_len, rage::datBitBuffer* buffer)
+	{
+		auto len      = std::min(max_len, (int)strlen(str) + 1);
+		bool extended = len > 127;
+		buffer->Write<bool>(extended, 1);
+		buffer->Write<int>(len, extended ? 15 : 7);
+		WriteArray((void*)str, 8 * len, buffer);
+	}
+
+	inline bool ReadString(char* str, int bits, rage::datBitBuffer* buffer)
+	{
+		return Pointers.ReadBitBufferString(buffer, str, bits);
 	}
 }
