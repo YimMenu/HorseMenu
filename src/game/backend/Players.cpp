@@ -1,7 +1,11 @@
 #include "Players.hpp"
+
+#include "game/pointers/Pointers.hpp"
+
 #include <network/CNetGamePlayer.hpp>
 #include <network/CNetworkPlayerMgr.hpp>
-#include "game/pointers/Pointers.hpp"
+#include <network/rlGamerInfo.hpp>
+
 
 namespace YimMenu
 {
@@ -23,5 +27,18 @@ namespace YimMenu
 				m_Players.erase(idx);
 			}
 		}
+	}
+
+	Player Players::GetByHostTokenImpl(uint64_t hostToken)
+	{
+		for (auto& [idx, player] : Players::GetPlayers())
+		{
+			if (player.GetGamerInfo()->m_HostToken == hostToken)
+			{
+				return player;
+			}
+		}
+
+		return nullptr;
 	}
 }

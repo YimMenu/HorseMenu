@@ -17,6 +17,7 @@ namespace YimMenu
 		msg.write_message(eNetMessageType::MsgTextChat);
 		msg.m_Buffer.Write<const char*>(message.c_str(), 256);
 		SerializeGamerHandle(self.GetGamerInfo()->m_GamerHandle, msg.m_Buffer);
+		msg.m_Buffer.WriteQword(self.GetGamerInfo()->m_HostToken, sizeof(self.GetGamerInfo()->m_HostToken) * 8);
 
 		for (auto& player : Players::GetPlayers())
 		{
@@ -40,7 +41,8 @@ namespace YimMenu
 
 		UIFEED::_UI_FEED_POST_FEED_TICKER(struct1.get(), struct2.get(), 1);
 		*/
-		Notifications::Show("Chat", sender.append(" - ").append(messsage), NotificationType::Info);
+		std::string text = std::string(sender).append(" -  ").append(message);
+		Notifications::Show("Chat", text, NotificationType::Info);
 	}
 
 	void SerializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer)

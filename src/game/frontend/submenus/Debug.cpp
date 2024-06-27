@@ -278,7 +278,7 @@ namespace YimMenu::Submenus
 		debug->AddItem(std::make_shared<BoolCommandItem>("logpresenceevents"_J));
 		debug->AddItem(std::make_shared<BoolCommandItem>("logpostmessage"_J));
 		debug->AddItem(std::make_shared<BoolCommandItem>("logservermessages"_J));
-		debug->AddItem(std::make_shared<BoolCommandItem>("chathelper"_J));
+		debug->AddItem(std::make_shared<CommandItem>("chathelper"_J));
 		debug->AddItem(std::make_shared<ImGuiItem>([] {
 			if (ImGui::Button("Bail to Loading Screen"))
 			{

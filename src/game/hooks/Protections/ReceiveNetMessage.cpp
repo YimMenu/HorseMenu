@@ -1,6 +1,7 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
+#include "game/backend/Players.hpp"
 #include "game/features/Features.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/Enums.hpp"
@@ -66,14 +67,19 @@ namespace YimMenu::Hooks
 		case eNetMessageType::MsgTextChat:
 		{
 			char message[256];
+			uint64_t hostToken;
 			rage::rlGamerHandle handle{};
 			const char* data = buffer.Read<const char*>(sizeof(message));
 			memcpy(message, data, sizeof(message));
 			DeserializeGamerHandle(handle, buffer);
+			buffer.ReadQword(&hostToken, sizeof(hostToken) * 8);
 
-			if (handle.m_rockstar_id != 0)
+			Player sender = Players::GetByHostToken(hostToken);
+
+
+			if (handle.m_rockstar_id != 0 && sender.IsValid())
 			{
-				RenderChatMessage(message, Player(Self::Id).GetName()); // Need to get the real senders name
+				RenderChatMessage(message, sender.GetName());
 				break;
 			}
 		}
