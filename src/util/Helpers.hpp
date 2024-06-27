@@ -9,7 +9,7 @@
 
 namespace YimMenu::Helpers
 {
-	inline rage::fwBasePool* GetPedPool()
+	static rage::fwBasePool* GetPedPool()
 	{
 		if (Pointers.PedPool->m_IsSet)
 		{
@@ -20,7 +20,7 @@ namespace YimMenu::Helpers
 		return nullptr;
 	}
 
-	inline rage::fwBasePool* GetObjectPool()
+	static rage::fwBasePool* GetObjectPool()
 	{
 		if (Pointers.ObjectPool->m_IsSet)
 		{
@@ -31,7 +31,7 @@ namespace YimMenu::Helpers
 		return nullptr;
 	}
 
-	inline rage::fwBasePool* GetVehiclePool()
+	static rage::fwBasePool* GetVehiclePool()
 	{
 		if (Pointers.VehiclePool->m_IsSet)
 		{
@@ -42,7 +42,7 @@ namespace YimMenu::Helpers
 		return nullptr;
 	}
 
-	inline rage::fwBasePool* GetPickupPool()
+	static rage::fwBasePool* GetPickupPool()
 	{
 		if (Pointers.PickupPool->m_IsSet)
 		{
