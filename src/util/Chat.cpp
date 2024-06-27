@@ -31,6 +31,7 @@ namespace YimMenu
 
 	void RenderChatMessage(const std::string& message, const std::string& sender)
 	{
+		/*
 		Guid<4> struct1;
 		struct1.At<int32_t>(0) = 10000; // Duration
 
@@ -38,6 +39,8 @@ namespace YimMenu
 		struct2.At<const char*>(2) = CreateVarString(std::string(sender).append(" - ").append(message).c_str());
 
 		UIFEED::_UI_FEED_POST_FEED_TICKER(struct1.get(), struct2.get(), 1);
+		*/
+		Notifications::Show("Chat", sender.append(" - ").append(messsage), NotificationType::Info);
 	}
 
 	void SerializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer)

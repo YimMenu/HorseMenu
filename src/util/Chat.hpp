@@ -1,5 +1,6 @@
 #pragma once
 #include "Packet.hpp"
+#include "core/frontend/Notifications.hpp"
 #include "game/backend/Players.hpp"
 #include "game/features/Features.hpp"
 #include "game/pointers/Pointers.hpp"
@@ -9,6 +10,7 @@
 
 #include <rage/Guid.hpp>
 #include <rage/datBitBuffer.hpp>
+
 
 
 namespace YimMenu
