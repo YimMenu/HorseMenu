@@ -9,6 +9,7 @@
 #include "util/Chat.hpp"
 #include "util/Helpers.hpp"
 
+#include <array>
 #include <network/InFrame.hpp>
 #include <network/rlGamerHandle.hpp>
 #include <rage/datBitBuffer.hpp>
@@ -57,10 +58,14 @@ namespace YimMenu::Hooks
 
 		if (Features::_LogPackets.GetState())
 		{
-			LOG(VERBOSE) << "RECEIVED PACKET: "
-			             << "TYPE = "
-			             << " " << (uint32_t)msg_type << "LENGTH = "
-			             << " " << frame->m_Length;
+			static constexpr const auto unloggables = std::to_array({eNetMessageType::MsgCloneSync, eNetMessageType::MsgPackedCloneSyncACKs, eNetMessageType::MsgPackedEvents, eNetMessageType::MsgPackedReliables, eNetMessageType::MsgPackedEventReliablesMsgs, eNetMessageType::MsgNetArrayMgrUpdate, eNetMessageType::MsgNetArrayMgrUpdateAck});
+			if (std::find(unloggables.begin(), unloggables.end(), msg_type) != unloggables.end())
+			{
+				LOG(VERBOSE) << "RECEIVED PACKET: "
+				             << "TYPE = "
+				             << " " << HEX((uint32_t)msg_type) << "LENGTH = "
+				             << " " << frame->m_Length;
+			}
 		}
 
 		switch (msg_type)
@@ -69,11 +74,10 @@ namespace YimMenu::Hooks
 		{
 			char message[256];
 			rage::rlGamerHandle handle{};
-			Helpers::ReadString(message, sizeof(message), &buffer);
+			Helpers::ReadString(message, sizeof(message) * 8, &buffer);
 			DeserializeGamerHandle(handle, buffer);
 
 			Player sender = Players::GetByRID(handle.m_rockstar_id);
-
 
 			if (handle.m_rockstar_id != 0 && sender.IsValid())
 			{
