@@ -7,6 +7,7 @@
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Player.hpp"
 #include "util/Chat.hpp"
+#include "util/Helpers.hpp"
 
 #include <network/InFrame.hpp>
 #include <network/rlGamerHandle.hpp>
@@ -67,14 +68,11 @@ namespace YimMenu::Hooks
 		case eNetMessageType::MsgTextChat:
 		{
 			char message[256];
-			uint64_t hostToken;
 			rage::rlGamerHandle handle{};
-			const char* data = buffer.Read<const char*>(sizeof(message));
-			memcpy(message, data, sizeof(message));
+			Helpers::ReadString(message, sizeof(message), &buffer);
 			DeserializeGamerHandle(handle, buffer);
-			buffer.ReadQword(&hostToken, sizeof(hostToken) * 8);
 
-			Player sender = Players::GetByHostToken(hostToken);
+			Player sender = Players::GetByRID(handle.m_rockstar_id);
 
 
 			if (handle.m_rockstar_id != 0 && sender.IsValid())
