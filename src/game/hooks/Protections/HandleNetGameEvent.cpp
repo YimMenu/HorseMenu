@@ -118,6 +118,13 @@ namespace YimMenu::Hooks
 			return;
 		}
 
+		if (type == NetEventType::LIGHTNING_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked Lightning from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
 		if (type == NetEventType::GIVE_CONTROL_EVENT && sourcePlayer)
 		{
 			YimMenu::Protections::SetSyncingPlayer(sourcePlayer);
