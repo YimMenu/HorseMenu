@@ -263,6 +263,31 @@ namespace YimMenu
 			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
 		});
 
+		constexpr auto sendPacketPtrn = Pattern<"8B 44 24 60 48 8B D6 48 8B CD">("SendPacket");
+		scanner.Add(sendPacketPtrn, [this](PointerCalculator ptr) {
+			SendPacket = ptr.Add(10).Rip().As<Functions::SendPacket>();
+		});
+
+		constexpr auto queuePacketPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 4C 8B F1 4D">("QueuePacket");
+		scanner.Add(queuePacketPtrn, [this](PointerCalculator ptr) {
+			QueuePacket = ptr.As<Functions::QueuePacket>();
+		});
+
+		constexpr auto receiveNetMessagePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 20 4C 8B 71 38">("ReceiveNetMessage");
+		scanner.Add(receiveNetMessagePtrn, [this](PointerCalculator ptr) {
+			ReceiveNetMessage = ptr.As<PVOID>();
+		});
+
+		constexpr auto handlePresenceEventPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 70 20 55 48 8D 68 A9 48 81 EC B0 00 00 00 4C">("HandlePresenceEvent");
+		scanner.Add(handlePresenceEventPtrn, [this](PointerCalculator ptr) {
+			HandlePresenceEvent = ptr.As<PVOID>();
+		});
+
+		constexpr auto postMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 35 C7 44 24 20 D9 7A 70 E1">("PostPresenceMessage");
+		scanner.Add(postMessagePtrn, [this](PointerCalculator ptr) {
+			PostPresenceMessage = ptr.Add(1).Rip().As<Functions::PostPresenceMessage>();
+		});
+
 		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 56 57 41 54 41 56 41 57 48 83 EC 50 4D 8B F1 48 8B F9 48 81 C1 A0 00 00 00 4C 8D 48 08 41 8B E8 4C 8B FA 33 DB E8 ?? ?? ?? ?? 84 C0 0F 84 C8">("SendNetInfoToLobby");
 		scanner.Add(sendNetInfoToLobbyPtrn, [this](PointerCalculator ptr) {
 			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
@@ -291,6 +316,16 @@ namespace YimMenu
 		constexpr auto fwScriptGuidCreateGuidPtrn = Pattern<"E8 ? ? ? ? B3 01 8B 15">("FwScriptGuidCreateGuid");
 		scanner.Add(fwScriptGuidCreateGuidPtrn, [this](PointerCalculator ptr) {
 			FwScriptGuidCreateGuid = ptr.Sub(141).As<uint32_t (*)(void*)>();
+		});
+
+		constexpr auto receiveServerMessagePtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 20 48 8B 02 48 8B F9 48 8B CA 48 8B DA FF 50 ?? 48 8B C8">("ReceiveServerMessage");
+		scanner.Add(receiveServerMessagePtrn, [this](PointerCalculator ptr) {
+			ReceiveServerMessage = ptr.As<PVOID>();
+		});
+
+		constexpr auto serializeServerRPCPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 48 8B 44 24 70">("SerializeServerRPC");
+		scanner.Add(serializeServerRPCPtrn, [this](PointerCalculator ptr) {
+			SerializeServerRPC = ptr.As<PVOID>();
 		});
 
 		if (!scanner.Scan())

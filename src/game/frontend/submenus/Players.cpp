@@ -2,6 +2,7 @@
 
 #include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
@@ -22,7 +23,10 @@
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
 
+#include <network/netPeerAddress.hpp>
+#include <network/rlGamerInfo.hpp>
 #include <script/scrThread.hpp>
+
 
 namespace YimMenu::Features
 {
@@ -58,7 +62,12 @@ namespace YimMenu::Submenus
 			ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 			for (auto& [id, player] : sortedPlayers)
 			{
-				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
+				std::string display_name = player.GetName();
+				if (player.IsHost())
+				{
+					display_name.append(" - Host");
+				}
+				if (ImGui::Selectable(display_name.c_str(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
 				}
@@ -99,24 +108,51 @@ namespace YimMenu::Submenus
 				{
 					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 					ImGui::Text(YimMenu::Players::GetSelected().GetName());
+
+					auto rid_str = std::to_string(YimMenu::Players::GetSelected().GetRID());
+					ImGui::Text("RID:");
+					ImGui::SameLine();
+					if (ImGui::Button(rid_str.c_str()))
+					{
+						ImGui::SetClipboardText(rid_str.c_str());
+					}
+
+					auto ip = YimMenu::Players::GetSelected().GetExternalIpAddress();
+					ImGui::Text("IP Address:");
+					ImGui::SameLine();
+					auto ip_str = std::string(std::to_string(ip.m_field1))
+					                  .append("." + std::to_string(ip.m_field2))
+					                  .append("." + std::to_string(ip.m_field3))
+					                  .append("." + std::to_string(ip.m_field4));
+					if (ImGui::Button(ip_str.c_str()))
+					{
+						ImGui::SetClipboardText(ip_str.c_str());
+					}
+
+					if (ImGui::Button("View SC Profile"))
+						FiberPool::Push([] {
+							uint64_t handle[18];
+							NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+							NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
+						});
+
+					if (ImGui::Button("Add Friend"))
+						FiberPool::Push([] {
+							uint64_t handle[18];
+							NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
+							NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
+						});
+					if (ImGui::Button("Add to Player Database"))
+					{
+						auto plyr = YimMenu::Players::GetSelected();
+						g_PlayerDatabase->AddPlayer(plyr.GetRID(), plyr.GetName());
+					}
 				}
 				else
 				{
 					YimMenu::Players::SetSelected(Self::Id);
+					ImGui::Text("No Players Yet!");
 				}
-				if (ImGui::Button("View SC Profile"))
-					FiberPool::Push([] {
-						uint64_t handle[18];
-						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
-						NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
-					});
-
-				if (ImGui::Button("Add Friend"))
-					FiberPool::Push([] {
-						uint64_t handle[18];
-						NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
-						NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
-					});
 			}));
 
 			// TODO: refactor teleport items

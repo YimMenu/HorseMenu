@@ -1,5 +1,6 @@
 #include "World.hpp"
 
+#include "game/backend/FiberPool.hpp"
 #include "World/Weather.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
@@ -11,7 +12,6 @@
 #include "util/libraries/PedModels.hpp"
 
 #include <game/rdr/Natives.hpp>
-
 
 namespace YimMenu::Submenus
 {

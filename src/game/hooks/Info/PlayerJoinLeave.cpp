@@ -11,7 +11,6 @@ namespace YimMenu::Features
 {
 	BoolCommand _DetectSpoofedNames{"detectspoofednames", "Detect Spoofed Names", "Detects If a Player is Possibly Spoofing Their Name"};
 }
-
 namespace YimMenu::Hooks
 {
 	void Info::PlayerHasJoined(CNetGamePlayer* player)
