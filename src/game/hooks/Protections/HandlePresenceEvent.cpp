@@ -35,7 +35,6 @@ namespace YimMenu::Hooks
 		}
 
 		nlohmann::json& event_payload = json[key];
-		LOG(VERBOSE) << event_payload.dump();
 		if (event_payload["e"].is_null() || event_payload["d"].is_null())
 		{
 			return true;
