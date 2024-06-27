@@ -29,11 +29,11 @@ namespace YimMenu
 		}
 	}
 
-	Player Players::GetByHostTokenImpl(uint64_t hostToken)
+	Player Players::GetByRIDImpl(uint64_t rid)
 	{
 		for (auto& [idx, player] : Players::GetPlayers())
 		{
-			if (player.GetGamerInfo()->m_HostToken == hostToken)
+			if (player.GetGamerInfo()->m_GamerHandle.m_rockstar_id == rid)
 			{
 				return player;
 			}
