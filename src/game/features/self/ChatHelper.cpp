@@ -1,4 +1,4 @@
-#include "core/commands/LoopedCommand.hpp"
+#include "core/commands/Command.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
@@ -9,25 +9,22 @@
 
 namespace YimMenu::Features
 {
-	class ChatHelper : public LoopedCommand
+	class ChatHelper : public Command
 	{
-		using LoopedCommand::LoopedCommand;
+		using Command::Command;
 
 
-		virtual void OnTick() override
+		virtual void OnCall() override
 		{
 			if (*Pointers.IsSessionStarted && !SCRIPTS::IS_LOADING_SCREEN_VISIBLE())
 			{
-				if (GetAsyncKeyState(0x54) & 0x8000)
+				MISC::DISPLAY_ONSCREEN_KEYBOARD(0, "Chat Message", "", "Enter Chat Message Here", "", "", "", 256);
+				while (MISC::UPDATE_ONSCREEN_KEYBOARD() == 0)
 				{
-					MISC::DISPLAY_ONSCREEN_KEYBOARD(0, "Chat Message", "", "Enter Chat Message Here", "", "", "", 256);
-					while (MISC::UPDATE_ONSCREEN_KEYBOARD() == 0)
-					{
-						ScriptMgr::Yield();
-					}
-
-					SendChatMessage(std::string(MISC::GET_ONSCREEN_KEYBOARD_RESULT()));
+					ScriptMgr::Yield();
 				}
+
+				SendChatMessage(MISC::GET_ONSCREEN_KEYBOARD_RESULT());
 			}
 			else
 			{
