@@ -17,8 +17,4 @@ namespace YimMenu
 {
 	void SendChatMessage(const std::string& message);
 	void RenderChatMessage(const std::string& message, const std::string& sender);
-	void SerializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer);
-	void DeserializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer);
-	bool ReadRockstarId(uint64_t* rockstarId, rage::datBitBuffer& buffer);
-	bool WriteRockstarId(uint64_t rockstarId, rage::datBitBuffer& buffer);
 }

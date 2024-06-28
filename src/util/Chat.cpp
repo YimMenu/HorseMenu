@@ -16,7 +16,7 @@ namespace YimMenu
 		Packet msg{};
 		msg.write_message(eNetMessageType::MsgTextChat);
 		Helpers::WriteBufferString(message.c_str(), 256, &msg.m_Buffer);
-		SerializeGamerHandle(self.GetGamerInfo()->m_GamerHandle, msg.m_Buffer);
+		msg.m_Buffer.Write<uint64_t>(self.GetRID(), 64);
 
 		for (auto& player : Players::GetPlayers())
 		{
@@ -42,33 +42,5 @@ namespace YimMenu
 		*/
 		std::string text = std::string(sender).append(" -  ").append(message);
 		Notifications::Show("Chat", text, NotificationType::Info);
-	}
-
-	void SerializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer)
-	{
-		buffer.Write<uint8_t>(hnd.m_platform, sizeof(hnd.m_platform) * 8);
-		if (hnd.m_platform == 3)
-		{
-			WriteRockstarId(hnd.m_rockstar_id, buffer);
-			buffer.Write<uint8_t>(hnd.unk_0009, sizeof(hnd.unk_0009) * 8);
-		}
-	}
-
-	void DeserializeGamerHandle(rage::rlGamerHandle& hnd, rage::datBitBuffer& buffer)
-	{
-		if ((hnd.m_platform = buffer.Read<uint8_t>(sizeof(hnd.m_platform) * 8)) != 3)
-			return;
-		ReadRockstarId(&hnd.m_rockstar_id, buffer);
-		hnd.unk_0009 = buffer.Read<uint8_t>(sizeof(hnd.unk_0009) * 8);
-	}
-
-	bool ReadRockstarId(uint64_t* rockstarId, rage::datBitBuffer& buffer)
-	{
-		return buffer.ReadQword(rockstarId, sizeof(rockstarId) * 8);
-	}
-
-	bool WriteRockstarId(uint64_t rockstarId, rage::datBitBuffer& buffer)
-	{
-		return buffer.WriteQword(rockstarId, sizeof(rockstarId) * 8);
 	}
 }

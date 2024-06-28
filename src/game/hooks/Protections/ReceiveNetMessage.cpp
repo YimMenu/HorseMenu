@@ -72,14 +72,16 @@ namespace YimMenu::Hooks
 		{
 		case eNetMessageType::MsgTextChat:
 		{
+			LOG(VERBOSE) << "called";
 			char message[256];
-			rage::rlGamerHandle handle{};
+			uint64_t senderRID;
 			Helpers::ReadString(message, sizeof(message) * 8, &buffer);
-			DeserializeGamerHandle(handle, buffer);
+			senderRID = buffer.Read<uint64_t>(64);
 
-			Player sender = Players::GetByRID(handle.m_rockstar_id);
+			Player sender = Players::GetByRID(senderRID);
+			LOG(VERBOSE) << "Message: " << message << "Sender: " << sender.GetName() << "Handle RID: " << std::to_string(senderRID);
 
-			if (handle.m_rockstar_id != 0 && sender.IsValid())
+			if (senderRID != 0)
 			{
 				RenderChatMessage(message, sender.GetName());
 				break;
