@@ -1,6 +1,6 @@
 #pragma once
 #include "Packet.hpp"
-#include "core/frontend/Notifications.hpp"
+#include "core/frontend/ChatDisplay.hpp"
 #include "game/backend/Players.hpp"
 #include "game/features/Features.hpp"
 #include "game/pointers/Pointers.hpp"

@@ -17,8 +17,14 @@ namespace YimMenu
 
 		std::lock_guard<std::mutex> lock(m_mutex);
 
-		int nextPos = m_Messages.back().first + 1;
-		auto result = m_Messages.insert(std::make_pair(nextPos, notification));
+		int nextPos        = m_Messages.back().m_Num + 1;
+		notification.m_Num = nextPos;
+		auto result        = m_Messages.emplace_back(notification);
+
+		if (m_Messages.size() > 10)
+		{
+			m_Messages.erase(m_Messages.begin());
+		}
 
 		return notification;
 	}
@@ -26,11 +32,11 @@ namespace YimMenu
 	bool ChatDisplay::EraseImpl(Message message)
 	{
 		std::lock_guard<std::mutex> lock(m_mutex);
-		for (auto& [id, n] : m_Messages)
+		for (auto& msg : m_Messages)
 		{
-			if (id == message.m_Num)
+			if (msg.m_Num == message.m_Num)
 			{
-				n.m_Remove = true;
+				message.m_Remove = true;
 				return true;
 			}
 		}
@@ -40,40 +46,40 @@ namespace YimMenu
 
 	static void DrawMessage(Message& message, int position)
 	{
-		float y_pos = position * 100;
-		float x_pos = 10;
-		ImVec2 cardSize(m_CardSizeX, m_CardSizeY);
+		float y_pos     = position * 100;
+		float x_pos     = 90;
+		std::string str = std::string(message.m_Sender).append(": ").append(message.m_Message);
 
-		ImGui::SetNextWindowSize(cardSize, ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(350.f, 100.f), ImGuiCond_Always);
 		ImGui::SetNextWindowPos(ImVec2(x_pos, y_pos + 10), ImGuiCond_Always);
 
 		std::string windowTitle = "Chat " + std::to_string(position + 1);
 		ImGui::Begin(windowTitle.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-		ImGui::TextWrapped("%s", std::string(message.m_Sender).append(": ").append(message.m_Message).c_str());
+		ImGui::TextWrapped("%s", str.c_str());
 
 		ImGui::End();
 	}
 
 	void ChatDisplay::DrawImpl()
 	{
-		std::vector<int> keys_to_erase;
+		std::vector<Message> keys_to_erase;
 		{
 			std::lock_guard<std::mutex> lock(m_mutex);
 			int position = 0;
 
-			for (auto& [id, message] : m_Messages)
+			for (auto& message : m_Messages)
 			{
 				DrawMessage(message, position);
 
 				if (m_Messages.size() > 10)
 				{
-					keys_to_erase.push_back(id);
+					keys_to_erase.push_back(message);
 				}
 
 				if (message.m_Remove)
 				{
-					keys_to_erase.push_back(id);
+					keys_to_erase.emplace_back(message);
 				}
 
 				position++;
@@ -82,7 +88,7 @@ namespace YimMenu
 		std::lock_guard<std::mutex> lock(m_mutex);
 		for (const auto& key : keys_to_erase)
 		{
-			m_Messages.erase(key);
+			m_Messages.erase(std::find(m_Messages.begin(), m_Messages.end(), key));
 		}
 	}
 }
