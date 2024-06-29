@@ -21,7 +21,7 @@ namespace YimMenu::Features
         virtual void OnDisable() override
         {
             PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, TRUE);
-			PED::SET_PED_CAN_RAGDOLL_FROM_PLAYER_IMPACT(Self::PlayerPed, TRUE);
+	    PED::SET_PED_CAN_RAGDOLL_FROM_PLAYER_IMPACT(Self::PlayerPed, TRUE);
         }
 	};
 
