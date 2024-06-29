@@ -79,7 +79,6 @@ namespace YimMenu::Hooks
 			senderRID = buffer.Read<uint64_t>(64);
 
 			Player sender = Players::GetByRID(senderRID);
-			LOG(VERBOSE) << "Message: " << message << "Sender: " << sender.GetName() << "Handle RID: " << std::to_string(senderRID);
 
 			if (senderRID != 0)
 			{

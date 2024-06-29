@@ -21,7 +21,7 @@ namespace YimMenu::Features
 			{
 				ScriptMgr::Yield(100ms); // Delay so hotkey key doesn't get mistaken as input
 				bool is_chat_cancelled = false;
-				MISC::DISPLAY_ONSCREEN_KEYBOARD(0, "Chat Message", "", "Enter Chat Message Here", "", "", "", 256);
+				MISC::DISPLAY_ONSCREEN_KEYBOARD(0, "Chat Message", "", "", "", "", "", 256);
 				while (MISC::UPDATE_ONSCREEN_KEYBOARD() == 0)
 				{
 					if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
