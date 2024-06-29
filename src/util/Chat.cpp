@@ -2,11 +2,6 @@
 
 namespace YimMenu
 {
-	static const char* CreateVarString(const char* String)
-	{
-		return MISC::VAR_STRING(10, (char*)"LITERAL_STRING", String);
-	}
-
 	void SendChatMessage(const std::string& message)
 	{
 		if (!*Pointers.IsSessionStarted)
