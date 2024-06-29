@@ -11,13 +11,17 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-            if (PED::CAN_PED_RAGDOLL(Self::PlayerPed))
-			    PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, false);
+			if (PED::CAN_PED_RAGDOLL(Self::PlayerPed))
+			{
+				PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, FALSE);
+				PED::SET_PED_CAN_RAGDOLL_FROM_PLAYER_IMPACT(Self::PlayerPed, FALSE);
+			}
 		}
 
         virtual void OnDisable() override
         {
-            PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, true);
+            PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, TRUE);
+			PED::SET_PED_CAN_RAGDOLL_FROM_PLAYER_IMPACT(Self::PlayerPed, TRUE);
         }
 	};
 
