@@ -265,7 +265,7 @@ namespace YimMenu
 
 		constexpr auto sendPacketPtrn = Pattern<"8B 44 24 60 48 8B D6 48 8B CD">("SendPacket");
 		scanner.Add(sendPacketPtrn, [this](PointerCalculator ptr) {
-			SendPacket = ptr.Add(10).Rip().As<Functions::SendPacket>();
+			SendPacket = ptr.Add(15).Rip().As<Functions::SendPacket>();
 		});
 
 		constexpr auto queuePacketPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 4C 8B F1 4D">("QueuePacket");

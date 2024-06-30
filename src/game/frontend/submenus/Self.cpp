@@ -66,7 +66,7 @@ namespace YimMenu::Submenus
 
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));	
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("offtheradar"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
@@ -76,6 +76,7 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteclip"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("maxaccuracy"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autocock"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
@@ -105,6 +106,7 @@ namespace YimMenu::Submenus
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
+		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superrun"_J));
 
 		columns->AddItem(globalsGroup);
 		columns->AddItem(toolsGroup);
@@ -118,6 +120,8 @@ namespace YimMenu::Submenus
 		auto horseGlobalsGroup = std::make_shared<Group>("Globals", GetListBoxDimensions());
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsegodmode"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsenoragdoll"_J));
+		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseclean"_J));
+		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horseclimbsteepslopes"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsebarsfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsecoresfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseagitationlow"_J));

@@ -35,18 +35,18 @@ namespace YimMenu
 	{
 		using GetRendererInfo  = RenderingInfo* (*)();
 		using GetNativeHandler = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
-		using FixVectors       = void (*)(rage::scrNativeCallContext* call_ctx);
+		using FixVectors       = void (*)(rage::scrNativeCallContext* callCtx);
 		using SendEventAck = void (*)(rage::netEventMgr* eventMgr, void* event, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, int eventIndex, int handledBitset);
 		using HandleToPtr               = void* (*)(int handle);
 		using PtrToHandle               = int (*)(void* pointer);
 		using GetLocalPed               = CPed* (*)();
 		using GetSyncTreeForType        = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
 		using GetNetworkPlayerFromPid   = CNetGamePlayer* (*)(uint8_t player);
-		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
+		using WorldToScreen             = bool (*)(float* worldCoords, float* outX, float* outY);
 		using GetNetObjectById          = rage::netObject* (*)(uint16_t id);
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
-		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
-		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, void* data, int size, int flags, void* unk);
+		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* addr, int connectionId, void* data, int size, int flags);
+		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msgId, void* data, int size, int flags, void* unk);
 		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
 		using SendNetInfoToLobby = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
 	};
