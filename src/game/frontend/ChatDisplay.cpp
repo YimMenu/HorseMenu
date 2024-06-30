@@ -35,7 +35,7 @@ namespace YimMenu
 		int position = 0;
 
 		float y_pos = position * 100 + 200;
-		float x_pos = Pointers.ScreenResX - 430;
+		float x_pos = Pointers.ScreenResX - 470;
 
 		ImGui::SetNextWindowSize(ImVec2(Pointers.ScreenResX - x_pos - 10, Pointers.ScreenResY - y_pos), ImGuiCond_Always);
 		ImGui::SetNextWindowPos(ImVec2(x_pos, y_pos), ImGuiCond_Always);
@@ -46,8 +46,11 @@ namespace YimMenu
 
 		for (auto& message : m_Messages)
 		{
-			std::string str = std::format("$b{}$w: {}\n", message.m_Sender, message.m_Message);
-			ImGui::ColorfulText(str, {{'b', ImGui::blue}, {'w', ImGui::white}});
+			ImGui::PushStyleColor(ImGuiCol_Text, ImGui::blue);
+			ImGui::TextWrapped("%s:", message.m_Sender.data());
+			ImGui::PopStyleColor();
+			ImGui::SameLine();
+			ImGui::TextWrapped("%s", message.m_Message.data());
 		}
 
 		ImGui::PopFont();
