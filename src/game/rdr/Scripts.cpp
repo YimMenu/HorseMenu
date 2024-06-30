@@ -3,6 +3,7 @@
 #include <rage/tlsContext.hpp>
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/data/ScriptNames.hpp"
 
 namespace YimMenu::Scripts
 {
@@ -38,5 +39,21 @@ namespace YimMenu::Scripts
 				SCRIPTS::TRIGGER_SCRIPT_EVENT(1, data, count, 0, &bits);
 			});
 		}
+	}
+
+	const char* GetScriptName(joaat_t hash)
+	{
+		if (*Pointers.IsSessionStarted)
+		{
+			if (auto it = Data::g_MpScriptNames.find(hash); it != Data::g_MpScriptNames.end())
+				return it->second;
+		}
+		else
+		{
+			if (auto it = Data::g_SpScriptNames.find(hash); it != Data::g_SpScriptNames.end())
+				return it->second;
+		}
+
+		return "Unknown";
 	}
 }
