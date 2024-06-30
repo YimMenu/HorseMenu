@@ -1,5 +1,8 @@
 #pragma once
+#include "game/pointers/Pointers.hpp" // game import in core
+
 #include <mutex>
+
 
 namespace YimMenu
 {
@@ -7,13 +10,6 @@ namespace YimMenu
 	{
 		std::string m_Sender;
 		std::string m_Message;
-		int m_Num;
-		bool m_Remove = false;
-
-		bool operator==(const Message& other) const
-		{
-			return m_Num == other.m_Num;
-		}
 	};
 
 	class ChatDisplay
@@ -24,7 +20,6 @@ namespace YimMenu
 
 		Message ShowImpl(std::string sender, std::string message);
 		void DrawImpl();
-		bool EraseImpl(Message message);
 
 		static ChatDisplay& GetInstance()
 		{
@@ -41,11 +36,6 @@ namespace YimMenu
 		static void Draw()
 		{
 			GetInstance().DrawImpl();
-		}
-
-		static bool Erase(Message message)
-		{
-			return GetInstance().EraseImpl(message);
 		}
 	};
 

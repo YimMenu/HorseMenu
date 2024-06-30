@@ -1,9 +1,12 @@
 #include "GUI.hpp"
-#include "Menu.hpp"
-#include "ESP.hpp"
+
 #include "ContextMenu.hpp"
-#include "core/renderer/Renderer.hpp"
+#include "ESP.hpp"
+#include "Menu.hpp"
+#include "core/frontend/ChatDisplay.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "core/renderer/Renderer.hpp"
+
 
 namespace YimMenu
 {
@@ -34,6 +37,11 @@ namespace YimMenu
 			    ContextMenu::DrawContextMenu();
 		    },
 		    -4);
+		Renderer::AddRendererCallBack(
+		    [&] {
+			    ChatDisplay::Draw();
+		    },
+		    -5);
 	}
 
 	GUI::~GUI()
