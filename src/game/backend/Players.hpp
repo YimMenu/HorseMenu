@@ -34,6 +34,11 @@ namespace YimMenu
 			return GetInstance().GetByRIDImpl(rid);
 		}
 
+		static Player GetByHostToken(uint64_t token)
+		{
+			return GetInstance().GetByHostToken(token);
+		}
+
 	private:
 		static Players& GetInstance()
 		{
@@ -43,5 +48,6 @@ namespace YimMenu
 
 		void TickImpl();
 		Player GetByRIDImpl(uint64_t rid);
+		Player GetByHostTokenImpl(uint64_t token);
 	};
 }

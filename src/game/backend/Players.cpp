@@ -41,4 +41,17 @@ namespace YimMenu
 
 		return nullptr;
 	}
+
+	Player Players::GetByHostTokenImpl(uint64_t token)
+	{
+		for (auto& [idx, player] : Players::GetPlayers())
+		{
+			if (player.GetGamerInfo()->m_HostToken == token)
+			{
+				return player;
+			}
+		}
+
+		return nullptr;
+	}
 }

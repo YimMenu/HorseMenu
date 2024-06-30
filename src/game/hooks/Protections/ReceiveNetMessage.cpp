@@ -74,13 +74,14 @@ namespace YimMenu::Hooks
 		{
 			LOG(VERBOSE) << "called";
 			char message[256];
-			uint64_t senderRID;
+			uint64_t senderHostToken;
 			Helpers::ReadString(message, sizeof(message) * 8, &buffer);
-			senderRID = buffer.Read<uint64_t>(64);
+			senderHostToken = buffer.Read<uint64_t>(64);
+			buffer.Read<bool>(1);
 
-			Player sender = Players::GetByRID(senderRID);
+			Player sender = Players::GetByHostToken(senderHostToken);
 
-			if (senderRID != 0)
+			if (senderHostToken != 0)
 			{
 				RenderChatMessage(message, sender.GetName());
 				break;
