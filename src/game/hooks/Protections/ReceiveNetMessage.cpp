@@ -72,7 +72,6 @@ namespace YimMenu::Hooks
 		{
 		case eNetMessageType::MsgTextChat:
 		{
-			LOG(VERBOSE) << "called";
 			char message[256];
 			uint64_t senderHostToken;
 			Helpers::ReadString(message, sizeof(message) * 8, &buffer);

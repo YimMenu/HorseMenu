@@ -36,7 +36,7 @@ namespace YimMenu
 
 		static Player GetByHostToken(uint64_t token)
 		{
-			return GetInstance().GetByHostToken(token);
+			return GetInstance().GetByHostTokenImpl(token);
 		}
 
 	private:
