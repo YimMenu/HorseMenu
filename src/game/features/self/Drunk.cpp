@@ -12,16 +12,16 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, true);
-			PED::_SET_PED_DRUNKNESS(Self::PlayerPed, true, 1.0f);
+			AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, TRUE);
+			PED::_SET_PED_DRUNKNESS(Self::PlayerPed, TRUE, 1.0f);
 		}
 
 		virtual void OnDisable() override
 		{
 			if (PED::_GET_PED_DRUNKNESS(Self::PlayerPed))
 			{
-				AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, false);
-				PED::_SET_PED_DRUNKNESS(Self::PlayerPed, false, 0.0f);
+				AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, TRUE);
+				PED::_SET_PED_DRUNKNESS(Self::PlayerPed, TRUE, 0.0f);
 			}
 		}
 	};
