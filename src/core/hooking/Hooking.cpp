@@ -43,6 +43,7 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::HandleScriptedGameEvent>(new DetourHook("HandleScriptedGameEvent", Pointers.HandleScriptedGameEvent, Hooks::Protections::HandleScriptedGameEvent));
 		BaseHook::Add<Hooks::Protections::AddObjectToCreationQueue>(new DetourHook("AddObjectToCreationQueue", Pointers.AddObjectToCreationQueue, Hooks::Protections::AddObjectToCreationQueue));
 		BaseHook::Add<Hooks::Protections::ReceiveNetMessage>(new DetourHook("ReceiveNetMessage", Pointers.ReceiveNetMessage, Hooks::Protections::ReceiveNetMessage));
+		// Temporarily Disable the HandlePresenceEvent hook due to errors
 		//BaseHook::Add<Hooks::Protections::HandlePresenceEvent>(new DetourHook("HandlePresenceEvent", Pointers.HandlePresenceEvent, Hooks::Protections::HandlePresenceEvent));
 		BaseHook::Add<Hooks::Protections::PPostMessage>(new DetourHook("PostMessage", Pointers.PostPresenceMessage, Hooks::Protections::PPostMessage));
 		BaseHook::Add<Hooks::Protections::SerializeServerRPC>(new DetourHook("SerializeServerRPC", Pointers.SerializeServerRPC, Hooks::Protections::SerializeServerRPC));
