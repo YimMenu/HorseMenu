@@ -40,6 +40,7 @@ namespace YimMenu::Hooks
 			return true;
 		}
 
+
 		std::string sender_str = "NULL";
 		if (!event_payload["d"]["n"].is_null())
 		{
