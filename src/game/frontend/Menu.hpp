@@ -10,7 +10,7 @@ namespace YimMenu::Menu
 	namespace Font
 	{
 		inline ImFont* g_DefaultFont   = nullptr;
-		inline float g_DefaultFontSize = 18.0f;
+		inline float g_DefaultFontSize = 16.0f;
 
 	    inline ImFont* g_OptionsFont   = nullptr;
 		inline float g_OptionsFontSize = 15.0f;

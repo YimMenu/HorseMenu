@@ -102,28 +102,30 @@ namespace YimMenu::Rewards
 					STREAMING::REQUEST_MODEL(hash, false);
 					ScriptMgr::Yield();
 				}
-				Vector3 coords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), true, false);
-				Object obj = OBJECT::CREATE_OBJECT(hash, coords.x, coords.y, coords.z, true, NETWORK::NETWORK_IS_HOST_OF_THIS_SCRIPT(), 1, 0, 1);
+	
+				Vector3 coords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), 0, 2, 0);
+	
+				Object obj = OBJECT::CREATE_OBJECT(hash, coords.x, coords.y, coords.z, 1, 1, 1, 0, 0);
+				OBJECT::PLACE_OBJECT_ON_GROUND_PROPERLY(obj, 1);
 				ScriptMgr::Yield();
-
+	
+				// Set up object properties
 				ENTITY::SET_ENTITY_VISIBLE(obj, true);
 				ScriptMgr::Yield();
-
+	
 				OBJECT::_MAKE_ITEM_CARRIABLE(obj);
-
+	
 				NETWORK::NETWORK_REGISTER_ENTITY_AS_NETWORKED(obj);
 				if (NETWORK::NETWORK_DOES_NETWORK_ID_EXIST(NETWORK::OBJ_TO_NET(obj)))
 				{
-					OBJECT::PLACE_OBJECT_ON_GROUND_PROPERLY(obj, true);
-					ENTITY::SET_ENTITY_SHOULD_FREEZE_WAITING_ON_COLLISION(obj, true);
 					NETWORK::SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(NETWORK::OBJ_TO_NET(obj), true);
 					NETWORK::NETWORK_REQUEST_CONTROL_OF_ENTITY(obj);
 				}
 				ScriptMgr::Yield();
-
+	
 				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 				ENTITY::SET_OBJECT_AS_NO_LONGER_NEEDED(&obj);
 			}
 		});
-	};
+	}
 };
