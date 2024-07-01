@@ -1,9 +1,16 @@
 #include "Scripts.hpp"
-#include <script/scrThread.hpp>
-#include <rage/tlsContext.hpp>
+
+#include "game/backend/ScriptMgr.hpp"
+#include "game/features/Features.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/Player.hpp"
 #include "game/rdr/data/ScriptNames.hpp"
+
+#include <rage/tlsContext.hpp>
+#include <script/scrThread.hpp>
+#include <script/scriptHandlerNetComponent.hpp>
+
 
 namespace YimMenu::Scripts
 {
@@ -22,13 +29,13 @@ namespace YimMenu::Scripts
 
 	void RunAsScript(rage::scrThread* thread, std::function<void()> callback)
 	{
-		auto og_thread = *Pointers.CurrentScriptThread;
-		auto og_running_in_scrthread  = rage::tlsContext::Get()->m_RunningScript;
-		*Pointers.CurrentScriptThread = thread;
+		auto og_thread                           = *Pointers.CurrentScriptThread;
+		auto og_running_in_scrthread             = rage::tlsContext::Get()->m_RunningScript;
+		*Pointers.CurrentScriptThread            = thread;
 		rage::tlsContext::Get()->m_RunningScript = true; // required to evade thread checks
 		callback();
 		rage::tlsContext::Get()->m_RunningScript = og_running_in_scrthread;
-		*Pointers.CurrentScriptThread = og_thread;
+		*Pointers.CurrentScriptThread            = og_thread;
 	}
 
 	void SendScriptEvent(uint64_t* data, int count, int bits)
@@ -55,5 +62,41 @@ namespace YimMenu::Scripts
 		}
 
 		return "Unknown";
+	}
+
+	bool ForceScriptHost(joaat_t hash)
+	{
+		if (auto launcher = FindScriptThread(hash); launcher && launcher->m_HandlerNetComponent)
+		{
+			auto component = ((rage::scriptHandlerNetComponent*)launcher->m_HandlerNetComponent);
+			auto self      = YimMenu::Player(Self::Id);
+			for (int i = 0; !IsLocalPlayerHost(hash, launcher, component); i++)
+			{
+				if (i > 200)
+					return false;
+				component->SendHostMigrationEvent(self.GetHandle());
+				ScriptMgr::Yield(10ms);
+
+				if (!launcher->m_Stack || !launcher->m_HandlerNetComponent)
+					return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool IsLocalPlayerHost(joaat_t hash, rage::scrThread* launcher, rage::scriptHandlerNetComponent* component)
+	{
+		if (launcher && launcher->m_HandlerNetComponent)
+		{
+			auto self = YimMenu::Player(Self::Id);
+
+			if (self.GetHandle() == component->GetHost())
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
