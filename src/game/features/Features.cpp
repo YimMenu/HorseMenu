@@ -1,5 +1,6 @@
 #include "Features.hpp"
 
+
 #include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
@@ -11,7 +12,6 @@
 #include "game/frontend/GUI.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
-
 
 namespace YimMenu::Features
 {

@@ -79,6 +79,7 @@ namespace YimMenu
 		PlayerDatabaseInstance.reset();
 
 	unload:
+		Pointers.Cache.Unload();
 		Hooking::Destroy();
 		Renderer::Destroy();
 		Pointers.Restore();

@@ -1,4 +1,7 @@
 #pragma once
+#include "PointerCache.hpp"
+#include "core/filemgr/File.hpp"
+#include "core/filemgr/FileMgr.hpp"
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
 
@@ -155,6 +158,8 @@ namespace YimMenu
 	{
 		bool Init();
 		void Restore();
+		// BUMP VERSION EVERYTIME AN UPDATE IS MADE TO POINTERS
+		PointerCache Cache{1};
 	};
 
 	inline YimMenu::Pointers Pointers;
