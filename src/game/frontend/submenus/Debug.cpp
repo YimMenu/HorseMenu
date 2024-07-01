@@ -8,17 +8,19 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
-#include "game/rdr/data/StackSizes.hpp"
-#include "game/rdr/data/ScriptNames.hpp"
 #include "game/rdr/Scripts.hpp"
+#include "game/rdr/data/ScriptNames.hpp"
+#include "game/rdr/data/StackSizes.hpp"
+
 #include <script/scrThread.hpp>
+
 
 static rage::scrThread* s_SelectedThread;
 static int s_SelectedStackSize             = 128;
-static int s_NumFreeStacks                     = -1;
-static const char* s_SelectedScriptName        = "<SELECT>";
-static const char* s_SelectedNewScriptName     = "<SELECT>";
-static const char* s_SelectedStackSizeStr      = "MICRO";
+static int s_NumFreeStacks                 = -1;
+static const char* s_SelectedScriptName    = "<SELECT>";
+static const char* s_SelectedNewScriptName = "<SELECT>";
+static const char* s_SelectedStackSizeStr  = "MICRO";
 static std::chrono::high_resolution_clock::time_point s_LastStackUpdateTime{};
 
 namespace
@@ -277,12 +279,13 @@ namespace YimMenu::Submenus
 		}
 		ImGui::EndGroup();
 	}
-	
+
 	void RenderScriptsView()
 	{
 		if (!Pointers.ScriptThreads || Pointers.ScriptThreads->size() == 0)
 		{
 			s_SelectedThread = nullptr;
+			ImGui::Text("No Threads Yet...");
 			return;
 		}
 
@@ -321,8 +324,12 @@ namespace YimMenu::Submenus
 
 		if (s_SelectedThread)
 		{
-			constexpr auto s_ThreadStateNames      = std::to_array({"Idle", "Running", "Killed", "Paused", "Unk"});
-			ImGui::Combo("State", (int*)&s_SelectedThread->m_Context.m_State, s_ThreadStateNames.data(), s_ThreadStateNames.size(), -1);
+			constexpr auto s_ThreadStateNames = std::to_array({"Idle", "Running", "Killed", "Paused", "Unk"});
+			ImGui::Combo("State",
+			    (int*)&s_SelectedThread->m_Context.m_State,
+			    s_ThreadStateNames.data(),
+			    s_ThreadStateNames.size(),
+			    -1);
 			ImGui::Text(std::format("StackSize: {}", s_SelectedThread->m_Context.m_StackSize).c_str());
 			ImGui::Text(std::format("PC: 0x{:X}", s_SelectedThread->m_Context.m_ProgramCounter).c_str());
 
