@@ -11,12 +11,12 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			WEAPON::SET_PED_INFINITE_AMMO(Self::PlayerPed, true, 0);
+			WEAPON::SET_PED_INFINITE_AMMO(Self::PlayerPed, TRUE, 0);
 		}
 
 		virtual void OnDisable() override
 		{
-			WEAPON::SET_PED_INFINITE_AMMO(Self::PlayerPed, false, 0);
+			WEAPON::SET_PED_INFINITE_AMMO(Self::PlayerPed, FALSE, 0);
 		}
 	};
 

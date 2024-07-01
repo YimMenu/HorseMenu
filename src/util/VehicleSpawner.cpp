@@ -12,11 +12,11 @@ namespace YimMenu
 
 		if (STREAMING::IS_MODEL_IN_CDIMAGE(model) && STREAMING::IS_MODEL_A_VEHICLE(model))
 		{
-			Vehicle veh = VEHICLE::CREATE_VEHICLE(model, coords.x, coords.y, coords.z, rotation, 1, 1, 0, 0);
+			Vehicle veh = VEHICLE::CREATE_VEHICLE(model, coords.x, coords.y, coords.z, rotation, TRUE, TRUE, FALSE, 0);
 
 			ScriptMgr::Yield();
 			VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh, 0);
-			ENTITY::SET_ENTITY_VISIBLE(veh, true);
+			ENTITY::SET_ENTITY_VISIBLE(veh, TRUE);
 			ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
 			STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
 			return veh;

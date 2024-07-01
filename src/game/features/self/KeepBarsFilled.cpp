@@ -11,15 +11,15 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (!Self::PlayerPed || PED::IS_PED_DEAD_OR_DYING(Self::PlayerPed, true) || ENTITY::IS_ENTITY_DEAD(Self::PlayerPed))
+			if (!Self::PlayerPed || PED::IS_PED_DEAD_OR_DYING(Self::PlayerPed, TRUE) || ENTITY::IS_ENTITY_DEAD(Self::PlayerPed))
 				return;
 
 			auto health_bar  = ENTITY::GET_ENTITY_HEALTH(Self::PlayerPed);
 			auto stamina_bar = PLAYER::_GET_PLAYER_STAMINA(Self::Id);
 			auto deadeye_bar = PLAYER::_GET_PLAYER_DEAD_EYE(Self::Id);
 
-			if (health_bar < ENTITY::GET_ENTITY_MAX_HEALTH(Self::PlayerPed, false))
-				ENTITY::SET_ENTITY_HEALTH(Self::PlayerPed, ENTITY::GET_ENTITY_MAX_HEALTH(Self::PlayerPed, false), 0);
+			if (health_bar < ENTITY::GET_ENTITY_MAX_HEALTH(Self::PlayerPed, FALSE))
+				ENTITY::SET_ENTITY_HEALTH(Self::PlayerPed, ENTITY::GET_ENTITY_MAX_HEALTH(Self::PlayerPed, FALSE), 0);
 			if (stamina_bar < PED::_GET_PED_MAX_STAMINA(Self::PlayerPed))
 				PED::_CHANGE_PED_STAMINA(Self::PlayerPed, PED::_GET_PED_MAX_STAMINA(Self::PlayerPed));
 			if (deadeye_bar < PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::Id, 0))
