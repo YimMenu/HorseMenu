@@ -328,6 +328,11 @@ namespace YimMenu
 			SerializeServerRPC = ptr.As<PVOID>();
 		});
 
+		constexpr auto scriptProgramTablePtrn = Pattern<"4C 8B 15 ? ? ? ? 41 3B DB">("ScriptProgramTable");
+		scanner.Add(scriptProgramTablePtrn, [this](PointerCalculator ptr) {
+			ScriptProgramTable = ptr.Add(3).Rip().As<void*>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";
