@@ -151,5 +151,5 @@ namespace YimMenu::Emote
         {"War Cry", 0x3AD8141A, EMOTE_TYPE_TAUNT},
         {"You Stink", 0xF6130E04, EMOTE_TYPE_TAUNT}
     }}
-}};
+    }};
 }

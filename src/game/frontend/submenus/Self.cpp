@@ -165,6 +165,16 @@ namespace YimMenu::Submenus
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnbountywagon"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 
+		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("overridewhistle"_J));
+		toolsGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			ImGui::Text("Pitch");
+			ImGui::SliderFloat("##Pitch", &SelfStorage::pitch, 0.0f, 1.0f);
+			ImGui::Text("Clarity");
+			ImGui::SliderFloat("##Clarity", &SelfStorage::clarity, 0.0f, 1.0f);
+			ImGui::Text("Shape");
+			ImGui::SliderFloat("##Shape", &SelfStorage::shape, 0.0f, 10.0f);
+		}));
+
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superrun"_J));

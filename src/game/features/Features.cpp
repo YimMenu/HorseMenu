@@ -44,6 +44,23 @@ namespace YimMenu
 		Self::IsOnMount = PED::IS_PED_ON_MOUNT(Self::PlayerPed);
 	}
 
+	void UpdateSelectedVars()
+	{
+		Selected::Pos = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()), true, true);
+
+		Selected::Distance = MISC::GET_DISTANCE_BETWEEN_COORDS(Self::Pos.x,
+		    Self::Pos.y,
+		    Self::Pos.z,
+		    Selected::Pos.x,
+		    Selected::Pos.y,
+		    Selected::Pos.z,
+		    1);
+
+		Selected::current_health = ENTITY::GET_ENTITY_HEALTH(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
+		Selected::max_health = ENTITY::GET_ENTITY_MAX_HEALTH(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()), false);
+		Selected::health_percentage = (float)Selected::current_health / Selected::max_health * 100.0f;
+	}
+
 	void SpectateTick()
 	{
 		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating
@@ -108,6 +125,7 @@ namespace YimMenu
 		{
 			Players::Tick();
 			UpdateSelfVars();
+			UpdateSelectedVars();
 			*Pointers.RageSecurityInitialized = false;
 			*Pointers.ExplosionBypass         = true;
 			Commands::RunLoopedCommands();
