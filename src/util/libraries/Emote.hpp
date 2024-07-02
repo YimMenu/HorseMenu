@@ -3,26 +3,26 @@
 
 namespace YimMenu::Emote
 {
-	constexpr int numCategories        = 5;
-	constexpr int maxEmotesPerCategory = 37;
-	
-    int selectedEmoteCategoryIndex     = 0;
-	int selectedEmoteMemberIndex       = 0;
+    constexpr int numCategories = 5;
+    constexpr int maxEmotesPerCategory = 37;
 
-	constexpr std::array<const char*, numCategories> emoteCategories = {
-	    "Actions",
-	    "Dances",
-	    "Greetings",
-	    "Reactions",
-	    "Taunts" /*, "Gun Twirl" */
-	};
+    int selectedEmoteCategoryIndex = 0;
+    int selectedEmoteMemberIndex = 0;
 
-	struct EmoteItemData
-	{
-		const char* name;
-		uint32_t hash;
-		eEmoteType type;
-	};
+    constexpr std::array<const char*, numCategories> emoteCategories = {
+        "Actions",
+        "Dances",
+        "Greetings",
+        "Reactions",
+        "Taunts" /*, "Gun Twirl" */
+    };
+
+    struct EmoteItemData
+    {
+        const char* name;
+        uint32_t hash;
+        eEmoteType type;
+    };
 
     // Emote Items
     constexpr std::array<std::array<EmoteItemData, maxEmotesPerCategory>, numCategories> emoteCategoryMembers = {{
