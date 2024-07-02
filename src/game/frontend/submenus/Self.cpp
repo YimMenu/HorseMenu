@@ -6,7 +6,7 @@
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
-#include "game/features/Emote.hpp"
+#include "util/libraries/Emote.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
 #include "util/Ped.hpp"
