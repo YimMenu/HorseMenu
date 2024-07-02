@@ -6,6 +6,7 @@
 #include "game/rdr/Natives.hpp"
 #include "network/CNetGamePlayer.hpp"
 
+#include <player/CPlayerInfo.hpp>
 
 namespace YimMenu::Features
 {
@@ -16,16 +17,29 @@ namespace YimMenu::Hooks
 	void Info::PlayerHasJoined(CNetGamePlayer* player)
 	{
 		BaseHook::Get<Info::PlayerHasJoined, DetourHook<decltype(&Info::PlayerHasJoined)>>()->Original()(player);
+		uint64_t rid       = player->m_PlayerInfo->m_GamerInfo.m_GamerHandle2.m_rockstar_id;
+		netAddress ipaddr  = player->m_PlayerInfo->m_GamerInfo.m_ExternalAddress;
+		std::string ip_str = std::format("{}.{}.{}.{}", ipaddr.m_field1, ipaddr.m_field2, ipaddr.m_field3, ipaddr.m_field4);
 
 		if (player->GetName()[0] == '~' && Features::_DetectSpoofedNames.GetState())
 			Notifications::Show("Spoofed Name Detected", std::string("Spoofed Name Detected from ").append(player->GetName()), NotificationType::Warning);
-		LOG(INFO) << player->GetName() << " is joining your session.";
+		
+		LOG(INFO) << std::format("{} joined the session. Reserved slot #{}. RID: {} | IP: {}", player->GetName(), (int)player->m_ActiveIndex, (int)rid, ip_str);
+		Notifications::Show("Network",
+		    std::format("{} joined the session\nReserving slot #{}\nRID: {} | IP: {}", player->GetName(), (int)player->m_ActiveIndex, (int)rid, ip_str));
 	}
 
 	void Info::PlayerHasLeft(CNetGamePlayer* player)
 	{
 		BaseHook::Get<Info::PlayerHasLeft, DetourHook<decltype(&Info::PlayerHasLeft)>>()->Original()(player);
+		uint64_t rid      = player->m_PlayerInfo->m_GamerInfo.m_GamerHandle2.m_rockstar_id;
+		netAddress ipaddr = player->m_PlayerInfo->m_GamerInfo.m_ExternalAddress;
+		std::string ip_str = std::format("{}.{}.{}.{}", ipaddr.m_field1, ipaddr.m_field2, ipaddr.m_field3, ipaddr.m_field4);
 
-		LOG(INFO) << player->GetName() << " has left your session.";
+		LOG(INFO)
+		    << std::format("{} left the session. Freeing slot #{}. RID: {} | IP: {}", player->GetName(), (int)player->m_ActiveIndex, (int)rid, ip_str);
+
+		Notifications::Show("Network",
+		    std::format("{} left the session\nFreeing slot #{}\nRID: {} | IP: {}", player->GetName(), (int)player->m_ActiveIndex, (int)rid, ip_str));
 	}
 }

@@ -6,6 +6,7 @@
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
+#include "game/features/Emote.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
 #include "util/Ped.hpp"
@@ -42,14 +43,80 @@ namespace YimMenu::Submenus
 					ScriptMgr::Yield();
 				}
 
-				TASK::TASK_PLAY_ANIM(YimMenu::Self::PlayerPed, dict.c_str(), anim.c_str(), 8.0f, -8.0f, -1, 0, 0, false, false, false, "", 0);
+				TASK::TASK_PLAY_ANIM(YimMenu::Self::PlayerPed, dict.c_str(), anim.c_str(), 8.0f, -8.0f, -1, 0, 0, FALSE, FALSE, FALSE, "", 0);
 			});
 		}
-		ImGui::SameLine();
-		if (ImGui::Button("Stop"))
+
+		ImGui::Separator();
+
+		ImGui::Text("Emote Category");
+		if (ImGui::BeginCombo("##Emote Category", Emote::emoteCategories[Emote::selectedEmoteCategoryIndex]))
+		{
+			for (int i = 0; i < Emote::numCategories; i++)
+			{
+				bool isSelected = (i == Emote::selectedEmoteCategoryIndex);
+				if (ImGui::Selectable(Emote::emoteCategories[i], isSelected))
+				{
+					Emote::selectedEmoteCategoryIndex          = i;
+					Emote::selectedEmoteMemberIndex   = 0;
+				}
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		ImGui::Text("Emote");
+		if (ImGui::BeginCombo("##Emote",
+		        Emote::emoteCategoryMembers[Emote::selectedEmoteCategoryIndex][Emote::selectedEmoteMemberIndex]
+		            .name))
+		{
+			for (int i = 0; i < Emote::maxEmotesPerCategory; i++)
+			{
+				const auto& emote = Emote::emoteCategoryMembers[Emote::selectedEmoteCategoryIndex][i];
+				if (emote.name == nullptr)
+					break;
+				bool isSelected = (i == Emote::selectedEmoteMemberIndex);
+				if (ImGui::Selectable(emote.name, isSelected))
+				{
+					Emote::selectedEmoteMemberIndex = i;
+				}
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		if (ImGui::Button("Play Emote"))
+		{
+			if (*Pointers.IsSessionStarted)
+			{
+				FiberPool::Push([=] {
+					int selectedCategoryIndex = Emote::selectedEmoteCategoryIndex;
+					int selectedEmoteIndex    = Emote::selectedEmoteMemberIndex;
+					const Emote::EmoteItemData& selectedEmote = Emote::emoteCategoryMembers[selectedCategoryIndex][selectedEmoteIndex];
+
+					TASK::TASK_PLAY_EMOTE_WITH_HASH(YimMenu::Self::PlayerPed,
+					    static_cast<int>(selectedEmote.type),
+					    EMOTE_PM_FULLBODY,
+					    static_cast<Hash>(selectedEmote.hash),
+					    false,
+					    false,
+					    false,
+					    false,
+					    false);
+				});
+			}
+		}
+
+		if (ImGui::Button("Stop Animation"))
 		{
 			FiberPool::Push([=] {
-				TASK::CLEAR_PED_TASKS(YimMenu::Self::PlayerPed, true, false);
+				TASK::CLEAR_PED_TASKS(YimMenu::Self::PlayerPed, TRUE, FALSE);
 			});
 		}
 	}
