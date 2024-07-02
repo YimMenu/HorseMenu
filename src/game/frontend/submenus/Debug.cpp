@@ -12,7 +12,10 @@
 #include "game/rdr/data/ScriptNames.hpp"
 #include "game/rdr/data/StackSizes.hpp"
 
+#include <network/CNetGamePlayer.hpp>
 #include <script/scrThread.hpp>
+#include <script/scriptHandlerNetComponent.hpp>
+
 
 
 static rage::scrThread* s_SelectedThread;
@@ -332,6 +335,13 @@ namespace YimMenu::Submenus
 			    -1);
 			ImGui::Text(std::format("StackSize: {}", s_SelectedThread->m_Context.m_StackSize).c_str());
 			ImGui::Text(std::format("PC: 0x{:X}", s_SelectedThread->m_Context.m_ProgramCounter).c_str());
+
+			auto s_SelectedThreadHandle = static_cast<rage::scriptHandlerNetComponent*>(s_SelectedThread->m_HandlerNetComponent);
+			if (s_SelectedThreadHandle->GetHost())
+			{
+				ImGui::Text("Host: %s", s_SelectedThreadHandle->GetHost()->GetName());
+			}
+
 
 			if (s_SelectedThread->m_Context.m_State == rage::eThreadState::killed)
 			{
