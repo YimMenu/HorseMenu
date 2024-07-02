@@ -12,12 +12,12 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			PLAYER::SET_EVERYONE_IGNORE_PLAYER(Self::Id, true);
+			PLAYER::SET_EVERYONE_IGNORE_PLAYER(Self::Id, TRUE);
 		}
 
 		virtual void OnDisable() override
 		{
-			PLAYER::SET_EVERYONE_IGNORE_PLAYER(Self::Id, false);
+			PLAYER::SET_EVERYONE_IGNORE_PLAYER(Self::Id, FALSE);
 		}
 	};
 

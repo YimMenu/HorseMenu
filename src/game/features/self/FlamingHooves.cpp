@@ -10,18 +10,18 @@ namespace YimMenu
 
 		virtual void OnEnable() override
 		{
-			PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, true);
+			PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, TRUE);
 		}
 
 		virtual void OnTick() override
 		{
-			if (!PED::GET_PED_CONFIG_FLAG(Self::Mount, 207, true))
-				PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, true);
+			if (!PED::GET_PED_CONFIG_FLAG(Self::Mount, 207, TRUE))
+				PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, TRUE);
 		}
 
 		virtual void OnDisable() override
 		{
-			PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, false);
+			PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, FALSE);
 		}
 	};
 

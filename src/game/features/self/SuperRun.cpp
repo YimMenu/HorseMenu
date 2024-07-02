@@ -14,7 +14,7 @@ namespace YimMenu::Features
 				return;
 
 			if (TASK::IS_PED_RUNNING(Self::PlayerPed) || TASK::IS_PED_SPRINTING(Self::PlayerPed))
-				ENTITY::APPLY_FORCE_TO_ENTITY(Self::PlayerPed, 1, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1, true, true, true, false, true);
+				ENTITY::APPLY_FORCE_TO_ENTITY(Self::PlayerPed, 1, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1, 1, 1, TRUE, FALSE, TRUE);
 		}
 	};
 
