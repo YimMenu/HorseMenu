@@ -15,6 +15,15 @@ namespace YimMenu
 		inline bool IsOnMount;
 	}
 
+	namespace Selected
+	{
+		inline float Distance;
+		inline Vector3 Pos;
+		inline int current_health;
+		inline int max_health;
+		inline float health_percentage;
+	}
+
 	// TODO: move these out
 	inline bool g_Spectating = false;
 	inline int g_SpectateId = -1;

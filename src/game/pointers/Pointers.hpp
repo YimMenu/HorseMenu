@@ -6,10 +6,10 @@
 #include <dxgi1_4.h>
 #include <rage/atArray.hpp>
 #include <rage/pools.hpp>
-#include <script/scrNativeHandler.hpp>
 #include <vulkan/vulkan.h>
 #include <windows.h>
 
+#include <script/scrNativeHandler.hpp>
 
 class CNetGamePlayer;
 class CVehicle;
@@ -68,6 +68,7 @@ namespace YimMenu
 		PVOID HandlePresenceEvent;
 		Functions::PostPresenceMessage PostPresenceMessage;
 		Functions::SendNetInfoToLobby SendNetInfoToLobby;
+		void* ScriptProgramTable; // TODO: Reverse scrProgramTable
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;

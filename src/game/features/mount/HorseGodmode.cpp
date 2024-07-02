@@ -12,12 +12,12 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, true);
+			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, TRUE);
 		}
 
         virtual void OnDisable() override
         {
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, false);
+			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, FALSE);
         }
 	};
 

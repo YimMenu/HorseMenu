@@ -10,14 +10,6 @@
 
 namespace YimMenu
 {
-	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes)
-	{
-		DWORD oldProtect;
-		VirtualProtect(address, numBytes, PAGE_EXECUTE_READWRITE, &oldProtect);
-		memcpy(address, bytes, numBytes);
-		VirtualProtect(address, numBytes, oldProtect, &oldProtect);
-	}
-
 	bool Pointers::Init()
 	{
 		const auto rdr2 = ModuleMgr.Get("RDR2.exe"_J);
@@ -326,6 +318,11 @@ namespace YimMenu
 		constexpr auto serializeServerRPCPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 48 8B 44 24 70">("SerializeServerRPC");
 		scanner.Add(serializeServerRPCPtrn, [this](PointerCalculator ptr) {
 			SerializeServerRPC = ptr.As<PVOID>();
+		});
+
+		constexpr auto scriptProgramTablePtrn = Pattern<"4C 8B 15 ? ? ? ? 41 3B DB">("ScriptProgramTable");
+		scanner.Add(scriptProgramTablePtrn, [this](PointerCalculator ptr) {
+			ScriptProgramTable = ptr.Add(3).Rip().As<void*>();
 		});
 
 		if (!scanner.Scan())

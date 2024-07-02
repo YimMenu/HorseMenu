@@ -13,7 +13,7 @@ namespace YimMenu::Features
 		virtual void OnCall(Player player) override
 		{
 			float rot      = ENTITY::GET_ENTITY_ROTATION(player.GetPed().GetHandle(), 0).z;
-			Vector3 coords = ENTITY::GET_ENTITY_COORDS(player.GetPed().GetHandle(), true, true);
+			Vector3 coords = ENTITY::GET_ENTITY_COORDS(player.GetPed().GetHandle(), TRUE, TRUE);
 			SpawnVehicle("wagonCircus01x", coords, rot);
 		}
 	};

@@ -12,7 +12,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{
-			Vector3 coords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(player.GetId()), true, true);
+			Vector3 coords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(player.GetId()), TRUE, TRUE);
 			coords.z       = coords.z - 1.0f;
 			SpawnObject(0xF3D580D3, coords);
 		}

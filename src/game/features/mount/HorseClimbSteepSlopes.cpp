@@ -19,5 +19,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static HorseClimbSteepSlopes _HorseClimbSteepSlopes{"horseclimbsteepslopes", "Can Climb Steep Slopes", "Your horse can climb up/down sleep slopes without sliding"};
+	static HorseClimbSteepSlopes _HorseClimbSteepSlopes{"horseclimbsteepslopes", "Can Climb Steep Slopes", "Your horse can climb up/down steep slopes without sliding"};
 }

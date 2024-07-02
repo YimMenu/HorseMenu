@@ -12,12 +12,12 @@ namespace YimMenu::Features
 		virtual void OnTick() override
 		{
             if(PED::CAN_PED_RAGDOLL(Self::Mount))
-			    PED::SET_PED_CAN_RAGDOLL(Self::Mount, false);
+			    PED::SET_PED_CAN_RAGDOLL(Self::Mount, FALSE);
 		}
 
         virtual void OnDisable() override
         {
-            PED::SET_PED_CAN_RAGDOLL(Self::Mount, true);
+			PED::SET_PED_CAN_RAGDOLL(Self::Mount, TRUE);
         }
 	};
 
