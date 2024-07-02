@@ -6,7 +6,7 @@ namespace YimMenu::Emote
 	constexpr int numCategories        = 5;
 	constexpr int maxEmotesPerCategory = 37;
 	
-    int selectedEmoteCategoryIndex     = 0;
+    	int selectedEmoteCategoryIndex     = 0;
 	int selectedEmoteMemberIndex       = 0;
 
 	constexpr std::array<const char*, numCategories> emoteCategories = {
