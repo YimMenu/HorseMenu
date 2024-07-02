@@ -24,8 +24,8 @@ namespace YimMenu::Emote
 		eEmoteType type;
 	};
 
-	// Emote Items
-	constexpr std::array<std::array<EmoteItemData, maxEmotesPerCategory>, numCategories> emoteCategoryMembers = {{
+    // Emote Items
+    constexpr std::array<std::array<EmoteItemData, maxEmotesPerCategory>, numCategories> emoteCategoryMembers = {{
     // Actions
     {{
         {"Beckon", 0x7FC09D55, EMOTE_TYPE_ACTION},
