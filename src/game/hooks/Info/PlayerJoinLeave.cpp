@@ -26,7 +26,7 @@ namespace YimMenu::Hooks
 		
 		LOG(INFO) << std::format("{} joined the session. Reserved slot #{}. RID: {} | IP: {}", player->GetName(), (int)player->m_ActiveIndex, (int)rid, ip_str);
 		Notifications::Show("Network",
-		    std::format("{} joined the session\nReserving slot #{}\nRID: {} | IP: {}", player->GetName(), (int)player->m_ActiveIndex, (int)rid, ip_str));
+		    std::format("{} joined the session\nReserved slot #{}\nRID: {} | IP: {}", player->GetName(), (int)player->m_ActiveIndex, (int)rid, ip_str));
 	}
 
 	void Info::PlayerHasLeft(CNetGamePlayer* player)
