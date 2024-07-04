@@ -5,6 +5,7 @@
 #include <script/scrNativeHandler.hpp>
 #include <script/types.hpp>
 
+enum class NativeIndex;
 namespace YimMenu
 {
 	class CustomCallContext : public rage::scrNativeCallContext
@@ -38,7 +39,7 @@ namespace YimMenu
 		constexpr void EndCall()
 		{
 			// TODO: try to get rid of this
-			if (!m_AreHandlersCached)
+			if (!m_AreHandlersCached) [[unlikely]]
 				CacheHandlers();
 
 			m_Handlers[index](&m_CallContext);
@@ -74,6 +75,14 @@ namespace YimMenu
 			{
 				return invoker.GetReturnValue<Ret>();
 			}
+		}
+
+		static constexpr rage::scrNativeHandler GetNativeHandler(NativeIndex index)
+		{
+			if (!m_AreHandlersCached) [[unlikely]]
+				CacheHandlers();
+
+			return m_Handlers[(int)index];
 		}
 
 		CustomCallContext m_CallContext{};

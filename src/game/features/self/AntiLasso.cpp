@@ -5,7 +5,6 @@
 
 namespace YimMenu::Features
 {
-    //Needs testing
 	class AntiLasso : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;

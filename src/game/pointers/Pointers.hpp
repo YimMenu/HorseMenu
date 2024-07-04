@@ -15,6 +15,7 @@ class CNetGamePlayer;
 class CVehicle;
 class CPed;
 class CNetworkPlayerMgr;
+class CNetworkObjectMgr;
 
 namespace rage
 {
@@ -28,6 +29,8 @@ namespace rage
 	class rlGamerHandle;
 	class datBitBuffer;
 }
+
+class CAnimScene;
 
 namespace YimMenu
 {
@@ -52,6 +55,7 @@ namespace YimMenu
 		using ReadBitBufferArray  = bool (*)(rage::datBitBuffer* buffer, PVOID read, int bits, int unk);
 		using WriteBitBufferArray = bool (*)(rage::datBitBuffer* buffer, void* val, int bits, int unk);
 		using ReadBitBufferString = bool (*)(rage::datBitBuffer* buffer, char* read, int bits);
+		using GetAnimSceneFromHandle = CAnimScene**(*)(CAnimScene** scene, int handle);
 	};
 
 	struct PointerData
@@ -74,12 +78,14 @@ namespace YimMenu
 		Functions::ReadBitBufferArray ReadBitBufferArray;
 		Functions::WriteBitBufferArray WriteBitBufferArray;
 		Functions::ReadBitBufferString ReadBitBufferString;
+		PVOID InitNativeTables;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;
 		PoolEncryption* VehiclePool;
 		PoolEncryption* PickupPool;
 		uint32_t (*FwScriptGuidCreateGuid)(void*);
+		CNetworkObjectMgr** NetworkObjectMgr;
 
 		// Security
 		PVOID SendMetric;
@@ -118,9 +124,13 @@ namespace YimMenu
 		Functions::WorldToScreen WorldToScreen;
 		Functions::GetNetObjectById GetNetObjectById;
 		Functions::RequestControlOfNetObject RequestControlOfNetObject;
+		Functions::GetAnimSceneFromHandle GetAnimSceneFromHandle;
 
 		// Misc
 		PVOID ThrowFatalError;
+		PVOID IsAnimSceneInScope;
+		PVOID BroadcastNetArray;
+		std::uint8_t* NetArrayPatch;
 
 		// Vulkan
 		PVOID QueuePresentKHR;      //Init in renderer
@@ -149,7 +159,6 @@ namespace YimMenu
 		PVOID NetworkRequest;
 
 		CNetworkPlayerMgr* NetworkPlayerMgr;
-		void* NetworkObjectMgr;
 
 		PVOID WritePlayerHealthData;
 

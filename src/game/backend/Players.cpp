@@ -21,10 +21,13 @@ namespace YimMenu
 			    netPlayer && (Pointers.GetNetPlayerFromPid(idx) == netPlayer /*game also does this*/) && netPlayer->IsValid())
 			{
 				m_Players[idx] = Player(idx);
+				if (!m_PlayerDatas.contains(idx))
+					m_PlayerDatas[idx] = PlayerData();
 			}
 			else
 			{
 				m_Players.erase(idx);
+				m_PlayerDatas.erase(idx);
 			}
 		}
 	}

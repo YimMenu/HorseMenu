@@ -1,6 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
@@ -12,14 +11,20 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			ENTITY::SET_ENTITY_VISIBLE(Self::PlayerPed, false);
-			NETWORK::SET_PLAYER_VISIBLE_LOCALLY(Self::Id, true);
+			if (Self::GetPed())
+			{
+				Self::GetPed().SetVisible(false);
+				NETWORK::SET_PLAYER_VISIBLE_LOCALLY(Self::GetPlayer().GetId(), true);
+			}
 		}
 
 		virtual void OnDisable() override
 		{
-			ENTITY::SET_ENTITY_VISIBLE(Self::PlayerPed, true);
-			NETWORK::SET_PLAYER_VISIBLE_LOCALLY(Self::Id, true);
+			if (Self::GetPed())
+			{
+				Self::GetPed().SetVisible(true);
+				NETWORK::SET_PLAYER_VISIBLE_LOCALLY(Self::GetPlayer().GetId(), false);
+			}
 		}
 	};
 

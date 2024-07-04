@@ -1,5 +1,7 @@
 #include "Scripts.hpp"
 #include <script/scrThread.hpp>
+#include <script/scriptHandlerNetComponent.hpp>
+#include <network/CNetworkPlayerMgr.hpp>
 #include <rage/tlsContext.hpp>
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
@@ -45,15 +47,27 @@ namespace YimMenu::Scripts
 	{
 		if (*Pointers.IsSessionStarted)
 		{
-			if (auto it = Data::g_MpScriptNames.find(hash); it != Data::g_MpScriptNames.end())
-				return it->second;
+			for (int i = 0; i < Data::g_MpScriptNames.size(); i++)
+			{
+				if (Data::g_MpScriptNames[i].first == hash)
+					return Data::g_MpScriptNames[i].second;
+			}
 		}
 		else
 		{
-			if (auto it = Data::g_SpScriptNames.find(hash); it != Data::g_SpScriptNames.end())
-				return it->second;
+			for (int i = 0; i < Data::g_SpScriptNames.size(); i++)
+			{
+				if (Data::g_SpScriptNames[i].first == hash)
+					return Data::g_SpScriptNames[i].second;
+			}
 		}
 
 		return "Unknown";
+	}
+
+	void ForceScriptHost(rage::scrThread* thread)
+	{
+		auto handler = reinterpret_cast<rage::scriptHandlerNetComponent*>(thread->m_HandlerNetComponent);
+		handler->DoHostMigration(Pointers.NetworkPlayerMgr->m_LocalPlayer, 0xFFFF, true);
 	}
 }

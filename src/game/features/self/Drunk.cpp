@@ -1,6 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "core/frontend/Notifications.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 
@@ -12,16 +11,19 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, true);
-			PED::_SET_PED_DRUNKNESS(Self::PlayerPed, true, 1.0f);
+			if (Self::GetPed())
+			{
+				AUDIO::SET_PED_IS_DRUNK(Self::GetPed().GetHandle(), true);
+				PED::_SET_PED_DRUNKNESS(Self::GetPed().GetHandle(), true, 1.0f);
+			}
 		}
 
 		virtual void OnDisable() override
 		{
-			if (PED::_GET_PED_DRUNKNESS(Self::PlayerPed))
+			if (Self::GetPed().GetHandle())
 			{
-				AUDIO::SET_PED_IS_DRUNK(Self::PlayerPed, false);
-				PED::_SET_PED_DRUNKNESS(Self::PlayerPed, false, 0.0f);
+				AUDIO::SET_PED_IS_DRUNK(Self::GetPed().GetHandle(), false);
+				PED::_SET_PED_DRUNKNESS(Self::GetPed().GetHandle(), false, 1.0f);
 			}
 		}
 	};

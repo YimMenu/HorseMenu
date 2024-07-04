@@ -17,6 +17,28 @@ namespace YimMenu
 			m_Handle = Pointers.PtrToHandle(m_Pointer);
 	}
 
+	void Entity::AssertValid(const std::string& function_name)
+	{
+		if (!IsValid())
+		{
+			LOG(WARNING) << "IsValid() assertion failed for " << function_name;
+		}
+	}
+
+	void Entity::AssertControl(const std::string& function_name)
+	{
+		if (!HasControl())
+		{
+			LOG(WARNING) << "HasControl() assertion failed for " << function_name;
+		}
+	}
+
+	void Entity::AssertScriptContext(const std::string& function_name)
+	{
+		// TODO
+	}
+
+	// TODO: potential use after free
 	bool Entity::IsValid()
 	{
 		return m_Handle != -1 || m_Pointer != nullptr;
@@ -50,18 +72,63 @@ namespace YimMenu
 
 	bool Entity::IsPlayer()
 	{
+		ENTITY_ASSERT_VALID();
 		return PED::IS_PED_A_PLAYER(GetHandle());
 	}
 
 	rage::fvector3 Entity::GetPosition()
 	{
+		ENTITY_ASSERT_VALID();
 		auto pos = ENTITY::GET_ENTITY_COORDS(GetHandle(), false, true);
 		return rage::fvector3(pos.x, pos.y, pos.z);
 	}
 
 	void Entity::SetPosition(rage::fvector3 position)
 	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY_ASSERT_SCRIPT_CONTEXT();
 		ENTITY::SET_ENTITY_COORDS(GetHandle(), position.x, position.y, position.z, false, true, true, true);
+	}
+
+	rage::fvector3 Entity::GetRotation(int order)
+	{
+		ENTITY_ASSERT_VALID();
+		auto pos = ENTITY::GET_ENTITY_ROTATION(GetHandle(), order);
+		return rage::fvector3(pos.x, pos.y, pos.z);
+	}
+
+	void Entity::SetRotation(rage::fvector3 rotation, int order)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY::SET_ENTITY_ROTATION(GetHandle(), rotation.x, rotation.y, rotation.z, order, false);
+	}
+
+	rage::fvector3 Entity::GetVelocity()
+	{
+		ENTITY_ASSERT_VALID();
+		auto pos = ENTITY::GET_ENTITY_VELOCITY(GetHandle(), 0);
+		return rage::fvector3(pos.x, pos.y, pos.z);
+	}
+
+	void Entity::SetVelocity(rage::fvector3 vel)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY::SET_ENTITY_VELOCITY(GetHandle(), vel.x, vel.y, vel.z);
+	}
+
+	void Entity::SetCollision(bool enabled)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY::SET_ENTITY_COLLISION(GetHandle(), enabled, true);
+	}
+
+	bool Entity::SetFrozen(bool enabled)
+	{
+		ENTITY::FREEZE_ENTITY_POSITION(GetHandle(), enabled);
 	}
 
 	bool Entity::IsNetworked()
@@ -80,10 +147,63 @@ namespace YimMenu
 
 	std::uint16_t Entity::GetNetworkObjectId()
 	{
+		ENTITY_ASSERT_VALID();
 		if (!IsNetworked())
 			return 0;
 
 		return GetPointer<rage::fwEntity*>()->m_NetObject->m_ObjectId;
+	}
+
+	bool Entity::GetInvincible()
+	{
+		// TODO this is bad!
+		ENTITY_ASSERT_VALID();
+		return !ENTITY::_GET_ENTITY_CAN_BE_DAMAGED(GetHandle());
+	}
+
+	void Entity::SetInvincible(bool status)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY::SET_ENTITY_INVINCIBLE(GetHandle(), status);
+	}
+
+	bool Entity::IsDead()
+	{
+		ENTITY_ASSERT_VALID();
+		return ENTITY::IS_ENTITY_DEAD(GetHandle());
+	}
+
+	int Entity::GetHealth()
+	{
+		ENTITY_ASSERT_VALID();
+		return ENTITY::GET_ENTITY_HEALTH(GetHandle());
+	}
+
+	void Entity::SetHealth(int health)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY::SET_ENTITY_HEALTH(GetHandle(), health, 0);
+	}
+
+	int Entity::GetMaxHealth()
+	{
+		ENTITY_ASSERT_VALID();
+		return ENTITY::GET_ENTITY_MAX_HEALTH(GetHandle(), 0);
+	}
+
+	bool Entity::IsVisible()
+	{
+		ENTITY_ASSERT_VALID();
+		return ENTITY::IS_ENTITY_VISIBLE(GetHandle());
+	}
+
+	void Entity::SetVisible(bool status)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY::SET_ENTITY_VISIBLE(GetHandle(), status);
 	}
 
 	// TODO: find a better way to compare entities

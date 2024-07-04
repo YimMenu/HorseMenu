@@ -11,6 +11,8 @@ namespace rage
 
 namespace YimMenu
 {
+	class PlayerData;
+
 	class Player
 	{
 		CNetGamePlayer* m_Handle;
@@ -46,6 +48,7 @@ namespace YimMenu
 		uint16_t GetRelayPort();
 		uint16_t GetUnkPort();
 		uint32_t GetRelayState();
+		PlayerData& GetData();
 
 		bool operator==(Player other);
 	};

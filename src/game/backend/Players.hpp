@@ -1,11 +1,13 @@
 #pragma once
 #include "game/rdr/Player.hpp"
+#include "PlayerData.hpp"
 
 namespace YimMenu
 {
 	class Players
 	{
 		std::unordered_map<uint8_t, Player> m_Players{};
+		std::unordered_map<uint8_t, PlayerData> m_PlayerDatas{};
 		Player m_SelectedPlayer = Player((uint8_t)0);
 
 	public:
@@ -37,6 +39,11 @@ namespace YimMenu
 		static Player GetByHostToken(uint64_t token)
 		{
 			return GetInstance().GetByHostTokenImpl(token);
+		}
+
+		static PlayerData& GetPlayerData(uint8_t idx)
+		{
+			return GetInstance().m_PlayerDatas[idx];
 		}
 
 	private:

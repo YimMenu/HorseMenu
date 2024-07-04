@@ -1,5 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
@@ -10,7 +10,7 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			MISC::SET_SUPER_JUMP_THIS_FRAME(Self::Id);
+			MISC::SET_SUPER_JUMP_THIS_FRAME(Self::GetPed().GetHandle());
 		}
 	};
 

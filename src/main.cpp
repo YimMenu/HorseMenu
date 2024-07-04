@@ -1,5 +1,4 @@
 #include "common.hpp"
-#include "core/byte_patch_manager/byte_patch_manager.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/filemgr/FileMgr.hpp"
 #include "core/frontend/Notifications.hpp"
@@ -10,6 +9,7 @@
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/backend/NativeHooks.hpp"
 #include "game/bigfeatures/CustomTeleport.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/GUI.hpp"
@@ -37,8 +37,6 @@ namespace YimMenu
 			goto unload;
 		if (!Renderer::Init())
 			goto unload;
-
-		Byte_Patch_Manager::Init();
 
 		Hooking::Init();
 
@@ -69,6 +67,9 @@ namespace YimMenu
 		}
 
 		LOG(INFO) << "Unloading";
+
+		NativeHooks::Destroy();
+		LOG(INFO) << "NativeHooks Uninitialized";
 
 		ScriptMgr::Destroy();
 		LOG(INFO) << "ScriptMgr Uninitialized";

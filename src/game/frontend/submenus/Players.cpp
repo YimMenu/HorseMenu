@@ -4,6 +4,7 @@
 #include "core/commands/Commands.hpp"
 #include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
+#include "game/backend/PlayerData.hpp"
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
@@ -209,6 +210,33 @@ namespace YimMenu::Submenus
 					ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
+
+				if (ImGui::Button("Test"))
+				{
+					FiberPool::Push([] {
+						Scripts::ForceScriptHost(Scripts::FindScriptThread("net_ambient_content_evaluator"_J));
+						auto broadcast                                  = ScriptGlobal(1207480);
+						*broadcast.At(2505).At(427).At(0, 1).As<int*>() = 0; // index
+						auto mission                                    = broadcast.At(231).At(1066).At(0, 17);
+						*mission.At(0).As<joaat_t*>()                   = "generic_weight_control_item"_J;
+						*mission.At(1).As<joaat_t*>()                   = 7000; 
+						*mission.At(6).As<int*>()                       = 1 | 64; // NET_ACE_LAUNCHER_CF_USE_LAUNCHER
+						*mission.At(13).As<int*>()                      = 2; // NET_ACE_LAUNCHER_HMS_MISSION_RUNNING?
+						*mission.At(7).As<int*>()                       = 1; // iNumLocations
+						*mission.At(8).At(0, 4).At(1).As<int*>()        = 0; // idk instance ID maybe?
+						*mission.At(8).At(0, 4).At(3).As<int*>()        = 999999; // range check
+						*mission.At(14).As<int*>()                      = 0;
+						*mission.At(15).As<int*>()                      = 0;
+						*mission.At(16).As<int*>()                      = -1;
+						auto uid_data                                   = broadcast.At(231).At(0, 15);
+						*uid_data.At(1).As<int*>()                      = 2; // high priority
+						*uid_data.At(5).As<int*>()                      = 3; // UID data
+						*uid_data.At(6).As<int*>()                      = 0;
+						auto location_data                              = broadcast.At(2505).At(0, 6).At(0, 3);
+						*location_data.As<int*>()                       = 2; // start val
+					});
+				}
+
 				if (ImGui::Button("Spawn Bounty Wagon for Player"))
 				{
 					FiberPool::Push([] {
@@ -218,6 +246,7 @@ namespace YimMenu::Submenus
 						Notifications::Show("Spawned Wagon", "Spawned Bounty Wagon for Player", NotificationType::Success);
 					});
 				};
+
 				if (ImGui::Button("Spawn Hunting Wagon for Player"))
 				{
 					FiberPool::Push([] {
@@ -282,7 +311,7 @@ namespace YimMenu::Submenus
 		}
 
 		{
-			auto kick = std::make_shared<Category>("Kick"); // would we ever find one?
+			auto kick = std::make_shared<Category>("Kick"); 
 
 			kick->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(true);
@@ -291,6 +320,8 @@ namespace YimMenu::Submenus
 			kick->AddItem(std::make_shared<ImGuiItem>([] {
 				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
+
+			kick->AddItem(std::make_shared<PlayerCommandItem>("splitkick"_J));
 
 			AddCategory(std::move(kick));
 		}

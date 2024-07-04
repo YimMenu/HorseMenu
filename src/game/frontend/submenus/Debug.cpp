@@ -12,6 +12,9 @@
 #include "game/rdr/data/ScriptNames.hpp"
 #include "game/rdr/Scripts.hpp"
 #include <script/scrThread.hpp>
+#include <script/scriptHandlerNetComponent.hpp>
+#include <network/CNetGamePlayer.hpp>
+#include "game/rdr/Player.hpp"
 
 static rage::scrThread* s_SelectedThread;
 static int s_SelectedStackSize             = 128;
@@ -332,6 +335,23 @@ namespace YimMenu::Submenus
 			}
 			else
 			{
+				if (s_SelectedThread->m_HandlerNetComponent)
+				{
+					auto handler = static_cast<rage::scriptHandlerNetComponent*>(s_SelectedThread->m_HandlerNetComponent);
+
+					if (handler->GetHost())
+					{
+						ImGui::Text("Host: %s", handler->GetHost()->GetName());
+					}
+
+					if (ImGui::Button("Force Host"))
+					{
+						FiberPool::Push([handler] {
+							handler->DoHostMigration(Player(Self::Id).GetHandle(), 0xFFFF, true);
+						});
+					}
+				}
+
 				if (ImGui::Button("Kill"))
 				{
 					if (s_SelectedThread->m_Context.m_StackSize != 0)

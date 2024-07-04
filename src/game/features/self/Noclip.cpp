@@ -1,8 +1,7 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
-#include "game/backend/ScriptMgr.hpp"
 
 namespace YimMenu::Features
 {
@@ -13,7 +12,7 @@ namespace YimMenu::Features
 	{
 		using LoopedCommand::LoopedCommand;
 
-		Entity m_Entity = 0;
+		Entity m_Entity{nullptr};
 		float m_SpeedMultiplier;
 
 		virtual void OnTick() override
@@ -21,24 +20,25 @@ namespace YimMenu::Features
 			for (const auto& control : controls)
 				PAD::DISABLE_CONTROL_ACTION(0, static_cast<int>(control), true);
 
-			const auto location = Self::Pos;
-			Entity ent = Self::PlayerPed;
+			Entity ent = Self::GetPed();
 
-			if (Self::Mount && PED::IS_PED_ON_MOUNT(Self::PlayerPed))
-				ent = Self::Mount;
-			else if (Self::Veh)
-				ent = Self::Veh;
+			if (auto mount = Self::GetMount())
+				ent = mount;
+			else if (auto veh = Self::GetVehicle())
+				ent = veh;
+
+			const auto location = ent.GetPosition();
 
 			// cleanup when changing entities
 			if (m_Entity != ent)
 			{
-				ENTITY::FREEZE_ENTITY_POSITION(m_Entity, false);
-				ENTITY::SET_ENTITY_COLLISION(m_Entity, true, false);
+				m_Entity.SetFrozen(false);
+				m_Entity.SetCollision(true);
 
 				m_Entity = ent;
 			}
 
-			Vector3 vel{};
+			rage::fvector3 vel{};
 
 			// Left Shift
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_SPRINT))
@@ -60,12 +60,13 @@ namespace YimMenu::Features
 				vel.x += speed;
 
 			auto rot = CAM::GET_GAMEPLAY_CAM_ROT(2);
-			ENTITY::SET_ENTITY_ROTATION(ent, 0.f, rot.y, rot.z, 2, 0);
-			ENTITY::SET_ENTITY_COLLISION(ent, false, false);
+			ent.SetRotation({0.0f, rot.y, rot.z});
+			ent.SetCollision(false);
+
 			if (vel.x == 0.f && vel.y == 0.f && vel.z == 0.f)
 			{
 				// freeze entity to prevent drifting when standing still
-				ENTITY::FREEZE_ENTITY_POSITION(ent, true);
+				ent.SetFrozen(true);
 				m_SpeedMultiplier = 0.f;
 			}
 			else
@@ -73,7 +74,7 @@ namespace YimMenu::Features
 				if (m_SpeedMultiplier < 20.f)
 					m_SpeedMultiplier += 0.07f;
 
-				ENTITY::FREEZE_ENTITY_POSITION(ent, false);
+				ent.SetFrozen(false);
 
 				#if 0
 				// TODO
@@ -83,18 +84,22 @@ namespace YimMenu::Features
 
 				ENTITY::SET_ENTITY_VELOCITY(ent, vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier);
 				#else
-				const auto offset = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ent, vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier);
 
-				ENTITY::SET_ENTITY_VELOCITY(ent, 0, 0, 0);
-				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ent, offset.x, offset.y, offset.z, true, true, true);
+				// TODO: we definitely need vector arithmetic
+				const auto offset = rage::fvector3{location.x + vel.x * m_SpeedMultiplier, location.y + vel.y * m_SpeedMultiplier, location.z + vel.z * m_SpeedMultiplier};
+				ent.SetVelocity({});
+				ent.SetPosition(offset);
 				#endif
 			}
 		}
 
 		virtual void OnDisable() override
 		{
-			ENTITY::FREEZE_ENTITY_POSITION(m_Entity, false);
-			ENTITY::SET_ENTITY_COLLISION(m_Entity, true, false);
+			if (m_Entity)
+			{
+				m_Entity.SetFrozen(false);
+				m_Entity.SetCollision(true);
+			}
 		}
 	};
 

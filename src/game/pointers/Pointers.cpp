@@ -54,11 +54,6 @@ namespace YimMenu
 				LOG(WARNING) << "Turn HDR off if your using DX12!";
 			}
 
-			if (gfx->m_motion_blur)
-			{
-				LOG(INFO) << "Ew motion blur. Seriously?";
-			}
-
 			//LOG(INFO) << GetGraphicsValue(gfx->m_gfx_lightingQuality); example
 
 			if (gfx->m_unk)
@@ -198,6 +193,17 @@ namespace YimMenu
 			ThrowFatalError = ptr.As<PVOID>();
 		});
 
+		constexpr auto isAnimSceneInScopePtrn = Pattern<"74 78 4C 8B 03 48 8B CB">("IsAnimSceneInScope");
+		scanner.Add(isAnimSceneInScopePtrn, [this](PointerCalculator ptr) {
+			IsAnimSceneInScope = ptr.Sub(0x37).As<PVOID>();
+		});
+
+		constexpr auto broadcastNetArrayPtrn = Pattern<"48 89 5C 24 ? 48 89 54 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 83 EC ? 48 8B 81 ? ? ? ? 4C 8B F1">("IsAnimSceneInScope");
+		scanner.Add(broadcastNetArrayPtrn, [this](PointerCalculator ptr) {
+			BroadcastNetArray = ptr.As<PVOID>();
+			NetArrayPatch     = ptr.Add(0x23B).As<std::uint8_t*>();
+		});
+
 		constexpr auto networkRequestPtrn = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
 		scanner.Add(networkRequestPtrn, [this](PointerCalculator ptr) {
 			NetworkRequest = ptr.As<PVOID>();
@@ -258,9 +264,14 @@ namespace YimMenu
 			RequestControlOfNetObject = ptr.Add(1).Rip().As<Functions::RequestControlOfNetObject>();
 		});
 
-		constexpr auto networkObjectMgrPtrn = Pattern<"48 8B 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? 90 E9 ?? ?? ?? ?? EC">("NetworkObjectMgr");
+		constexpr auto getAnimSceneFromHandlePtrn = Pattern<"00 83 F9 04 7C 0F">("GetAnimSceneFromHandle");
+		scanner.Add(getAnimSceneFromHandlePtrn, [this](PointerCalculator ptr) {
+			GetAnimSceneFromHandle = ptr.Sub(0x13).Rip().As<Functions::GetAnimSceneFromHandle>();
+		});
+
+		constexpr auto networkObjectMgrPtrn = Pattern<"74 44 0F B7 56 40">("NetworkObjectMgr");
 		scanner.Add(networkObjectMgrPtrn, [this](PointerCalculator ptr) {
-			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
+			NetworkObjectMgr = ptr.Add(0xC).Rip().As<CNetworkObjectMgr**>();
 		});
 
 		constexpr auto sendPacketPtrn = Pattern<"8B 44 24 60 48 8B D6 48 8B CD">("SendPacket");
@@ -341,6 +352,11 @@ namespace YimMenu
 		constexpr auto readBBStringPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 18 56 57 41 56 48 83 EC 20 45 8B">("ReadBitBufferString");
 		scanner.Add(readBBStringPtrn, [this](PointerCalculator ptr) {
 			ReadBitBufferString = ptr.As<Functions::ReadBitBufferString>();
+		});
+
+		constexpr auto initNativeTablesPtrn = Pattern<"41 B0 01 44 39 51 2C 0F">("InitNativeTables");
+		scanner.Add(initNativeTablesPtrn, [this](PointerCalculator ptr) {
+			InitNativeTables = ptr.Sub(0x10).As<PVOID>();
 		});
 
 		if (!scanner.Scan())

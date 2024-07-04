@@ -1,6 +1,7 @@
 #include "Player.hpp"
 
 #include "game/pointers/Pointers.hpp"
+#include "game/backend/Players.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/netPeerAddress.hpp>
@@ -144,6 +145,11 @@ namespace YimMenu
 			return 0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayState;
+	}
+
+	PlayerData& Player::GetData()
+	{
+		return Players::GetPlayerData(GetId());
 	}
 
 	bool Player::operator==(Player other)

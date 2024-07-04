@@ -10,6 +10,7 @@
 #include "game/frontend/items/Items.hpp"
 #include "util/Ped.hpp"
 #include "util/libraries/PedModels.hpp"
+#include "World/Shows.hpp"
 
 #include <game/rdr/Natives.hpp>
 
@@ -100,6 +101,7 @@ namespace YimMenu::Submenus
 	{
 		auto main    = std::make_shared<Category>("Main");
 		auto weather = std::make_shared<Category>("Weather");
+		auto shows = std::make_shared<Category>("Shows");
 
 
 		main->AddItem(std::make_shared<ImGuiItem>([] {
@@ -150,9 +152,15 @@ namespace YimMenu::Submenus
 
 		spawners->AddItem(pedSpawnerGroup);
 		main->AddItem(std::make_shared<CommandItem>("forcelighting"_J));
+
+		shows->AddItem(std::make_shared<ImGuiItem>([] {
+			RenderShowsMenu();
+		}));
+
 		AddCategory(std::move(main));
 		AddCategory(std::move(weather));
 		AddCategory(std::move(spawners));
+		AddCategory(std::move(shows));
 	}
 
 }

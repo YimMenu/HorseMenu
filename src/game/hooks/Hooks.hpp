@@ -18,6 +18,8 @@ namespace rage
 	class ServerMsgData;
 	class ServerRPCSerializer;
 	class InFrame;
+	class scrProgram;
+	class scrThreadContext;
 }
 class CNetGamePlayer;
 enum class NetEventType;
@@ -56,6 +58,7 @@ namespace YimMenu::Hooks
 	namespace Script
 	{
 		extern bool RunScriptThreads(void* threads, int unk);
+		extern bool InitNativeTables(rage::scrProgram* program);
 	}
 
 	namespace Anticheat
@@ -95,6 +98,7 @@ namespace YimMenu::Hooks
 	namespace Misc
 	{
 		extern void ThrowFatalError(int code, int fileHash, int fileLine);
+		extern bool IsAnimSceneInScope(rage::netObject* scene, CNetGamePlayer* player, int* reason);
 	}
 
 	namespace Info
@@ -109,5 +113,10 @@ namespace YimMenu::Hooks
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
 		extern bool SendNetInfoToLobby(rage::rlGamerInfo* local_player, int64_t a2, int64_t a3, DWORD* a4);
+	}
+
+	namespace Toxic
+	{
+		extern unsigned int BroadcastNetArray(void* array, CNetGamePlayer* target, rage::datBitBuffer* buffer, std::uint16_t counter, std::uint32_t* elem_start);
 	}
 }

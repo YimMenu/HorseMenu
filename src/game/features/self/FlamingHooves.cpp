@@ -1,6 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Natives.hpp"
+#include "game/backend/Self.hpp"
 
 namespace YimMenu
 {
@@ -8,20 +7,17 @@ namespace YimMenu
 	{
 		using LoopedCommand::LoopedCommand;
 
-		virtual void OnEnable() override
-		{
-			PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, true);
-		}
-
 		virtual void OnTick() override
 		{
-			if (!PED::GET_PED_CONFIG_FLAG(Self::Mount, 207, true))
-				PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, true);
+			// TODO: cleanup when player leaves horse?
+			if (Self::GetMount())
+				Self::GetMount().SetConfigFlag(PedConfigFlag::FlamingHoovesActive, true);
 		}
 
 		virtual void OnDisable() override
 		{
-			PED::SET_PED_CONFIG_FLAG(Self::Mount, 207, false);
+			if (Self::GetMount())
+				Self::GetMount().SetConfigFlag(PedConfigFlag::FlamingHoovesActive, false);
 		}
 	};
 

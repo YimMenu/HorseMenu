@@ -7,24 +7,24 @@
 
 namespace YimMenu
 {
-	template<std::size_t N>
-	class VMTHook : public BaseHook
+	class VMTHook
 	{
 	private:
 		std::string_view m_Name;
 		bool m_Enabled;
 
-		std::array<void*, N> m_NewVMT = {nullptr};
+		int m_NumEntries;
+		void** m_NewVMT{};
 		void** m_OriginalVMT;
 		void*** m_VMTAddress;
 
 	public:
 		template<typename T>
-		VMTHook(const std::string_view name, T* vmtAddress);
+		VMTHook(const std::string_view name, T* vmtAddress, int numEntries);
 		~VMTHook();
 
-		virtual bool Enable() override;
-		virtual bool Disable() override;
+		virtual bool Enable();
+		virtual bool Disable();
 
 		template<typename T>
 		inline T Original(const std::uint32_t idx) const;
@@ -35,39 +35,41 @@ namespace YimMenu
 
 		inline constexpr std::size_t VMTSize() const
 		{
-			return N;
+			return m_NumEntries;
 		}
 	};
 
-	template<std::size_t N>
+
 	template<typename T>
-	inline VMTHook<N>::VMTHook(const std::string_view name, T* vmtAddress) :
-	    BaseHook(name),
-	    m_VMTAddress(reinterpret_cast<void***>(vmtAddress))
+	inline VMTHook::VMTHook(const std::string_view name, T* vmtAddress, int numEntries) :
+	    m_Name(name),
+	    m_VMTAddress(reinterpret_cast<void***>(vmtAddress)),
+	    m_NumEntries(numEntries),
+	    m_NewVMT(new void*[m_NumEntries])
 	{
 		m_OriginalVMT = *m_VMTAddress;
-		std::copy_n(m_OriginalVMT, N, m_NewVMT.begin());
+		memcpy(m_NewVMT, m_OriginalVMT, sizeof(void*) * m_NumEntries);
 	}
 
-	template<std::size_t N>
-	inline VMTHook<N>::~VMTHook()
+	inline VMTHook::~VMTHook()
 	{
 		Disable();
+		delete[] m_NewVMT;
 	}
 
-	template<std::size_t N>
-	inline bool VMTHook<N>::Enable()
+
+	inline bool VMTHook::Enable()
 	{
 		if (m_Enabled)
 			return false;
 
 		m_Enabled     = true;
-		*m_VMTAddress = m_NewVMT.data();
+		*m_VMTAddress = m_NewVMT;
 		return true;
 	}
 
-	template<std::size_t N>
-	inline bool VMTHook<N>::Disable()
+
+	inline bool VMTHook::Disable()
 	{
 		if (!m_Enabled)
 			return false;
@@ -77,9 +79,9 @@ namespace YimMenu
 		return true;
 	}
 
-	template<std::size_t N>
+
 	template<typename T>
-	inline void VMTHook<N>::Hook(const std::uint32_t idx, T& detour)
+	inline void VMTHook::Hook(const std::uint32_t idx, T& detour)
 	{
 		if (std::is_pointer<T>())
 			m_NewVMT[idx] = reinterpret_cast<void*>(detour);
@@ -87,15 +89,15 @@ namespace YimMenu
 			m_NewVMT[idx] = reinterpret_cast<void*>(&detour);
 	}
 
-	template<std::size_t N>
-	inline void VMTHook<N>::UnHook(const std::uint32_t idx)
+
+	inline void VMTHook::UnHook(const std::uint32_t idx)
 	{
 		m_NewVMT[idx] = m_OriginalVMT[idx];
 	}
 
-	template<std::size_t N>
+
 	template<typename T>
-	inline T VMTHook<N>::Original(const std::uint32_t idx) const
+	inline T VMTHook::Original(const std::uint32_t idx) const
 	{
 		return reinterpret_cast<T>(m_OriginalVMT[idx]);
 	}

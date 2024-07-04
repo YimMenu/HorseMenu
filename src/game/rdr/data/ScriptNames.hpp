@@ -3,7 +3,7 @@
 
 namespace YimMenu::Data
 {
-	const std::map<std::uint32_t, const char*> g_SpScriptNames = {
+	const std::vector<std::pair<std::uint32_t, const char*>> g_SpScriptNames = {
 	    {"aberdeenpigfarm"_J, "aberdeenpigfarm"},
 	    {"abigail21_outro"_J, "abigail21_outro"},
 	    {"abigail2_1"_J, "abigail2_1"},
@@ -1644,7 +1644,7 @@ namespace YimMenu::Data
 	    {"xml_menus"_J, "xml_menus"},
 	};
 
-	const std::map<std::uint32_t, const char*> g_MpScriptNames = {
+	const std::vector<std::pair<std::uint32_t, const char*>> g_MpScriptNames = {
 	    { "aberdeenpigfarm"_J, "aberdeenpigfarm" },
 		{ "adlerranch"_J, "adlerranch" },
 		{ "aguasdulces"_J, "aguasdulces" },

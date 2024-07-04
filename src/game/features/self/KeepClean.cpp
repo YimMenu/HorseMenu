@@ -1,6 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
@@ -11,11 +10,15 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			PED::_SET_PED_DAMAGE_CLEANLINESS(Self::PlayerPed, (int)ePedDamageCleanliness::PED_DAMAGE_CLEANLINESS_PERFECT);
-			PED::CLEAR_PED_WETNESS(Self::PlayerPed);
-			PED::CLEAR_PED_ENV_DIRT(Self::PlayerPed);
-			PED::CLEAR_PED_BLOOD_DAMAGE(Self::PlayerPed);
-			PED::CLEAR_PED_DAMAGE_DECAL_BY_ZONE(Self::PlayerPed, 10, "ALL");
+			auto ped = Self::GetPed();
+			if (!ped || ped.IsDead())
+				return;
+
+			PED::_SET_PED_DAMAGE_CLEANLINESS(ped.GetHandle(), (int)ePedDamageCleanliness::PED_DAMAGE_CLEANLINESS_PERFECT);
+			PED::CLEAR_PED_WETNESS(ped.GetHandle());
+			PED::CLEAR_PED_ENV_DIRT(ped.GetHandle());
+			PED::CLEAR_PED_BLOOD_DAMAGE(ped.GetHandle());
+			PED::CLEAR_PED_DAMAGE_DECAL_BY_ZONE(ped.GetHandle(), 10, "ALL");
 		}
 	};
 
