@@ -2,6 +2,7 @@
 #include "util/StrToHex.hpp"
 
 #include <string_view>
+#include <vector>
 
 namespace YimMenu
 {
@@ -128,4 +129,15 @@ namespace YimMenu
 		os << "}";
 		return os;
 	}
+
+	class SimplePattern
+	{
+	public:
+		SimplePattern(std::string_view ida_sig);
+		inline SimplePattern(const char* ida_sig) :
+		    SimplePattern(std::string_view(ida_sig))
+		{
+		}
+		std::vector<std::optional<uint8_t>> m_Bytes;
+	};
 }
