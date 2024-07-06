@@ -4,6 +4,7 @@
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "core/script_patch/ScriptPatcherService.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
@@ -96,16 +97,21 @@ namespace YimMenu
 		if (!Features::_IsFirstLoadComplete.GetState())
 		{
 			Commands::GetCommand<BoolCommand>("detectspoofednames"_J)->SetState(true);
-			Commands::GetCommand<BoolCommand>("chathelper"_J)->SetState(true);
 			Features::_IsFirstLoadComplete.SetState(true);
 		}
+	}
+
+	void RegisterScriptPatches()
+	{
+		// Put Stuff Here for Script Patches
 	}
 
 	void FeatureLoop()
 	{
 		TryFirstLoad();
+		RegisterScriptPatches();
 
-		while (true)
+		while (g_Running)
 		{
 			Players::Tick();
 			UpdateSelfVars();
@@ -121,7 +127,7 @@ namespace YimMenu
 
 	void BlockControlsForUI()
 	{
-		while (true)
+		while (g_Running)
 		{
 			if (GUI::IsOpen())
 			{
@@ -158,7 +164,7 @@ namespace YimMenu
 
 	void ContextMenuTick()
 	{
-		while (true)
+		while (g_Running)
 		{
 			ContextMenu::GameTick();
 			ScriptMgr::Yield();
