@@ -1,4 +1,5 @@
 #pragma once
+#include "game/rdr/Enums.hpp"
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
 
@@ -15,6 +16,7 @@ class CNetGamePlayer;
 class CVehicle;
 class CPed;
 class CNetworkPlayerMgr;
+class CNetworkObjMgr;
 
 namespace rage
 {
@@ -52,6 +54,7 @@ namespace YimMenu
 		using ReadBitBufferArray  = bool (*)(rage::datBitBuffer* buffer, PVOID read, int bits, int unk);
 		using WriteBitBufferArray = bool (*)(rage::datBitBuffer* buffer, void* val, int bits, int unk);
 		using ReadBitBufferString = bool (*)(rage::datBitBuffer* buffer, char* read, int bits);
+		using MigrateObject       = void (*)(CNetGamePlayer* player, rage::netObject* object, eMigrationType type);
 	};
 
 	struct PointerData
@@ -74,6 +77,7 @@ namespace YimMenu
 		Functions::ReadBitBufferArray ReadBitBufferArray;
 		Functions::WriteBitBufferArray WriteBitBufferArray;
 		Functions::ReadBitBufferString ReadBitBufferString;
+		Functions::MigrateObject MigrateObject;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;
@@ -149,7 +153,7 @@ namespace YimMenu
 		PVOID NetworkRequest;
 
 		CNetworkPlayerMgr* NetworkPlayerMgr;
-		void* NetworkObjectMgr;
+		CNetworkObjMgr* NetworkObjectMgr;
 
 		PVOID WritePlayerHealthData;
 

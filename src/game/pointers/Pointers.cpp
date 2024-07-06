@@ -260,7 +260,7 @@ namespace YimMenu
 
 		constexpr auto networkObjectMgrPtrn = Pattern<"48 8B 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? 90 E9 ?? ?? ?? ?? EC">("NetworkObjectMgr");
 		scanner.Add(networkObjectMgrPtrn, [this](PointerCalculator ptr) {
-			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
+			NetworkObjectMgr = *ptr.Add(3).Rip().As<CNetworkObjMgr**>();
 		});
 
 		constexpr auto sendPacketPtrn = Pattern<"8B 44 24 60 48 8B D6 48 8B CD">("SendPacket");
@@ -341,6 +341,11 @@ namespace YimMenu
 		constexpr auto readBBStringPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 18 56 57 41 56 48 83 EC 20 45 8B">("ReadBitBufferString");
 		scanner.Add(readBBStringPtrn, [this](PointerCalculator ptr) {
 			ReadBitBufferString = ptr.As<Functions::ReadBitBufferString>();
+		});
+
+		constexpr auto migrateObjectPtrn = Pattern<"48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 54 41 56 41 57 48 83 EC ? 65 4C 8B 0C 25">("MigrateObject");
+		scanner.Add(migrateObjectPtrn, [this](PointerCalculator ptr) {
+			MigrateObject = ptr.As<Functions::MigrateObject>();
 		});
 
 		if (!scanner.Scan())

@@ -1586,7 +1586,7 @@ enum class ePresenceEvents : uint32_t
 	PRESENCE_ASSET_DATA_RESPONSE          = 0xbd14ef85
 };
 
-enum class OverheadTexture : unsigned int
+enum class eOverheadTexture : unsigned int
 {
 	OVERHEAD_AMBIENT_HUNTER    = 0x2C5FA6B9,
 	OVERHEAD_BOUNTY            = 0x92D3352B,
@@ -1642,4 +1642,15 @@ enum class OverheadTexture : unsigned int
 	OVERHEAD_TROPHY            = 0x705F1A66,
 	OVERHEAD_VIP               = 0x0E630EB5,
 	OVERHEAD_WAGON             = 0x22421E9D
+};
+
+enum eMigrationType
+{
+	MIGRATE_PROXIMITY,
+	MIGRATE_OUT_OF_SCOPE,
+	MIGRATE_SCRIPT,
+	MIGRATE_FORCED,
+	MIGRATE_REASSIGNMENT,
+	MIGRATE_FROZEN_PED,
+	NUM_MIGRATION_TYPES
 };
