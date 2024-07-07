@@ -35,6 +35,9 @@ namespace YimMenu::Hooks
 				         << "\tID Overriden: " << (event->m_ScriptIdOverridden ? "YES" : "NO");
 		}
 
+		if (event->m_Data[0] == 201)
+			return true; // TMP TMP TMP
+
 		return BaseHook::Get<Protections::HandleScriptedGameEvent, DetourHook<decltype(&Protections::HandleScriptedGameEvent)>>()
 		    ->Original()(event, src, dst);
 	}

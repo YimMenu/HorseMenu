@@ -1,5 +1,5 @@
 #include "game/commands/PlayerCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Scripts.hpp"
 #include "game/rdr/ScriptGlobal.hpp"

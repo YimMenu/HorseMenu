@@ -15,7 +15,7 @@ namespace YimMenu
 
 		int m_NumEntries;
 		void** m_NewVMT{};
-		void** m_OriginalVMT;
+		void** m_OriginalVMT{};
 		void*** m_VMTAddress;
 
 	public:
@@ -23,14 +23,18 @@ namespace YimMenu
 		VMTHook(const std::string_view name, T* vmtAddress, int numEntries);
 		~VMTHook();
 
-		virtual bool Enable();
-		virtual bool Disable();
+		VMTHook(VMTHook&& that)              = delete;
+		VMTHook& operator=(VMTHook&& that)   = delete;
+		VMTHook(VMTHook const&)              = delete;
+		VMTHook& operator=(VMTHook const&)   = delete;
+
+		virtual void Enable();
+		virtual void Disable();
 
 		template<typename T>
 		inline T Original(const std::uint32_t idx) const;
 
-		template<typename T>
-		void Hook(const std::uint32_t idx, T& detour);
+		void Hook(const std::uint32_t idx, void* detour);
 		void UnHook(const std::uint32_t idx);
 
 		inline constexpr std::size_t VMTSize() const
@@ -45,7 +49,8 @@ namespace YimMenu
 	    m_Name(name),
 	    m_VMTAddress(reinterpret_cast<void***>(vmtAddress)),
 	    m_NumEntries(numEntries),
-	    m_NewVMT(new void*[m_NumEntries])
+	    m_NewVMT(new void*[m_NumEntries]),
+	    m_Enabled(false)
 	{
 		m_OriginalVMT = *m_VMTAddress;
 		memcpy(m_NewVMT, m_OriginalVMT, sizeof(void*) * m_NumEntries);
@@ -58,35 +63,30 @@ namespace YimMenu
 	}
 
 
-	inline bool VMTHook::Enable()
+	inline void VMTHook::Enable()
 	{
 		if (m_Enabled)
-			return false;
+			return;
 
 		m_Enabled     = true;
 		*m_VMTAddress = m_NewVMT;
-		return true;
+		return;
 	}
 
 
-	inline bool VMTHook::Disable()
+	inline void VMTHook::Disable()
 	{
 		if (!m_Enabled)
-			return false;
+			return;
 
 		*m_VMTAddress = m_OriginalVMT;
 		m_Enabled     = false;
-		return true;
+		return;
 	}
 
-
-	template<typename T>
-	inline void VMTHook::Hook(const std::uint32_t idx, T& detour)
+	inline void VMTHook::Hook(const std::uint32_t idx, void* detour)
 	{
-		if (std::is_pointer<T>())
-			m_NewVMT[idx] = reinterpret_cast<void*>(detour);
-		else
-			m_NewVMT[idx] = reinterpret_cast<void*>(&detour);
+		m_NewVMT[idx] = reinterpret_cast<void*>(detour);
 	}
 
 

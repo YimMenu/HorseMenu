@@ -3,7 +3,7 @@
 #include "core/commands/Command.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
 

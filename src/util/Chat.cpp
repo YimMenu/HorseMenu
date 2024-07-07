@@ -2,7 +2,7 @@
 #include "Packet.hpp"
 #include "game/frontend/ChatDisplay.hpp"
 #include "game/backend/Players.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
@@ -19,7 +19,7 @@ namespace YimMenu
 		if (!*Pointers.IsSessionStarted)
 			return;
 
-		Player self = Player(Self::Id);
+		auto self = Self::GetPlayer();
 		Packet msg{};
 		msg.write_message(eNetMessageType::MsgTextChat);
 		Helpers::WriteBufferString(message.c_str(), 256, &msg.m_Buffer);

@@ -1,6 +1,8 @@
 #pragma once
 #include <rage/vector.hpp>
 
+#define ENTITY_DEBUG
+
 // TODO: debug stuff
 #ifdef ENTITY_DEBUG
 	#define ENTITY_ASSERT_VALID() AssertValid(__FUNCTION__);
@@ -22,15 +24,15 @@ namespace YimMenu
 		void PopulatePointer();
 		void PopulateHandle();
 
+	public:
 		// debug
 		void AssertValid(const std::string& function_name);
 		void AssertControl(const std::string& function_name);
 		void AssertScriptContext(const std::string& function_name);
 
-	public:
 		constexpr Entity(void* pointer) :
 			m_Pointer(pointer),
-		    m_Handle(-1)
+		    m_Handle(0)
 		{
 		}
 
@@ -57,14 +59,20 @@ namespace YimMenu
 
 		constexpr int GetHandle()
 		{
-			if (m_Handle == -1)
+			if (m_Handle == 0)
 				PopulateHandle();
 			return m_Handle;
 		}
 
+		template<typename T>
+		constexpr T As()
+		{
+			return T(this);
+		}
+
 		bool IsValid();
 		inline operator bool() { return IsValid(); }
-		bool IsAlive();
+		inline operator int() = delete;
 
 		bool IsPed();
 		bool IsVehicle();
@@ -81,7 +89,7 @@ namespace YimMenu
 
 		// physical
 		void SetCollision(bool enabled);
-		bool SetFrozen(bool enabled);
+		void SetFrozen(bool enabled);
 
 		// networking
 		bool IsNetworked();
@@ -101,5 +109,9 @@ namespace YimMenu
 		void SetVisible(bool status);
 
 		bool operator==(const Entity& other);
+		bool operator!=(const Entity& other)
+		{
+			return !this->operator==(other);
+		}
 	};
 }

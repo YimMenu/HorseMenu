@@ -2,7 +2,7 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "game/backend/Players.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Player.hpp"

@@ -2,7 +2,7 @@
 
 #include "common.hpp"
 #include "game/backend/Players.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "util/Math.hpp"
 #include "core/commands/BoolCommand.hpp"
@@ -76,10 +76,10 @@ namespace YimMenu
 	//TODO : Very bare bones currently, expand and possibly refactor
 	void ESP::DrawPlayer(Player& plyr, ImDrawList* drawList)
 	{
-		if (!plyr.IsValid() || !plyr.GetPed().IsValid() || plyr.GetId() == Self::Id || boneToScreen(plyr.GetPed().GetBonePosition(torsoBone)).x == 0)
+		if (!plyr.IsValid() || !plyr.GetPed().IsValid() || plyr == Self::GetPlayer() || boneToScreen(plyr.GetPed().GetBonePosition(torsoBone)).x == 0)
 			return;
 
-		float distanceToPlayer   = Math::DistanceBetweenVectors(Self::Pos, plyr.GetPed().GetBonePosition(torsoBone));
+		float distanceToPlayer = Math::DistanceBetweenVectors(Self::GetPed().GetPosition(), plyr.GetPed().GetBonePosition(torsoBone));
 		int alphaBasedOnDistance     = 255;
 		ImColor colorBasedOnDistance = Red;
 
@@ -100,7 +100,8 @@ namespace YimMenu
 		drawList->AddText({boneToScreen(plyr.GetPed().GetBonePosition(headBone)).x,
 		                      boneToScreen(plyr.GetPed().GetBonePosition(headBone)).y + 20},
 		    colorBasedOnDistance,
-		    std::to_string((int)Math::DistanceBetweenVectors(Self::Pos, plyr.GetPed().GetBonePosition(torsoBone))).data());
+		    std::to_string((int)Math::DistanceBetweenVectors(Self::GetPed().GetPosition(), plyr.GetPed().GetBonePosition(torsoBone)))
+		        .data());
 
 		currentFont->Scale = originalFontSize;
 		ImGui::PopFont();

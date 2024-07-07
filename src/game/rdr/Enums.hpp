@@ -1122,7 +1122,7 @@ enum class eAttributeCore
 	ATTRIBUTE_CORE_DEADEYE
 };
 
-enum class eMotivationState
+enum class MotivationState
 {
 	TOILET_STATE,
 	FEAR_STATE,

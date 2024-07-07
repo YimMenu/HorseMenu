@@ -9,7 +9,7 @@ namespace YimMenu::Hooks
 {
 	unsigned int Toxic::BroadcastNetArray(void* array, CNetGamePlayer* target, rage::datBitBuffer* buffer, std::uint16_t counter, std::uint32_t* elem_start)
 	{
-		auto data = *(void**)(((__int64)array)+0x1D8);
+		auto data = *(void**)(((__int64)array) + 0x1D8);
 
 		int oldHostStateVal = 0;
 		bool needToUseSessionSplitKick = ScriptGlobal(1207480).As<void*>() == data && Player(target).GetData().m_UseSessionSplitKick;

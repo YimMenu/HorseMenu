@@ -8,15 +8,16 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "util/Ped.hpp"
 #include "util/libraries/PedModels.hpp"
+#include "game/rdr/Ped.hpp"
+#include "game/backend/Self.hpp"
 #include "World/Shows.hpp"
 
 #include <game/rdr/Natives.hpp>
 
 namespace YimMenu::Submenus
 {
-	bool is_ped_model_in_ped_model_list(std::string model)
+	static bool IsPedModelInList(std::string model)
 	{
 		for (const auto& pedModel : pedModels)
 		{
@@ -27,7 +28,7 @@ namespace YimMenu::Submenus
 		return false;
 	}
 
-	int PedSpawnerInputCallback(ImGuiInputTextCallbackData* data)
+	static int PedSpawnerInputCallback(ImGuiInputTextCallbackData* data)
 	{
 		if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
 		{
@@ -64,7 +65,7 @@ namespace YimMenu::Submenus
 		    .Draw();
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Press Tab to auto fill");
-		if (!pedModelBuffer.empty() && !is_ped_model_in_ped_model_list(pedModelBuffer))
+		if (!pedModelBuffer.empty() && !IsPedModelInList(pedModelBuffer))
 		{
 			ImGui::BeginListBox("##pedmodels", ImVec2(250, 100));
 
@@ -91,7 +92,7 @@ namespace YimMenu::Submenus
 		if (ImGui::Button("Spawn"))
 		{
 			FiberPool::Push([] {
-				Peds::SpawnPed(pedModelBuffer, ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(Self::PlayerPed, 0, 3, 0), 0, freeze, dead, godmode, invis, scale);
+				Ped::Create(Joaat(pedModelBuffer), Self::GetPed().GetPosition(), 0, freeze, dead, godmode, invis, scale);
 			});
 		}
 	}
@@ -144,7 +145,7 @@ namespace YimMenu::Submenus
 
 
 		auto spawners        = std::make_shared<Category>("Spawners");
-		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner", GetListBoxDimensions());
+		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			PedSpawnerGroup();

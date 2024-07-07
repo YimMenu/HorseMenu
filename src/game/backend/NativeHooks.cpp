@@ -183,8 +183,12 @@ namespace YimMenu
 
 		if (m_RegisteredPrograms.contains(program))
 		{
-			LOG(WARNING) << "We've already registered " << HEX(program->m_NameHash);
+			LOG(FATAL) << "We've already registered " << HEX(program->m_NameHash) << ". This is bad!";
 			return;
+		}
+		else
+		{
+			LOG(INFO) << HEX(program->m_NameHash);
 		}
 
 		auto t = new Program(program);
@@ -212,6 +216,10 @@ namespace YimMenu
 		{
 			it->second->Cleanup();
 			m_RegisteredPrograms.erase(it);
+		}
+		else
+		{
+			LOG(FATAL) << "Cannot find program " << HEX(program->m_NameHash) << " in registry. This is bad!";
 		}
 	}
 

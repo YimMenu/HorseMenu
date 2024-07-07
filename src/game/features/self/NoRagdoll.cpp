@@ -1,5 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
 
@@ -11,13 +11,12 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-            if (PED::CAN_PED_RAGDOLL(Self::PlayerPed))
-			    PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, false);
+			Self::GetPed().SetRagdoll(false);
 		}
 
         virtual void OnDisable() override
         {
-            PED::SET_PED_CAN_RAGDOLL(Self::PlayerPed, true);
+			Self::GetPed().SetRagdoll(true);
         }
 	};
 

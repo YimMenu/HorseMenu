@@ -8,7 +8,7 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
@@ -60,8 +60,7 @@ namespace YimMenu::Submenus
 		auto session          = std::make_shared<Category>("Session");
 		auto spoofing         = std::make_shared<Category>("Spoofing");
 		auto database         = std::make_shared<Category>("Player Database");
-		auto nameChangerGroup = std::make_shared<Group>("Name Changer", GetListBoxDimensions());
-		auto spoofingColumns  = std::make_shared<Column>(1);
+		auto nameChangerGroup = std::make_shared<Group>("Name Changer");
 
 		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
@@ -184,20 +183,6 @@ namespace YimMenu::Submenus
 				ImGui::EndCombo();
 			}
 
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetTooltip("This effect is local");
-			}
-
-			if (!g_SpoofingStorage.spoofed_name.empty())
-				if (ImGui::Button("Show Locally"))
-				{
-					FiberPool::Push([=] {
-						HUD::_CREATE_MP_GAMER_TAG(YimMenu::Self::Id, g_SpoofingStorage.spoofed_name.c_str(), 0, 0, "", 0);
-						HUD::_CREATE_MP_GAMER_TAG_ON_ENTITY(YimMenu::Self::Id, g_SpoofingStorage.spoofed_name.c_str());
-					});
-				}
-
 			if (ImGui::Button("Set Spoofed Name"))
 			{
 				std::string concat_name        = std::string(color_spoof_buf) + name_input_buf;
@@ -208,8 +193,7 @@ namespace YimMenu::Submenus
 				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally unless enabled above.");
 			}
 		}));
-		spoofingColumns->AddItem(nameChangerGroup);
-		spoofing->AddItem(spoofingColumns);
+		spoofing->AddItem(nameChangerGroup);
 		AddCategory(std::move(session));
 		AddCategory(std::move(spoofing));
 		AddCategory(std::move(database));

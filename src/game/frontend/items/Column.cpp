@@ -2,6 +2,7 @@
 
 namespace YimMenu
 {
+#if 0
 	void Column::Draw()
 	{
 		ImGui::Columns(m_Columns);
@@ -22,4 +23,5 @@ namespace YimMenu
 			ImGui::NextColumn();
 		}));
 	}
+#endif
 }

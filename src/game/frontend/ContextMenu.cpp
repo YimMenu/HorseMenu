@@ -31,7 +31,7 @@ namespace YimMenu
 			rage::fvector2 screenPos{};
 			float worldCoords_[3] = {worldCoords.x, worldCoords.y, worldCoords.z};
 			Pointers.WorldToScreen(worldCoords_, &screenPos.x, &screenPos.y);
-			if (CumulativeDistanceToMiddleOfScreen(screenPos) < distance && handle != Self::PlayerPed)
+ 			if (CumulativeDistanceToMiddleOfScreen(screenPos) < distance && handle != Self::GetPed().GetHandle())
 			{
 				closestHandle = handle;
 				distance      = CumulativeDistanceToMiddleOfScreen(screenPos);

@@ -3,8 +3,9 @@
 
 namespace YimMenu
 {
-	BoolCommand::BoolCommand(std::string name, std::string label, std::string description) :
-	    Command(name, label, description, 0)
+	BoolCommand::BoolCommand(std::string name, std::string label, std::string description, bool def_value) :
+	    Command(name, label, description, 0),
+	    m_State(def_value)
 	{
 	}
 

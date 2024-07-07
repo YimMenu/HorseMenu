@@ -2,7 +2,7 @@
 #include "game/backend/NativeHooks.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Scripts.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Player.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
@@ -23,7 +23,6 @@ namespace YimMenu::Submenus
 	{
 		ActorOverrideType Type = ActorOverrideType::DEFAULT;
 		Player OverridePlayer{};
-		// Ped DefaultPed;
 	};
 
 	enum class SceneType
@@ -111,22 +110,22 @@ namespace YimMenu::Submenus
 		return SceneType(0); // should not reach here
 	}
 
-	static ::Ped ProcessActorDef(ActorDefinition& def)
+	static Ped ProcessActorDef(ActorDefinition& def)
 	{
 		if (def.Type == ActorOverrideType::DEFAULT)
-			return -1;
+			return nullptr;
 		else if (def.Type == ActorOverrideType::SELF)
-			return Self::PlayerPed;
+			return Self::GetPed();
 		else
 		{
 			if (!def.OverridePlayer.IsValid())
 				return -1;
 
-			return def.OverridePlayer.GetPed().GetHandle();
+			return def.OverridePlayer.GetPed();
 		}
 	}
 
-	static ::Ped GetOverridePed(SceneType sceneType, joaat_t hash)
+	static Ped GetOverridePed(SceneType sceneType, joaat_t hash)
 	{
 		if (sceneType == SceneType::CAN_CAN_01 || sceneType == SceneType::CAN_CAN_02)
 		{
@@ -193,15 +192,15 @@ namespace YimMenu::Submenus
 			};
 		}
 
-		return -1;
+		return nullptr;
 	}
 
 	static void CREATE_PED(rage::scrNativeCallContext* ctx)
 	{
 		auto override = GetOverridePed(SceneTypeFromScript(SCRIPTS::GET_HASH_OF_THIS_SCRIPT_NAME()), ctx->get_arg<Hash>(0));
-		if (override != -1)
+		if (override)
 		{
-			ctx->set_return_value(override);
+			ctx->set_return_value(override.GetHandle());
 			return;
 		}
 
@@ -240,7 +239,7 @@ namespace YimMenu::Submenus
 				auto net = *(rage::netObject**)((__int64)scene + 0x30);
 				for (auto& [id, player] : Players::GetPlayers())
 				{
-					if (id != Self::Id)
+					if (id != Self::GetPlayer().GetId())
 					{
 						rage::datBitBuffer buffer(data, sizeof(data));
 						(*Pointers.NetworkObjectMgr)->PackCloneCreate(net, player.GetHandle(), &buffer);
@@ -298,7 +297,7 @@ namespace YimMenu::Submenus
 		if (ImGui::Button("Teleport to Theater"))
 		{
 			FiberPool::Push([] {
-				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(Self::PlayerPed, 2546.5646f, -1301.4119f, 48.3564f, false, false, true);
+				Self::GetPed().SetPosition({2546.5646f, -1301.4119f, 48.3564f});
 			});
 		}
 

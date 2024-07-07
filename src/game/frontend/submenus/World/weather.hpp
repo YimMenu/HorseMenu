@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/commands/Command.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
 

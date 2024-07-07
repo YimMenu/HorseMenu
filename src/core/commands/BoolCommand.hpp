@@ -14,7 +14,7 @@ namespace YimMenu
 
 		bool m_State = false;
 	public:
-		BoolCommand(std::string name, std::string label, std::string description);
+		BoolCommand(std::string name, std::string label, std::string description, bool def_value = false);
 		bool GetState();
 		void SetState(bool state);
 

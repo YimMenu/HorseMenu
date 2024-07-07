@@ -1,5 +1,5 @@
 #include "core/commands/Command.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
@@ -10,7 +10,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			VEHICLE::SET_VEHICLE_FIXED(Self::Veh);
+			VEHICLE::SET_VEHICLE_FIXED(Self::GetVehicle().GetHandle());
 		}
 	};
 

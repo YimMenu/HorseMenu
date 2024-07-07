@@ -2,6 +2,7 @@
 
 #include "game/pointers/Pointers.hpp"
 #include "game/backend/Players.hpp"
+#include "game/pointers/Pointers.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/netPeerAddress.hpp>
@@ -23,7 +24,12 @@ namespace YimMenu
 	int Player::GetId()
 	{
 		if (!IsValid())
+		{
+			if (!*Pointers.IsSessionStarted)
+				return 0;
+
 			return 255;
+		}
 
 		return m_Handle->m_PlayerIndex;
 	}
@@ -31,7 +37,9 @@ namespace YimMenu
 	const char* Player::GetName()
 	{
 		if (!IsValid())
+		{
 			return "Null Player!";
+		}
 
 		return m_Handle->GetName();
 	}

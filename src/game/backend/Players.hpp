@@ -21,9 +21,9 @@ namespace YimMenu
 			return GetInstance().m_SelectedPlayer;
 		}
 
-		static void SetSelected(uint8_t idx)
+		static void SetSelected(Player player)
 		{
-			GetInstance().m_SelectedPlayer = Player(idx);
+			GetInstance().m_SelectedPlayer = player;
 		}
 
 		static std::unordered_map<uint8_t, Player>& GetPlayers()

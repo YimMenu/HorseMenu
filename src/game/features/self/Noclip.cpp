@@ -78,17 +78,17 @@ namespace YimMenu::Features
 
 				#if 0
 				// TODO
-				const auto offset = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ent, vel.x, vel.y, 0.f);
+				const auto offset = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ent.GetHandle(), vel.x, vel.y, 0.f);
 				vel.x             = offset.x - location.x;
 				vel.y             = offset.y - location.y;
 
-				ENTITY::SET_ENTITY_VELOCITY(ent, vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier);
+				ent.SetVelocity({vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier});
 				#else
 
 				// TODO: we definitely need vector arithmetic
-				const auto offset = rage::fvector3{location.x + vel.x * m_SpeedMultiplier, location.y + vel.y * m_SpeedMultiplier, location.z + vel.z * m_SpeedMultiplier};
+				const auto offset = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ent.GetHandle(), vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier);
 				ent.SetVelocity({});
-				ent.SetPosition(offset);
+				ent.SetPosition({offset.x, offset.y, offset.z});
 				#endif
 			}
 		}

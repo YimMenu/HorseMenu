@@ -1,7 +1,7 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/Natives.hpp"
 #include "network/CNetGamePlayer.hpp"

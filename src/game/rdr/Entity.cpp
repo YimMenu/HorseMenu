@@ -27,6 +27,9 @@ namespace YimMenu
 
 	void Entity::AssertControl(const std::string& function_name)
 	{
+		if (!IsValid())
+			return;
+
 		if (!HasControl())
 		{
 			LOG(WARNING) << "HasControl() assertion failed for " << function_name;
@@ -41,12 +44,7 @@ namespace YimMenu
 	// TODO: potential use after free
 	bool Entity::IsValid()
 	{
-		return m_Handle != -1 || m_Pointer != nullptr;
-	}
-
-	bool Entity::IsAlive()
-	{
-		return !ENTITY::IS_ENTITY_DEAD(GetHandle());
+		return m_Handle != 0 || m_Pointer != nullptr;
 	}
 
 	bool Entity::IsPed()
@@ -88,7 +86,7 @@ namespace YimMenu
 		ENTITY_ASSERT_VALID();
 		ENTITY_ASSERT_CONTROL();
 		ENTITY_ASSERT_SCRIPT_CONTEXT();
-		ENTITY::SET_ENTITY_COORDS(GetHandle(), position.x, position.y, position.z, false, true, true, true);
+		ENTITY::SET_ENTITY_COORDS_NO_OFFSET(GetHandle(), position.x, position.y, position.z, true, true, true);
 	}
 
 	rage::fvector3 Entity::GetRotation(int order)
@@ -126,7 +124,7 @@ namespace YimMenu
 		ENTITY::SET_ENTITY_COLLISION(GetHandle(), enabled, true);
 	}
 
-	bool Entity::SetFrozen(bool enabled)
+	void Entity::SetFrozen(bool enabled)
 	{
 		ENTITY::FREEZE_ENTITY_POSITION(GetHandle(), enabled);
 	}
@@ -141,8 +139,7 @@ namespace YimMenu
 		if (!IsNetworked())
 			return true;
 
-		return GetPointer<rage::fwEntity*>()->m_NetObject->m_MigratingOwnerId < 32
-		    && !GetPointer<rage::fwEntity*>()->m_NetObject->m_IsRemotelyControlled;
+		return !GetPointer<rage::fwEntity*>()->m_NetObject->m_IsRemotelyControlled;
 	}
 
 	std::uint16_t Entity::GetNetworkObjectId()
@@ -209,7 +206,7 @@ namespace YimMenu
 	// TODO: find a better way to compare entities
 	bool Entity::operator==(const Entity& other)
 	{
-		if (m_Handle != -1 && other.m_Handle != -1)
+		if (m_Handle != 0 && other.m_Handle != 0)
 			return m_Handle == other.m_Handle;
 
 		if (m_Pointer != nullptr && other.m_Pointer != nullptr)
@@ -219,8 +216,8 @@ namespace YimMenu
 			if (auto ptr = GetPointer<void*>())
 				return ptr == other.m_Pointer;
 
-		if (other.m_Handle != -1)
-			if (auto handle = GetHandle(); handle != -1)
+		if (other.m_Handle != 0)
+			if (auto handle = GetHandle(); handle != 0)
 				return handle == other.m_Handle;
 
 		return false;

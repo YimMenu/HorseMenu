@@ -9,7 +9,7 @@ namespace YimMenu
 		if (!STREAMING::IS_MODEL_IN_CDIMAGE(model))
 		{
 #ifdef ENTITY_DEBUG
-			LOG(WARNING) << "Invalid model passed to Ped::Create: " << HASH(model);
+			LOG(WARNING) << "Invalid model passed to Ped::Create: " << HEX(model);
 #endif
 			return nullptr;
 		}
@@ -40,13 +40,75 @@ namespace YimMenu
 	Ped Ped::GetMount()
 	{
 		ENTITY_ASSERT_VALID();
-		return Ped(PED::GET_MOUNT(GetHandle()));
+		if (PED::IS_PED_ON_MOUNT(GetHandle()))
+			return Ped(PED::GET_MOUNT(GetHandle()));
+		else
+			return nullptr;
+	}
+
+	Ped Ped::GetLastMount()
+	{
+		ENTITY_ASSERT_VALID();
+		return Ped(PED::_GET_LAST_MOUNT(GetHandle()));
 	}
 
 	Entity Ped::GetVehicle()
 	{
 		ENTITY_ASSERT_VALID();
 		return Entity(PED::GET_VEHICLE_PED_IS_IN(GetHandle(), true));
+	}
+
+	float Ped::GetStamina()
+	{
+		ENTITY_ASSERT_VALID();
+		return PED::_GET_PED_STAMINA(GetHandle());
+	}
+
+	void Ped::SetStamina(float amount)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		PED::_CHANGE_PED_STAMINA(GetHandle(), amount - GetStamina());
+	}
+
+	float Ped::GetMaxStamina()
+	{
+		ENTITY_ASSERT_VALID();
+		return PED::_GET_PED_MAX_STAMINA(GetHandle());
+	}
+
+	bool Ped::GetRagdoll()
+	{
+		ENTITY_ASSERT_VALID();
+		return PED::CAN_PED_RAGDOLL(GetHandle());
+	}
+
+	void Ped::SetRagdoll(bool enabled)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		PED::SET_PED_CAN_RAGDOLL(GetHandle(), enabled);
+	}
+
+	float Ped::GetMotivation(MotivationState state)
+	{
+		ENTITY_ASSERT_VALID();
+		return PED::_GET_PED_MOTIVATION(GetHandle(), (int)state, 0);
+	}
+
+	void Ped::SetMotivation(MotivationState state, float value)
+	{
+		ENTITY_ASSERT_VALID();
+		// control not required
+		PED::_SET_PED_MOTIVATION(GetHandle(), (int)state, value, 0);
+	}
+
+	void Ped::SetInMount(Ped mount, int seat)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY_ASSERT_SCRIPT_CONTEXT();
+		PED::SET_PED_ONTO_MOUNT(GetHandle(), mount.GetHandle(), seat, true);
 	}
 
 	rage::fvector3 Ped::GetBonePosition(int bone)
@@ -68,5 +130,17 @@ namespace YimMenu
 		ENTITY_ASSERT_VALID();
 		ENTITY_ASSERT_CONTROL();
 		PED::SET_PED_CONFIG_FLAG(GetHandle(), (int)flag, value);
+	}
+
+	int Ped::GetPlayer()
+	{
+		ENTITY_ASSERT_VALID();
+#ifdef ENTITY_DEBUG
+		if (!IsPlayer())
+		{
+			LOG(WARNING) << __FUNCTION__ ": ped is not a player!";
+		}
+#endif
+		return NETWORK::NETWORK_GET_PLAYER_INDEX_FROM_PED(GetHandle());
 	}
 }

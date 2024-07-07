@@ -6,6 +6,7 @@
 #include "game/backend/Players.hpp"
 #include "game/backend/PlayerData.hpp"
 #include "game/commands/PlayerCommand.hpp"
+#include "game/backend/Self.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "util/network.hpp"
@@ -96,9 +97,8 @@ namespace YimMenu::Submenus
 	{
 		{
 			auto main               = std::make_shared<Category>("Main");
-			auto column             = std::make_shared<Column>(2);
-			auto teleportGroup      = std::make_shared<Group>("Teleport", GetListBoxDimensions());
-			auto playerOptionsGroup = std::make_shared<Group>("Info", GetListBoxDimensions());
+			auto teleportGroup      = std::make_shared<Group>("Teleport");
+			auto playerOptionsGroup = std::make_shared<Group>("Info");
 
 			main->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(true);
@@ -151,7 +151,7 @@ namespace YimMenu::Submenus
 				}
 				else
 				{
-					YimMenu::Players::SetSelected(Self::Id);
+					YimMenu::Players::SetSelected(Self::GetPlayer());
 					ImGui::Text("No Players Yet!");
 				}
 			}));
@@ -163,7 +163,9 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Teleport To"))
 				{
 					FiberPool::Push([] {
-						if (Teleport::TeleportEntity(Self::PlayerPed, YimMenu::Players::GetSelected().GetPed().GetPosition(), false))
+						if (Teleport::TeleportEntity(Self::GetPed().GetHandle(),
+						        YimMenu::Players::GetSelected().GetPed().GetPosition(),
+						        false))
 							g_Spectating = false;
 					});
 				}
@@ -175,7 +177,9 @@ namespace YimMenu::Submenus
 						    0,
 						    -10,
 						    0);
-						if (Teleport::TeleportEntity(Self::PlayerPed, {playerCoords.x, playerCoords.y, playerCoords.z}, false))
+						if (Teleport::TeleportEntity(Self::GetPed().GetHandle(),
+						        {playerCoords.x, playerCoords.y, playerCoords.z},
+						        false))
 							g_Spectating = false;
 					});
 				}
@@ -184,17 +188,14 @@ namespace YimMenu::Submenus
 					FiberPool::Push([] {
 						auto playerVeh = PED::GET_VEHICLE_PED_IS_USING(
 						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
-						if (Teleport::WarpIntoVehicle(Self::PlayerPed, playerVeh))
+						if (Teleport::WarpIntoVehicle(Self::GetPed().GetHandle(), playerVeh))
 							g_Spectating = false;
 					});
 				}
 			}));
 
-			column->AddColumnOffset(1, 160);
-			column->AddItem(playerOptionsGroup);
-			column->AddNextColumn();
-			column->AddItem(teleportGroup);
-			main->AddItem(column);
+			main->AddItem(playerOptionsGroup);
+			main->AddItem(teleportGroup);
 			AddCategory(std::move(main));
 		}
 
@@ -234,6 +235,47 @@ namespace YimMenu::Submenus
 						*uid_data.At(6).As<int*>()                      = 0;
 						auto location_data                              = broadcast.At(2505).At(0, 6).At(0, 3);
 						*location_data.As<int*>()                       = 2; // start val
+					});
+				}
+
+				if (ImGui::Button("Hmm..."))
+				{
+					FiberPool::Push([] {
+						Scripts::ForceScriptHost(Scripts::FindScriptThread("net_player_camp_manager"_J));
+						*ScriptGlobal(1147987).At(67).As<int*>() = 48699;
+						*ScriptGlobal(1147987).At(164).As<int*>() = 999999;
+
+						float blah = (float)900000.0f;
+						int iv     = *(int*)&blah;
+
+						uint64_t event_data[9]{};
+						event_data[0] = 201;
+						event_data[1] = Self::GetPlayer().GetId();
+						event_data[4] = 0;
+
+						event_data[5] = 46;
+						event_data[6] = iv;
+						event_data[7] = iv;
+						event_data[8] = INT_MAX;
+						Scripts::SendScriptEvent(event_data, 9, 1 << Self::GetPlayer().GetId());
+
+						event_data[5] = 48697;
+						event_data[6] = UINT_MAX;
+						event_data[7] = UINT_MAX; // NaN
+						event_data[8] = 1;
+						Scripts::SendScriptEvent(event_data, 9, 1 << Self::GetPlayer().GetId());
+
+						event_data[5] = 48197;
+						event_data[6] = UINT_MAX;
+						event_data[7] = 0; // doesn't matter (f_0)
+						event_data[8] = 3; // (f_1)
+						Scripts::SendScriptEvent(event_data, 9, 1 << Self::GetPlayer().GetId());
+
+						event_data[5] = 48198;
+						event_data[6] = 3; // f_2
+						event_data[7] = 0; // f_3
+						event_data[8] = UINT_MAX;
+						Scripts::SendScriptEvent(event_data, 9, 1 << Self::GetPlayer().GetId());
 					});
 				}
 

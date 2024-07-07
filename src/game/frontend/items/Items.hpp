@@ -8,11 +8,6 @@ namespace YimMenu
 	class PlayerCommand;
 	class Command;
 
-	inline ImVec2 GetListBoxDimensions()
-	{
-		return {300, 250};
-	}
-
 	class Button : public UIItem
 	{
 	public:
@@ -80,7 +75,7 @@ namespace YimMenu
 	class Group : public UIItem
 	{
 	public:
-		explicit Group(const std::string& name, ImVec2 size = {0, 0});
+		explicit Group(const std::string& name, int items_per_row = 7);
 		void Draw() override;
 		
 		void AddItem(std::shared_ptr<UIItem>&& item)
@@ -90,10 +85,11 @@ namespace YimMenu
 
 	private:
 		std::string m_Name;
-		ImVec2 m_Size;
+		int m_ItemsPerRow;
 		std::vector<std::shared_ptr<UIItem>> m_Items;
 	};
 
+	#if 0
 	class Column : public UIItem
 	{
 	public:
@@ -115,6 +111,7 @@ namespace YimMenu
 		std::vector<std::shared_ptr<UIItem>> m_Items;
 		int m_Columns;
 	};
+	#endif
 
 	class InputTextWithHint : public UIItem
 	{
