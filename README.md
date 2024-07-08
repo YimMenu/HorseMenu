@@ -1,6 +1,6 @@
 # HorseMenu
 
-A trainer for the popular horse riding game from Rockstar Games.
+A mod menu for Red Dead Redemption 2 and Red Dead Online published by Rockstar Games. Strictly for educational purposes.
 
 ## Structure
 
