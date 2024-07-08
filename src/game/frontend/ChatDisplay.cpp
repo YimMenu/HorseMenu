@@ -1,10 +1,10 @@
 #include "ChatDisplay.hpp"
 
+#include "Menu.hpp"
+#include "core/frontend/widgets/color_text/imgui_color_text.hpp"
 #include "core/logger/LogHelper.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "core/frontend/widgets/color_text/imgui_color_text.hpp"
 #include "game/pointers/Pointers.hpp"
-#include "Menu.hpp"
 
 
 namespace YimMenu
@@ -19,11 +19,23 @@ namespace YimMenu
 		notification.m_Sender  = sender;
 		notification.m_Message = message;
 
+		static const bool isBigScreen = Pointers.ScreenResX > 1600 && Pointers.ScreenResY > 900;
+
 		std::lock_guard<std::mutex> lock(m_mutex);
 
-		if (m_Messages.size() >= 20)
+		if (isBigScreen)
 		{
-			m_Messages.erase(m_Messages.begin());
+			if (m_Messages.size() >= 20)
+			{
+				m_Messages.erase(m_Messages.begin());
+			}
+		}
+		else
+		{
+			if (m_Messages.size() >= 7)
+			{
+				m_Messages.erase(m_Messages.begin());
+			}
 		}
 
 		m_Messages.push_back(notification);
