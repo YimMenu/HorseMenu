@@ -21,7 +21,7 @@ namespace YimMenu
 
 		static const bool isBigScreen = Pointers.ScreenResX > 1600 && Pointers.ScreenResY > 900;
 
-		std::lock_guard<std::mutex> lock(m_mutex);
+		std::lock_guard<std::mutex> lock(m_Mutex);
 
 		if (isBigScreen)
 		{
@@ -43,7 +43,7 @@ namespace YimMenu
 
 	void ChatDisplay::DrawImpl()
 	{
-		std::lock_guard<std::mutex> lock(m_mutex);
+		std::lock_guard<std::mutex> lock(m_Mutex);
 		int position = 0;
 
 		float y_pos = position * 100 + 200;
