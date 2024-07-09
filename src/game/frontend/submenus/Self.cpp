@@ -148,8 +148,8 @@ namespace YimMenu::Submenus
 		spawnCollectiblesGroup->AddItem(std::make_shared<ImGuiItem>([=] {
 			if (recoveryCommand->GetState())
 			{
-				static Rewards::eRewardType selected;
-				std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::GOLD_REWARDS, "Gold Rewards"}, {Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
+				static Rewards::eRewardType selected{};
+				std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
 
 				if (ImGui::BeginCombo("Rewards", reward_translations[selected].c_str()))
 				{
@@ -161,21 +161,25 @@ namespace YimMenu::Submenus
 						}
 						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 						{
-							Rewards::SpawnRequestedRewards({selected});
+							FiberPool::Push([] {
+								Rewards::GiveRequestedRewards({selected});
+							});
 						}
 					}
 					ImGui::EndCombo();
 				}
 
-				if (ImGui::Button("Spawn Selected"))
+				if (ImGui::Button("Add Selected"))
 				{
-					Rewards::SpawnRequestedRewards({selected});
+					FiberPool::Push([] {
+						Rewards::GiveRequestedRewards({selected});
+					});
 				}
 			}
 			else
 			{
 				ImGui::Text("Recovery Feature Restricted");
-				ImGui::Text("The recovery/collectibles feature is risky and you might face a ban for using it. You are responsible for what you do with this feature. None of the developers or YimMenu organization are responsible for any damages to your account.");
+				ImGui::Text("The recovery/collectibles feature is risky and you might face a ban for using it. You are responsible for what you do with this feature. None of the developers or the YimMenu organization are responsible for any damages to your account.");
 				if (ImGui::Button("Enable Recovery"))
 				{
 					recoveryCommand->SetState(true);

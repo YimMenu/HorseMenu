@@ -14,11 +14,14 @@ namespace YimMenu
 
 	void Group::Draw()
 	{
-		ImGui::PushFont(Menu::Font::g_ChildTitleFont);
-		ImGui::Text(m_Name.c_str());
-		ImGui::PopFont();
-		ImGui::Separator();
-		ImGui::Spacing();
+		if (!m_Name.empty())
+		{
+			ImGui::PushFont(Menu::Font::g_ChildTitleFont);
+			ImGui::Text(m_Name.c_str());
+			ImGui::PopFont();
+			ImGui::Separator();
+			ImGui::Spacing();
+		}
 
 		int item_count = 0;
 
@@ -28,7 +31,7 @@ namespace YimMenu
 			item->Draw();
 			item_count++;
 
-			if (item_count % m_ItemsPerRow == 0)
+			if (m_ItemsPerRow != -1 && item_count % m_ItemsPerRow == 0)
 			{
 				ImGui::EndGroup();
 				ImGui::SameLine();

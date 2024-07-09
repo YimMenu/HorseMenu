@@ -7,7 +7,7 @@
 #include "game/backend/Players.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-#include "util/Helpers.hpp"
+#include "game/rdr/Pools.hpp"
 
 namespace YimMenu::Features
 {
@@ -49,7 +49,7 @@ namespace YimMenu
 
 		if (includePeds)
 		{
-			for (Ped ped : Helpers::GetAllPeds())
+			for (Ped ped : Pools::GetPeds())
 			{
 				if (ped.IsValid() || ped.GetPointer<void*>())
 					updateClosestEntity(ped.GetHandle());

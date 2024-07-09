@@ -51,7 +51,7 @@ namespace YimMenu
 	            }},
 	        {"Kill",
 	            [&](Entity entity) {
-		            ENTITY::SET_ENTITY_HEALTH(entity.GetHandle(), 0, 0);
+		            entity.Kill();
 	            }},
 	        {"Apply Force",
 	            [&](Entity entity) {

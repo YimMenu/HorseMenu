@@ -61,6 +61,7 @@ namespace YimMenu::Submenus
 		auto spoofing         = std::make_shared<Category>("Spoofing");
 		auto database         = std::make_shared<Category>("Player Database");
 		auto nameChangerGroup = std::make_shared<Group>("Name Changer");
+		auto blipSpoofingGroup = std::make_shared<Group>("Blip Spoofing");
 
 		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
@@ -193,7 +194,12 @@ namespace YimMenu::Submenus
 				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally unless enabled above.");
 			}
 		}));
+		blipSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofprimaryicon"_J));
+		blipSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofprimaryicon"_J, std::make_shared<ListCommandItem>("primaryicon"_J, "Icon##primary")));
+		blipSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofsecondaryicon"_J));
+		blipSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofsecondaryicon"_J, std::make_shared<ListCommandItem>("secondaryicon"_J, "Icon##secondary"))); 
 		spoofing->AddItem(nameChangerGroup);
+		spoofing->AddItem(blipSpoofingGroup);
 		AddCategory(std::move(session));
 		AddCategory(std::move(spoofing));
 		AddCategory(std::move(database));

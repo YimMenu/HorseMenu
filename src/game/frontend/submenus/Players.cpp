@@ -207,10 +207,6 @@ namespace YimMenu::Submenus
 			}));
 
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
-				if (Features::_PopPlayerList.GetState())
-					ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-			helpful->AddItem(std::make_shared<ImGuiItem>([] {
 
 				if (ImGui::Button("Test"))
 				{
@@ -235,47 +231,6 @@ namespace YimMenu::Submenus
 						*uid_data.At(6).As<int*>()                      = 0;
 						auto location_data                              = broadcast.At(2505).At(0, 6).At(0, 3);
 						*location_data.As<int*>()                       = 2; // start val
-					});
-				}
-
-				if (ImGui::Button("Hmm..."))
-				{
-					FiberPool::Push([] {
-						Scripts::ForceScriptHost(Scripts::FindScriptThread("net_player_camp_manager"_J));
-						*ScriptGlobal(1147987).At(67).As<int*>() = 48699;
-						*ScriptGlobal(1147987).At(164).As<int*>() = 999999;
-
-						float blah = (float)900000.0f;
-						int iv     = *(int*)&blah;
-
-						uint64_t event_data[9]{};
-						event_data[0] = 201;
-						event_data[1] = Self::GetPlayer().GetId();
-						event_data[4] = 0;
-
-						event_data[5] = 46;
-						event_data[6] = iv;
-						event_data[7] = iv;
-						event_data[8] = INT_MAX;
-						Scripts::SendScriptEvent(event_data, 9, 1 << Self::GetPlayer().GetId());
-
-						event_data[5] = 48697;
-						event_data[6] = UINT_MAX;
-						event_data[7] = UINT_MAX; // NaN
-						event_data[8] = 1;
-						Scripts::SendScriptEvent(event_data, 9, 1 << Self::GetPlayer().GetId());
-
-						event_data[5] = 48197;
-						event_data[6] = UINT_MAX;
-						event_data[7] = 0; // doesn't matter (f_0)
-						event_data[8] = 3; // (f_1)
-						Scripts::SendScriptEvent(event_data, 9, 1 << Self::GetPlayer().GetId());
-
-						event_data[5] = 48198;
-						event_data[6] = 3; // f_2
-						event_data[7] = 0; // f_3
-						event_data[8] = UINT_MAX;
-						Scripts::SendScriptEvent(event_data, 9, 1 << Self::GetPlayer().GetId());
 					});
 				}
 
@@ -321,10 +276,9 @@ namespace YimMenu::Submenus
 				drawPlayerList(!Features::_PopPlayerList.GetState());
 			}));
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
-				if (Features::_PopPlayerList.GetState())
-					ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("circus"_J));
 
 			AddCategory(std::move(trolling));
 		}
@@ -336,18 +290,12 @@ namespace YimMenu::Submenus
 				drawPlayerList(true);
 			}));
 
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-
+			toxic->AddItem(std::make_shared<PlayerCommandItem>("kill"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
 			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("circus"_J));
 
 			AddCategory(std::move(toxic));
 		}
@@ -357,10 +305,6 @@ namespace YimMenu::Submenus
 
 			kick->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(true);
-			}));
-
-			kick->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
 			}));
 
 			kick->AddItem(std::make_shared<PlayerCommandItem>("splitkick"_J));

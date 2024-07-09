@@ -39,6 +39,9 @@ namespace YimMenu
 		bool GetConfigFlag(PedConfigFlag flag);
 		void SetConfigFlag(PedConfigFlag flag, bool value);
 
+		// relationships
+		bool IsEnemy();
+
 		// player
 		// We're returning a handle here and not a Player because we don't want to create a cyclic import dependency
 		int GetPlayer();

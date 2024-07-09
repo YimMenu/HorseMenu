@@ -6,6 +6,7 @@ namespace YimMenu
 {
 	class BoolCommand;
 	class PlayerCommand;
+	class ListCommand;
 	class Command;
 
 	class Button : public UIItem
@@ -51,6 +52,30 @@ namespace YimMenu
 		BoolCommand* m_Command;
 	};
 
+	class ListCommandItem : public UIItem
+	{
+	public:
+		explicit ListCommandItem(joaat_t id, std::optional<std::string> label_override = std::nullopt);
+		void Draw() override;
+
+	private:
+		ListCommand* m_Command;
+		std::optional<std::string> m_LabelOverride;
+		std::optional<int> m_ItemWidth = std::nullopt;
+		std::optional<std::string> m_SelectedItem = std::nullopt;
+	};
+
+	class ConditionalItem : public UIItem
+	{
+	public:
+		explicit ConditionalItem(joaat_t bool_cmd_id, std::shared_ptr<UIItem> to_draw);
+		void Draw() override;
+
+	private:
+		BoolCommand* m_Condition;
+		std::shared_ptr<UIItem> m_Item;
+	};
+
 	class ImGuiItem : public UIItem
 	{
 	public:
@@ -88,30 +113,6 @@ namespace YimMenu
 		int m_ItemsPerRow;
 		std::vector<std::shared_ptr<UIItem>> m_Items;
 	};
-
-	#if 0
-	class Column : public UIItem
-	{
-	public:
-		explicit Column(const int columns) :
-		    m_Columns(columns)
-		{
-		}
-
-		void AddItem(std::shared_ptr<UIItem>&& item)
-		{
-			m_Items.push_back(std::move(item));
-		}
-
-		void Draw();
-		void AddNextColumn();
-		void AddColumnOffset(const int column, const int offset);
-
-	private:
-		std::vector<std::shared_ptr<UIItem>> m_Items;
-		int m_Columns;
-	};
-	#endif
 
 	class InputTextWithHint : public UIItem
 	{

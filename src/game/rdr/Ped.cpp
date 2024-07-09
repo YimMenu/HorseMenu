@@ -132,6 +132,18 @@ namespace YimMenu
 		PED::SET_PED_CONFIG_FLAG(GetHandle(), (int)flag, value);
 	}
 
+	bool Ped::IsEnemy()
+	{
+		ENTITY_ASSERT_VALID();
+		
+		// TODO: maybe use a class member?
+		auto r1 = PED::GET_RELATIONSHIP_BETWEEN_PEDS(GetHandle(), PLAYER::PLAYER_PED_ID());
+		auto r2 = PED::GET_RELATIONSHIP_BETWEEN_PEDS(PLAYER::PLAYER_PED_ID(), GetHandle());
+		auto rel = std::max(r1, r2);
+
+		return rel == 4 || rel == 5;
+	}
+
 	int Ped::GetPlayer()
 	{
 		ENTITY_ASSERT_VALID();

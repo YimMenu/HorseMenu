@@ -100,6 +100,7 @@ namespace YimMenu
 		bool GetInvincible();
 		void SetInvincible(bool status);
 		bool IsDead();
+		void Kill();
 		int GetHealth();
 		void SetHealth(int health);
 		int GetMaxHealth();

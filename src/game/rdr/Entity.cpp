@@ -1,6 +1,7 @@
 #include "Entity.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "Natives.hpp"
+#include "util/Joaat.hpp"
 #include <entity/fwEntity.hpp>
 #include <network/netObject.hpp>
 
@@ -169,6 +170,28 @@ namespace YimMenu
 	{
 		ENTITY_ASSERT_VALID();
 		return ENTITY::IS_ENTITY_DEAD(GetHandle());
+	}
+
+	void Entity::Kill()
+	{
+		ENTITY_ASSERT_VALID();
+
+		if (HasControl())
+		{
+			ENTITY::SET_ENTITY_HEALTH(GetHandle(), 0, PLAYER::PLAYER_PED_ID());
+		}
+		else
+		{
+			auto ptr = GetPointer<rage::fwEntity*>();
+			auto local = reinterpret_cast<rage::fwEntity*>(Pointers.GetLocalPed());
+			auto pos = GetPosition();
+			std::uint32_t weapon = "WEAPON_EXPLOSION"_J;
+
+			if (!ptr || !ptr->m_NetObject || !local || !local->m_NetObject)
+				return;
+
+			Pointers.TriggerWeaponDamageEvent(local->m_NetObject, ptr->m_NetObject, nullptr, &pos, nullptr, nullptr, true, &weapon, 9999.9f, 9999.0f, -1, -1, 16, nullptr, false, false, true, false, false, -1, 0, 0, 0, 0, 0);
+		}
 	}
 
 	int Entity::GetHealth()

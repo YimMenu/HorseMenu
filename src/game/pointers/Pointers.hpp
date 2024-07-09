@@ -5,10 +5,10 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <rage/atArray.hpp>
-#include <rage/pools.hpp>
 #include <script/scrNativeHandler.hpp>
 #include <vulkan/vulkan.h>
 #include <windows.h>
+#include <rage/vector.hpp>
 
 
 class CNetGamePlayer;
@@ -16,6 +16,7 @@ class CVehicle;
 class CPed;
 class CNetworkPlayerMgr;
 class CNetworkObjectMgr;
+class PoolEncryption;
 
 namespace rage
 {
@@ -28,9 +29,12 @@ namespace rage
 	class netPeerAddress;
 	class rlGamerHandle;
 	class datBitBuffer;
+	class fwEntity;
 }
 
 class CAnimScene;
+class CEventInventoryItemPickedUp;
+class CEventGroup;
 
 namespace YimMenu
 {
@@ -56,6 +60,8 @@ namespace YimMenu
 		using WriteBitBufferArray = bool (*)(rage::datBitBuffer* buffer, void* val, int bits, int unk);
 		using ReadBitBufferString = bool (*)(rage::datBitBuffer* buffer, char* read, int bits);
 		using GetAnimSceneFromHandle = CAnimScene**(*)(CAnimScene** scene, int handle);
+		using InventoryEventConstructor = CEventInventoryItemPickedUp* (*)(CEventInventoryItemPickedUp*, std::uint32_t reward_hash, std::uint32_t model_hash, bool a4, bool a5, void* a6);
+		using TriggerWeaponDamageEvent = void(*)(rage::netObject* source, rage::netObject* target, rage::netObject* unk, rage::fvector3* position, void* a5, void* a6, bool override_dmg, std::uint32_t* weapon_hash, float damage, float f10, int tire_index, int suspension_index, std::uint64_t flags, void* action_result, bool hit_entity_weapon, bool hit_ammo_attachment, bool silenced, bool a18, bool a19, int a20, int a21, int a22, int a23, int a24, int a25);
 	};
 
 	struct PointerData
@@ -79,6 +85,7 @@ namespace YimMenu
 		Functions::WriteBitBufferArray WriteBitBufferArray;
 		Functions::ReadBitBufferString ReadBitBufferString;
 		PVOID InitNativeTables;
+		Functions::TriggerWeaponDamageEvent TriggerWeaponDamageEvent;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;
@@ -131,6 +138,8 @@ namespace YimMenu
 		PVOID IsAnimSceneInScope;
 		PVOID BroadcastNetArray;
 		std::uint8_t* NetArrayPatch;
+		Functions::InventoryEventConstructor InventoryEventConstructor;
+		CEventGroup** EventGroupNetwork;
 
 		// Vulkan
 		PVOID QueuePresentKHR;      //Init in renderer

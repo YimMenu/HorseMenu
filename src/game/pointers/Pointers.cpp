@@ -64,6 +64,11 @@ namespace YimMenu
 			}
 		});
 
+		constexpr auto keyboardHookPtrn = Pattern<"41 83 E9 5B 44 3B C8 76 15">("KeyboardHook");
+		scanner.Add(keyboardHookPtrn, [this](PointerCalculator ptr) {
+			UnhookWindowsHookEx(*ptr.Add(0xC).Rip().As<HHOOK*>()); // weird hook that gets set by an encrypted function
+		});
+
 		constexpr auto wndProcPtrn = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
 		scanner.Add(wndProcPtrn, [this](PointerCalculator ptr) {
 			WndProc = ptr.As<PVOID>();
@@ -202,6 +207,16 @@ namespace YimMenu
 		scanner.Add(broadcastNetArrayPtrn, [this](PointerCalculator ptr) {
 			BroadcastNetArray = ptr.As<PVOID>();
 			NetArrayPatch     = ptr.Add(0x23B).As<std::uint8_t*>();
+		});
+
+		constexpr auto inventoryEventCtorPtrn = Pattern<"C7 41 10 55 2B 70 40">("InventoryEventConstructor");
+		scanner.Add(inventoryEventCtorPtrn, [this](PointerCalculator ptr) {
+			InventoryEventConstructor = ptr.Sub(0x81).As<Functions::InventoryEventConstructor>();
+		});
+
+		constexpr auto eventGroupNetworkPtrn = Pattern<"80 78 47 00 75 52 48 8B 35">("EventGroupNetwork");
+		scanner.Add(eventGroupNetworkPtrn, [this](PointerCalculator ptr) {
+			EventGroupNetwork = ptr.Add(0x9).Rip().As<CEventGroup**>();
 		});
 
 		constexpr auto networkRequestPtrn = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
@@ -357,6 +372,11 @@ namespace YimMenu
 		constexpr auto initNativeTablesPtrn = Pattern<"41 B0 01 44 39 51 2C 0F">("InitNativeTables");
 		scanner.Add(initNativeTablesPtrn, [this](PointerCalculator ptr) {
 			InitNativeTables = ptr.Sub(0x10).As<PVOID>();
+		});
+
+		constexpr auto triggerWeaponDamageEventPtrn = Pattern<"89 44 24 58 8B 47 F8 89">("TriggerWeaponDamageEvent");
+		scanner.Add(triggerWeaponDamageEventPtrn, [this](PointerCalculator ptr) {
+			TriggerWeaponDamageEvent = ptr.Add(0x39).Rip().As<Functions::TriggerWeaponDamageEvent>();
 		});
 
 		if (!scanner.Scan())
