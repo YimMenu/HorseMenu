@@ -142,6 +142,7 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepcoresfilled"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteclip"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("nospread"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autocock"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
@@ -149,6 +150,9 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superdamage"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 
 
@@ -162,6 +166,7 @@ namespace YimMenu::Submenus
 		}));
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
+		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("eagleeye"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnbountywagon"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 

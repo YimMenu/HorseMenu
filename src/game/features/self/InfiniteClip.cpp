@@ -15,12 +15,15 @@ namespace YimMenu::Features
 			Hash current_weapon = WEAPON::_GET_PED_CURRENT_HELD_WEAPON(Self::PlayerPed);
 			int current_clip_ammo{};
 			
-			WEAPON::GET_AMMO_IN_CLIP(Self::PlayerPed, &current_clip_ammo, current_weapon);
+			if (current_weapon != "WEAPON_FISHINGROD"_J)
+			{
+				WEAPON::GET_AMMO_IN_CLIP(Self::PlayerPed, &current_clip_ammo, current_weapon);
 			
-			auto clip_size = WEAPON::GET_WEAPON_CLIP_SIZE(current_weapon);
-
-			if (current_clip_ammo < clip_size)
-				WEAPON::_REFILL_AMMO_IN_CURRENT_PED_WEAPON(Self::PlayerPed);
+				auto clip_size = WEAPON::GET_WEAPON_CLIP_SIZE(current_weapon);
+			
+				if (current_clip_ammo < clip_size)
+					WEAPON::_REFILL_AMMO_IN_CURRENT_PED_WEAPON(Self::PlayerPed);
+			}
 		}
 	};
 

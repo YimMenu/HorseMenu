@@ -36,9 +36,11 @@ namespace YimMenu
 			    ImGui::PushFont(Menu::Font::g_DefaultFont);
 			    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImU32(ImColor(15, 15, 15)));
 
-			    // Think this add HTML&PHP with no CSS. Lol just for testing.
-			    ImGui::SetNextWindowSize(ImVec2(610, 610 /*add auto resize*/), ImGuiCond_Once);
-			    if (ImGui::Begin("HorseMenu", nullptr, ImGuiWindowFlags_NoDecoration))
+			    	// Think this add HTML&PHP with no CSS. Lol just for testing.
+			    	ImGui::SetNextWindowSize(ImVec2(780, 620 /*add auto resize*/), ImGuiCond_Once);
+				// Window default positioning, adjust as needed.
+				ImGui::SetNextWindowPos(ImVec2(0.5f, 0.5f), ImGuiCond_Once);
+			    if (ImGui::Begin("Welcome to HorseMenu!", nullptr, ImGuiWindowFlags_NoResize))
 			    {
 				    //ImGui::BeginDisabled(*Pointers.IsSessionStarted);
 				    if (ImGui::Button("Unload", ImVec2(120, 0)))
