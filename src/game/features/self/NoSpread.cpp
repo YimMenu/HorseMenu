@@ -5,7 +5,7 @@
 
 namespace YimMenu::Features
 {
-	class AccuracyMax : public LoopedCommand
+	class NoSpread : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
 
@@ -20,5 +20,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static AccuracyMax _AccuracyMax{"maxaccuracy", "No Spread", "Always perfect accuracy on shots"};
+	static NoSpread _NoSpread{"nospread", "No Spread", "Always perfect accuracy on shots"};
 }
