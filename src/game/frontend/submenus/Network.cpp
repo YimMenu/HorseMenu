@@ -61,7 +61,6 @@ namespace YimMenu::Submenus
 		auto nameChangerGroup = std::make_shared<Group>("Name Changer", GetListBoxDimensions());
 		auto spoofingColumns  = std::make_shared<Column>(1);
 
-		session->AddItem(std::make_shared<CommandItem>("quitsession"_J));
 		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
