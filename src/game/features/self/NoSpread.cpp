@@ -13,6 +13,11 @@ namespace YimMenu::Features
 		{
 			PED::SET_PED_ACCURACY(Self::PlayerPed, 100);
 		}
+
+		virtual void OnDisable() override
+		{
+			PED::SET_PED_ACCURACY(Self::PlayerPed, 0); // Does not set it to miss every time, accuracy is weird.
+		}
 	};
 
 	static AccuracyMax _AccuracyMax{"maxaccuracy", "No Spread", "Always perfect accuracy on shots"};
