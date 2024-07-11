@@ -339,6 +339,14 @@ namespace
 				    NotificationType::Warning);
 				return true;
 			}
+			if (g_CageModels.count(data.m_ModelHash))
+			{
+				LOG(WARNING) << "Blocked potential cage spawn from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections",
+				    std::string("Blocked potential cage spawn from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
+				return true;
+			}
 			break;
 		}
 		case "CPhysicalAttachDataNode"_J:
@@ -383,8 +391,7 @@ namespace
 						// TODO: add more checks
 						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
 						Notifications::Show("Protections",
-						    std::string("Blocked remote teleport from ")
-						        .append(Protections::GetSyncingPlayer().GetName()),
+						    std::string("Blocked remote teleport from ").append(Protections::GetSyncingPlayer().GetName()),
 						    NotificationType::Warning);
 						g_PlayerDatabase->AddInfraction(
 						    g_PlayerDatabase->GetOrCreatePlayer(

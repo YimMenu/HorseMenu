@@ -11,18 +11,18 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (!Self::PlayerPed || PED::IS_PED_DEAD_OR_DYING(Self::PlayerPed, true) || ENTITY::IS_ENTITY_DEAD(Self::PlayerPed))
+			if (!Self::PlayerPed || PED::IS_PED_DEAD_OR_DYING(Self::PlayerPed, TRUE) || ENTITY::IS_ENTITY_DEAD(Self::PlayerPed))
 			{
-				ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, false);
+				ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, FALSE);
 				return;
 			}
 
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, true);
+			ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, TRUE);
 		}
 
 		virtual void OnDisable() override
 		{
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, false);
+			ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, FALSE);
 		}
 	};
 

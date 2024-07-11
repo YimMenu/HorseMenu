@@ -17,7 +17,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, false);
+			ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, FALSE);
 			ENTITY::SET_ENTITY_HEALTH(Self::PlayerPed, 0, 0);
 		}
 	};

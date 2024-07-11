@@ -129,6 +129,16 @@ namespace YimMenu::Submenus
 						ImGui::SetClipboardText(ip_str.c_str());
 					}
 
+					std::string healthText = std::format("HP: {}/{} ({:.2f}%)", Selected::current_health, Selected::max_health, Selected::health_percentage);
+					ImGui::Text("%s", healthText.c_str());
+
+					ImGui::Text("Distance: %.1f", Selected::Distance);
+
+					ImGui::Text("X: %.1f\nY: %.1f\nZ: %.1f",
+					    Selected::Pos.x,
+					    Selected::Pos.y,
+					    Selected::Pos.z);
+
 					if (ImGui::Button("View SC Profile"))
 						FiberPool::Push([] {
 							uint64_t handle[18];
