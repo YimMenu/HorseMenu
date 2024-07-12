@@ -20,23 +20,16 @@ namespace YimMenu
 		notification.m_Message = message;
 
 		static const bool isBigScreen = Pointers.ScreenResX > 1600 && Pointers.ScreenResY > 900;
+		static const int maxMessages  = isBigScreen ? 20 : 7;
 
 		std::lock_guard<std::mutex> lock(m_Mutex);
 
-		if (isBigScreen)
+
+		if (m_Messages.size() >= maxMessages)
 		{
-			if (m_Messages.size() >= 20)
-			{
-				m_Messages.erase(m_Messages.begin());
-			}
+			m_Messages.erase(m_Messages.begin());
 		}
-		else
-		{
-			if (m_Messages.size() >= 7)
-			{
-				m_Messages.erase(m_Messages.begin());
-			}
-		}
+
 
 		m_Messages.push_back(notification);
 	}
