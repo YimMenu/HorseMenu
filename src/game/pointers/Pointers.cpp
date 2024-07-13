@@ -384,6 +384,11 @@ namespace YimMenu
 			ScSession = ptr.Add(0xB).Rip().As<CNetworkScSession**>();
 		});
 
+		constexpr auto receiveArrayUpdatePtrn = Pattern<"48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 50 48 8B D9 45">("ReceiveArrayUpdate");
+		scanner.Add(receiveArrayUpdatePtrn, [this](PointerCalculator ptr) {
+			ReceiveArrayUpdate = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

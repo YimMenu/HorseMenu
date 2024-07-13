@@ -48,6 +48,7 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::PPostMessage>(new DetourHook("PostMessage", Pointers.PostPresenceMessage, Hooks::Protections::PPostMessage));
 		BaseHook::Add<Hooks::Protections::SerializeServerRPC>(new DetourHook("SerializeServerRPC", Pointers.SerializeServerRPC, Hooks::Protections::SerializeServerRPC));
 		BaseHook::Add<Hooks::Protections::ReceiveServerMessage>(new DetourHook("ReceiveServerMessage", Pointers.ReceiveServerMessage, Hooks::Protections::ReceiveServerMessage));
+		BaseHook::Add<Hooks::Protections::ReceiveArrayUpdate>(new DetourHook("ReceiveArrayUpdate", Pointers.ReceiveArrayUpdate, Hooks::Protections::ReceiveArrayUpdate));
 
 		BaseHook::Add<Hooks::Voice::EnumerateAudioDevices>(new DetourHook("EnumerateAudioDevices", Pointers.EnumerateAudioDevices, Hooks::Voice::EnumerateAudioDevices));
 		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));

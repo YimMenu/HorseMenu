@@ -1,8 +1,9 @@
 #pragma once
 #include <D3D12.h>
 #include <dxgi1_4.h>
-#include <vulkan/vulkan.h>
 #include <network/InFrame.hpp> // has to be imported
+#include <vulkan/vulkan.h>
+
 
 
 namespace rage
@@ -79,11 +80,12 @@ namespace YimMenu::Hooks
 		extern void ResetSyncNodes();
 		extern bool HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern int AddObjectToCreationQueue(void* mgr, eNetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
-		extern bool ReceiveNetMessage(void* a1, void* ncm, rage::netConnection::InFrame * frame);
+		extern bool ReceiveNetMessage(void* a1, void* ncm, rage::netConnection::InFrame* frame);
 		extern bool HandlePresenceEvent(uint64_t a1, rage::rlGamerInfo* gamerInfo, unsigned int sender, const char** payload, const char* channel);
 		extern bool PPostMessage(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
 		extern bool SerializeServerRPC(rage::ServerRPCSerializer* ser, void* a2, const char* message, void* def, void* structure, const char* rpc_guid, void* a7);
 		extern bool ReceiveServerMessage(void* a1, rage::ServerMsg* a2); // doesn't receive all messages
+		extern bool ReceiveArrayUpdate(void* array, CNetGamePlayer* sender, rage::datBitBuffer* buffer, int size, int16_t cycle);
 	}
 
 	namespace Voice

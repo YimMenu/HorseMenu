@@ -1,23 +1,24 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/Self.hpp"
 #include "game/hooks/Hooks.hpp"
-#include "game/rdr/data/MessageTypes.hpp"
+#include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Player.hpp"
+#include "game/rdr/data/MessageTypes.hpp"
 #include "util/Chat.hpp"
 #include "util/Helpers.hpp"
-#include "game/pointers/Pointers.hpp"
 
 #include <array>
+#include <network/CNetGamePlayer.hpp>
+#include <network/CNetworkScSession.hpp>
 #include <network/InFrame.hpp>
 #include <network/rlGamerHandle.hpp>
-#include <rage/datBitBuffer.hpp>
-#include <network/CNetworkScSession.hpp>
 #include <network/rlScPeerConnection.hpp>
-#include <network/CNetGamePlayer.hpp>
+#include <rage/datBitBuffer.hpp>
 
 
 namespace YimMenu::Features
@@ -53,9 +54,8 @@ namespace YimMenu::Hooks
 			    frame->m_Address.m_external_ip.m_field2,
 			    frame->m_Address.m_external_ip.m_field3,
 			    frame->m_Address.m_external_ip.m_field4,
-			    frame->m_Address.m_external_port
-			);
-			std::string msg_name = std::format("0x{:X}", (int)msg_type);
+			    frame->m_Address.m_external_port);
+			std::string msg_name    = std::format("0x{:X}", (int)msg_type);
 			if (auto it = Data::g_MessageTypes.find((int)msg_type); it != Data::g_MessageTypes.end())
 				msg_name = it->second;
 
@@ -64,9 +64,8 @@ namespace YimMenu::Hooks
 			{
 				for (int i = 0; i < 32; i++)
 				{
-					if (session->GetPlayerByIndex(i) &&
-						session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection &&
-					    session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection->m_MessageId == frame->m_MsgId)
+					if (session->GetPlayerByIndex(i) && session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection
+					    && session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection->m_MessageId == frame->m_MsgId)
 					{
 						if (session->GetPlayerByIndex(i)->m_HasGamerInfo)
 							player_name = session->GetPlayerByIndex(i)->m_GamerInfo.m_Name;
@@ -83,12 +82,14 @@ namespace YimMenu::Hooks
 	{
 		if (frame->GetEventType() != rage::netConnection::InFrame::EventType::FrameReceived)
 		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
+			    ->Original()(a1, ncm, frame);
 		}
 
 		if (frame->m_Data == nullptr || frame->m_Length == 0)
 		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
+			    ->Original()(a1, ncm, frame);
 		}
 
 		rage::datBitBuffer buffer(frame->m_Data, frame->m_Length);
@@ -98,7 +99,8 @@ namespace YimMenu::Hooks
 
 		if (!GetMessageType(msg_type, buffer))
 		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
+			    ->Original()(a1, ncm, frame);
 		}
 
 		if (Features::_LogPackets.GetState())
@@ -142,6 +144,14 @@ namespace YimMenu::Hooks
 		{
 			if (!player || !player->m_SessionPeer->m_IsHost)
 			{
+				g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(player->m_GamerInfo.m_GamerHandle.m_RockstarId,
+				                                    player->m_GamerInfo.m_Name),
+				    (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
+
+				Notifications::Show("Protections",
+				    std::string("Blocked Reset Population Kick from ").append(player->m_GamerInfo.m_Name),
+				    NotificationType::Warning);
+
 				return true;
 			}
 			break;
