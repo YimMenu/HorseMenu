@@ -1,6 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
@@ -11,12 +10,12 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			WEAPON::_SET_PED_INFINITE_AMMO_CLIP(Self::PlayerPed, TRUE);
+			WEAPON::_SET_PED_INFINITE_AMMO_CLIP(Self::GetPed().GetHandle(), TRUE);
 		}
 
 		virtual void OnDisable() override
 		{
-			WEAPON::_SET_PED_INFINITE_AMMO_CLIP(Self::PlayerPed, FALSE);
+			WEAPON::_SET_PED_INFINITE_AMMO_CLIP(Self::GetPed().GetHandle(), FALSE);
 		}
 	};
 

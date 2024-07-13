@@ -126,7 +126,7 @@ jobs:
       - name: Echo build sha256
         id: build_sha
         run: |
-          sha256sum YimMenu.dll > sha256.checksum
+          sha256sum HorseMenu.dll > sha256.checksum
           echo "build_sha=$(cat sha256.checksum)" >> $GITHUB_OUTPUT
           cat sha256.checksum
 
@@ -149,7 +149,7 @@ jobs:
             Build artifacts ARE NOT automatically the same as release assets since release assets can be modified afterwards.
 
             These are nightly builds of HorseMenu, they are provided for testing purposes only:
-            - Test if your build environment produces a broken YimMenu.dll
+            - Test if your build environment produces a broken HorseMenu.dll
             - Test if source code is out of date and no longer compatible with the current version of Red Dead Redemption 2
 
             If you wish to use this menu as-is you are on your own, no warranty is provided.

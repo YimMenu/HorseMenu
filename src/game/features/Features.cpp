@@ -28,7 +28,7 @@ namespace YimMenu
 			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, Players::GetSelected().GetPed().GetHandle());
 		}
 
-		if (g_Spectating)
+		if (g_Spectating && g_Running)
 		{
 			if (!Players::GetSelected().IsValid() || !Players::GetSelected().GetPed())
 			{
@@ -85,20 +85,23 @@ namespace YimMenu
 		TryFirstLoad();
 		while (true)
 		{
-			Players::Tick();
-			*Pointers.RageSecurityInitialized = false;
-			*Pointers.ExplosionBypass         = true;
-			Commands::RunLoopedCommands();
-			g_HotkeySystem.FeatureCommandsHotkeyLoop();
 			SpectateTick();
-			Self::Update();
-			ScriptMgr::Yield();
+			*Pointers.RageSecurityInitialized = false;
+			if (g_Running)
+			{
+				Players::Tick();
+				*Pointers.ExplosionBypass         = true;
+				Commands::RunLoopedCommands();
+				g_HotkeySystem.FeatureCommandsHotkeyLoop();
+				Self::Update();
+				ScriptMgr::Yield();
+			}
 		}
 	}
 
 	void BlockControlsForUI()
 	{
-		while (true)
+		while (g_Running)
 		{
 			if (GUI::IsOpen())
 			{
@@ -135,7 +138,7 @@ namespace YimMenu
 
 	void ContextMenuTick()
 	{
-		while (true)
+		while (g_Running)
 		{
 			ContextMenu::GameTick();
 			ScriptMgr::Yield();

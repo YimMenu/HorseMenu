@@ -58,17 +58,4 @@ namespace YimMenu
 
 		return nullptr;
 	}
-
-	Player Players::GetSelfImpl()
-	{
-		for (auto& [idx, player] : Players::GetPlayers())
-		{
-			if (player == Player(Self::Id))
-			{
-				return player;
-			}
-		}
-
-		return nullptr;
-	}
 }
