@@ -20,6 +20,9 @@ namespace YimMenu::Hooks
 {
 	bool Protections::HandlePresenceEvent(uint64_t a1, rage::rlGamerInfo* gamerInfo, unsigned int sender, const char** payload, const char* channel)
 	{
+		bool ret =
+		    BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()->Original()(a1, gamerInfo, sender, payload, channel);
+
 		const char* key = "gm.evt";
 		std::string p(*payload);
 
@@ -52,6 +55,7 @@ namespace YimMenu::Hooks
 		if (Features::_LogPresenceEvents.GetState())
 		{
 			LOG(VERBOSE) << "Hash of Presence Event: " << std::to_string(presence_hash) << " Sender: " << sender_str << " Channel: " << std::string(channel);
+			LOG(VERBOSE) << "Payload(Raw JSON): " << json.dump();
 		}
 
 		switch (presence_hash)
@@ -83,7 +87,6 @@ namespace YimMenu::Hooks
 		}
 		}
 
-		return BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()
-		    ->Original()(a1, gamerInfo, sender, payload, channel);
+		return ret;
 	}
 }
