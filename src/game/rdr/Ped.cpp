@@ -139,9 +139,17 @@ namespace YimMenu
 		// TODO: maybe use a class member?
 		auto r1 = PED::GET_RELATIONSHIP_BETWEEN_PEDS(GetHandle(), PLAYER::PLAYER_PED_ID());
 		auto r2 = PED::GET_RELATIONSHIP_BETWEEN_PEDS(PLAYER::PLAYER_PED_ID(), GetHandle());
-		auto rel = std::max(r1, r2);
+		auto r3  = PED::IS_PED_IN_COMBAT(GetHandle(), PLAYER::PLAYER_PED_ID()) ? 5 : 0;
+		auto rel = std::max({r1, r2, r3});
 
 		return rel == 4 || rel == 5;
+	}
+
+	void Ped::SetScale(float scale)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		PED::_SET_PED_SCALE(GetHandle(), scale);
 	}
 
 	int Ped::GetPlayer()

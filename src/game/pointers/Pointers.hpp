@@ -35,6 +35,7 @@ namespace rage
 class CAnimScene;
 class CEventInventoryItemPickedUp;
 class CEventGroup;
+class CNetworkScSession;
 
 namespace YimMenu
 {
@@ -86,6 +87,7 @@ namespace YimMenu
 		Functions::ReadBitBufferString ReadBitBufferString;
 		PVOID InitNativeTables;
 		Functions::TriggerWeaponDamageEvent TriggerWeaponDamageEvent;
+		CNetworkScSession** ScSession;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;

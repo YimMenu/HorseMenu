@@ -299,7 +299,7 @@ namespace
 				    std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
@@ -312,7 +312,7 @@ namespace
 				    std::string("Blocked player model switch crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
@@ -326,7 +326,7 @@ namespace
 			{
 				LOG(WARNING) << "Blocked mismatched vehicle model crash from " << Protections::GetSyncingPlayer().GetName();
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
@@ -353,7 +353,7 @@ namespace
 					    std::string("Blocked attachment from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
 					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
-					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 					                                    Protections::GetSyncingPlayer().GetName()),
 					    (int)PlayerDatabase::eInfraction::TRIED_ATTACH);
 					return true;
@@ -384,7 +384,7 @@ namespace
 						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
 						g_PlayerDatabase->AddInfraction(
 						    g_PlayerDatabase->GetOrCreatePlayer(
-						        Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+						        Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 						        Protections::GetSyncingPlayer().GetName()),
 						    (int)PlayerDatabase::eInfraction::REMOTE_TELEPORT);
 						return true;
@@ -418,7 +418,7 @@ namespace
 					    std::string("Blocked ped attachment from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
 					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
-					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 					                                    Protections::GetSyncingPlayer().GetName()),
 					    (int)PlayerDatabase::eInfraction::TRIED_ATTACH);
 					return true;
@@ -449,7 +449,7 @@ namespace
 				    std::string("Blocked invalid propset from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;

@@ -24,11 +24,14 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
+#include "game/rdr/Packet.hpp"
 
 #include <network/netPeerAddress.hpp>
 #include <network/rlGamerInfo.hpp>
+#include <network/rlScPeerConnection.hpp>
 #include <script/scrThread.hpp>
-
+#include <network/CNetworkScSessionPlayer.hpp>
+#include <network/CNetworkScSession.hpp>
 
 namespace YimMenu::Features
 {
@@ -207,33 +210,6 @@ namespace YimMenu::Submenus
 			}));
 
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
-
-				if (ImGui::Button("Test"))
-				{
-					FiberPool::Push([] {
-						Scripts::ForceScriptHost(Scripts::FindScriptThread("net_ambient_content_evaluator"_J));
-						auto broadcast                                  = ScriptGlobal(1207480);
-						*broadcast.At(2505).At(427).At(0, 1).As<int*>() = 0; // index
-						auto mission                                    = broadcast.At(231).At(1066).At(0, 17);
-						*mission.At(0).As<joaat_t*>()                   = "generic_weight_control_item"_J;
-						*mission.At(1).As<joaat_t*>()                   = 7000; 
-						*mission.At(6).As<int*>()                       = 1 | 64; // NET_ACE_LAUNCHER_CF_USE_LAUNCHER
-						*mission.At(13).As<int*>()                      = 2; // NET_ACE_LAUNCHER_HMS_MISSION_RUNNING?
-						*mission.At(7).As<int*>()                       = 1; // iNumLocations
-						*mission.At(8).At(0, 4).At(1).As<int*>()        = 0; // idk instance ID maybe?
-						*mission.At(8).At(0, 4).At(3).As<int*>()        = 999999; // range check
-						*mission.At(14).As<int*>()                      = 0;
-						*mission.At(15).As<int*>()                      = 0;
-						*mission.At(16).As<int*>()                      = -1;
-						auto uid_data                                   = broadcast.At(231).At(0, 15);
-						*uid_data.At(1).As<int*>()                      = 2; // high priority
-						*uid_data.At(5).As<int*>()                      = 3; // UID data
-						*uid_data.At(6).As<int*>()                      = 0;
-						auto location_data                              = broadcast.At(2505).At(0, 6).At(0, 3);
-						*location_data.As<int*>()                       = 2; // start val
-					});
-				}
-
 				if (ImGui::Button("Spawn Bounty Wagon for Player"))
 				{
 					FiberPool::Push([] {
@@ -290,12 +266,19 @@ namespace YimMenu::Submenus
 				drawPlayerList(true);
 			}));
 
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("kill"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
+			auto general = std::make_shared<Group>("General");
+			general->AddItem(std::make_shared<PlayerCommandItem>("kill"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
+
+			auto mount = std::make_shared<Group>("Mount");
+			mount->AddItem(std::make_shared<PlayerCommandItem>("kickhorse"_J));
+
+			toxic->AddItem(general);
+			toxic->AddItem(mount);
 
 			AddCategory(std::move(toxic));
 		}
@@ -308,6 +291,7 @@ namespace YimMenu::Submenus
 			}));
 
 			kick->AddItem(std::make_shared<PlayerCommandItem>("splitkick"_J));
+			kick->AddItem(std::make_shared<PlayerCommandItem>("popkick"_J));
 
 			AddCategory(std::move(kick));
 		}

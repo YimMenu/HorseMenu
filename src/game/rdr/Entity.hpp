@@ -95,6 +95,10 @@ namespace YimMenu
 		bool IsNetworked();
 		bool HasControl();
 		std::uint16_t GetNetworkObjectId();
+		/// <summary>
+		/// WARNING: This function is potentially unstable when used on vehicles and horses. Use RequestControl instead
+		/// </summary>
+		void ForceControl();
 
 		// health
 		bool GetInvincible();

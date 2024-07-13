@@ -1,5 +1,5 @@
 #include "Chat.hpp"
-#include "Packet.hpp"
+#include "game/rdr/Packet.hpp"
 #include "game/frontend/ChatDisplay.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/Self.hpp"
@@ -11,6 +11,7 @@
 
 #include <rage/Guid.hpp>
 #include <rage/datBitBuffer.hpp>
+#include <network/rlGamerInfo.hpp>
 
 namespace YimMenu
 {
@@ -21,16 +22,16 @@ namespace YimMenu
 
 		auto self = Self::GetPlayer();
 		Packet msg{};
-		msg.write_message(eNetMessageType::MsgTextChat);
-		Helpers::WriteBufferString(message.c_str(), 256, &msg.m_Buffer);
-		msg.m_Buffer.Write<uint64_t>(self.GetGamerInfo()->m_HostToken, 64);
-		msg.m_Buffer.Write<bool>(false, 1);
+		msg.WriteMessageHeader(NetMessageType::TEXT_CHAT);
+		Helpers::WriteBufferString(message.c_str(), 256, &msg.GetBuffer());
+		msg.GetBuffer().Write<uint64_t>(self.GetGamerInfo()->m_HostToken, 64);
+		msg.GetBuffer().Write<bool>(false, 1);
 
 		for (auto& player : Players::GetPlayers())
 		{
 			if (player.second.IsValid())
 			{
-				msg.Send(player.second.GetMessageId());
+				msg.Send(player.second.GetMessageId(), 7);
 			}
 		}
 

@@ -186,10 +186,6 @@ namespace YimMenu
 			LOG(FATAL) << "We've already registered " << HEX(program->m_NameHash) << ". This is bad!";
 			return;
 		}
-		else
-		{
-			LOG(INFO) << HEX(program->m_NameHash);
-		}
 
 		auto t = new Program(program);
 		m_RegisteredPrograms.emplace(program, std::move(t));

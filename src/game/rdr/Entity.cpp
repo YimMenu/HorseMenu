@@ -4,6 +4,8 @@
 #include "util/Joaat.hpp"
 #include <entity/fwEntity.hpp>
 #include <network/netObject.hpp>
+#include <network/CNetObjectMgr.hpp>
+#include <network/CNetworkPlayerMgr.hpp>
 
 namespace YimMenu
 {
@@ -127,11 +129,16 @@ namespace YimMenu
 
 	void Entity::SetFrozen(bool enabled)
 	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
 		ENTITY::FREEZE_ENTITY_POSITION(GetHandle(), enabled);
 	}
 
 	bool Entity::IsNetworked()
 	{
+		if (!IsValid())
+			return false;
+
 		return GetPointer<rage::fwEntity*>()->m_NetObject != nullptr;
 	}
 
@@ -150,6 +157,16 @@ namespace YimMenu
 			return 0;
 
 		return GetPointer<rage::fwEntity*>()->m_NetObject->m_ObjectId;
+	}
+
+	void Entity::ForceControl()
+	{
+		ENTITY_ASSERT_VALID();
+
+		if (!IsNetworked() || HasControl())
+			return;
+
+		(*Pointers.NetworkObjectMgr)->ChangeOwner(GetPointer<rage::fwEntity*>()->m_NetObject, Pointers.NetworkPlayerMgr->m_LocalPlayer, 5, true);
 	}
 
 	bool Entity::GetInvincible()

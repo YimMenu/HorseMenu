@@ -42,6 +42,9 @@ namespace YimMenu
 		// relationships
 		bool IsEnemy();
 
+		// scale
+		void SetScale(float scale);
+
 		// player
 		// We're returning a handle here and not a Player because we don't want to create a cyclic import dependency
 		int GetPlayer();

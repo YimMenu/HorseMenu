@@ -80,7 +80,7 @@ namespace YimMenu
 		if (!IsValid() || !m_Handle->m_PlayerInfo)
 			return 0;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_GamerHandle.m_rockstar_id;
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_GamerHandle.m_RockstarId;
 	}
 
 	netAddress Player::GetExternalIpAddress()

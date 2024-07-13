@@ -17,5 +17,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static KillAll _KillAll{"killall", "Kill All Peds", "Kills all peds in the game world"};
+	static KillAll _KillAll{"killallpeds", "Kill All Peds", "Kills all peds in the game world"};
 }

@@ -154,7 +154,7 @@ namespace YimMenu::Submenus
 		spawners->AddItem(pedSpawnerGroup);
 
 		auto killPeds = std::make_shared<Group>("", 1);
-		killPeds->AddItem(std::make_shared<CommandItem>("killall"_J));
+		killPeds->AddItem(std::make_shared<CommandItem>("killallpeds"_J));
 		killPeds->AddItem(std::make_shared<CommandItem>("killallenemies"_J));
 
 		main->AddItem(std::move(killPeds));

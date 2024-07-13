@@ -5,6 +5,8 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/backend/PlayerData.hpp"
 
+#include <script/globals/ACEHostData.hpp>
+
 namespace YimMenu::Features
 {
 	class SessionSplitKick : public PlayerCommand
@@ -14,25 +16,24 @@ namespace YimMenu::Features
 		virtual void OnCall(Player player) override
 		{
 			Scripts::ForceScriptHost(Scripts::FindScriptThread("net_ambient_content_evaluator"_J));
-			auto broadcast                                  = ScriptGlobal(1207480);
-			*broadcast.At(2505).At(427).At(0, 1).As<int*>() = 0; // index
-			auto mission                                    = broadcast.At(231).At(1066).At(0, 17);
-			*mission.At(0).As<joaat_t*>()                   = "net_session_split"_J;
-			*mission.At(1).As<joaat_t*>()                   = 128;     // micro
-			*mission.At(6).As<int*>()                       = 1 | 128; // NET_ACE_LAUNCHER_CF_USE_LAUNCHER
-			*mission.At(13).As<int*>()                      = 2;       // NET_ACE_LAUNCHER_HMS_MISSION_RUNNING?
-			*mission.At(7).As<int*>()                       = 1;       // iNumLocations
-			*mission.At(8).At(0, 4).At(1).As<int*>()        = 0;       // idk instance ID maybe?
-			*mission.At(8).At(0, 4).At(3).As<int*>()        = 999999;  // range check
-			*mission.At(14).As<int*>()                      = 0;
-			*mission.At(15).As<int*>()                      = 0;
-			*mission.At(16).As<int*>()                      = -1;
-			auto uid_data                                   = broadcast.At(231).At(0, 15);
-			*uid_data.At(1).As<int*>()                      = 2; // high priority
-			*uid_data.At(5).As<int*>()                      = 3; // UID data
-			*uid_data.At(6).As<int*>()                      = 0;
-			auto location_data                              = broadcast.At(2505).At(0, 6).At(0, 3);
-			*location_data.As<int*>()                       = (__rdtsc() % 2000) + 5; // start val
+
+			auto data = ScriptGlobal(1207480).As<ACE_HOST_DATA*>();
+			data->RuntimeData.SlotIndices[0] = 0;
+			data->Missions.Datas[0].ScriptHash = "net_session_split"_J;
+			data->Missions.Datas[0].StackSize  = 128;
+			data->Missions.Datas[0].ConfigFlags.Set(ACEConfigFlags::USE_LAUNCHER);
+			data->Missions.Datas[0].ConfigFlags.Set(ACEConfigFlags::USE_BEAT_THREAD);
+			data->Missions.Datas[0].State = ACEHostMissionState::MISSION_RUNNING;
+			data->Missions.Datas[0].NumLocations = 1;
+			data->Missions.Datas[0].Locations[0].InstanceId = 0;
+			data->Missions.Datas[0].Locations[0].LaunchDistance = 999999;
+			data->Missions.Datas[0].BeatParameter2 = 0;
+			data->Missions.Datas[0].BeatParameter3 = 0;
+			data->Missions.Datas[0].BeatParameter4 = -1;
+			data->Missions.Slots[0].Priority = ACESlotPriority::HIGH;
+			data->Missions.Slots[0].IdentifierData.UID = {3, 0};
+			data->RuntimeData.RuntimeMissionDatas[0].Locations[0].State = ACEHostRuntimeState((__rdtsc() % 2000) + 5);
+
 			player.GetData().m_UseSessionSplitKick = true;
 		}
 	};

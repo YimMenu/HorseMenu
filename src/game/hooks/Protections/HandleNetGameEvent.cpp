@@ -78,7 +78,7 @@ namespace YimMenu::Hooks
 			LOG(WARNING) << "Blocked remote native call from " << sourcePlayer->GetName();
 			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 			g_PlayerDatabase->AddInfraction(
-			    g_PlayerDatabase->GetOrCreatePlayer(sourcePlayer->GetGamerInfo()->m_GamerHandle.m_rockstar_id),
+			    g_PlayerDatabase->GetOrCreatePlayer(sourcePlayer->GetGamerInfo()->m_GamerHandle.m_RockstarId),
 			    (int)PlayerDatabase::eInfraction::REMOTE_NATIVE_CALL);
 			return;
 		}

@@ -203,7 +203,7 @@ namespace YimMenu
 			IsAnimSceneInScope = ptr.Sub(0x37).As<PVOID>();
 		});
 
-		constexpr auto broadcastNetArrayPtrn = Pattern<"48 89 5C 24 ? 48 89 54 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 83 EC ? 48 8B 81 ? ? ? ? 4C 8B F1">("IsAnimSceneInScope");
+		constexpr auto broadcastNetArrayPtrn = Pattern<"48 89 5C 24 ? 48 89 54 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 83 EC ? 48 8B 81 ? ? ? ? 4C 8B F1">("BroadcastNetArray");
 		scanner.Add(broadcastNetArrayPtrn, [this](PointerCalculator ptr) {
 			BroadcastNetArray = ptr.As<PVOID>();
 			NetArrayPatch     = ptr.Add(0x23B).As<std::uint8_t*>();
@@ -377,6 +377,11 @@ namespace YimMenu
 		constexpr auto triggerWeaponDamageEventPtrn = Pattern<"89 44 24 58 8B 47 F8 89">("TriggerWeaponDamageEvent");
 		scanner.Add(triggerWeaponDamageEventPtrn, [this](PointerCalculator ptr) {
 			TriggerWeaponDamageEvent = ptr.Add(0x39).Rip().As<Functions::TriggerWeaponDamageEvent>();
+		});
+
+		constexpr auto scSessionPtrn = Pattern<"3B 1D ? ? ? ? 76 60">("ScSession");
+		scanner.Add(scSessionPtrn, [this](PointerCalculator ptr) {
+			ScSession = ptr.Add(0xB).Rip().As<CNetworkScSession**>();
 		});
 
 		if (!scanner.Scan())
