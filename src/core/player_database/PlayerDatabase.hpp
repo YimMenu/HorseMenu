@@ -63,6 +63,7 @@ namespace YimMenu
 			REMOTE_NATIVE_CALL,
 			TRIED_ATTACH,
 			REMOTE_TELEPORT,
+			INVALID_PLAYER_MODEL,
 		};
 
 		std::unordered_map<eInfraction, std::string> InfractionDescriptions = {
@@ -71,6 +72,7 @@ namespace YimMenu
 		    {eInfraction::REMOTE_NATIVE_CALL, "Tried to call a native!"},
 		    {eInfraction::TRIED_ATTACH, "Tried to attach to you!"},
 		    {eInfraction::REMOTE_TELEPORT, "Tried to teleport to you!"},
+		    {eInfraction::INVALID_PLAYER_MODEL, "Tried to use an invalid player model!"},
 		};
 	};
 

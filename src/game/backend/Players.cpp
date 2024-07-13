@@ -1,5 +1,6 @@
 #include "Players.hpp"
 
+#include "game/features/Features.hpp"
 #include "game/pointers/Pointers.hpp"
 
 #include <network/CNetGamePlayer.hpp>
@@ -50,6 +51,19 @@ namespace YimMenu
 		for (auto& [idx, player] : Players::GetPlayers())
 		{
 			if (player.GetGamerInfo()->m_HostToken == token)
+			{
+				return player;
+			}
+		}
+
+		return nullptr;
+	}
+
+	Player Players::GetSelfImpl()
+	{
+		for (auto& [idx, player] : Players::GetPlayers())
+		{
+			if (player == Player(Self::Id))
 			{
 				return player;
 			}

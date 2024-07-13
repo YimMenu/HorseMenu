@@ -144,6 +144,14 @@ namespace YimMenu::Hooks
 			{
 				return true;
 			}
+			else
+			{
+				LOG(VERBOSE) << "Received chat message with null host token!";
+			}
+		}
+		case (eNetMessageType)0x3A: // Before Merge Replace with actual message in enum
+		{
+			return true;
 		}
 		}
 

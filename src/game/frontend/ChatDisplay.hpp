@@ -16,7 +16,7 @@ namespace YimMenu
 	{
 	private:
 		std::vector<Message> m_Messages = {};
-		std::mutex m_mutex;
+		std::mutex m_Mutex;
 
 		void ShowImpl(std::string sender, std::string message);
 		void DrawImpl();

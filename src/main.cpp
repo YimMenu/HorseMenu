@@ -54,6 +54,10 @@ namespace YimMenu
 
 		Notifications::Show("HorseMenu", "Loaded succesfully", NotificationType::Success);
 
+#ifndef NDEBUG
+		LOG(WARNING) << "Debug Build. Switch to RelWithDebInfo or Release build configurations to have a more stable experience.";
+#endif
+
 		while (g_Running)
 		{
 			// Needed incase UI is malfunctioning or for emergencies
