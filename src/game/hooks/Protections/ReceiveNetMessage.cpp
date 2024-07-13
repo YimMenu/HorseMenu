@@ -144,13 +144,17 @@ namespace YimMenu::Hooks
 		{
 			if (!player || !player->m_SessionPeer->m_IsHost)
 			{
-				g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(player->m_GamerInfo.m_GamerHandle.m_RockstarId,
-				                                    player->m_GamerInfo.m_Name),
-				    (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
+				if (player)
+				{
+					g_PlayerDatabase->AddInfraction(
+					    g_PlayerDatabase->GetOrCreatePlayer(player->m_GamerInfo.m_GamerHandle.m_RockstarId,
+					        player->m_GamerInfo.m_Name),
+					    (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
 
-				Notifications::Show("Protections",
-				    std::string("Blocked Reset Population Kick from ").append(player->m_GamerInfo.m_Name),
-				    NotificationType::Warning);
+					Notifications::Show("Protections",
+					    std::string("Blocked Reset Population Kick from ").append(player->m_GamerInfo.m_Name),
+					    NotificationType::Warning);
+				}
 
 				return true;
 			}

@@ -3,7 +3,7 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/backend/Players.hpp"
 #include "game/pointers/Pointers.hpp"
-
+#include <script/globals/ACEHostData.hpp>
 
 namespace YimMenu::Hooks
 {
@@ -11,12 +11,12 @@ namespace YimMenu::Hooks
 	{
 		auto data = *(void**)(((__int64)array) + 0x1D8);
 
-		int oldHostStateVal = 0;
+		ACEHostRuntimeState oldHostStateVal{};
 		bool needToUseSessionSplitKick = ScriptGlobal(1207480).As<void*>() == data && Player(target).GetData().m_UseSessionSplitKick;
 		if (needToUseSessionSplitKick)
 		{
-			oldHostStateVal = *ScriptGlobal(1207480).At(2505).At(0, 6).At(0, 3).As<int*>();
-			*ScriptGlobal(1207480).At(2505).At(0, 6).At(0, 3).As<int*>() = 2;
+			oldHostStateVal = ScriptGlobal(1207480).As<ACE_HOST_DATA*>()->RuntimeData.RuntimeMissionDatas[0].Locations[0].State;
+			ScriptGlobal(1207480).As<ACE_HOST_DATA*>()->RuntimeData.RuntimeMissionDatas[0].Locations[0].State = ACEHostRuntimeState::ACTIVE;
 			*Pointers.NetArrayPatch = 0xEB;
 		}
 
@@ -24,7 +24,7 @@ namespace YimMenu::Hooks
 
 		if (needToUseSessionSplitKick)
 		{
-			*ScriptGlobal(1207480).At(2505).At(0, 6).At(0, 3).As<int*>() = oldHostStateVal;
+			ScriptGlobal(1207480).As<ACE_HOST_DATA*>()->RuntimeData.RuntimeMissionDatas[0].Locations[0].State = oldHostStateVal;
 			*Pointers.NetArrayPatch = 0x74;
 		}
 

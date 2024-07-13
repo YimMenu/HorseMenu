@@ -4,6 +4,8 @@
 #include "game/backend/Players.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
+#include "util/Joaat.hpp"
+#include <script/globals/ACEHostData.hpp>
 
 
 namespace YimMenu::Hooks
@@ -11,18 +13,35 @@ namespace YimMenu::Hooks
 	bool Protections::ReceiveArrayUpdate(void* array, CNetGamePlayer* sender, rage::datBitBuffer* buffer, int size, int16_t cycle)
 	{
 		auto data        = *(void**)(((__int64)array) + 0x1D8);
-		int hostStateVal = *ScriptGlobal(1207480).At(2505).At(0, 6).At(0, 3).As<int*>();
 
-		auto ret =
-		    BaseHook::Get<Protections::ReceiveArrayUpdate, DetourHook<decltype(&Protections::ReceiveArrayUpdate)>>()->Original()(array, sender, buffer, size, cycle);
+		auto ret = BaseHook::Get<Protections::ReceiveArrayUpdate, DetourHook<decltype(&Protections::ReceiveArrayUpdate)>>()->Original()(array, sender, buffer, size, cycle);
 
-		if (ScriptGlobal(1207480).As<void*>() == data && *ScriptGlobal(1207480).At(2505).At(0, 6).At(0, 3).As<int*>() == 2)
+		if (ScriptGlobal(1207480).As<void*>() == data)
 		{
-			*ScriptGlobal(1207480).At(2505).At(0, 6).At(0, 3).As<int*>() = hostStateVal;
+			auto data = ScriptGlobal(1207480).As<ACE_HOST_DATA*>();
+			for (int i = 0; i < data->Missions.Datas.Size; i++)
+			{
+				if (data->RuntimeData.RuntimeMissionDatas[i].Locations[0].State == ACEHostRuntimeState::ACTIVE)
+				{
+					if (data->Missions.Datas[i].ScriptHash == "net_session_split"_J)
+					{
+						auto plyr = Player(sender);
+						Notifications::Show("Protections", std::format("Blocked session split kick from {}", plyr.GetName()), NotificationType::Warning);
+						g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(plyr.GetRID(), plyr.GetName()), (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
 
-			auto plyr = Player(sender);
-			Notifications::Show("Protections", std::string("Blocked Split Session Kick from ").append(plyr.GetName()), NotificationType::Warning);
-			g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(plyr.GetRID(), plyr.GetName()), (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
+						data->Missions.Datas[i].ScriptHash = 0;
+						data->RuntimeData.RuntimeMissionDatas[i].Locations[0].State = ACEHostRuntimeState::INVALID;
+					}
+					else if (data->Missions.Datas[i].ScriptHash == "generic_weight_control_item"_J)
+					{
+						auto plyr = Player(sender);
+						Notifications::Show("Protections", std::format("Blocked faint player from {}", plyr.GetName()), NotificationType::Warning);
+
+						data->Missions.Datas[i].ScriptHash                          = 0;
+						data->RuntimeData.RuntimeMissionDatas[i].Locations[0].State = ACEHostRuntimeState::INVALID;
+					}
+				}
+			}
 		}
 
 		return ret;

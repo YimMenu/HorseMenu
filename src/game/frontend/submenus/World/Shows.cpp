@@ -211,7 +211,7 @@ namespace YimMenu::Submenus
 
 	static void CREATE_OBJECT(rage::scrNativeCallContext* ctx)
 	{
-		auto obj = OBJECT::CREATE_OBJECT(ctx->get_arg<int>(0), ctx->get_arg<float>(1), ctx->get_arg<float>(2), ctx->get_arg<float>(3), ctx->get_arg<float>(4), ctx->get_arg<int>(5), ctx->get_arg<int>(6), ctx->get_arg<int>(7), ctx->get_arg<int>(8));
+		auto obj = OBJECT::CREATE_OBJECT(ctx->get_arg<int>(0), ctx->get_arg<float>(1), ctx->get_arg<float>(2), ctx->get_arg<float>(3), ctx->get_arg<int>(4), ctx->get_arg<int>(5), ctx->get_arg<int>(6), ctx->get_arg<int>(7), ctx->get_arg<int>(8));
 		if (ctx->get_arg<int>(0) == -262339715)
 		{
 			// hide curtain
