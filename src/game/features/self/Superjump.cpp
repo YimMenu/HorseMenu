@@ -10,7 +10,7 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			MISC::SET_SUPER_JUMP_THIS_FRAME(Self::GetPed().GetHandle());
+			MISC::SET_SUPER_JUMP_THIS_FRAME(Self::GetPlayer().GetId());
 		}
 	};
 
