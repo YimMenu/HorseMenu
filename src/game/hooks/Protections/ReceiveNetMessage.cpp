@@ -86,6 +86,10 @@ namespace YimMenu::Hooks
 				break;
 			}
 		}
+		case (eNetMessageType)0x3A: // Before Merge Replace with actual message in enum
+		{
+			return true;
+		}
 		}
 
 		return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(netConnectionManager, a2, frame);
