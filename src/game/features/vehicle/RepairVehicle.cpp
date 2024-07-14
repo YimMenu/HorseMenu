@@ -10,7 +10,8 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			VEHICLE::SET_VEHICLE_FIXED(Self::GetVehicle().GetHandle());
+			if (Self::GetVehicle())
+				VEHICLE::SET_VEHICLE_FIXED(Self::GetVehicle().GetHandle());
 		}
 	};
 

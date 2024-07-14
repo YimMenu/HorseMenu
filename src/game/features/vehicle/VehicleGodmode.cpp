@@ -9,12 +9,14 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			Self::GetVehicle().SetInvincible(true);
+			if (Self::GetVehicle())
+				Self::GetVehicle().SetInvincible(true);
 		}
 
 		virtual void OnDisable() override
 		{
-			Self::GetVehicle().SetInvincible(false);
+			if (Self::GetVehicle())
+				Self::GetVehicle().SetInvincible(false);
 		}
 	};
 
