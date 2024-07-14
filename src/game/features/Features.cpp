@@ -83,6 +83,7 @@ namespace YimMenu
 	void FeatureLoop()
 	{
 		TryFirstLoad();
+		Commands::EnableLoopedCommands();
 		while (true)
 		{
 			SpectateTick();

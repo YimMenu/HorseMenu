@@ -100,9 +100,10 @@ namespace YimMenu
 			ScriptPrograms = ptr.Sub(0x16).Add(3).Rip().Add(0xC8).As<rage::scrProgram**>();
 		});
 
-		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread");
+		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread&ScriptVM");
 		scanner.Add(currentScriptThreadPtrn, [this](PointerCalculator ptr) {
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
+			ScriptVM            = ptr.Add(0x28).Rip().As<PVOID>();
 		});
 
 		constexpr auto sendMetricPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B F1 48 8B FA B1">("SendMetric");
