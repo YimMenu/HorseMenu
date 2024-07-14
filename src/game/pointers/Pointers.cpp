@@ -320,9 +320,9 @@ namespace YimMenu
 			PostPresenceMessage = ptr.Add(1).Rip().As<Functions::PostPresenceMessage>();
 		});
 
-		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 56 57 41 54 41 56 41 57 48 83 EC 50 4D 8B F1 48 8B F9 48 81 C1 A0 00 00 00 4C 8D 48 08 41 8B E8 4C 8B FA 33 DB E8 ?? ?? ?? ?? 84 C0 0F 84 C8">("SendNetInfoToLobby");
+		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"E8 ?? ?? ?? ?? 32 DB 84 C0 74 1B 44 8B 84 24 40 01 00 00">("SendNetInfoToLobby");
 		scanner.Add(sendNetInfoToLobbyPtrn, [this](PointerCalculator ptr) {
-			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
+			SendNetInfoToLobby = ptr.Add(1).Rip().As<Functions::SendNetInfoToLobby>();
 		});
 
 		constexpr auto pedPoolPtrn = Pattern<"0F 28 F0 48 85 DB 74 56 8A 05 ? ? ? ? 84 C0 75 05">("PedPool");

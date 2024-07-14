@@ -1,11 +1,14 @@
 #include "Entity.hpp"
-#include "game/pointers/Pointers.hpp"
+
 #include "Natives.hpp"
+#include "game/pointers/Pointers.hpp"
 #include "util/Joaat.hpp"
+
 #include <entity/fwEntity.hpp>
-#include <network/netObject.hpp>
 #include <network/CNetObjectMgr.hpp>
 #include <network/CNetworkPlayerMgr.hpp>
+#include <network/netObject.hpp>
+
 
 namespace YimMenu
 {
@@ -199,9 +202,9 @@ namespace YimMenu
 		}
 		else
 		{
-			auto ptr = GetPointer<rage::fwEntity*>();
-			auto local = reinterpret_cast<rage::fwEntity*>(Pointers.GetLocalPed());
-			auto pos = GetPosition();
+			auto ptr             = GetPointer<rage::fwEntity*>();
+			auto local           = reinterpret_cast<rage::fwEntity*>(Pointers.GetLocalPed());
+			auto pos             = GetPosition();
 			std::uint32_t weapon = "WEAPON_EXPLOSION"_J;
 
 			if (!ptr || !ptr->m_NetObject || !local || !local->m_NetObject)
