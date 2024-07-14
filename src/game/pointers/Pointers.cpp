@@ -10,14 +10,6 @@
 
 namespace YimMenu
 {
-	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes)
-	{
-		DWORD oldProtect;
-		VirtualProtect(address, numBytes, PAGE_EXECUTE_READWRITE, &oldProtect);
-		memcpy(address, bytes, numBytes);
-		VirtualProtect(address, numBytes, oldProtect, &oldProtect);
-	}
-
 	bool Pointers::Init()
 	{
 		const auto rdr2 = ModuleMgr.Get("RDR2.exe"_J);

@@ -1,6 +1,7 @@
 #include "Self.hpp"
 
 #include "core/commands/BoolCommand.hpp"
+#include "core/commands/IntCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
@@ -80,7 +81,8 @@ namespace YimMenu::Submenus
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
-
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("quickskin"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("disableguardzones"_J));
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("clearcrimes"_J));
@@ -108,6 +110,7 @@ namespace YimMenu::Submenus
 		auto horseGlobalsGroup = std::make_shared<Group>("Globals");
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsegodmode"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsenoragdoll"_J));
+		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsesuperrun"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsebarsfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsecoresfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseagitationlow"_J));
@@ -126,6 +129,10 @@ namespace YimMenu::Submenus
 
 		auto vehicle             = std::make_shared<Category>("Vehicle");
 		auto vehicleGlobalsGroup = std::make_shared<Group>("Globals");
+		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("superdrive"_J));
+		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("superdrivedirectional"_J));
+		vehicleGlobalsGroup->AddItem(std::make_shared<IntCommandItem>("superdriveforce"_J));
+		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("superbrake"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
 		vehicle->AddItem(vehicleGlobalsGroup);
