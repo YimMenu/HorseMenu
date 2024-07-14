@@ -11,12 +11,14 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			Self::GetMount().SetRagdoll(false);
+			if (Self::GetMount())
+				Self::GetMount().SetRagdoll(false);
 		}
 
         virtual void OnDisable() override
         {
-			Self::GetMount().SetRagdoll(true);
+			if (Self::GetMount())
+				Self::GetMount().SetRagdoll(true);
         }
 	};
 

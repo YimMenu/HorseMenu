@@ -95,6 +95,11 @@ namespace YimMenu
 			RunScriptThreads = ptr.Add(8).Rip().As<PVOID>();
 		});
 
+		constexpr auto scriptProgramsPtrn = Pattern<"C1 EF 0E 85 FF 74 21">("ScriptPrograms");
+		scanner.Add(scriptProgramsPtrn, [this](PointerCalculator ptr) {
+			ScriptPrograms = ptr.Sub(0x16).Add(3).Rip().Add(0xC8).As<rage::scrProgram**>();
+		});
+
 		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread");
 		scanner.Add(currentScriptThreadPtrn, [this](PointerCalculator ptr) {
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();

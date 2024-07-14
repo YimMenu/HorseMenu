@@ -31,6 +31,7 @@ namespace rage
 	class rlGamerHandle;
 	class datBitBuffer;
 	class fwEntity;
+	class scrProgram;
 }
 
 class CAnimScene;
@@ -75,6 +76,7 @@ namespace YimMenu
 		Functions::GetNativeHandler GetNativeHandler;
 		Functions::FixVectors FixVectors;
 		rage::atArray<rage::scrThread*>* ScriptThreads;
+		rage::scrProgram** ScriptPrograms;
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
 		Functions::GetLocalPed GetLocalPed;

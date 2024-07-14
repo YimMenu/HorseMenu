@@ -11,92 +11,13 @@
 #include "util/libraries/PedModels.hpp"
 #include "game/rdr/Ped.hpp"
 #include "game/backend/Self.hpp"
+#include "World/PedSpawner.hpp"
 #include "World/Shows.hpp"
 
 #include <game/rdr/Natives.hpp>
 
 namespace YimMenu::Submenus
 {
-	static bool IsPedModelInList(std::string model)
-	{
-		for (const auto& pedModel : pedModels)
-		{
-			if (pedModel.model == model)
-				return true;
-		}
-
-		return false;
-	}
-
-	static int PedSpawnerInputCallback(ImGuiInputTextCallbackData* data)
-	{
-		if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
-		{
-			std::string newText{};
-			std::string inputLower = data->Buf;
-			std::transform(inputLower.begin(), inputLower.end(), inputLower.begin(), ::tolower);
-			for (const auto& pedModel : pedModels)
-			{
-				std::string modelLower = pedModel.model;
-				std::transform(modelLower.begin(), modelLower.end(), modelLower.begin(), ::tolower);
-				if (modelLower.find(inputLower) != std::string::npos)
-				{
-					newText = pedModel.model;
-				}
-			}
-
-			if (!newText.empty())
-			{
-				data->DeleteChars(0, data->BufTextLen);
-				data->InsertChars(0, newText.c_str());
-			}
-
-			return 1;
-		}
-		return 0;
-	}
-
-	void PedSpawnerGroup()
-	{
-		static std::string pedModelBuffer;
-		static float scale = 1;
-		static bool dead, invis, godmode, freeze;
-		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback)
-		    .Draw();
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Press Tab to auto fill");
-		if (!pedModelBuffer.empty() && !IsPedModelInList(pedModelBuffer))
-		{
-			ImGui::BeginListBox("##pedmodels", ImVec2(250, 100));
-
-			std::string bufferLower = pedModelBuffer;
-			std::transform(bufferLower.begin(), bufferLower.end(), bufferLower.begin(), ::tolower);
-			for (const auto& pedModel : pedModels)
-			{
-				std::string pedModelLower = pedModel.model;
-				std::transform(pedModelLower.begin(), pedModelLower.end(), pedModelLower.begin(), ::tolower);
-				if (pedModelLower.find(bufferLower) != std::string::npos && ImGui::Selectable(pedModel.model.data()))
-				{
-					pedModelBuffer = pedModel.model;
-				}
-			}
-
-			ImGui::EndListBox();
-		}
-
-		ImGui::Checkbox("Spawn Dead", &dead);
-		ImGui::Checkbox("Invisible", &invis);
-		ImGui::Checkbox("GodMode", &godmode);
-		ImGui::Checkbox("Frozen", &freeze);
-		ImGui::SliderFloat("Scale", &scale, 0.1, 10);
-		if (ImGui::Button("Spawn"))
-		{
-			FiberPool::Push([] {
-				Ped::Create(Joaat(pedModelBuffer), Self::GetPed().GetPosition(), 0, freeze, dead, godmode, invis, scale);
-			});
-		}
-	}
-
 	World::World() :
 	    Submenu::Submenu("World")
 	{
@@ -148,7 +69,7 @@ namespace YimMenu::Submenus
 		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
-			PedSpawnerGroup();
+			RenderPedSpawnerMenu();
 		}));
 
 		spawners->AddItem(pedSpawnerGroup);

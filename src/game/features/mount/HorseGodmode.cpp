@@ -9,12 +9,14 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			Self::GetMount().SetInvincible(true);
+			if (Self::GetMount())
+				Self::GetMount().SetInvincible(true);
 		}
 
         virtual void OnDisable() override
         {
-			Self::GetMount().SetInvincible(false);
+			if (Self::GetMount())
+				Self::GetMount().SetInvincible(false);
         }
 	};
 

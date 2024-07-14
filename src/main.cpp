@@ -86,7 +86,6 @@ namespace YimMenu
 	unload:
 		Hooking::Destroy();
 		Renderer::Destroy();
-		Pointers.Restore();
 
 		LogHelper::Destroy();
 

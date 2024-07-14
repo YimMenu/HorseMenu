@@ -43,7 +43,12 @@ namespace YimMenu
 	    m_RegisteredPrograms(),
 	    m_RegisteredHooks()
 	{
-		// TODO: hook existing programs
+		for (int i = 0; i < 160; i++)
+		{
+			if (Pointers.ScriptPrograms[i] != nullptr)
+				RegisterProgram(Pointers.ScriptPrograms[i]);
+
+		}
 		m_RegisteredHooks.emplace(ALL_SCRIPTS, std::vector<Hook>());
 	}
 
@@ -66,6 +71,7 @@ namespace YimMenu
 		{
 			if (scp->m_NameHash == script || script == ALL_SCRIPTS)
 			{
+				LOG(VERBOSE) << "Applying native hook on existing script";
 				program->Apply(Hook(index, hook));
 			}
 		}
