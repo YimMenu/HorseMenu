@@ -1,19 +1,20 @@
 #include "PedSpawner.hpp"
+
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/ScriptMgr.hpp"
-#include "game/frontend/items/Items.hpp"
-#include "util/libraries/PedModels.hpp"
-#include "game/backend/Self.hpp"
 #include "game/backend/NativeHooks.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Self.hpp"
+#include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
+#include "util/libraries/PedModels.hpp"
+
 
 namespace YimMenu::Submenus
 {
 	void GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH(rage::scrNativeCallContext* ctx)
 	{
-		LOG(INFO) << ctx->get_arg<int>(0);
 		if (ctx->get_arg<int>(0) == "mp_intro"_J)
 		{
 			ctx->set_return_value<int>(1);
