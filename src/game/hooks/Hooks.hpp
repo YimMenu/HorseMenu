@@ -60,6 +60,7 @@ namespace YimMenu::Hooks
 	{
 		extern bool RunScriptThreads(void* threads, int unk);
 		extern bool InitNativeTables(rage::scrProgram* program);
+		extern int ScriptVM(void* stack, void** globals, bool* globals_enabled, rage::scrProgram* program, rage::scrThreadContext* ctx);
 	}
 
 	namespace Anticheat

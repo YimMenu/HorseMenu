@@ -2,7 +2,7 @@
 
 namespace YimMenu
 {
-	std::optional<uint8_t> ToHex(char const c)
+	static inline constexpr std::optional<uint8_t> ToHex(char const c)
 	{
 		switch (c)
 		{
@@ -36,7 +36,7 @@ namespace YimMenu
 	{
 		const auto size_minus_one = ida_sig.size() - 1;
 		m_Bytes.reserve(size_minus_one / 2);
-		for (size_t i = 0; i != size_minus_one; i++)
+		for (size_t i = 0; i != size_minus_one; ++i)
 		{
 			if (ida_sig[i] == ' ')
 				continue;

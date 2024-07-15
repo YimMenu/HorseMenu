@@ -24,12 +24,17 @@ namespace YimMenu
 		static void AddLoopedCommand(LoopedCommand* command)
 		{
 			GetInstance().AddLoopedCommandImpl(command);
-		
 		}
 
 		static void RunLoopedCommands()
 		{
 			GetInstance().RunLoopedCommandsImpl();
+		}
+
+		// TODO: what about bool commands?
+		static void EnableLoopedCommands()
+		{
+			GetInstance().EnableLoopedCommandsImpl();
 		}
 
 		template<typename T = Command>
@@ -61,6 +66,7 @@ namespace YimMenu
 	private:
 		void AddCommandImpl(Command* command);
 		void AddLoopedCommandImpl(LoopedCommand* command);
+		void EnableLoopedCommandsImpl();
 		void RunLoopedCommandsImpl();
 		Command* GetCommandImpl(joaat_t hash);
 		virtual void SaveStateImpl(nlohmann::json& state) override;

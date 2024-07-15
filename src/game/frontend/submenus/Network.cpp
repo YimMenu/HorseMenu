@@ -57,12 +57,14 @@ namespace YimMenu::Submenus
 	Network::Network() :
 	    Submenu::Submenu("Network")
 	{
+		// TODO: this needs a rework
 		auto session          = std::make_shared<Category>("Session");
 		auto spoofing         = std::make_shared<Category>("Spoofing");
 		auto database         = std::make_shared<Category>("Player Database");
 		auto nameChangerGroup = std::make_shared<Group>("Name Changer");
 		auto blipSpoofingGroup = std::make_shared<Group>("Blip Spoofing");
 
+		session->AddItem(std::make_shared<BoolCommandItem>("revealall"_J));
 		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));

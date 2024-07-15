@@ -4,7 +4,6 @@
 
 namespace YimMenu::Features
 {
-	//TODO: OnDisable doesn't call if menu is unloaded prematurely
 	class Invis : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;

@@ -44,6 +44,11 @@ namespace YimMenu
 		MarkDirty();
 	}
 
+	void BoolCommand::Initialize()
+	{
+		OnEnable();
+	}
+
 	void BoolCommand::Shutdown()
 	{
 		OnDisable();

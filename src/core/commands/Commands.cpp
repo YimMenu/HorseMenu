@@ -19,6 +19,13 @@ namespace YimMenu
 		m_LoopedCommands.push_back(command);
 	}
 
+	void Commands::EnableLoopedCommandsImpl()
+	{
+		for (auto& command : m_LoopedCommands)
+			if (command->GetState())
+				command->Initialize();
+	}
+
 	void Commands::RunLoopedCommandsImpl()
 	{
 		for (auto& command : m_LoopedCommands)
