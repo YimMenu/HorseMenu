@@ -2303,3 +2303,22 @@ enum class PedConfigFlag
 	_0x2C666858                                            = 601,
 	_0x640FF990                                            = 602,
 };
+
+enum eEmoteType
+{
+	EMOTE_TYPE_INVALID = -1,
+	EMOTE_TYPE_REACT,
+	EMOTE_TYPE_ACTION,
+	EMOTE_TYPE_TAUNT,
+	EMOTE_TYPE_GREET,
+	EMOTE_TYPE_TWIRL_GUN,
+	EMOTE_TYPE_DANCE_FLOOR
+};
+
+enum eEmotePlaybackMode
+{
+	EMOTE_PM_INVALID = -1,
+	EMOTE_PM_UPPERBODY,
+	EMOTE_PM_UPPERBODY_LOOP,
+	EMOTE_PM_FULLBODY,
+};

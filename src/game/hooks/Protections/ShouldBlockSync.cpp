@@ -122,20 +122,17 @@ namespace
 			break;
 		case "CVehicleGadgetDataNode"_J:
 			LOG_FIELD_B(CVehicleGadgetNodeData, m_has_position);
-			const auto& position = node->GetData<CVehicleGadgetNodeData>().m_position;
-			LOG(INFO) << "\tm_position: X: " << position[0] << " Y: " << position[1] << " Z: " << position[2] << " W: " << position[3];
+			LOG_FIELD(CVehicleGadgetNodeData, m_position[0]);
+			LOG_FIELD(CVehicleGadgetNodeData, m_position[1]);
+			LOG_FIELD(CVehicleGadgetNodeData, m_position[2]);
+			LOG_FIELD(CVehicleGadgetNodeData, m_position[3]);
 			LOG_FIELD(CVehicleGadgetNodeData, m_num_gadgets);
-
-			for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
+			if (node->GetData<CVehicleGadgetNodeData>().m_num_gadgets <= 2)
 			{
-				LOG(INFO) << "m_gadgets[" << i << "].m_type: " << node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_type;
-				uint32_t sum = 0;
-				for (int j = 0; j < sizeof(node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data); j++)
+				for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
 				{
-					sum += node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data[j];
+					LOG_FIELD(CVehicleGadgetNodeData, m_gadgets[i].m_type);
 				}
-
-				LOG(INFO) << "\tm_data: " << HEX(sum);
 			}
 			break;
 		}
@@ -347,6 +344,9 @@ namespace
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_VEHICLE(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched vehicle model crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections",
+				    std::string("Blocked mismatched vehicle model crash from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
 				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
@@ -358,6 +358,14 @@ namespace
 				LOG(WARNING) << "Blocked vehicle flood from " << Protections::GetSyncingPlayer().GetName();
 				Notifications::Show("Protections",
 				    std::string("Blocked vehicle flood from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
+				return true;
+			}
+			if (g_CageModels.count(data.m_ModelHash))
+			{
+				LOG(WARNING) << "Blocked potential cage spawn from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections",
+				    std::string("Blocked potential cage spawn from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				return true;
 			}
@@ -404,6 +412,9 @@ namespace
 					{
 						// TODO: add more checks
 						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
+						Notifications::Show("Protections",
+						    std::string("Blocked remote teleport from ").append(Protections::GetSyncingPlayer().GetName()),
+						    NotificationType::Warning);
 						g_PlayerDatabase->AddInfraction(
 						    g_PlayerDatabase->GetOrCreatePlayer(
 						        Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,

@@ -6,7 +6,7 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
-#include "game/backend/Self.hpp"
+#include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
 #include "util/Rewards.hpp"
@@ -42,14 +42,80 @@ namespace YimMenu::Submenus
 					ScriptMgr::Yield();
 				}
 
-				TASK::TASK_PLAY_ANIM(YimMenu::Self::GetPed().GetHandle(), dict.c_str(), anim.c_str(), 8.0f, -8.0f, -1, 0, 0, false, false, false, "", 0);
+				TASK::TASK_PLAY_ANIM(YimMenu::Self::PlayerPed, dict.c_str(), anim.c_str(), 8.0f, -8.0f, -1, 0, 0, FALSE, FALSE, FALSE, "", 0);
 			});
 		}
-		ImGui::SameLine();
-		if (ImGui::Button("Stop"))
+
+		ImGui::Separator();
+
+		ImGui::Text("Emote Category");
+		if (ImGui::BeginCombo("##Emote Category", Emote::emoteCategories[Emote::selectedEmoteCategoryIndex]))
+		{
+			for (int i = 0; i < Emote::numCategories; i++)
+			{
+				bool isSelected = (i == Emote::selectedEmoteCategoryIndex);
+				if (ImGui::Selectable(Emote::emoteCategories[i], isSelected))
+				{
+					Emote::selectedEmoteCategoryIndex          = i;
+					Emote::selectedEmoteMemberIndex   = 0;
+				}
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		ImGui::Text("Emote");
+		if (ImGui::BeginCombo("##Emote",
+		        Emote::emoteCategoryMembers[Emote::selectedEmoteCategoryIndex][Emote::selectedEmoteMemberIndex]
+		            .name))
+		{
+			for (int i = 0; i < Emote::maxEmotesPerCategory; i++)
+			{
+				const auto& emote = Emote::emoteCategoryMembers[Emote::selectedEmoteCategoryIndex][i];
+				if (emote.name == nullptr)
+					break;
+				bool isSelected = (i == Emote::selectedEmoteMemberIndex);
+				if (ImGui::Selectable(emote.name, isSelected))
+				{
+					Emote::selectedEmoteMemberIndex = i;
+				}
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		if (ImGui::Button("Play Emote"))
+		{
+			if (*Pointers.IsSessionStarted)
+			{
+				FiberPool::Push([=] {
+					int selectedCategoryIndex = Emote::selectedEmoteCategoryIndex;
+					int selectedEmoteIndex    = Emote::selectedEmoteMemberIndex;
+					const Emote::EmoteItemData& selectedEmote = Emote::emoteCategoryMembers[selectedCategoryIndex][selectedEmoteIndex];
+
+					TASK::TASK_PLAY_EMOTE_WITH_HASH(YimMenu::Self::PlayerPed,
+					    static_cast<int>(selectedEmote.type),
+					    EMOTE_PM_FULLBODY,
+					    static_cast<Hash>(selectedEmote.hash),
+					    false,
+					    false,
+					    false,
+					    false,
+					    false);
+				});
+			}
+		}
+
+		if (ImGui::Button("Stop Animation"))
 		{
 			FiberPool::Push([=] {
-				TASK::CLEAR_PED_TASKS(YimMenu::Self::GetPed().GetHandle(), true, false);
+				TASK::CLEAR_PED_TASKS(YimMenu::Self::PlayerPed, TRUE, FALSE);
 			});
 		}
 	}
@@ -65,7 +131,7 @@ namespace YimMenu::Submenus
 
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));	
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("offtheradar"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
@@ -74,12 +140,17 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepcoresfilled"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteclip"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("nospread"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autocock"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superdamage"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("quickskin"_J));
 
@@ -94,11 +165,23 @@ namespace YimMenu::Submenus
 		}));
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
+		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("eagleeye"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnbountywagon"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 
+		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("overridewhistle"_J));
+		toolsGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			ImGui::Text("Pitch");
+			ImGui::SliderFloat("##Pitch", &SelfStorage::pitch, 0.0f, 1.0f);
+			ImGui::Text("Clarity");
+			ImGui::SliderFloat("##Clarity", &SelfStorage::clarity, 0.0f, 1.0f);
+			ImGui::Text("Shape");
+			ImGui::SliderFloat("##Shape", &SelfStorage::shape, 0.0f, 10.0f);
+		}));
+
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
+		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superrun"_J));
 
 		main->AddItem(globalsGroup);
 		main->AddItem(toolsGroup);
@@ -109,7 +192,8 @@ namespace YimMenu::Submenus
 		auto horseGlobalsGroup = std::make_shared<Group>("Globals");
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsegodmode"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsenoragdoll"_J));
-		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsesuperrun"_J));
+		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseclean"_J));
+		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horseclimbsteepslopes"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsebarsfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsecoresfilled"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseagitationlow"_J));
