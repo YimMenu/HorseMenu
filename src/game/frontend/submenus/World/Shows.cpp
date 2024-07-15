@@ -300,6 +300,22 @@ namespace YimMenu::Submenus
 				Self::GetPed().SetPosition({2546.5646f, -1301.4119f, 48.3564f});
 			});
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("Unlock Theater Door"))
+		{
+			FiberPool::Push([] {
+				if (OBJECT::IS_DOOR_REGISTERED_WITH_SYSTEM(340151973))
+					OBJECT::DOOR_SYSTEM_SET_DOOR_STATE(340151973, 0);
+			});
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Lock Theater Door"))
+		{
+			FiberPool::Push([] {
+				if (OBJECT::IS_DOOR_REGISTERED_WITH_SYSTEM(340151973))
+					OBJECT::DOOR_SYSTEM_SET_DOOR_STATE(340151973, 1);
+			});
+		}
 
 		ImGui::Combo("Show", (int*)&g_SelectedSceneType, g_SceneTypeStrs.data(), g_SceneTypeStrs.size(), -1);
 

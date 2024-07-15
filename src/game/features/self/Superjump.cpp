@@ -4,7 +4,7 @@
 
 namespace YimMenu::Features
 {
-	class Superjump : public LoopedCommand
+	class SuperJump : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
 
@@ -14,5 +14,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static Superjump _Superjump{"superjump", "Superjump", "Jump higher than normal"};
+	static SuperJump _SuperJump{"superjump", "Super Jump", "Jump higher than normal"};
 }

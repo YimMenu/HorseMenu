@@ -77,7 +77,6 @@ namespace YimMenu::Submenus
 			ImGui::InputText("Player Name", search, sizeof(search));
 			ImGui::PopID();
 
-
 			if (ImGui::BeginListBox("###players", {180, static_cast<float>(Pointers.ScreenResY - 400 - 38 * 4)}))
 			{
 				auto& item_arr = g_PlayerDatabase->GetAllPlayers();

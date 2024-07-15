@@ -3,6 +3,7 @@
 #include "Natives.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "util/Joaat.hpp"
+#include "game/backend/Self.hpp"
 
 #include <entity/fwEntity.hpp>
 #include <network/CNetObjectMgr.hpp>
@@ -93,6 +94,15 @@ namespace YimMenu
 		ENTITY_ASSERT_CONTROL();
 		ENTITY_ASSERT_SCRIPT_CONTEXT();
 		ENTITY::SET_ENTITY_COORDS_NO_OFFSET(GetHandle(), position.x, position.y, position.z, true, true, true);
+	}
+
+	float Entity::GetDistance()
+	{
+		ENTITY_ASSERT_VALID();
+		auto pos     = ENTITY::GET_ENTITY_COORDS(GetHandle(), false, true);
+		auto selfPos = Self::GetPed().GetPosition();
+		auto dist    = MISC::GET_DISTANCE_BETWEEN_COORDS(pos.x, pos.y, pos.z, selfPos.x, selfPos.y, selfPos.z, TRUE);
+		return dist;
 	}
 
 	rage::fvector3 Entity::GetRotation(int order)

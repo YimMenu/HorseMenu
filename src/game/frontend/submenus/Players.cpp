@@ -113,24 +113,35 @@ namespace YimMenu::Submenus
 					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 					ImGui::Text(YimMenu::Players::GetSelected().GetName());
 
-					auto rid_str = std::to_string(YimMenu::Players::GetSelected().GetRID());
+					auto health    = YimMenu::Players::GetSelected().GetPed().GetHealth();
+					auto maxHealth = YimMenu::Players::GetSelected().GetPed().GetMaxHealth();
+					std::string healthStr = std::format("HP: {}/{} ({:.2f}%)", health, maxHealth, (float)health / maxHealth * 100.0f);
+					ImGui::Text("%s", healthStr.c_str());
+
+					auto coords = YimMenu::Players::GetSelected().GetPed().GetPosition();
+					ImGui::Text("Coords: %.2f, %.2f, %.2f", coords.x, coords.y, coords.z);
+
+					auto distance = YimMenu::Players::GetSelected().GetPed().GetDistance();
+					ImGui::Text("Distance: %.2f", distance);
+
+					auto ridStr = std::to_string(YimMenu::Players::GetSelected().GetRID());
 					ImGui::Text("RID:");
 					ImGui::SameLine();
-					if (ImGui::Button(rid_str.c_str()))
+					if (ImGui::Button(ridStr.c_str()))
 					{
-						ImGui::SetClipboardText(rid_str.c_str());
+						ImGui::SetClipboardText(ridStr.c_str());
 					}
 
 					auto ip = YimMenu::Players::GetSelected().GetExternalIpAddress();
 					ImGui::Text("IP Address:");
 					ImGui::SameLine();
-					auto ip_str = std::string(std::to_string(ip.m_field1))
+					auto ipStr = std::string(std::to_string(ip.m_field1))
 					                  .append("." + std::to_string(ip.m_field2))
 					                  .append("." + std::to_string(ip.m_field3))
 					                  .append("." + std::to_string(ip.m_field4));
-					if (ImGui::Button(ip_str.c_str()))
+					if (ImGui::Button(ipStr.c_str()))
 					{
-						ImGui::SetClipboardText(ip_str.c_str());
+						ImGui::SetClipboardText(ipStr.c_str());
 					}
 
 					if (ImGui::Button("View SC Profile"))
