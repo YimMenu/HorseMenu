@@ -138,6 +138,17 @@ namespace YimMenu
 		    SimplePattern(std::string_view(ida_sig))
 		{
 		}
+
+		inline SimplePattern(SimplePattern&& other) :
+		    m_Bytes(other.m_Bytes)
+		{
+		}
+
+		inline SimplePattern(const SimplePattern& other) :
+		    m_Bytes(other.m_Bytes)
+		{
+		}
+
 		std::vector<std::optional<uint8_t>> m_Bytes;
 	};
 }

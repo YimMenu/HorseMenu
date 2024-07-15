@@ -92,9 +92,10 @@ namespace YimMenu
 			ScriptPrograms = ptr.Sub(0x16).Add(3).Rip().Add(0xC8).As<rage::scrProgram**>();
 		});
 
-		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread");
+		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread&ScriptVM");
 		scanner.Add(currentScriptThreadPtrn, [this](PointerCalculator ptr) {
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
+			ScriptVM            = ptr.Add(0x28).Rip().As<PVOID>();
 		});
 
 		constexpr auto sendMetricPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B F1 48 8B FA B1">("SendMetric");
@@ -311,9 +312,9 @@ namespace YimMenu
 			PostPresenceMessage = ptr.Add(1).Rip().As<Functions::PostPresenceMessage>();
 		});
 
-		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 56 57 41 54 41 56 41 57 48 83 EC 50 4D 8B F1 48 8B F9 48 81 C1 A0 00 00 00 4C 8D 48 08 41 8B E8 4C 8B FA 33 DB E8 ?? ?? ?? ?? 84 C0 0F 84 C8">("SendNetInfoToLobby");
+		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"E8 ?? ?? ?? ?? 32 DB 84 C0 74 1B 44 8B 84 24 40 01 00 00">("SendNetInfoToLobby");
 		scanner.Add(sendNetInfoToLobbyPtrn, [this](PointerCalculator ptr) {
-			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
+			SendNetInfoToLobby = ptr.Add(1).Rip().As<Functions::SendNetInfoToLobby>();
 		});
 
 		constexpr auto pedPoolPtrn = Pattern<"0F 28 F0 48 85 DB 74 56 8A 05 ? ? ? ? 84 C0 75 05">("PedPool");

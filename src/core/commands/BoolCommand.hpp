@@ -17,7 +17,7 @@ namespace YimMenu
 		BoolCommand(std::string name, std::string label, std::string description, bool def_value = false);
 		bool GetState();
 		void SetState(bool state);
-
+		void Initialize();
 		void Shutdown();
 	};
 }

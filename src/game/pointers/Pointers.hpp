@@ -79,6 +79,7 @@ namespace YimMenu
 		rage::scrProgram** ScriptPrograms;
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
+		PVOID ScriptVM;
 		Functions::GetLocalPed GetLocalPed;
 		Functions::SendPacket SendPacket;
 		Functions::QueuePacket QueuePacket;
