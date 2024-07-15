@@ -18,7 +18,7 @@ namespace YimMenu
 
 	bool Player::IsValid()
 	{
-		return m_Handle && m_Handle->IsValid();
+		return m_Handle && m_Handle->IsValid() && m_Handle->m_PlayerInfo;
 	}
 
 	int Player::GetId()
@@ -59,7 +59,7 @@ namespace YimMenu
 
 	Ped Player::GetPed()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return nullptr;
 
 		return m_Handle->m_PlayerInfo->m_Ped;
@@ -77,7 +77,7 @@ namespace YimMenu
 
 	uint64_t Player::GetRID()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return 0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_GamerHandle.m_RockstarId;
@@ -85,7 +85,7 @@ namespace YimMenu
 
 	netAddress Player::GetExternalIpAddress()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return (netAddress)0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_ExternalAddress;
@@ -93,7 +93,7 @@ namespace YimMenu
 
 	netAddress Player::GetInternalIpAddress()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return (netAddress)0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_InternalAddress;
@@ -101,7 +101,7 @@ namespace YimMenu
 
 	netAddress Player::GetRelayIpAddress()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return (netAddress)0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayAddress;
@@ -109,7 +109,7 @@ namespace YimMenu
 
 	netAddress Player::GetUnkIpAddress()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return (netAddress)0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_UnkAddress;
@@ -117,7 +117,7 @@ namespace YimMenu
 
 	uint16_t Player::GetExternalPort()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return 0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_ExternalPort;
@@ -125,7 +125,7 @@ namespace YimMenu
 
 	uint16_t Player::GetInternalPort()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return 0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_InternalPort;
@@ -133,7 +133,7 @@ namespace YimMenu
 
 	uint16_t Player::GetRelayPort()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return 0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayPort;
@@ -141,7 +141,7 @@ namespace YimMenu
 
 	uint16_t Player::GetUnkPort()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return 0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_UnkPort;
@@ -149,7 +149,7 @@ namespace YimMenu
 
 	uint32_t Player::GetRelayState()
 	{
-		if (!IsValid() || !m_Handle->m_PlayerInfo)
+		if (!IsValid())
 			return 0;
 
 		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayState;

@@ -1,5 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
@@ -10,7 +10,8 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			WEAPON::_SET_FORCE_CURRENT_WEAPON_INTO_COCKED_STATE(Self::PlayerPed, 0);
+			if (Self::GetPed())
+				WEAPON::_SET_FORCE_CURRENT_WEAPON_INTO_COCKED_STATE(Self::GetPed().GetHandle(), 0);
 		}
 	};
 

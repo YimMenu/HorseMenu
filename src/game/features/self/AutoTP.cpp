@@ -10,7 +10,7 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (MAP::IS_WAYPOINT_ACTIVE())
+			if (MAP::IS_WAYPOINT_ACTIVE() && Self::GetPed())
 			{
 				Vector3 coords = Teleport::GetWaypointCoords();
 				if (coords != Vector3{0, 0, 0})

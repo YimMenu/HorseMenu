@@ -3,12 +3,14 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/commands/IntCommand.hpp"
 #include "core/commands/Commands.hpp"
+#include "game/backend/Self.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/data/Emotes.hpp"
 #include "util/Rewards.hpp"
 
 #include <map>
@@ -42,7 +44,7 @@ namespace YimMenu::Submenus
 					ScriptMgr::Yield();
 				}
 
-				TASK::TASK_PLAY_ANIM(YimMenu::Self::PlayerPed, dict.c_str(), anim.c_str(), 8.0f, -8.0f, -1, 0, 0, FALSE, FALSE, FALSE, "", 0);
+				TASK::TASK_PLAY_ANIM(YimMenu::Self::GetPed().GetHandle(), dict.c_str(), anim.c_str(), 8.0f, -8.0f, -1, 0, 0, false, false, false, "", 0);
 			});
 		}
 
@@ -99,7 +101,7 @@ namespace YimMenu::Submenus
 					int selectedEmoteIndex    = Emote::selectedEmoteMemberIndex;
 					const Emote::EmoteItemData& selectedEmote = Emote::emoteCategoryMembers[selectedCategoryIndex][selectedEmoteIndex];
 
-					TASK::TASK_PLAY_EMOTE_WITH_HASH(YimMenu::Self::PlayerPed,
+					TASK::TASK_PLAY_EMOTE_WITH_HASH(YimMenu::Self::GetPed().GetHandle(),
 					    static_cast<int>(selectedEmote.type),
 					    EMOTE_PM_FULLBODY,
 					    static_cast<Hash>(selectedEmote.hash),
@@ -115,7 +117,7 @@ namespace YimMenu::Submenus
 		if (ImGui::Button("Stop Animation"))
 		{
 			FiberPool::Push([=] {
-				TASK::CLEAR_PED_TASKS(YimMenu::Self::PlayerPed, TRUE, FALSE);
+				TASK::CLEAR_PED_TASKS(YimMenu::Self::GetPed().GetHandle(), true, false);
 			});
 		}
 	}
@@ -146,11 +148,9 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
-
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superdamage"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("quickskin"_J));
 
@@ -170,14 +170,9 @@ namespace YimMenu::Submenus
 		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("overridewhistle"_J));
-		toolsGroup->AddItem(std::make_shared<ImGuiItem>([] {
-			ImGui::Text("Pitch");
-			ImGui::SliderFloat("##Pitch", &SelfStorage::pitch, 0.0f, 1.0f);
-			ImGui::Text("Clarity");
-			ImGui::SliderFloat("##Clarity", &SelfStorage::clarity, 0.0f, 1.0f);
-			ImGui::Text("Shape");
-			ImGui::SliderFloat("##Shape", &SelfStorage::shape, 0.0f, 10.0f);
-		}));
+		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistlepitch"_J, "Pitch")));
+		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistleclarity"_J, "Clarity")));
+		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistleshape"_J, "Shape")));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));

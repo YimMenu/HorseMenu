@@ -1,7 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/rdr/Natives.hpp"
+#include "game/backend/Self.hpp"
 
 namespace YimMenu::Features
 {
@@ -11,12 +9,14 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			PED::SET_PED_ACCURACY(Self::PlayerPed, 100);
+			if (Self::GetPed())
+				Self::GetPed().SetAccuracy(100);
 		}
 
 		virtual void OnDisable() override
 		{
-			PED::SET_PED_ACCURACY(Self::PlayerPed, 0); // Does not set it to miss every time, accuracy is weird.
+			if (Self::GetPed())
+				Self::GetPed().SetAccuracy(0);
 		}
 	};
 

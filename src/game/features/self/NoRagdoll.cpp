@@ -1,7 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
 #include "game/backend/Self.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
 {

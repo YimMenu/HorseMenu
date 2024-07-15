@@ -79,7 +79,7 @@ namespace YimMenu
 		if (!plyr.IsValid() || !plyr.GetPed().IsValid() || plyr == Self::GetPlayer() || boneToScreen(plyr.GetPed().GetBonePosition(torsoBone)).x == 0)
 			return;
 
-		float distanceToPlayer = Math::DistanceBetweenVectors(Self::GetPed().GetPosition(), plyr.GetPed().GetBonePosition(torsoBone));
+		float distanceToPlayer = Self::GetPed().GetPosition().GetDistance(plyr.GetPed().GetBonePosition(torsoBone));
 		int alphaBasedOnDistance     = 255;
 		ImColor colorBasedOnDistance = Red;
 
@@ -100,7 +100,7 @@ namespace YimMenu
 		drawList->AddText({boneToScreen(plyr.GetPed().GetBonePosition(headBone)).x,
 		                      boneToScreen(plyr.GetPed().GetBonePosition(headBone)).y + 20},
 		    colorBasedOnDistance,
-		    std::to_string((int)Math::DistanceBetweenVectors(Self::GetPed().GetPosition(), plyr.GetPed().GetBonePosition(torsoBone)))
+		    std::to_string((int)Self::GetPed().GetPosition().GetDistance(plyr.GetPed().GetBonePosition(torsoBone)))
 		        .data());
 
 		currentFont->Scale = originalFontSize;

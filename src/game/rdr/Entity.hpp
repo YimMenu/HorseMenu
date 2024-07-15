@@ -82,7 +82,6 @@ namespace YimMenu
 		// position
 		rage::fvector3 GetPosition();
 		void SetPosition(rage::fvector3 position);
-		float GetDistance();
 		rage::fvector3 GetRotation(int order = 2);
 		void SetRotation(rage::fvector3 rotation, int order = 2);
 		rage::fvector3 GetVelocity();

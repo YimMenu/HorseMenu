@@ -8,7 +8,7 @@
 #include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
-#include "util/libraries/PedModels.hpp"
+#include "game/rdr/data/PedModels.hpp"
 
 
 namespace YimMenu::Submenus
@@ -32,7 +32,7 @@ namespace YimMenu::Submenus
 
 	static bool IsPedModelInList(std::string model)
 	{
-		for (const auto& pedModel : pedModels)
+		for (const auto& pedModel : Data::g_PedModels)
 		{
 			if (pedModel.model == model)
 				return true;
@@ -48,7 +48,7 @@ namespace YimMenu::Submenus
 			std::string newText{};
 			std::string inputLower = data->Buf;
 			std::transform(inputLower.begin(), inputLower.end(), inputLower.begin(), ::tolower);
-			for (const auto& pedModel : pedModels)
+			for (const auto& pedModel : Data::g_PedModels)
 			{
 				std::string modelLower = pedModel.model;
 				std::transform(modelLower.begin(), modelLower.end(), modelLower.begin(), ::tolower);
@@ -90,7 +90,7 @@ namespace YimMenu::Submenus
 
 			std::string bufferLower = pedModelBuffer;
 			std::transform(bufferLower.begin(), bufferLower.end(), bufferLower.begin(), ::tolower);
-			for (const auto& pedModel : pedModels)
+			for (const auto& pedModel : Data::g_PedModels)
 			{
 				std::string pedModelLower = pedModel.model;
 				std::transform(pedModelLower.begin(), pedModelLower.end(), pedModelLower.begin(), ::tolower);

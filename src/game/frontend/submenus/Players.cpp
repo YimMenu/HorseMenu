@@ -121,7 +121,7 @@ namespace YimMenu::Submenus
 					auto coords = YimMenu::Players::GetSelected().GetPed().GetPosition();
 					ImGui::Text("Coords: %.2f, %.2f, %.2f", coords.x, coords.y, coords.z);
 
-					auto distance = YimMenu::Players::GetSelected().GetPed().GetDistance();
+					auto distance = YimMenu::Players::GetSelected().GetPed().GetPosition().GetDistance(Self::GetPed().GetPosition());
 					ImGui::Text("Distance: %.2f", distance);
 
 					auto ridStr = std::to_string(YimMenu::Players::GetSelected().GetRID());
@@ -166,7 +166,7 @@ namespace YimMenu::Submenus
 				else
 				{
 					YimMenu::Players::SetSelected(Self::GetPlayer());
-					ImGui::Text("No Players Yet!");
+					ImGui::Text("No players yet!");
 				}
 			}));
 
@@ -280,6 +280,7 @@ namespace YimMenu::Submenus
 			auto general = std::make_shared<Group>("General");
 			general->AddItem(std::make_shared<PlayerCommandItem>("kill"_J));
 			general->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("lightning"_J));
 			general->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
 			general->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			general->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));

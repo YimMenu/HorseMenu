@@ -3,7 +3,7 @@ include(FetchContent)
 FetchContent_Declare(
     rdr_classes
     GIT_REPOSITORY https://github.com/YimMenu/RDR-Classes.git
-    GIT_TAG        d62a02a6d7f0686148d638152c34a3856fa3248e
+    GIT_TAG        9ef64d85290f85ddfa6a4b6a8ef1d9acfcb31808
     GIT_PROGRESS TRUE
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

@@ -22,7 +22,7 @@ namespace YimMenu::Submenus
 		// saved_locations_filtered_list can be used to get a joint list of all categories when the filter is empty.
 		for (auto& loc : CustomTeleport::SavedLocationsFilteredList())
 		{
-			float newDistance = Math::DistanceBetweenVectors(Self::GetPed().GetPosition(), {loc.x, loc.y, loc.z});
+			float newDistance = Self::GetPed().GetPosition().GetDistance({loc.x, loc.y, loc.z});
 
 			if (newDistance < distance)
 				closestLocation = loc, distance = newDistance;
@@ -33,7 +33,7 @@ namespace YimMenu::Submenus
 
 	static float GetDistanceToTelelocation(Telelocation t)
 	{
-		return Math::DistanceBetweenVectors(Vector3(t.x, t.y, t.z), Self::GetPed().GetPosition());
+		return rage::fvector3(t.x, t.y, t.z).GetDistance(Self::GetPed().GetPosition());
 	}
 
 	void RenderCustomTeleport()

@@ -1,6 +1,6 @@
 #include "core/commands/LoopedCommand.hpp"
 #include "game/rdr/Natives.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 
 namespace YimMenu::Features
 {
@@ -10,7 +10,10 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			PED::SET_PED_RESET_FLAG(Self::Mount, 204, true);
+			if (Self::GetMount())
+			{
+				PED::SET_PED_RESET_FLAG(Self::GetMount().GetHandle(), 204, true);
+			}
 		}
 	};
 

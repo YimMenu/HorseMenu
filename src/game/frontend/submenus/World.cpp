@@ -11,7 +11,7 @@
 #include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Ped.hpp"
-#include "util/libraries/PedModels.hpp"
+#include "game/rdr/data/PedModels.hpp"
 
 #include <game/rdr/Natives.hpp>
 

@@ -152,6 +152,19 @@ namespace YimMenu
 		PED::_SET_PED_SCALE(GetHandle(), scale);
 	}
 
+	int Ped::GetAccuracy()
+	{
+		ENTITY_ASSERT_VALID();
+		return PED::GET_PED_ACCURACY(GetHandle());
+	}
+
+	void Ped::SetAccuracy(int accuracy)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		PED::SET_PED_ACCURACY(GetHandle(), accuracy);
+	}
+
 	int Ped::GetPlayer()
 	{
 		ENTITY_ASSERT_VALID();

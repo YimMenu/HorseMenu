@@ -8,6 +8,7 @@ namespace YimMenu
 	class PlayerCommand;
 	class ListCommand;
 	class IntCommand;
+	class FloatCommand;
 	class Command;
 
 	class Button : public UIItem
@@ -62,6 +63,17 @@ namespace YimMenu
 
 	private:
 		IntCommand* m_Command;
+		std::optional<std::string> m_LabelOverride;
+	};
+
+	class FloatCommandItem : public UIItem
+	{
+	public:
+		explicit FloatCommandItem(joaat_t id, std::optional<std::string> label_override = std::nullopt);
+		void Draw() override;
+
+	private:
+		FloatCommand* m_Command;
 		std::optional<std::string> m_LabelOverride;
 	};
 

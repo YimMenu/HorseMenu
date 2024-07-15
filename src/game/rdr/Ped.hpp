@@ -45,6 +45,10 @@ namespace YimMenu
 		// scale
 		void SetScale(float scale);
 
+		// accuracy
+		int GetAccuracy();
+		void SetAccuracy(int accuracy);
+
 		// player
 		// We're returning a handle here and not a Player because we don't want to create a cyclic import dependency
 		int GetPlayer();
