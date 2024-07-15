@@ -24,7 +24,7 @@ namespace YimMenu
 		auto label = m_LabelOverride.has_value() ? m_LabelOverride.value().c_str() : m_Command->GetLabel().c_str();
 		if (!m_Command->GetMinimum().has_value() || !m_Command->GetMaximum().has_value())
 		{
-			ImGui::SetNextItemWidth(250);
+			ImGui::SetNextItemWidth(150);
 			if (ImGui::InputInt(label, &value))
 			{
 				m_Command->SetState(value);
@@ -32,7 +32,7 @@ namespace YimMenu
 		}
 		else
 		{
-			ImGui::SetNextItemWidth(250);
+			ImGui::SetNextItemWidth(150);
 			if (ImGui::SliderInt(label, &value, m_Command->GetMinimum().value(), m_Command->GetMaximum().value()))
 			{
 				m_Command->SetState(value);

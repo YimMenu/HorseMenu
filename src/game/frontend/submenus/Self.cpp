@@ -131,12 +131,11 @@ namespace YimMenu::Submenus
 		auto vehicleFunGroup = std::make_shared<Group>("Fun");
 
 		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
-		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("superbrake"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
 
 		vehicleFunGroup->AddItem(std::make_shared<BoolCommandItem>("superdrive"_J));
-		vehicleFunGroup->AddItem(std::make_shared<BoolCommandItem>("superdrivedirectional"_J, "Directional"));
-		vehicleFunGroup->AddItem(std::make_shared<IntCommandItem>("superdriveforce"_J, "Force"));
+		vehicleFunGroup->AddItem(std::make_shared<ConditionalItem>("superdrive"_J, std::make_shared<BoolCommandItem>("superdrivedirectional"_J, "Directional")));
+		vehicleFunGroup->AddItem(std::make_shared<ConditionalItem>("superdrive"_J, std::make_shared<IntCommandItem>("superdriveforce"_J, "Force")));
 		vehicleFunGroup->AddItem(std::make_shared<BoolCommandItem>("superbrake"_J));
 		vehicle->AddItem(vehicleGlobalsGroup);
 		vehicle->AddItem(vehicleFunGroup);

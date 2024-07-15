@@ -46,11 +46,12 @@ namespace YimMenu
 	class BoolCommandItem : public UIItem
 	{
 	public:
-		explicit BoolCommandItem(joaat_t id);
+		explicit BoolCommandItem(joaat_t id, std::optional<std::string> label_override = std::nullopt);
 		void Draw() override;
 
 	private:
 		BoolCommand* m_Command;
+		std::optional<std::string> m_LabelOverride;
 	};
 
 	class IntCommandItem : public UIItem

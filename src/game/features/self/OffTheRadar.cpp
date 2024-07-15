@@ -2,13 +2,23 @@
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/backend/Self.hpp"
+#include "game/backend/NativeHooks.hpp"
 
 namespace YimMenu::Features
 {
-	//TODO: fix this
+	void DECOR_SET_INT(rage::scrNativeCallContext* ctx);
+
 	class OffTheRadar : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
+
+		virtual void OnEnable()
+		{
+			static auto run_once = ([]() {
+				NativeHooks::AddHook("net_main_offline"_J, NativeIndex::DECOR_SET_INT, DECOR_SET_INT);
+				return true;
+			})();
+		}
 
 		virtual void OnTick() override
 		{
@@ -22,4 +32,16 @@ namespace YimMenu::Features
 	};
 
 	static OffTheRadar _OffTheRadar{"offtheradar", "Off The Radar", "You won't show up on the maps of other players"};
+
+	// TODO: maybe add support for removing native hooks dynamically?
+	void DECOR_SET_INT(rage::scrNativeCallContext* ctx)
+	{
+		int flags = ctx->get_arg<int>(2);
+		if (Joaat(ctx->get_arg<char*>(1)) == "MP_HUD_Bits"_J)
+		{
+			if (_OffTheRadar.GetState())
+				flags |= 64;
+		}
+		DECORATOR::DECOR_SET_INT(ctx->get_arg<ScrHandle>(0), ctx->get_arg<const char*>(1), flags);
+	}
 }
