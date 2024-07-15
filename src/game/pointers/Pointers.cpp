@@ -289,22 +289,22 @@ namespace YimMenu
 
 		constexpr auto sendPacketPtrn = Pattern<"8B 44 24 60 48 8B D6 48 8B CD">("SendPacket");
 		scanner.Add(sendPacketPtrn, [this](PointerCalculator ptr) {
-			SendPacket = ptr.Add(14).Add(1).Rip().As<Functions::SendPacket>();
+			SendPacket = ptr.Add(0xE).Add(1).Rip().As<Functions::SendPacket>();
 		});
 
-		constexpr auto queuePacketPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 4C 8B F1 4D">("QueuePacket");
+		constexpr auto queuePacketPtrn = Pattern<"E8 ?? ?? ?? ?? FF C6 49 83 C6 08 3B B7 88 40 00 00">("QueuePacket");
 		scanner.Add(queuePacketPtrn, [this](PointerCalculator ptr) {
-			QueuePacket = ptr.As<Functions::QueuePacket>();
+			QueuePacket = ptr.Add(1).Rip().As<Functions::QueuePacket>();
 		});
 
-		constexpr auto receiveNetMessagePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 20 4C 8B 71 38">("ReceiveNetMessage");
+		constexpr auto receiveNetMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 24 48 8D B7 90 02 00 00">("ReceiveNetMessage");
 		scanner.Add(receiveNetMessagePtrn, [this](PointerCalculator ptr) {
-			ReceiveNetMessage = ptr.As<PVOID>();
+			ReceiveNetMessage = ptr.Add(1).Rip().As<PVOID>();
 		});
 
-		constexpr auto handlePresenceEventPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 70 20 55 48 8D 68 A9 48 81 EC B0 00 00 00 4C">("HandlePresenceEvent");
+		constexpr auto handlePresenceEventPtrn = Pattern<"E8 ?? ?? ?? ?? 4C 8D 9C 24 B0 10 00 00 49 8B 5B 10">("HandlePresenceEvent");
 		scanner.Add(handlePresenceEventPtrn, [this](PointerCalculator ptr) {
-			HandlePresenceEvent = ptr.As<PVOID>();
+			HandlePresenceEvent = ptr.Add(1).Rip().As<PVOID>();
 		});
 
 		constexpr auto postMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 35 C7 44 24 20 D9 7A 70 E1">("PostPresenceMessage");
