@@ -88,6 +88,7 @@ namespace YimMenu::Submenus
 		killPeds->AddItem(std::make_shared<CommandItem>("killallenemies"_J));
 
 		main->AddItem(std::move(killPeds));
+		main->AddItem(std::make_shared<BoolCommandItem>("disableguardzones"_J));
 		main->AddItem(std::make_shared<CommandItem>("forcelighting"_J));
 
 		shows->AddItem(std::make_shared<ImGuiItem>([] {

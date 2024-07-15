@@ -3,6 +3,8 @@
 #include "Natives.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "util/Joaat.hpp"
+#include "game/backend/Self.hpp"
+
 #include <entity/fwEntity.hpp>
 #include <network/CNetObjectMgr.hpp>
 #include <network/CNetworkPlayerMgr.hpp>
@@ -97,7 +99,7 @@ namespace YimMenu
 	float Entity::GetDistance()
 	{
 		ENTITY_ASSERT_VALID();
-		auto pos = ENTITY::GET_ENTITY_COORDS(GetHandle(), false, true);
+		auto pos     = ENTITY::GET_ENTITY_COORDS(GetHandle(), false, true);
 		auto selfPos = Self::GetPed().GetPosition();
 		auto dist    = MISC::GET_DISTANCE_BETWEEN_COORDS(pos.x, pos.y, pos.z, selfPos.x, selfPos.y, selfPos.z, TRUE);
 		return dist;

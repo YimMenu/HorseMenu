@@ -26,5 +26,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static DisableGuardZones _DisableGuardZones{"disableguardzones", "Disable Guard Zones", "Allow you to enter restricted areas such as Sisika"};
+	static DisableGuardZones _DisableGuardZones{"disableguardzones", "Disable Guard Zones", "Allow you to enter restricted areas"};
 }

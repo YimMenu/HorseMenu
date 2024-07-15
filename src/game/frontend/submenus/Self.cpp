@@ -82,7 +82,6 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("quickskin"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("disableguardzones"_J));
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("clearcrimes"_J));
@@ -129,13 +128,18 @@ namespace YimMenu::Submenus
 
 		auto vehicle             = std::make_shared<Category>("Vehicle");
 		auto vehicleGlobalsGroup = std::make_shared<Group>("Globals");
-		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("superdrive"_J));
-		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("superdrivedirectional"_J));
-		vehicleGlobalsGroup->AddItem(std::make_shared<IntCommandItem>("superdriveforce"_J));
-		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("superbrake"_J));
+		auto vehicleFunGroup = std::make_shared<Group>("Fun");
+
 		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
+		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("superbrake"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
+
+		vehicleFunGroup->AddItem(std::make_shared<BoolCommandItem>("superdrive"_J));
+		vehicleFunGroup->AddItem(std::make_shared<BoolCommandItem>("superdrivedirectional"_J, "Directional"));
+		vehicleFunGroup->AddItem(std::make_shared<IntCommandItem>("superdriveforce"_J, "Force"));
+		vehicleFunGroup->AddItem(std::make_shared<BoolCommandItem>("superbrake"_J));
 		vehicle->AddItem(vehicleGlobalsGroup);
+		vehicle->AddItem(vehicleFunGroup);
 		AddCategory(std::move(vehicle));
 
 		auto animations = std::make_shared<Category>("Animations");
