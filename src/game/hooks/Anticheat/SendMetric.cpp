@@ -11,6 +11,7 @@
 namespace YimMenu::Features
 {
 	BoolCommand _LogMetrics("logmetrics", "Log Metrics", "Log game telemetry");
+	BoolCommand _BlockAllTelemetry("blockalltelemetry", "Block All Telemetry", "Block all game telemetry");
 }
 
 namespace YimMenu::Hooks
@@ -31,6 +32,11 @@ namespace YimMenu::Hooks
 
 		if (Features::_LogMetrics.GetState())
 			LOG(INFO) << "METRIC: " << metric_name << "; DATA: " << serializer.GetBuffer();
+
+		if (Features::_BlockAllTelemetry.GetState())
+		{
+			return true;
+		}
 
 		return BaseHook::Get<Anticheat::SendMetric, DetourHook<decltype(&Anticheat::SendMetric)>>()->Original()(manager, metric);
 	}

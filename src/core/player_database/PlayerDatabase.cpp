@@ -132,12 +132,15 @@ namespace YimMenu
 
 	void PlayerDatabase::AddInfraction(std::shared_ptr<persistent_player> player, int infraction)
 	{
-		player->infractions.insert((int)infraction);
-		if (!player->is_modder)
+		if (!player->trust)
 		{
-			player->is_modder = true;
+			player->infractions.insert((int)infraction);
+			if (!player->is_modder)
+			{
+				player->is_modder = true;
+			}
+			Save();
 		}
-		Save();
 	}
 
 	void PlayerDatabase::RemoveRID(uint64_t rockstar_id)

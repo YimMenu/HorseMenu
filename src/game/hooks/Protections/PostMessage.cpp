@@ -18,7 +18,7 @@ namespace YimMenu::Hooks
 		{
 			LOG(VERBOSE) << "Local Gamer Index: " << localGamerIndex;
 			LOG(VERBOSE) << "Recipients name and rid: " << std::string(recipients->m_Name).c_str() << " "
-			             << recipients->m_GamerHandle.m_rockstar_id;
+			             << recipients->m_GamerHandle.m_RockstarId;
 
 			LOG(VERBOSE) << "Num recipients: " << numRecipients;
 			LOG(VERBOSE) << "Message: " << msg;

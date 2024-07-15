@@ -10,16 +10,6 @@ namespace YimMenu::Math
 		return static_cast<float>(radian);
 	}
 
-	inline float DistanceBetweenVectors(Vector3 a, Vector3 b)
-	{
-		return static_cast<float>(sqrt(pow((a.x - b.x), 2) + pow((a.y - b.y), 2) + pow((a.z - b.z), 2)));
-	}
-
-	inline float DistanceBetweenVectors(rage::fvector3 a, rage::fvector3 b)
-	{
-		return static_cast<float>(sqrt(pow((a.x - b.x), 2) + pow((a.y - b.y), 2) + pow((a.z - b.z), 2)));
-	}
-
 	inline Vector3 RotationToDirection(Vector3 rotation)
 	{
 		float x = DegToRad(rotation.x);

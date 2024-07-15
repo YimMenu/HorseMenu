@@ -20,6 +20,9 @@ namespace YimMenu::Hooks
 {
 	bool Protections::HandlePresenceEvent(uint64_t a1, rage::rlGamerInfo* gamerInfo, unsigned int sender, const char** payload, const char* channel)
 	{
+		bool ret =
+		    BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()->Original()(a1, gamerInfo, sender, payload, channel);
+
 		const char* key = "gm.evt";
 		std::string p(*payload);
 
@@ -35,11 +38,11 @@ namespace YimMenu::Hooks
 		}
 
 		nlohmann::json& event_payload = json[key];
-		LOG(VERBOSE) << event_payload.dump();
 		if (event_payload["e"].is_null() || event_payload["d"].is_null())
 		{
 			return true;
 		}
+
 
 		std::string sender_str = "NULL";
 		if (!event_payload["d"]["n"].is_null())
@@ -52,6 +55,7 @@ namespace YimMenu::Hooks
 		if (Features::_LogPresenceEvents.GetState())
 		{
 			LOG(VERBOSE) << "Hash of Presence Event: " << std::to_string(presence_hash) << " Sender: " << sender_str << " Channel: " << std::string(channel);
+			LOG(VERBOSE) << "Payload(Raw JSON): " << json.dump();
 		}
 
 		switch (presence_hash)
@@ -81,17 +85,8 @@ namespace YimMenu::Hooks
 			LOG(WARNING) << "Received Stat Update from " << sender_str;
 			break;
 		}
-		//really bad protection - kick uses invalid json(we block the whole event)
-		case (uint32_t)ePresenceEvents::PRESENCE_INVITE_RESPONSE:
-		{
-			Notifications::Show("Presence Event", std::string("Blocked Kick from ").append(sender_str), NotificationType::Warning);
-			LOG(WARNING) << "Blocked Kick from  " << sender_str;
-			g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(gamerInfo->m_GamerHandle.m_rockstar_id, sender_str), (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
-			return true;
-		}
 		}
 
-		return BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()
-		    ->Original()(a1, gamerInfo, sender, payload, channel);
+		return ret;
 	}
 }

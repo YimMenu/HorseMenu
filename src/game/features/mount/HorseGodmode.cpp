@@ -1,23 +1,22 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/rdr/Natives.hpp"
+#include "game/backend/Self.hpp"
 
 namespace YimMenu::Features
 {
-	// Doesn't work
 	class HorseGodmode : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
 
 		virtual void OnTick() override
 		{
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, TRUE);
+			if (Self::GetMount())
+				Self::GetMount().SetInvincible(true);
 		}
 
         virtual void OnDisable() override
         {
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::Mount, FALSE);
+			if (Self::GetMount())
+				Self::GetMount().SetInvincible(false);
         }
 	};
 

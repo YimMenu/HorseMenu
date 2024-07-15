@@ -1,6 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Natives.hpp"
+#include "game/backend/Self.hpp"
 
 namespace YimMenu::Features
 {
@@ -10,12 +9,14 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::Veh, TRUE);
+			if (Self::GetVehicle())
+				Self::GetVehicle().SetInvincible(true);
 		}
 
 		virtual void OnDisable() override
 		{
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::Veh, FALSE);
+			if (Self::GetVehicle())
+				Self::GetVehicle().SetInvincible(false);
 		}
 	};
 

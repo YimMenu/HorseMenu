@@ -1,5 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
@@ -10,12 +10,12 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			PLAYER::SET_PLAYER_MELEE_WEAPON_DAMAGE_MODIFIER(Self::Id, 100.0f);
+			PLAYER::SET_PLAYER_MELEE_WEAPON_DAMAGE_MODIFIER(Self::GetPlayer().GetId(), 100.0f);
 		}
 
 		virtual void OnDisable() override
 		{
-			PLAYER::SET_PLAYER_MELEE_WEAPON_DAMAGE_MODIFIER(Self::Id, 1.0f);
+			PLAYER::SET_PLAYER_MELEE_WEAPON_DAMAGE_MODIFIER(Self::GetPlayer().GetId(), 1.0f);
 		}
 	};
 

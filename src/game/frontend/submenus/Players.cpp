@@ -4,7 +4,9 @@
 #include "core/commands/Commands.hpp"
 #include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
+#include "game/backend/PlayerData.hpp"
 #include "game/commands/PlayerCommand.hpp"
+#include "game/backend/Self.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "util/network.hpp"
@@ -22,11 +24,14 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
+#include "game/rdr/Packet.hpp"
 
 #include <network/netPeerAddress.hpp>
 #include <network/rlGamerInfo.hpp>
+#include <network/rlScPeerConnection.hpp>
 #include <script/scrThread.hpp>
-
+#include <network/CNetworkScSessionPlayer.hpp>
+#include <network/CNetworkScSession.hpp>
 
 namespace YimMenu::Features
 {
@@ -95,9 +100,8 @@ namespace YimMenu::Submenus
 	{
 		{
 			auto main               = std::make_shared<Category>("Main");
-			auto column             = std::make_shared<Column>(2);
-			auto teleportGroup      = std::make_shared<Group>("Teleport", GetListBoxDimensions());
-			auto playerOptionsGroup = std::make_shared<Group>("Info", GetListBoxDimensions());
+			auto teleportGroup      = std::make_shared<Group>("Teleport");
+			auto playerOptionsGroup = std::make_shared<Group>("Info");
 
 			main->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(true);
@@ -109,35 +113,36 @@ namespace YimMenu::Submenus
 					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 					ImGui::Text(YimMenu::Players::GetSelected().GetName());
 
-					auto rid_str = std::to_string(YimMenu::Players::GetSelected().GetRID());
+					auto health    = YimMenu::Players::GetSelected().GetPed().GetHealth();
+					auto maxHealth = YimMenu::Players::GetSelected().GetPed().GetMaxHealth();
+					std::string healthStr = std::format("HP: {}/{} ({:.2f}%)", health, maxHealth, (float)health / maxHealth * 100.0f);
+					ImGui::Text("%s", healthStr.c_str());
+
+					auto coords = YimMenu::Players::GetSelected().GetPed().GetPosition();
+					ImGui::Text("Coords: %.2f, %.2f, %.2f", coords.x, coords.y, coords.z);
+
+					auto distance = YimMenu::Players::GetSelected().GetPed().GetPosition().GetDistance(Self::GetPed().GetPosition());
+					ImGui::Text("Distance: %.2f", distance);
+
+					auto ridStr = std::to_string(YimMenu::Players::GetSelected().GetRID());
 					ImGui::Text("RID:");
 					ImGui::SameLine();
-					if (ImGui::Button(rid_str.c_str()))
+					if (ImGui::Button(ridStr.c_str()))
 					{
-						ImGui::SetClipboardText(rid_str.c_str());
+						ImGui::SetClipboardText(ridStr.c_str());
 					}
 
 					auto ip = YimMenu::Players::GetSelected().GetExternalIpAddress();
 					ImGui::Text("IP Address:");
 					ImGui::SameLine();
-					auto ip_str = std::string(std::to_string(ip.m_field1))
+					auto ipStr = std::string(std::to_string(ip.m_field1))
 					                  .append("." + std::to_string(ip.m_field2))
 					                  .append("." + std::to_string(ip.m_field3))
 					                  .append("." + std::to_string(ip.m_field4));
-					if (ImGui::Button(ip_str.c_str()))
+					if (ImGui::Button(ipStr.c_str()))
 					{
-						ImGui::SetClipboardText(ip_str.c_str());
+						ImGui::SetClipboardText(ipStr.c_str());
 					}
-
-					std::string healthText = std::format("HP: {}/{} ({:.2f}%)", Selected::current_health, Selected::max_health, Selected::health_percentage);
-					ImGui::Text("%s", healthText.c_str());
-
-					ImGui::Text("Distance: %.1f", Selected::Distance);
-
-					ImGui::Text("X: %.1f\nY: %.1f\nZ: %.1f",
-					    Selected::Pos.x,
-					    Selected::Pos.y,
-					    Selected::Pos.z);
 
 					if (ImGui::Button("View SC Profile"))
 						FiberPool::Push([] {
@@ -160,8 +165,8 @@ namespace YimMenu::Submenus
 				}
 				else
 				{
-					YimMenu::Players::SetSelected(Self::Id);
-					ImGui::Text("No Players Yet!");
+					YimMenu::Players::SetSelected(Self::GetPlayer());
+					ImGui::Text("No players yet!");
 				}
 			}));
 
@@ -172,7 +177,9 @@ namespace YimMenu::Submenus
 				if (ImGui::Button("Teleport To"))
 				{
 					FiberPool::Push([] {
-						if (Teleport::TeleportEntity(Self::PlayerPed, YimMenu::Players::GetSelected().GetPed().GetPosition(), false))
+						if (Teleport::TeleportEntity(Self::GetPed().GetHandle(),
+						        YimMenu::Players::GetSelected().GetPed().GetPosition(),
+						        false))
 							g_Spectating = false;
 					});
 				}
@@ -184,7 +191,9 @@ namespace YimMenu::Submenus
 						    0,
 						    -10,
 						    0);
-						if (Teleport::TeleportEntity(Self::PlayerPed, {playerCoords.x, playerCoords.y, playerCoords.z}, false))
+						if (Teleport::TeleportEntity(Self::GetPed().GetHandle(),
+						        {playerCoords.x, playerCoords.y, playerCoords.z},
+						        false))
 							g_Spectating = false;
 					});
 				}
@@ -193,17 +202,14 @@ namespace YimMenu::Submenus
 					FiberPool::Push([] {
 						auto playerVeh = PED::GET_VEHICLE_PED_IS_USING(
 						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
-						if (Teleport::WarpIntoVehicle(Self::PlayerPed, playerVeh))
+						if (Teleport::WarpIntoVehicle(Self::GetPed().GetHandle(), playerVeh))
 							g_Spectating = false;
 					});
 				}
 			}));
 
-			column->AddColumnOffset(1, 160);
-			column->AddItem(playerOptionsGroup);
-			column->AddNextColumn();
-			column->AddItem(teleportGroup);
-			main->AddItem(column);
+			main->AddItem(playerOptionsGroup);
+			main->AddItem(teleportGroup);
 			AddCategory(std::move(main));
 		}
 
@@ -215,10 +221,6 @@ namespace YimMenu::Submenus
 			}));
 
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
-				if (Features::_PopPlayerList.GetState())
-					ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
-			helpful->AddItem(std::make_shared<ImGuiItem>([] {
 				if (ImGui::Button("Spawn Bounty Wagon for Player"))
 				{
 					FiberPool::Push([] {
@@ -228,6 +230,7 @@ namespace YimMenu::Submenus
 						Notifications::Show("Spawned Wagon", "Spawned Bounty Wagon for Player", NotificationType::Success);
 					});
 				};
+
 				if (ImGui::Button("Spawn Hunting Wagon for Player"))
 				{
 					FiberPool::Push([] {
@@ -260,10 +263,9 @@ namespace YimMenu::Submenus
 				drawPlayerList(!Features::_PopPlayerList.GetState());
 			}));
 
-			trolling->AddItem(std::make_shared<ImGuiItem>([] {
-				if (Features::_PopPlayerList.GetState())
-					ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("circus"_J));
 
 			AddCategory(std::move(trolling));
 		}
@@ -275,33 +277,33 @@ namespace YimMenu::Submenus
 				drawPlayerList(true);
 			}));
 
-			toxic->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
+			auto general = std::make_shared<Group>("General");
+			general->AddItem(std::make_shared<PlayerCommandItem>("kill"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("lightning"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
 
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("lightning"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
-			toxic->AddItem(std::make_shared<PlayerCommandItem>("circus"_J));
+			auto mount = std::make_shared<Group>("Mount");
+			mount->AddItem(std::make_shared<PlayerCommandItem>("kickhorse"_J));
+
+			toxic->AddItem(general);
+			toxic->AddItem(mount);
 
 			AddCategory(std::move(toxic));
 		}
 
 		{
-			auto kick = std::make_shared<Category>("Kick"); // would we ever find one?
+			auto kick = std::make_shared<Category>("Kick"); 
 
 			kick->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(true);
 			}));
 
-			kick->AddItem(std::make_shared<ImGuiItem>([] {
-				ImGui::Text(YimMenu::Players::GetSelected().GetName());
-			}));
+			kick->AddItem(std::make_shared<PlayerCommandItem>("splitkick"_J));
+			kick->AddItem(std::make_shared<PlayerCommandItem>("popkick"_J));
 
 			AddCategory(std::move(kick));
 		}

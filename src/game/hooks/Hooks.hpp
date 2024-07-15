@@ -1,7 +1,9 @@
 #pragma once
 #include <D3D12.h>
 #include <dxgi1_4.h>
+#include <network/InFrame.hpp> // has to be imported
 #include <vulkan/vulkan.h>
+
 
 
 namespace rage
@@ -17,7 +19,8 @@ namespace rage
 	class ServerMsg;
 	class ServerMsgData;
 	class ServerRPCSerializer;
-	class InFrame;
+	class scrProgram;
+	class scrThreadContext;
 }
 class CNetGamePlayer;
 enum class NetEventType;
@@ -56,6 +59,8 @@ namespace YimMenu::Hooks
 	namespace Script
 	{
 		extern bool RunScriptThreads(void* threads, int unk);
+		extern bool InitNativeTables(rage::scrProgram* program);
+		extern int ScriptVM(void* stack, void** globals, bool* globals_enabled, rage::scrProgram* program, rage::scrThreadContext* ctx);
 	}
 
 	namespace Anticheat
@@ -76,11 +81,12 @@ namespace YimMenu::Hooks
 		extern void ResetSyncNodes();
 		extern bool HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst);
 		extern int AddObjectToCreationQueue(void* mgr, eNetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
-		extern bool ReceiveNetMessage(void* netConnectionManager, void* a2, rage::InFrame* frame);
+		extern bool ReceiveNetMessage(void* a1, void* ncm, rage::netConnection::InFrame* frame);
 		extern bool HandlePresenceEvent(uint64_t a1, rage::rlGamerInfo* gamerInfo, unsigned int sender, const char** payload, const char* channel);
 		extern bool PPostMessage(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
 		extern bool SerializeServerRPC(rage::ServerRPCSerializer* ser, void* a2, const char* message, void* def, void* structure, const char* rpc_guid, void* a7);
 		extern bool ReceiveServerMessage(void* a1, rage::ServerMsg* a2); // doesn't receive all messages
+		extern bool ReceiveArrayUpdate(void* array, CNetGamePlayer* sender, rage::datBitBuffer* buffer, int size, int16_t cycle);
 	}
 
 	namespace Voice
@@ -95,6 +101,7 @@ namespace YimMenu::Hooks
 	namespace Misc
 	{
 		extern void ThrowFatalError(int code, int fileHash, int fileLine);
+		extern bool IsAnimSceneInScope(rage::netObject* scene, CNetGamePlayer* player, int* reason);
 	}
 
 	namespace Info
@@ -109,5 +116,10 @@ namespace YimMenu::Hooks
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
 		extern bool SendNetInfoToLobby(rage::rlGamerInfo* local_player, int64_t a2, int64_t a3, DWORD* a4);
+	}
+
+	namespace Toxic
+	{
+		extern unsigned int BroadcastNetArray(void* array, CNetGamePlayer* target, rage::datBitBuffer* buffer, std::uint16_t counter, std::uint32_t* elem_start);
 	}
 }

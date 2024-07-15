@@ -1,5 +1,5 @@
 #include "game/commands/PlayerCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 #include "util/SpawnObject.hpp"
 
@@ -12,7 +12,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{
-			Vector3 coords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(player.GetId()), TRUE, TRUE);
+			Vector3 coords = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(player.GetId()), true, true);
 			coords.z       = coords.z - 1.0f;
 			SpawnObject(0xF3D580D3, coords);
 		}

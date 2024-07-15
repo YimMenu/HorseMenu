@@ -11,7 +11,7 @@
 #include "game/frontend/GUI.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
-
+#include "game/backend/Self.hpp"
 
 namespace YimMenu::Features
 {
@@ -20,73 +20,35 @@ namespace YimMenu::Features
 
 namespace YimMenu
 {
-	static void UpdateSelfVars()
-	{
-		Self::PlayerPed = PLAYER::PLAYER_PED_ID();
-		Self::Id        = PLAYER::PLAYER_ID();
-		Self::Pos       = ENTITY::GET_ENTITY_COORDS(Self::PlayerPed, TRUE, TRUE);
-		Self::Rot       = ENTITY::GET_ENTITY_ROTATION(Self::PlayerPed, 2);
-
-		if (PED::IS_PED_IN_ANY_VEHICLE(Self::PlayerPed, TRUE))
-			Self::Veh = PED::GET_VEHICLE_PED_IS_IN(Self::PlayerPed, TRUE);
-		else
-			Self::Veh = 0;
-
-		if (PED::IS_PED_ON_MOUNT(Self::PlayerPed))
-			Self::Mount = PED::GET_MOUNT(Self::PlayerPed);
-		else if (ENTITY::DOES_ENTITY_EXIST(PED::_GET_LAST_MOUNT(Self::PlayerPed)))
-			Self::Mount = PED::_GET_LAST_MOUNT(Self::PlayerPed);
-		else if (ENTITY::DOES_ENTITY_EXIST(PLAYER::GET_MOUNT_OWNED_BY_PLAYER(Self::Id)))
-			Self::Mount = PLAYER::GET_MOUNT_OWNED_BY_PLAYER(Self::Id);
-		else
-			Self::Mount = 0;
-
-		Self::IsOnMount = PED::IS_PED_ON_MOUNT(Self::PlayerPed);
-	}
-
-	void UpdateSelectedVars()
-	{
-		Selected::Pos = ENTITY::GET_ENTITY_COORDS(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()), true, true);
-
-		Selected::Distance = MISC::GET_DISTANCE_BETWEEN_COORDS(Self::Pos.x,
-		    Self::Pos.y,
-		    Self::Pos.z,
-		    Selected::Pos.x,
-		    Selected::Pos.y,
-		    Selected::Pos.z,
-		    1);
-
-		Selected::current_health = ENTITY::GET_ENTITY_HEALTH(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()));
-		Selected::max_health = ENTITY::GET_ENTITY_MAX_HEALTH(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(Players::GetSelected().GetId()), false);
-		Selected::health_percentage = (float)Selected::current_health / Selected::max_health * 100.0f;
-	}
-
 	void SpectateTick()
 	{
-		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating
-		    && ENTITY::DOES_ENTITY_EXIST(Players::GetSelected().GetPed().GetHandle()))
+		if (g_SpectateId != Players::GetSelected().GetId() && g_Spectating)
 		{
 			g_SpectateId = Players::GetSelected().GetId();
-			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(TRUE, Players::GetSelected().GetPed().GetHandle());
+			NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, Players::GetSelected().GetPed().GetHandle());
 		}
 
-		if (g_Spectating && g_SpectateId == Players::GetSelected().GetId())
+		if (g_Spectating && g_Running)
 		{
+			if (!Players::GetSelected().IsValid() || !Players::GetSelected().GetPed())
+			{
+				STREAMING::CLEAR_FOCUS();
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::GetPed().GetHandle());
+				g_Spectating = false;
+				return;
+			}
+
 			auto playerPed = Players::GetSelected().GetPed().GetHandle();
 
 			if (!STREAMING::IS_ENTITY_FOCUS(playerPed))
 				STREAMING::SET_FOCUS_ENTITY(playerPed);
 
+			CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
+			CAM::_DISABLE_CINEMATIC_MODE_THIS_FRAME();
+
 			if (!NETWORK::NETWORK_IS_IN_SPECTATOR_MODE() && ENTITY::DOES_ENTITY_EXIST(playerPed))
 			{
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(TRUE, playerPed);
-			}
-			if (!Players::GetSelected().IsValid())
-			{
-				STREAMING::CLEAR_FOCUS();
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(FALSE, Self::PlayerPed);
-				g_Spectating = false;
-				Notifications::Show("Spectate", "Player is no longer in the session.\nSpectate mode disabled.", NotificationType::Warning);
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(true, playerPed);
 			}
 		}
 		else
@@ -94,7 +56,7 @@ namespace YimMenu
 			if (NETWORK::NETWORK_IS_IN_SPECTATOR_MODE())
 			{
 				STREAMING::CLEAR_FOCUS();
-				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(FALSE, Self::PlayerPed);
+				NETWORK::NETWORK_SET_IN_SPECTATOR_MODE(false, Self::GetPed().GetHandle());
 				CAM::_FORCE_LETTER_BOX_THIS_UPDATE();
 				CAM::_DISABLE_CINEMATIC_MODE_THIS_FRAME();
 			}
@@ -113,6 +75,7 @@ namespace YimMenu
 		if (!Features::_IsFirstLoadComplete.GetState())
 		{
 			Commands::GetCommand<BoolCommand>("detectspoofednames"_J)->SetState(true);
+			Commands::GetCommand<BoolCommand>("chathelper"_J)->SetState(true);
 			Features::_IsFirstLoadComplete.SetState(true);
 		}
 	}
@@ -120,53 +83,54 @@ namespace YimMenu
 	void FeatureLoop()
 	{
 		TryFirstLoad();
-
+		Commands::EnableLoopedCommands();
 		while (true)
 		{
-			Players::Tick();
-			UpdateSelfVars();
-			UpdateSelectedVars();
-			*Pointers.RageSecurityInitialized = false;
-			*Pointers.ExplosionBypass         = true;
-			Commands::RunLoopedCommands();
-			g_HotkeySystem.FeatureCommandsHotkeyLoop();
 			SpectateTick();
-
-			ScriptMgr::Yield();
+			*Pointers.RageSecurityInitialized = false;
+			if (g_Running)
+			{
+				Players::Tick();
+				*Pointers.ExplosionBypass         = true;
+				Commands::RunLoopedCommands();
+				g_HotkeySystem.FeatureCommandsHotkeyLoop();
+				Self::Update();
+				ScriptMgr::Yield();
+			}
 		}
 	}
 
 	void BlockControlsForUI()
 	{
-		while (true)
+		while (g_Running)
 		{
 			if (GUI::IsOpen())
 			{
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_LOOK_LR, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_LOOK_UD, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_AIM, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_MELEE_ATTACK, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_DRIVE_LOOK, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_AIM, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_ATTACK, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_ATTACK2, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_AIM, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_ATTACK, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_ATTACK2, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_GUN_LR, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_GUN_UD, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_DRIVE_LOOK2, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK2, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_NEXT_WEAPON, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_PREV_WEAPON, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_AIM, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK2, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK2, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_AIM, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_ATTACK, TRUE);
-				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_ATTACK2, TRUE);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_LOOK_LR, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_LOOK_UD, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_AIM, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_MELEE_ATTACK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_DRIVE_LOOK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_AIM, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_ATTACK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_ATTACK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_AIM, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_ATTACK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_ATTACK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_GUN_LR, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_HORSE_GUN_UD, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_DRIVE_LOOK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_ATTACK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_NEXT_WEAPON, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_PREV_WEAPON, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_AIM, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_CAR_ATTACK2, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_AIM, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_ATTACK, 1);
+				PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_VEH_BOAT_ATTACK2, 1);
 			}
 
 			ScriptMgr::Yield();
@@ -175,7 +139,7 @@ namespace YimMenu
 
 	void ContextMenuTick()
 	{
-		while (true)
+		while (g_Running)
 		{
 			ContextMenu::GameTick();
 			ScriptMgr::Yield();

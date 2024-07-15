@@ -3,7 +3,7 @@
 #include "core/commands/Commands.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
 #include "util/teleport.hpp"
@@ -11,67 +11,34 @@
 
 namespace YimMenu
 {
-	inline ContextOperationsMenu ContextMenuDefault = ContextOperationsMenu("Default", {ContextMenuOperation{"Error", [&](Entity) {
-
-	                                                                                                         }}});
+	inline ContextOperationsMenu ContextMenuDefault = ContextOperationsMenu("Default", {ContextMenuOperation{"Error", [&](Entity) {}}});
 
 	inline ContextOperationsMenu ContextMenuPlayers = ContextOperationsMenu("Players",
 	    {
 	        ContextMenuOperation{"Set Selected",
 	            [&](Entity entity) {
-		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
-			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
-				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
-				            {
-					            YimMenu::Players::SetSelected(id);
-					            break;
-				            }
+		            YimMenu::Players::SetSelected(entity.As<Ped>().GetPlayer());
 	            }},
 	        {"Teleport to",
 	            [&](Entity entity) {
-		            Teleport::TeleportEntity(Self::PlayerPed, entity.GetPosition(), false);
+		            Teleport::TeleportEntity(Self::GetPed().GetHandle(), entity.GetPosition(), false);
 	            }},
 	        {"Teleport Behind",
 	            [&](Entity entity) {
 		            auto playerCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(entity.GetHandle(), 0, -10, 0);
-		            if (Teleport::TeleportEntity(Self::PlayerPed, {playerCoords.x, playerCoords.y, playerCoords.z}, true))
-			            g_Spectating = false;
+		            Teleport::TeleportEntity(Self::GetPed().GetHandle(), {playerCoords.x, playerCoords.y, playerCoords.z}, true);
 	            }},
 	        {"Explode",
 	            [&](Entity entity) {
-		            int playerId = -1;
-		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
-			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
-				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
-				            {
-					            playerId = id;
-					            break;
-				            }
-		            Commands::GetCommand<PlayerCommand>("explode"_J)->Call(playerId);
+		            Commands::GetCommand<PlayerCommand>("explode"_J)->Call(entity.As<Ped>().GetPlayer());
 	            }},
 	        {"Set Defensive",
 	            [&](Entity entity) {
-		            int playerId = -1;
-		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
-			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
-				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
-				            {
-					            playerId = id;
-					            break;
-				            }
-		            Commands::GetCommand<PlayerCommand>("defensive"_J)->Call(playerId);
+		            Commands::GetCommand<PlayerCommand>("defensive"_J)->Call(entity.As<Ped>().GetPlayer());
 	            }},
 	        {"Set Offensive",
 	            [&](Entity entity) {
-		            int playerId = -1;
-		            for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
-			            if (plyr.IsValid() && plyr.GetPed().GetPointer<void*>())
-				            if (entity == PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id))
-				            {
-					            playerId = id;
-					            break;
-				            }
-		            Commands::GetCommand<PlayerCommand>("offensive"_J)->Call(playerId);
+		            Commands::GetCommand<PlayerCommand>("offensive"_J)->Call(entity.As<Ped>().GetPlayer());
 	            }},
 	    });
 
@@ -84,7 +51,7 @@ namespace YimMenu
 	            }},
 	        {"Kill",
 	            [&](Entity entity) {
-		            ENTITY::SET_ENTITY_HEALTH(entity.GetHandle(), 0, 0);
+		            entity.Kill();
 	            }},
 	        {"Apply Force",
 	            [&](Entity entity) {

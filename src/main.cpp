@@ -1,5 +1,4 @@
 #include "common.hpp"
-#include "core/byte_patch_manager/byte_patch_manager.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/filemgr/FileMgr.hpp"
 #include "core/frontend/Notifications.hpp"
@@ -10,6 +9,7 @@
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/backend/NativeHooks.hpp"
 #include "game/bigfeatures/CustomTeleport.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/GUI.hpp"
@@ -38,8 +38,6 @@ namespace YimMenu
 		if (!Renderer::Init())
 			goto unload;
 
-		Byte_Patch_Manager::Init();
-
 		Hooking::Init();
 
 		ScriptMgr::Init();
@@ -56,6 +54,10 @@ namespace YimMenu
 
 		Notifications::Show("HorseMenu", "Loaded succesfully", NotificationType::Success);
 
+#ifndef NDEBUG
+		LOG(WARNING) << "Debug Build. Switch to RelWithDebInfo or Release build configurations to have a more stable experience.";
+#endif
+
 		while (g_Running)
 		{
 			// Needed incase UI is malfunctioning or for emergencies
@@ -70,6 +72,9 @@ namespace YimMenu
 
 		LOG(INFO) << "Unloading";
 
+		NativeHooks::Destroy();
+		LOG(INFO) << "NativeHooks Uninitialized";
+
 		ScriptMgr::Destroy();
 		LOG(INFO) << "ScriptMgr Uninitialized";
 
@@ -81,7 +86,6 @@ namespace YimMenu
 	unload:
 		Hooking::Destroy();
 		Renderer::Destroy();
-		Pointers.Restore();
 
 		LogHelper::Destroy();
 

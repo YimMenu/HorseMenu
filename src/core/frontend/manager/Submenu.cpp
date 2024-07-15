@@ -30,7 +30,7 @@ namespace YimMenu
 				if (!active)
 					ImGui::PushStyleColor(ImGuiCol_Button, color);
 
-				if (ImGui::Button(category->m_Name.data(), ImVec2(75, 35)))
+				if (ImGui::Button(category->m_Name.data(), ImVec2(category->GetLength(), 35)))
 				{
 					SetActiveCategory(category);
 				}

@@ -9,11 +9,3 @@ namespace YimMenu::Submenus
 		Self();
 	};
 }
-
-namespace YimMenu::SelfStorage
-{
-	/* WHISTLE MODIFIERS */
-	inline float pitch;
-	inline float clarity;
-	inline float shape;
-}

@@ -1,6 +1,5 @@
 #include "core/commands/Command.hpp"
-#include "game/rdr/Natives.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "core/frontend/Notifications.hpp"
 
 namespace YimMenu::Features
@@ -11,14 +10,20 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-            if (ENTITY::DOES_ENTITY_EXIST(Self::Mount))
-				if (PED::GET_MOUNT(Self::PlayerPed) != Self::Mount)
-                	ENTITY::SET_ENTITY_COORDS(Self::Mount, Self::Pos.x, Self::Pos.y, Self::Pos.z, true, false, false, true);    
-				else
-                	Notifications::Show("Teleport", "Already on mount", NotificationType::Warning);
+			if (Self::GetMount())
+			{
+				Notifications::Show("Teleport", "Already on mount", NotificationType::Warning);
+				return;
+			}
 
-            else
-                Notifications::Show("Teleport", "No current mount found", NotificationType::Error);
+			if (auto last_mount = Self::GetPed().GetLastMount())
+			{
+				last_mount.SetPosition(Self::GetPed().GetPosition());
+			}
+			else
+			{
+				Notifications::Show("Teleport", "No current mount found", NotificationType::Error);
+			}
 		}
 	};
 

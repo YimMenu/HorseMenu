@@ -5,16 +5,19 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <rage/atArray.hpp>
-#include <rage/pools.hpp>
+#include <rage/vector.hpp>
+#include <script/scrNativeHandler.hpp>
 #include <vulkan/vulkan.h>
 #include <windows.h>
 
-#include <script/scrNativeHandler.hpp>
+
 
 class CNetGamePlayer;
 class CVehicle;
 class CPed;
 class CNetworkPlayerMgr;
+class CNetworkObjectMgr;
+class PoolEncryption;
 
 namespace rage
 {
@@ -27,7 +30,14 @@ namespace rage
 	class netPeerAddress;
 	class rlGamerHandle;
 	class datBitBuffer;
+	class fwEntity;
+	class scrProgram;
 }
+
+class CAnimScene;
+class CEventInventoryItemPickedUp;
+class CEventGroup;
+class CNetworkScSession;
 
 namespace YimMenu
 {
@@ -35,20 +45,26 @@ namespace YimMenu
 	{
 		using GetRendererInfo  = RenderingInfo* (*)();
 		using GetNativeHandler = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
-		using FixVectors       = void (*)(rage::scrNativeCallContext* callCtx);
+		using FixVectors       = void (*)(rage::scrNativeCallContext* call_ctx);
 		using SendEventAck = void (*)(rage::netEventMgr* eventMgr, void* event, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, int eventIndex, int handledBitset);
 		using HandleToPtr               = void* (*)(int handle);
 		using PtrToHandle               = int (*)(void* pointer);
 		using GetLocalPed               = CPed* (*)();
 		using GetSyncTreeForType        = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
 		using GetNetworkPlayerFromPid   = CNetGamePlayer* (*)(uint8_t player);
-		using WorldToScreen             = bool (*)(float* worldCoords, float* outX, float* outY);
+		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
 		using GetNetObjectById          = rage::netObject* (*)(uint16_t id);
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
-		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* addr, int connectionId, void* data, int size, int flags);
-		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msgId, void* data, int size, int flags, void* unk);
+		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
+		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, int connection_id, void* data, int size, int flags, void* unk);
 		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
-		using SendNetInfoToLobby = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
+		using SendNetInfoToLobby     = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
+		using ReadBitBufferArray     = bool (*)(rage::datBitBuffer* buffer, PVOID read, int bits, int unk);
+		using WriteBitBufferArray    = bool (*)(rage::datBitBuffer* buffer, void* val, int bits, int unk);
+		using ReadBitBufferString    = bool (*)(rage::datBitBuffer* buffer, char* read, int bits);
+		using GetAnimSceneFromHandle = CAnimScene** (*)(CAnimScene** scene, int handle);
+		using InventoryEventConstructor = CEventInventoryItemPickedUp* (*)(CEventInventoryItemPickedUp*, std::uint32_t reward_hash, std::uint32_t model_hash, bool a4, bool a5, void* a6);
+		using TriggerWeaponDamageEvent = void (*)(rage::netObject* source, rage::netObject* target, rage::netObject* unk, rage::fvector3* position, void* a5, void* a6, bool override_dmg, std::uint32_t* weapon_hash, float damage, float f10, int tire_index, int suspension_index, std::uint64_t flags, void* action_result, bool hit_entity_weapon, bool hit_ammo_attachment, bool silenced, bool a18, bool a19, int a20, int a21, int a22, int a23, int a24, int a25);
 	};
 
 	struct PointerData
@@ -60,21 +76,29 @@ namespace YimMenu
 		Functions::GetNativeHandler GetNativeHandler;
 		Functions::FixVectors FixVectors;
 		rage::atArray<rage::scrThread*>* ScriptThreads;
+		rage::scrProgram** ScriptPrograms;
 		PVOID RunScriptThreads;
 		rage::scrThread** CurrentScriptThread;
+		PVOID ScriptVM;
 		Functions::GetLocalPed GetLocalPed;
 		Functions::SendPacket SendPacket;
 		Functions::QueuePacket QueuePacket;
 		PVOID HandlePresenceEvent;
 		Functions::PostPresenceMessage PostPresenceMessage;
 		Functions::SendNetInfoToLobby SendNetInfoToLobby;
-		void* ScriptProgramTable; // TODO: Reverse scrProgramTable
+		Functions::ReadBitBufferArray ReadBitBufferArray;
+		Functions::WriteBitBufferArray WriteBitBufferArray;
+		Functions::ReadBitBufferString ReadBitBufferString;
+		PVOID InitNativeTables;
+		Functions::TriggerWeaponDamageEvent TriggerWeaponDamageEvent;
+		CNetworkScSession** ScSession;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;
 		PoolEncryption* VehiclePool;
 		PoolEncryption* PickupPool;
 		uint32_t (*FwScriptGuidCreateGuid)(void*);
+		CNetworkObjectMgr** NetworkObjectMgr;
 
 		// Security
 		PVOID SendMetric;
@@ -97,6 +121,7 @@ namespace YimMenu
 		PVOID SendComplaint;
 		PVOID ReceiveServerMessage;
 		PVOID SerializeServerRPC;
+		PVOID ReceiveArrayUpdate;
 
 		// Player Stuff
 		PVOID PlayerHasJoined;
@@ -113,9 +138,15 @@ namespace YimMenu
 		Functions::WorldToScreen WorldToScreen;
 		Functions::GetNetObjectById GetNetObjectById;
 		Functions::RequestControlOfNetObject RequestControlOfNetObject;
+		Functions::GetAnimSceneFromHandle GetAnimSceneFromHandle;
 
 		// Misc
 		PVOID ThrowFatalError;
+		PVOID IsAnimSceneInScope;
+		PVOID BroadcastNetArray;
+		std::uint8_t* NetArrayPatch;
+		Functions::InventoryEventConstructor InventoryEventConstructor;
+		CEventGroup** EventGroupNetwork;
 
 		// Vulkan
 		PVOID QueuePresentKHR;      //Init in renderer
@@ -144,7 +175,6 @@ namespace YimMenu
 		PVOID NetworkRequest;
 
 		CNetworkPlayerMgr* NetworkPlayerMgr;
-		void* NetworkObjectMgr;
 
 		PVOID WritePlayerHealthData;
 

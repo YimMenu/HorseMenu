@@ -3,7 +3,7 @@
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/bigfeatures/CustomTeleport.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "util/Math.hpp"
 #include "util/Teleport.hpp"
@@ -11,17 +11,18 @@
 
 namespace YimMenu::Submenus
 {
-	Telelocation GetLocationPlayerIsClosestTo()
+	static Telelocation GetLocationPlayerIsClosestTo()
 	{
 		if (!Pointers.GetLocalPed)
 			return {};
 
 		float distance = 500;
 		Telelocation closestLocation{};
-		//saved_locations_filtered_list can be used to get a joint list of all categories when the filter is empty.
+
+		// saved_locations_filtered_list can be used to get a joint list of all categories when the filter is empty.
 		for (auto& loc : CustomTeleport::SavedLocationsFilteredList())
 		{
-			float newDistance = Math::DistanceBetweenVectors(Self::Pos, {loc.x, loc.y, loc.z});
+			float newDistance = Self::GetPed().GetPosition().GetDistance({loc.x, loc.y, loc.z});
 
 			if (newDistance < distance)
 				closestLocation = loc, distance = newDistance;
@@ -30,11 +31,10 @@ namespace YimMenu::Submenus
 		return closestLocation;
 	}
 
-	float GetDistanceToTelelocation(Telelocation t)
+	static float GetDistanceToTelelocation(Telelocation t)
 	{
-		return Math::DistanceBetweenVectors(Vector3(t.x, t.y, t.z), Self::Pos);
+		return rage::fvector3(t.x, t.y, t.z).GetDistance(Self::GetPed().GetPosition());
 	}
-
 
 	void RenderCustomTeleport()
 	{
@@ -75,7 +75,7 @@ namespace YimMenu::Submenus
 		InputTextWithHint("Location name", "New location", &NewLocationName).Draw();
 		ImGui::PopItemWidth();
 
-		if (ImGui::Button("Save current location")) //Button widget still crashes
+		if (ImGui::Button("Save current location")) // Button widget still crashes
 		{
 			FiberPool::Push([=] {
 				if (NewLocationName.empty())
@@ -89,11 +89,11 @@ namespace YimMenu::Submenus
 				else
 				{
 					Telelocation teleportLocation;
-					Entity teleportEntity = Self::PlayerPed;
-					if (Self::Veh != 0)
-						teleportEntity = Self::Veh;
-					else if (Self::IsOnMount)
-						teleportEntity = Self::Mount;
+					Entity teleportEntity = Self::GetPed();
+					if (auto vehicle = Self::GetVehicle())
+						teleportEntity = vehicle;
+					else if (auto mount = Self::GetMount())
+						teleportEntity = mount;
 
 					auto coords            = teleportEntity.GetPosition();
 					teleportLocation.name  = NewLocationName;
@@ -133,7 +133,7 @@ namespace YimMenu::Submenus
 		ImGui::SameLine();
 		ImGui::BeginGroup();
 		ImGui::Text("Locations");
-		if (ImGui::BeginListBox("##Telelocations", {200, -1})) //Need automatic dimensions instead of hard coded
+		if (ImGui::BeginListBox("##telelocations", {200, -1})) // Need automatic dimensions instead of hard coded
 		{
 			if (CustomTeleport::GetAllSavedLocations().find(category) != CustomTeleport::GetAllSavedLocations().end())
 			{
@@ -158,7 +158,7 @@ namespace YimMenu::Submenus
 							{
 								FiberPool::Push([l] {
 									rage::fvector3 l_ = {l.x, l.y, l.z};
-									YimMenu::Teleport::TeleportEntity(Self::PlayerPed, l_, false);
+									YimMenu::Teleport::TeleportEntity(Self::GetPed().GetHandle(), l_, false);
 								});
 							}
 						}
@@ -186,15 +186,13 @@ namespace YimMenu::Submenus
 	    Submenu::Submenu("Teleport")
 	{
 		auto main      = std::make_shared<Category>("Main");
-		auto columns   = std::make_shared<Column>(2);
-		auto miscGroup = std::make_shared<Group>("Misc", GetListBoxDimensions());
+		auto miscGroup = std::make_shared<Group>("Misc");
 
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptowaypoint"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptomount"_J));
 		miscGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 
-		columns->AddItem(miscGroup);
-		main->AddItem(columns);
+		main->AddItem(miscGroup);
 
 		auto customteleport = std::make_shared<Category>("Saved");
 		customteleport->AddItem(std::make_shared<ImGuiItem>([] {
