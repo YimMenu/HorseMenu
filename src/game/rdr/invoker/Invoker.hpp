@@ -13,13 +13,13 @@ namespace YimMenu
 	public:
 		constexpr CustomCallContext()
 		{
-			m_return_value = &m_return_stack[0];
-			m_args         = &m_arg_stack[0];
+			m_ReturnValue = &m_ReturnStack[0];
+			m_Args         = &m_ArgStack[0];
 		}
 
 	private:
-		uint64_t m_return_stack[10];
-		uint64_t m_arg_stack[40];
+		uint64_t m_ReturnStack[10];
+		uint64_t m_ArgStack[40];
 	};
 
 	class NativeInvoker
@@ -50,13 +50,13 @@ namespace YimMenu
 		template<typename T>
 		constexpr void PushArg(T&& value)
 		{
-			m_CallContext.push_arg(std::forward<T>(value));
+			m_CallContext.PushArg(std::forward<T>(value));
 		}
 
 		template<typename T>
 		constexpr T& GetReturnValue()
 		{
-			return *m_CallContext.get_return_value<T>();
+			return *m_CallContext.GetReturnValue<T>();
 		}
 
 	public:

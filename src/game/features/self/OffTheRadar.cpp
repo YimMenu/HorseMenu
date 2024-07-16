@@ -36,12 +36,12 @@ namespace YimMenu::Features
 	// TODO: maybe add support for removing native hooks dynamically?
 	void DECOR_SET_INT(rage::scrNativeCallContext* ctx)
 	{
-		int flags = ctx->get_arg<int>(2);
-		if (Joaat(ctx->get_arg<char*>(1)) == "MP_HUD_Bits"_J)
+		int flags = ctx->GetArg<int>(2);
+		if (Joaat(ctx->GetArg<char*>(1)) == "MP_HUD_Bits"_J)
 		{
 			if (_OffTheRadar.GetState())
 				flags |= 64;
 		}
-		DECORATOR::DECOR_SET_INT(ctx->get_arg<ScrHandle>(0), ctx->get_arg<const char*>(1), flags);
+		DECORATOR::DECOR_SET_INT(ctx->GetArg<ScrHandle>(0), ctx->GetArg<const char*>(1), flags);
 	}
 }

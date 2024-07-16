@@ -15,19 +15,19 @@ namespace YimMenu::Submenus
 {
 	void GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH(rage::scrNativeCallContext* ctx)
 	{
-		if (ctx->get_arg<int>(0) == "mp_intro"_J)
+		if (ctx->GetArg<int>(0) == "mp_intro"_J)
 		{
-			ctx->set_return_value<int>(1);
+			ctx->SetReturnValue<int>(1);
 		}
 		else
 		{
-			ctx->set_return_value<int>(NETWORK::NETWORK_AWARD_HAS_REACHED_MAXCLAIM(ctx->get_arg<int>(0)));
+			ctx->SetReturnValue<int>(NETWORK::NETWORK_AWARD_HAS_REACHED_MAXCLAIM(ctx->GetArg<int>(0)));
 		}
 	}
 
 	void _GET_META_PED_TYPE(rage::scrNativeCallContext* ctx)
 	{
-		ctx->set_return_value<int>(4);
+		ctx->SetReturnValue<int>(4);
 	}
 
 	static bool IsPedModelInList(std::string model)

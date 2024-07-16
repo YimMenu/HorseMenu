@@ -121,17 +121,17 @@ namespace
 			LOG_FIELD(CPedAttachData, m_AttachObjectId);
 			break;
 		case "CVehicleGadgetDataNode"_J:
-			LOG_FIELD_B(CVehicleGadgetNodeData, m_has_position);
-			LOG_FIELD(CVehicleGadgetNodeData, m_position[0]);
-			LOG_FIELD(CVehicleGadgetNodeData, m_position[1]);
-			LOG_FIELD(CVehicleGadgetNodeData, m_position[2]);
-			LOG_FIELD(CVehicleGadgetNodeData, m_position[3]);
-			LOG_FIELD(CVehicleGadgetNodeData, m_num_gadgets);
-			if (node->GetData<CVehicleGadgetNodeData>().m_num_gadgets <= 2)
+			LOG_FIELD_B(CVehicleGadgetDataNode, m_HasPosition);
+			LOG_FIELD(CVehicleGadgetDataNode, m_Position[0]);
+			LOG_FIELD(CVehicleGadgetDataNode, m_Position[1]);
+			LOG_FIELD(CVehicleGadgetDataNode, m_Position[2]);
+			LOG_FIELD(CVehicleGadgetDataNode, m_Position[3]);
+			LOG_FIELD(CVehicleGadgetDataNode, m_NumGadgets);
+			if (node->GetData<CVehicleGadgetDataNode>().m_NumGadgets <= 2)
 			{
-				for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
+				for (int i = 0; i < node->GetData<CVehicleGadgetDataNode>().m_NumGadgets; i++)
 				{
-					LOG_FIELD(CVehicleGadgetNodeData, m_gadgets[i].m_type);
+					LOG_FIELD(CVehicleGadgetDataNode, m_Gadgets[i].m_Type);
 				}
 			}
 			break;

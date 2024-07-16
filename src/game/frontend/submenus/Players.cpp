@@ -285,6 +285,9 @@ namespace YimMenu::Submenus
 			general->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 			general->AddItem(std::make_shared<PlayerCommandItem>("maxhonor"_J));
 			general->AddItem(std::make_shared<PlayerCommandItem>("minhonor"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("startparlay"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("endparlay"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("increasebounty"_J));
 
 			auto mount = std::make_shared<Group>("Mount");
 			mount->AddItem(std::make_shared<PlayerCommandItem>("kickhorse"_J));

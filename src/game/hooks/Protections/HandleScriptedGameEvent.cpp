@@ -62,7 +62,22 @@ namespace YimMenu::Hooks
 		{
 			if (event->m_Data[11] && event->m_Data[4] == 2)
 			{
+				Notifications::Show("Protections", std::format("Blocked press charges from {}", src->GetName()), NotificationType::Warning);
 				return true; // block pressing charges
+			}
+			break;
+		}
+		case ScriptEvent::SCRIPT_EVENT_PARLEY:
+		{
+			if (event->m_Data[4] == 3)
+			{
+				Notifications::Show("Protections", std::format("Blocked start parlay from {}", src->GetName()), NotificationType::Warning);
+				return true;
+			}
+			if (event->m_Data[4] == 5)
+			{
+				Notifications::Show("Protections", std::format("Blocked end parlay from {}", src->GetName()), NotificationType::Warning);
+				return true;
 			}
 		}
 		}
