@@ -67,7 +67,7 @@ namespace YimMenu::Hooks
 			}
 			break;
 		}
-		case ScriptEvent::SCRIPT_EVENT_PARLEY:
+		case ScriptEvent::SCRIPT_EVENT_PARLAY:
 		{
 			if (event->m_Data[4] == 3)
 			{
@@ -79,6 +79,7 @@ namespace YimMenu::Hooks
 				Notifications::Show("Protections", std::format("Blocked end parlay from {}", src->GetName()), NotificationType::Warning);
 				return true;
 			}
+			break;
 		}
 		}
 

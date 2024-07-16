@@ -6,15 +6,15 @@
 
 namespace YimMenu::Features
 {
-	void ParlayStart(int bits)
+	void ParlayStart(Player player)
 	{
 		uint64_t data[7]{};
-		data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_PARLEY);
-		data[1] = Self::GetPlayer().GetId();
+		data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_PARLAY);
+		data[1] = player.GetId();
 		data[4] = 3;
 		data[5] = 11;
 		data[6] = 9;
-		Scripts::SendScriptEvent(data, 9, bits);
+		Scripts::SendScriptEvent(data, 9, 10, 1 << player.GetId());
 	}
 	
 	class StartParlay : public PlayerCommand
@@ -23,7 +23,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{
-			ParlayStart(1 << player.GetId());
+			ParlayStart(player);
 		}
 	};
 

@@ -17,13 +17,13 @@ namespace YimMenu::Features
 			data[4] = 2;
 			data[5] = "PERSONA_HONOR_ACTION__MISSION_NEG_FIFTY"_J;
 			data[6] = 1;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__MISSION_NEG_FORTYFIVE"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__MURDER_RAMPAGE"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__MURDER_BUTCHER"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			ScriptMgr::Yield(40ms);
 		}
 	}

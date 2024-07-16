@@ -46,6 +46,20 @@ namespace YimMenu
 			return GetInstance().m_PlayerDatas[idx];
 		}
 
+		static Player GetRandomPlayer()
+		{
+			auto& players = GetPlayers();
+
+			if (players.empty())
+			{
+				return Player((uint8_t)0);
+			}
+
+			uint8_t random = static_cast<uint8_t>(rand() % players.size());
+			auto it = std::next(players.begin(), random);
+			return it->second;
+		}
+
 	private:
 		static Players& GetInstance()
 		{

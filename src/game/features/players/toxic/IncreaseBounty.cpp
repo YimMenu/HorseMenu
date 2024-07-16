@@ -6,11 +6,11 @@
 
 namespace YimMenu::Features
 {
-	void AddBounty(int bits)
+	void AddBounty(Player player)
 	{
 		uint64_t data[13]{};
 		data[0]  = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_NOTORIETY_PRESS_CHARGES);
-		data[1]  = Self::GetPlayer().GetId();
+		data[1]  = player.GetId();
 		data[4]  = 2;
 		data[5]  = 5;
 		data[6]  = 9;
@@ -21,7 +21,7 @@ namespace YimMenu::Features
 		{
 			for (int j = 0; j < 10; ++j)
 			{
-				Scripts::SendScriptEvent(data, 13, bits);
+				Scripts::SendScriptEvent(data, 13, 7, 1 << player.GetId());
 			}
 
 			ScriptMgr::Yield();

@@ -9,12 +9,12 @@ namespace YimMenu::Features
 	void ParlayEnd(int bits)
 	{
 		uint64_t data[7]{};
-		data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_PARLEY);
+		data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_PARLAY);
 		data[1] = Self::GetPlayer().GetId();
 		data[4] = 5;
 		data[5] = 11;
 		data[6] = 9;
-		Scripts::SendScriptEvent(data, 9, bits);
+		Scripts::SendScriptEvent(data, 9, 10, bits);
 	}
 
 	class EndParlay : public PlayerCommand

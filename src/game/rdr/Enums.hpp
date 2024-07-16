@@ -1381,7 +1381,8 @@ enum class LassoFlags
 
 enum class ScriptEvent
 {
-	SCRIPT_EVENT_PARLEY                            = 28,
+	SCRIPT_EVENT_TICKER_MESSAGE					   = 0,
+	SCRIPT_EVENT_PARLAY                            = 28,
 	SCRIPT_EVENT_NOTORIETY_PRESS_CHARGES           = 35,
 	SCRIPT_EVENT_NOTORIETY_FORCE_PASSIVE           = 36,
 	SCRIPT_EVENT_NOTORIETY_FORCE_NOT_PASSIVE_HORSE = 37,

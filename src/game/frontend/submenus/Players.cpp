@@ -288,6 +288,9 @@ namespace YimMenu::Submenus
 			general->AddItem(std::make_shared<PlayerCommandItem>("startparlay"_J));
 			general->AddItem(std::make_shared<PlayerCommandItem>("endparlay"_J));
 			general->AddItem(std::make_shared<PlayerCommandItem>("increasebounty"_J));
+			general->AddItem(std::make_shared<PlayerCommandItem>("sendticker"_J));
+			//general->AddItem(std::make_shared<BoolCommandItem>("randomsender"_J));
+			general->AddItem(std::make_shared<ListCommandItem>("tickermessage"_J, "Message"));
 
 			auto mount = std::make_shared<Group>("Mount");
 			mount->AddItem(std::make_shared<PlayerCommandItem>("kickhorse"_J));
