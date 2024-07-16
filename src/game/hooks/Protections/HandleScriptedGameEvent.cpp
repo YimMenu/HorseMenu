@@ -60,10 +60,10 @@ namespace YimMenu::Hooks
 		}
 		case ScriptEvent::SCRIPT_EVENT_NOTORIETY_PRESS_CHARGES:
 		{
-			if (event->m_Data[11] && event->m_Data[4] == 2)
+			if (event->m_Data[11] && event->m_Data[4] == 2 || event->m_Data[4] == 3)
 			{
 				Notifications::Show("Protections", std::format("Blocked press charges from {}", src->GetName()), NotificationType::Warning);
-				return true; // block pressing charges
+				return true;
 			}
 			break;
 		}
