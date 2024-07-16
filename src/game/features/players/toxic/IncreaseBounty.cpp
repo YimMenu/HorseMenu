@@ -16,7 +16,16 @@ namespace YimMenu::Features
 		data[6]  = 9;
 		data[11] = 1;
 		data[12] = 1;
-		Scripts::SendScriptEvent(data, 13, bits);
+
+		for (int i = 0; i < 10; ++i)
+		{
+			for (int j = 0; j < 10; ++j)
+			{
+				Scripts::SendScriptEvent(data, 13, bits);
+			}
+
+			ScriptMgr::Yield();
+		}
 	}
 	
 	class IncreaseBounty : public PlayerCommand
