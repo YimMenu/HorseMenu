@@ -60,26 +60,26 @@ namespace YimMenu::Hooks
 
 		switch (presence_hash)
 		{
-		case (uint32_t)ePresenceEvents::PRESENCE_ADMIN_JOIN_EVENT:
+		case (uint32_t)PresenceEvents::PRESENCE_ADMIN_JOIN_EVENT:
 		{
 			Notifications::Show("Presence Event", std::string("A Rockstar Games Admin ").append(sender_str).append(" is joining your game!"), NotificationType::Warning);
 			LOG(WARNING) << "A Rockstar Games Admin(" << sender_str << ")"
 			             << "is joining your game";
 			break;
 		}
-		case (uint32_t)ePresenceEvents::PRESENCE_TEXT_MESSAGE:
+		case (uint32_t)PresenceEvents::PRESENCE_TEXT_MESSAGE:
 		{
 			Notifications::Show("Presence Event", std::string("Blocked Text Message from ").append(sender_str), NotificationType::Warning);
 			LOG(WARNING) << "Blocked Text Message from " << sender_str;
 			return true;
 		}
-		case (uint32_t)ePresenceEvents::PRESENCE_JOIN_REQUEST:
+		case (uint32_t)PresenceEvents::PRESENCE_JOIN_REQUEST:
 		{
 			Notifications::Show("Presence Event", std::string(sender_str).append(" is joining"), NotificationType::Warning);
 			LOG(WARNING) << "Received Join Request from " << sender_str;
 			break;
 		}
-		case (uint32_t)ePresenceEvents::PRESENCE_STAT_UPDATE:
+		case (uint32_t)PresenceEvents::PRESENCE_STAT_UPDATE:
 		{
 			Notifications::Show("Presence Event", std::string("Received Stat Update from ").append(sender_str), NotificationType::Warning);
 			LOG(WARNING) << "Received Stat Update from " << sender_str;

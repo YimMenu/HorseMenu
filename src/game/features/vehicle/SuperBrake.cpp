@@ -18,7 +18,7 @@ namespace YimMenu::Features
 				return;
 			}
 
-			if (PAD::IS_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_VEH_BRAKE) || PAD::IS_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_VEH_HANDBRAKE))
+			if (PAD::IS_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_VEH_BRAKE) || PAD::IS_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_VEH_HANDBRAKE))
 			{
 				VEHICLE::SET_VEHICLE_FORWARD_SPEED(YimMenu::Self::GetVehicle().GetHandle(), 0);
 			}

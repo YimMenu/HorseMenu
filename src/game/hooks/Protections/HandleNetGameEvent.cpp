@@ -14,15 +14,15 @@
 
 namespace
 {
-	bool IsVehicleType(eNetObjType type)
+	bool IsVehicleType(NetObjType type)
 	{
 		switch (type)
 		{
-		case eNetObjType::Automobile:
-		case eNetObjType::Bike:
-		case eNetObjType::Heli:
-		case eNetObjType::DraftVeh:
-		case eNetObjType::Boat: return true;
+		case NetObjType::Automobile:
+		case NetObjType::Bike:
+		case NetObjType::Heli:
+		case NetObjType::DraftVeh:
+		case NetObjType::Boat: return true;
 		}
 
 		return false;
@@ -105,7 +105,7 @@ namespace YimMenu::Hooks
 			auto net_id = new_buffer.Read<uint16_t>(13);
 			if (auto object = Pointers.GetNetObjectById(net_id))
 			{
-				if (!IsVehicleType((eNetObjType)object->m_ObjectType))
+				if (!IsVehicleType((NetObjType)object->m_ObjectType))
 				{
 					LOG(WARNING) << "Blocked mismatched NETWORK_DESTROY_VEHICLE_LOCK_EVENT entity from " << sourcePlayer->GetName();
 					Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);

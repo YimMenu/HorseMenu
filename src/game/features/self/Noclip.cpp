@@ -5,7 +5,7 @@
 
 namespace YimMenu::Features
 {
-	static constexpr eNativeInputs controls[] = {eNativeInputs::INPUT_SPRINT, eNativeInputs::INPUT_MOVE_UP_ONLY, eNativeInputs::INPUT_MOVE_DOWN_ONLY, eNativeInputs::INPUT_MOVE_LEFT_ONLY, eNativeInputs::INPUT_MOVE_RIGHT_ONLY, eNativeInputs::INPUT_DUCK, eNativeInputs::INPUT_HORSE_STOP};
+	static constexpr NativeInputs controls[] = {NativeInputs::INPUT_SPRINT, NativeInputs::INPUT_MOVE_UP_ONLY, NativeInputs::INPUT_MOVE_DOWN_ONLY, NativeInputs::INPUT_MOVE_LEFT_ONLY, NativeInputs::INPUT_MOVE_RIGHT_ONLY, NativeInputs::INPUT_DUCK, NativeInputs::INPUT_HORSE_STOP};
 	static constexpr float speed = 0.57f;
 
 	class Noclip : public LoopedCommand
@@ -41,22 +41,22 @@ namespace YimMenu::Features
 			rage::fvector3 vel{};
 
 			// Left Shift
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_SPRINT))
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_SPRINT))
 				vel.z += speed / 2;
 			// Left Control
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_DUCK) || PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_HORSE_STOP))
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_DUCK) || PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_HORSE_STOP))
 				vel.z -= speed / 2;
 			// Forward
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_MOVE_UP_ONLY))
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_MOVE_UP_ONLY))
 				vel.y += speed;
 			// Backward
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_MOVE_DOWN_ONLY))
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_MOVE_DOWN_ONLY))
 				vel.y -= speed;
 			// Left
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_MOVE_LEFT_ONLY))
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_MOVE_LEFT_ONLY))
 				vel.x -= speed;
 			// Right
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_MOVE_RIGHT_ONLY))
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_MOVE_RIGHT_ONLY))
 				vel.x += speed;
 
 			auto rot = CAM::GET_GAMEPLAY_CAM_ROT(2);

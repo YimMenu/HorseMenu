@@ -48,7 +48,7 @@ namespace
 {
 	using namespace YimMenu;
 
-	void LogNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
+	void LogNode(CProjectBaseSyncDataNode* node, SyncNodeId id, NetObjType type, rage::netObject* object)
 	{
 		if (!object)
 			return; // TODO: log creation queue syncs
@@ -237,7 +237,7 @@ namespace
 
 
 	// note that object can be nullptr here if it hasn't been created yet (i.e. in the creation queue)
-	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
+	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, NetObjType type, rage::netObject* object)
 	{
 		switch (id)
 		{
@@ -389,7 +389,7 @@ namespace
 					return true;
 				}
 
-				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)NetObjType::Trailer)
 				{
 					LOG(WARNING) << "Blocked physical trailer attachment crash from " << Protections::GetSyncingPlayer().GetName();
 					Notifications::Show("Protections",
@@ -457,7 +457,7 @@ namespace
 					return true;
 				}
 
-				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)NetObjType::Trailer)
 				{
 					LOG(WARNING) << "Blocked trailer ped attachment crash from " << Protections::GetSyncingPlayer().GetName();
 					Notifications::Show("Protections",
@@ -494,7 +494,7 @@ namespace
 		return false;
 	}
 
-	bool SyncNodeVisitor(CProjectBaseSyncDataNode* node, eNetObjType type, rage::netObject* object)
+	bool SyncNodeVisitor(CProjectBaseSyncDataNode* node, NetObjType type, rage::netObject* object)
 	{
 		if (node->IsParentNode())
 		{
@@ -520,7 +520,7 @@ namespace
 
 namespace YimMenu::Hooks::Protections
 {
-	bool ShouldBlockSync(rage::netSyncTree* tree, eNetObjType type, rage::netObject* object)
+	bool ShouldBlockSync(rage::netSyncTree* tree, NetObjType type, rage::netObject* object)
 	{
 		Nodes::Init();
 

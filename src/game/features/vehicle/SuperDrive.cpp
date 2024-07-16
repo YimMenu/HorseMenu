@@ -19,7 +19,7 @@ namespace YimMenu::Features
 			if (!YimMenu::Self::GetVehicle().IsValid())
 				return;
 
-			if (PAD::IS_CONTROL_PRESSED(0, (int)eNativeInputs::INPUT_VEH_ACCELERATE))
+			if (PAD::IS_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_VEH_ACCELERATE))
 			{
 				float force = _SuperDriveForce.GetState() / 100.0f;
 				Vector3 direction;

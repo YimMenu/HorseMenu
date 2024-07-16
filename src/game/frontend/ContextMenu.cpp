@@ -63,8 +63,8 @@ namespace YimMenu
 	{
 		if (Features::_ContextMenu.GetState())
 		{
-			PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_SWITCH_SHOULDER, true);
-			if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (Hash)eNativeInputs::INPUT_SWITCH_SHOULDER))
+			PAD::DISABLE_CONTROL_ACTION(0, (Hash)NativeInputs::INPUT_SWITCH_SHOULDER, true);
+			if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (Hash)NativeInputs::INPUT_SWITCH_SHOULDER))
 				m_Enabled = !m_Enabled;
 
 			if (m_Enabled)
@@ -107,17 +107,17 @@ namespace YimMenu
 					m_ScreenPos.x *= Pointers.ScreenResX;
 					m_ScreenPos.y *= Pointers.ScreenResY;
 
-					PAD::DISABLE_CONTROL_ACTION(0, (int)eNativeInputs::INPUT_NEXT_WEAPON, true);
-					PAD::DISABLE_CONTROL_ACTION(0, (int)eNativeInputs::INPUT_PREV_WEAPON, true);
-					PAD::DISABLE_CONTROL_ACTION(0, (int)eNativeInputs::INPUT_ATTACK, true);
+					PAD::DISABLE_CONTROL_ACTION(0, (int)NativeInputs::INPUT_NEXT_WEAPON, true);
+					PAD::DISABLE_CONTROL_ACTION(0, (int)NativeInputs::INPUT_PREV_WEAPON, true);
+					PAD::DISABLE_CONTROL_ACTION(0, (int)NativeInputs::INPUT_ATTACK, true);
 
-					if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)eNativeInputs::INPUT_PREV_WEAPON))
+					if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)NativeInputs::INPUT_PREV_WEAPON))
 						m_CurrentOperationsMenu.SelectPrevious();
 
-					if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)eNativeInputs::INPUT_NEXT_WEAPON))
+					if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)NativeInputs::INPUT_NEXT_WEAPON))
 						m_CurrentOperationsMenu.SelectNext();
 
-					if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)eNativeInputs::INPUT_ATTACK))
+					if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (int)NativeInputs::INPUT_ATTACK))
 						FiberPool::Push([=] {
 							m_CurrentOperationsMenu.m_SelectedOperation.m_Operation(m_Entity);
 						});
