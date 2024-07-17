@@ -7,7 +7,6 @@
 #include "game/rdr/data/TickerEvents.hpp"
 #include "game/rdr/data/StableEvents.hpp"
 #include "game/backend/Players.hpp"
-#include "core/misc/RateLimiter.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/CScriptedGameEvent.hpp>
