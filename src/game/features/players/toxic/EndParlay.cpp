@@ -6,15 +6,15 @@
 
 namespace YimMenu::Features
 {
-	void ParlayEnd(int bits)
+	void ParlayEnd(Player player)
 	{
 		uint64_t data[7]{};
 		data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_PARLAY);
-		data[1] = Self::GetPlayer().GetId();
+		data[1] = player.GetId();
 		data[4] = 5;
 		data[5] = 11;
 		data[6] = 9;
-		Scripts::SendScriptEvent(data, 9, 10, bits);
+		Scripts::SendScriptEvent(data, 9, 10, 1 << player.GetId());
 	}
 
 	class EndParlay : public PlayerCommand
@@ -23,7 +23,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{
-			ParlayEnd(1 << player.GetId());
+			ParlayEnd(player);
 		}
 	};
 

@@ -46,7 +46,7 @@ namespace YimMenu
 			return GetInstance().m_PlayerDatas[idx];
 		}
 
-		static Player GetRandomPlayer()
+		static Player GetRandom()
 		{
 			auto& players = GetPlayers();
 

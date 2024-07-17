@@ -34,7 +34,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{
-			AddBounty(1 << player.GetId());
+			AddBounty(player);
 		}
 	};
 

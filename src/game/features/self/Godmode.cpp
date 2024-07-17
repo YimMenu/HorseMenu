@@ -17,7 +17,7 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
-			Self::GetPed().SetInvincible(true);
+			Self::GetPed().SetInvincible(false);
 		}
 	};
 

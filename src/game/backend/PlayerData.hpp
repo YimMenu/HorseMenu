@@ -1,4 +1,5 @@
 #pragma once
+#include "core/misc/RateLimiter.hpp"
 
 namespace YimMenu
 {
@@ -6,5 +7,6 @@ namespace YimMenu
 	{
 	public:
 		bool m_UseSessionSplitKick{};
+		RateLimiter m_TickerMessageRateLimit{5s, 3};
 	};
 }

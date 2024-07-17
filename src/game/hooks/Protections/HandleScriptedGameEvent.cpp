@@ -1,8 +1,11 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "core/misc/RateLimiter.hpp"
 #include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
+#include "game/rdr/data/TickerEvents.hpp"
+#include "game/backend/Players.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/CScriptedGameEvent.hpp>

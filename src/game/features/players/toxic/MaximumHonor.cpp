@@ -1,11 +1,12 @@
-#include "game/commands/PlayerCommand.hpp"
-#include "game/backend/Self.hpp"
-#include "game/rdr/Scripts.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Self.hpp"
+#include "game/commands/PlayerCommand.hpp"
 #include "game/rdr/Enums.hpp"
+#include "game/rdr/Scripts.hpp"
 
 namespace YimMenu::Features
 {
+	// TODO: Refactor sender
 	void MaxHonor(int bits)
 	{
 		uint64_t data[7]{};
@@ -44,7 +45,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			MaxHonor(-1 & ~(1 << Self::GetPlayer().GetId())); // TODO
+			MaxHonor(-1 & ~(1 << Self::GetPlayer().GetId()));
 		}
 	};
 
