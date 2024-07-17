@@ -1382,13 +1382,15 @@ enum class LassoFlags
 enum class ScriptEvent
 {
 	SCRIPT_EVENT_TICKER_MESSAGE                    = 0,
-	SCRIPT_EVENT_AMBIENT_CONTENT_EVALUATOR		   = 4,
-	SCRIPT_EVENT_ACE_LAUNCHER					   = 5,
+	SCRIPT_EVENT_AMBIENT_CONTENT_EVALUATOR         = 4,
+	SCRIPT_EVENT_ACE_LAUNCHER                      = 5,
 	SCRIPT_EVENT_PARLAY                            = 28,
 	SCRIPT_EVENT_NOTORIETY_PRESS_CHARGES           = 35,
 	SCRIPT_EVENT_NOTORIETY_FORCE_PASSIVE           = 36,
 	SCRIPT_EVENT_NOTORIETY_FORCE_NOT_PASSIVE_HORSE = 37,
-	SCRIPT_EVENT_FETCH_MANAGER					   = 178,
+	SCRIPT_EVENT_NET_STABLE                        = 46,
+	SCRIPT_EVENT_NET_STABLE_MOUNT                  = 47,
+	SCRIPT_EVENT_FETCH_MANAGER                     = 178,
 	SCRIPT_EVENT_NET_HUD                           = 186,
 	SCRIPT_EVENT_PERSONA_HONOR                     = 188,
 	SCRIPT_EVENT_PLAYER_CAMP                       = 201

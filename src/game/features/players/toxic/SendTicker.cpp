@@ -10,7 +10,7 @@
 
 namespace YimMenu::Features
 {
-	static ListCommand _TickerMessage{"tickermessage", "Ticker Message", "The ticker message to send", Data::g_TickerEvents, 0};
+	static ListCommand _TickerMessage{"tickermessage", "Ticker Message", "The ticker message to send", Data::g_TickerEvents, 2};
 
 	void SendTickerMessage(Player player)
 	{

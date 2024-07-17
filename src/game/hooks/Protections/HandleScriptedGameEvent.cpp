@@ -5,7 +5,9 @@
 #include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/data/TickerEvents.hpp"
+#include "game/rdr/data/StableEvents.hpp"
 #include "game/backend/Players.hpp"
+#include "core/misc/RateLimiter.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/CScriptedGameEvent.hpp>
@@ -17,6 +19,8 @@ namespace YimMenu::Features
 
 namespace YimMenu::Hooks
 {
+	RateLimiter m_TickerMessageRateLimit{5s, 3};
+
 	bool Protections::HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst)
 	{
 		if (Features::_LogScriptEvents.GetState())
@@ -80,6 +84,35 @@ namespace YimMenu::Hooks
 			if (event->m_Data[4] == 5)
 			{
 				Notifications::Show("Protections", std::format("Blocked end parlay from {}", src->GetName()), NotificationType::Warning);
+				return true;
+			}
+			break;
+		}
+		case ScriptEvent::SCRIPT_EVENT_TICKER_MESSAGE:
+		{
+			if (m_TickerMessageRateLimit.Process())
+			{
+				if (m_TickerMessageRateLimit.ExceededLastProcess())
+				{
+					Notifications::Show("Protections",
+					    std::format("Blocked ticker spam from {} ({})",
+					        src->GetName(),
+					        Data::g_TickerEvents[event->m_Data[4]].second),
+					    NotificationType::Warning);
+				}
+				return true;
+			}
+			break;
+		}
+		case ScriptEvent::SCRIPT_EVENT_NET_STABLE_MOUNT:
+		{
+			if (event->m_Data[0])
+			{
+				Notifications::Show("Protections",
+				    std::format("Blocked stable event from {} ({})",
+				        src->GetName(),
+				        Data::g_StableMountEvent[event->m_Data[4]].second),
+				    NotificationType::Warning);
 				return true;
 			}
 			break;

@@ -11,9 +11,9 @@ namespace YimMenu
 		uint32_t m_NumAttemptsAllowed = 0;
 
 	public:
-		RateLimiter(std::chrono::milliseconds time_period, uint32_t num_allowed_attempts) :
-		    m_AttemptsAllowedInTimePeriod(num_allowed_attempts),
-		    m_TimePeriod(time_period)
+		RateLimiter(std::chrono::milliseconds period, uint32_t numAllowedAttempts) :
+		    m_AttemptsAllowedInTimePeriod(numAllowedAttempts),
+		    m_TimePeriod(period)
 		{
 		}
 
