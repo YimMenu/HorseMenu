@@ -15,14 +15,14 @@ namespace YimMenu::Features
 
 	void SendNetStableMountEvent(Player player)
 	{
-			uint64_t data[6]{};
-			data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_NET_STABLE_MOUNT);
-			data[1] = player.GetId();
-			data[2] = NETWORK::GET_NETWORK_TIME_ACCURATE();
-			data[4] = _StableMountEvent.GetState();
-		    	data[5] = _MountInstance.GetState();
-
-			Scripts::SendScriptEvent(data, 6, 0, 1 << player.GetId());
+		uint64_t data[6]{};
+		data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_NET_STABLE_MOUNT);
+		data[1] = player.GetId();
+		data[2] = NETWORK::GET_NETWORK_TIME_ACCURATE();
+		data[4] = _StableMountEvent.GetState();
+		data[5] = _MountInstance.GetState();
+	
+		Scripts::SendScriptEvent(data, 6, 0, 1 << player.GetId());
 	}
 
 	class SendStableMountEvent : public PlayerCommand
