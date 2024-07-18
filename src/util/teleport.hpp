@@ -50,7 +50,7 @@ namespace YimMenu::Teleport
 	
 		return true;
 	}
-
+	
 	// Entity typdef is being ambiguous with Entity class
 	inline bool TeleportEntity(int ent, rage::fvector3 coords, bool loadGround = false)
 	{
