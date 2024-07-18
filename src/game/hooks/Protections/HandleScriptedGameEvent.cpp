@@ -7,6 +7,7 @@
 #include "game/rdr/data/TickerEvents.hpp"
 #include "game/rdr/data/StableEvents.hpp"
 #include "game/backend/Players.hpp"
+#include "game/backend/Self.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/CScriptedGameEvent.hpp>
@@ -105,7 +106,7 @@ namespace YimMenu::Hooks
 		}
 		case ScriptEvent::SCRIPT_EVENT_NET_STABLE_MOUNT:
 		{
-			if (event->m_Data[0])
+			if (event->m_Data[1] == Self::GetPlayer().GetId())
 			{
 				Notifications::Show("Protections",
 				    std::format("Blocked stable event from {} ({})",
