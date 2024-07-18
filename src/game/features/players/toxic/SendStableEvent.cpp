@@ -20,7 +20,7 @@ namespace YimMenu::Features
 			data[1] = player.GetId();
 			data[2] = NETWORK::GET_NETWORK_TIME_ACCURATE();
 			data[4] = _StableMountEvent.GetState();
-		    data[5] = _MountInstance.GetState();
+		    	data[5] = _MountInstance.GetState();
 
 			Scripts::SendScriptEvent(data, 6, 0, 1 << player.GetId());
 	}
