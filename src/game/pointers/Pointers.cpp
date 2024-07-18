@@ -387,6 +387,11 @@ namespace YimMenu
 			ReceiveArrayUpdate = ptr.As<PVOID>();
 		});
 
+		constexpr auto createPoolItemPtrn = Pattern<"E8 ? ? ? ? 48 85 C0 74 ? 44 8A 4C 24 ? 48 8B C8 44 0F B7 44 24 ? 0F B7 54 24">("CreatePoolItem");
+		scanner.Add(createPoolItemPtrn, [this](PointerCalculator ptr) {
+			CreatePoolItem = ptr.Add(1).Rip().As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

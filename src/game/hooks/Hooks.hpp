@@ -1,10 +1,9 @@
 #pragma once
+#include "game/rdr/Pools.hpp"
 #include <D3D12.h>
 #include <dxgi1_4.h>
 #include <network/InFrame.hpp> // has to be imported
 #include <vulkan/vulkan.h>
-
-
 
 namespace rage
 {
@@ -22,6 +21,7 @@ namespace rage
 	class scrProgram;
 	class scrThreadContext;
 }
+
 class CNetGamePlayer;
 enum class NetEventType;
 class CFoundDevice;
@@ -87,6 +87,7 @@ namespace YimMenu::Hooks
 		extern bool SerializeServerRPC(rage::ServerRPCSerializer* ser, void* a2, const char* message, void* def, void* structure, const char* rpc_guid, void* a7);
 		extern bool ReceiveServerMessage(void* a1, rage::ServerMsg* a2); // doesn't receive all messages
 		extern bool ReceiveArrayUpdate(void* array, CNetGamePlayer* sender, rage::datBitBuffer* buffer, int size, int16_t cycle);
+		extern void* CreatePoolItem(PoolUtils<Entity>* pool);
 	}
 
 	namespace Voice

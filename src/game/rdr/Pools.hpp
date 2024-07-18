@@ -70,6 +70,11 @@ namespace YimMenu
 		{
 			return ++PoolIterator<Wrapper>(m_Pool, m_Pool->m_Size);
 		}
+
+		auto size()
+		{
+			return m_Pool->m_Size;
+		}
 	};
 
 	namespace Pools
