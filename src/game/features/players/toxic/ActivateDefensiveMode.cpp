@@ -5,17 +5,22 @@
 
 namespace YimMenu::Features
 {
+	void Defensive(Player player)
+	{
+		uint64_t data[13]{};
+		data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_NOTORIETY_FORCE_PASSIVE);
+		data[1] = player.GetId();
+		data[8] = 2;
+		Scripts::SendScriptEvent(data, 13, 43, 1 << player.GetId());
+	}
+
 	class ActivateDefensiveMode : public PlayerCommand
 	{
 		using PlayerCommand::PlayerCommand;
 
 		virtual void OnCall(Player player) override
 		{
-			uint64_t data[13]{};
-			data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_NOTORIETY_FORCE_PASSIVE);
-			data[1] = Self::GetPlayer().GetId();
-			data[8] = 2;
-			Scripts::SendScriptEvent(data, 13, 1 << player.GetId());
+			Defensive(player);
 		}
 	};
 

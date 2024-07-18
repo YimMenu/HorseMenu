@@ -15,13 +15,13 @@ namespace YimMenu::Features
 			if (!mount || mount.IsDead())
 				return;
 
-			auto health_core = ATTRIBUTE::_GET_ATTRIBUTE_CORE_VALUE(mount.GetHandle(), (int)eAttributeCore::ATTRIBUTE_CORE_HEALTH);
-			auto stamina_care = ATTRIBUTE::_GET_ATTRIBUTE_CORE_VALUE(mount.GetHandle(), (int)eAttributeCore::ATTRIBUTE_CORE_STAMINA);
+			auto health_core = ATTRIBUTE::_GET_ATTRIBUTE_CORE_VALUE(mount.GetHandle(), (int)AttributeCore::ATTRIBUTE_CORE_HEALTH);
+			auto stamina_care = ATTRIBUTE::_GET_ATTRIBUTE_CORE_VALUE(mount.GetHandle(), (int)AttributeCore::ATTRIBUTE_CORE_STAMINA);
 
 			if (health_core < 100)
-				ATTRIBUTE::_SET_ATTRIBUTE_CORE_VALUE(mount.GetHandle(), (int)eAttributeCore::ATTRIBUTE_CORE_HEALTH, 100);
+				ATTRIBUTE::_SET_ATTRIBUTE_CORE_VALUE(mount.GetHandle(), (int)AttributeCore::ATTRIBUTE_CORE_HEALTH, 100);
 			if (stamina_care < 100)
-				ATTRIBUTE::_SET_ATTRIBUTE_CORE_VALUE(mount.GetHandle(), (int)eAttributeCore::ATTRIBUTE_CORE_STAMINA, 100);
+				ATTRIBUTE::_SET_ATTRIBUTE_CORE_VALUE(mount.GetHandle(), (int)AttributeCore::ATTRIBUTE_CORE_STAMINA, 100);
 		}
 	};
 

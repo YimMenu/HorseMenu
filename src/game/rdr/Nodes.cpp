@@ -4,19 +4,19 @@
 
 namespace YimMenu
 {
-	SyncNodeId& Nodes::FindImpl(eNetObjType obj_type, uintptr_t addr)
+	SyncNodeId& Nodes::FindImpl(NetObjType obj_type, uintptr_t addr)
 	{
 		return m_Finder.m_SyncTressSyncNodeAddrToIds[(int)obj_type][addr];
 	}
 
-	SyncNodeVftToIds& Nodes::GetNodesForTypeImpl(eNetObjType obj_type)
+	SyncNodeVftToIds& Nodes::GetNodesForTypeImpl(NetObjType obj_type)
 	{
 		return m_Finder.m_SyncTressSyncNodeAddrToIds[(int)obj_type];
 	}
 
 	void Nodes::InitImpl()
 	{
-		for (int i = (int)eNetObjType::Animal; i < (int)eNetObjType::Max; i++)
+		for (int i = (int)NetObjType::Animal; i < (int)NetObjType::Max; i++)
 		{
 			rage::netSyncTree* tree = Pointers.GetSyncTreeForType(nullptr, i);
 

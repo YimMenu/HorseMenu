@@ -1,8 +1,12 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "core/misc/RateLimiter.hpp"
 #include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
+#include "game/rdr/data/TickerEvents.hpp"
+#include "game/rdr/data/StableEvents.hpp"
+#include "game/backend/Players.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/CScriptedGameEvent.hpp>
@@ -14,6 +18,8 @@ namespace YimMenu::Features
 
 namespace YimMenu::Hooks
 {
+	RateLimiter m_TickerMessageRateLimit{5s, 3};
+
 	bool Protections::HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst)
 	{
 		if (Features::_LogScriptEvents.GetState())
@@ -60,10 +66,55 @@ namespace YimMenu::Hooks
 		}
 		case ScriptEvent::SCRIPT_EVENT_NOTORIETY_PRESS_CHARGES:
 		{
-			if (event->m_Data[11] && event->m_Data[4] == 2)
+			if (event->m_Data[11] && event->m_Data[4] == 2 || event->m_Data[4] == 3)
 			{
-				return true; // block pressing charges
+				Notifications::Show("Protections", std::format("Blocked press charges from {}", src->GetName()), NotificationType::Warning);
+				return true;
 			}
+			break;
+		}
+		case ScriptEvent::SCRIPT_EVENT_PARLAY:
+		{
+			if (event->m_Data[4] == 3)
+			{
+				Notifications::Show("Protections", std::format("Blocked start parlay from {}", src->GetName()), NotificationType::Warning);
+				return true;
+			}
+			if (event->m_Data[4] == 5)
+			{
+				Notifications::Show("Protections", std::format("Blocked end parlay from {}", src->GetName()), NotificationType::Warning);
+				return true;
+			}
+			break;
+		}
+		case ScriptEvent::SCRIPT_EVENT_TICKER_MESSAGE:
+		{
+			if (m_TickerMessageRateLimit.Process())
+			{
+				if (m_TickerMessageRateLimit.ExceededLastProcess())
+				{
+					Notifications::Show("Protections",
+					    std::format("Blocked ticker spam from {} ({})",
+					        src->GetName(),
+					        Data::g_TickerEvents[event->m_Data[4]].second),
+					    NotificationType::Warning);
+				}
+				return true;
+			}
+			break;
+		}
+		case ScriptEvent::SCRIPT_EVENT_NET_STABLE_MOUNT:
+		{
+			if (event->m_Data[0])
+			{
+				Notifications::Show("Protections",
+				    std::format("Blocked stable event from {} ({})",
+				        src->GetName(),
+				        Data::g_StableMountEvent[event->m_Data[4]].second),
+				    NotificationType::Warning);
+				return true;
+			}
+			break;
 		}
 		}
 

@@ -122,6 +122,7 @@ namespace YimMenu
 		PVOID ReceiveServerMessage;
 		PVOID SerializeServerRPC;
 		PVOID ReceiveArrayUpdate;
+		PVOID CreatePoolItem;
 
 		// Player Stuff
 		PVOID PlayerHasJoined;

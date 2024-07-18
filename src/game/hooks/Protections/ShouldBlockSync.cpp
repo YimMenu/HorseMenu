@@ -48,7 +48,7 @@ namespace
 {
 	using namespace YimMenu;
 
-	void LogNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
+	void LogNode(CProjectBaseSyncDataNode* node, SyncNodeId id, NetObjType type, rage::netObject* object)
 	{
 		if (!object)
 			return; // TODO: log creation queue syncs
@@ -121,17 +121,17 @@ namespace
 			LOG_FIELD(CPedAttachData, m_AttachObjectId);
 			break;
 		case "CVehicleGadgetDataNode"_J:
-			LOG_FIELD_B(CVehicleGadgetNodeData, m_has_position);
-			LOG_FIELD(CVehicleGadgetNodeData, m_position[0]);
-			LOG_FIELD(CVehicleGadgetNodeData, m_position[1]);
-			LOG_FIELD(CVehicleGadgetNodeData, m_position[2]);
-			LOG_FIELD(CVehicleGadgetNodeData, m_position[3]);
-			LOG_FIELD(CVehicleGadgetNodeData, m_num_gadgets);
-			if (node->GetData<CVehicleGadgetNodeData>().m_num_gadgets <= 2)
+			LOG_FIELD_B(CVehicleGadgetDataNode, m_HasPosition);
+			LOG_FIELD(CVehicleGadgetDataNode, m_Position[0]);
+			LOG_FIELD(CVehicleGadgetDataNode, m_Position[1]);
+			LOG_FIELD(CVehicleGadgetDataNode, m_Position[2]);
+			LOG_FIELD(CVehicleGadgetDataNode, m_Position[3]);
+			LOG_FIELD(CVehicleGadgetDataNode, m_NumGadgets);
+			if (node->GetData<CVehicleGadgetDataNode>().m_NumGadgets <= 2)
 			{
-				for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
+				for (int i = 0; i < node->GetData<CVehicleGadgetDataNode>().m_NumGadgets; i++)
 				{
-					LOG_FIELD(CVehicleGadgetNodeData, m_gadgets[i].m_type);
+					LOG_FIELD(CVehicleGadgetDataNode, m_Gadgets[i].m_Type);
 				}
 			}
 			break;
@@ -237,7 +237,7 @@ namespace
 
 
 	// note that object can be nullptr here if it hasn't been created yet (i.e. in the creation queue)
-	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
+	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, NetObjType type, rage::netObject* object)
 	{
 		switch (id)
 		{
@@ -389,7 +389,7 @@ namespace
 					return true;
 				}
 
-				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)NetObjType::Trailer)
 				{
 					LOG(WARNING) << "Blocked physical trailer attachment crash from " << Protections::GetSyncingPlayer().GetName();
 					Notifications::Show("Protections",
@@ -457,7 +457,7 @@ namespace
 					return true;
 				}
 
-				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)eNetObjType::Trailer)
+				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)NetObjType::Trailer)
 				{
 					LOG(WARNING) << "Blocked trailer ped attachment crash from " << Protections::GetSyncingPlayer().GetName();
 					Notifications::Show("Protections",
@@ -494,7 +494,7 @@ namespace
 		return false;
 	}
 
-	bool SyncNodeVisitor(CProjectBaseSyncDataNode* node, eNetObjType type, rage::netObject* object)
+	bool SyncNodeVisitor(CProjectBaseSyncDataNode* node, NetObjType type, rage::netObject* object)
 	{
 		if (node->IsParentNode())
 		{
@@ -520,7 +520,7 @@ namespace
 
 namespace YimMenu::Hooks::Protections
 {
-	bool ShouldBlockSync(rage::netSyncTree* tree, eNetObjType type, rage::netObject* object)
+	bool ShouldBlockSync(rage::netSyncTree* tree, NetObjType type, rage::netObject* object)
 	{
 		Nodes::Init();
 

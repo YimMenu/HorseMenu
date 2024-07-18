@@ -197,39 +197,39 @@ namespace YimMenu::Submenus
 
 	static void CREATE_PED(rage::scrNativeCallContext* ctx)
 	{
-		auto override = GetOverridePed(SceneTypeFromScript(SCRIPTS::GET_HASH_OF_THIS_SCRIPT_NAME()), ctx->get_arg<Hash>(0));
+		auto override = GetOverridePed(SceneTypeFromScript(SCRIPTS::GET_HASH_OF_THIS_SCRIPT_NAME()), ctx->GetArg<Hash>(0));
 		if (override)
 		{
-			ctx->set_return_value(override.GetHandle());
+			ctx->SetReturnValue(override.GetHandle());
 			return;
 		}
 
-		auto ped = PED::CREATE_PED(ctx->get_arg<Hash>(0), ctx->get_arg<float>(1), ctx->get_arg<float>(2), ctx->get_arg<float>(3), ctx->get_arg<float>(4), ctx->get_arg<int>(5), ctx->get_arg<int>(6), ctx->get_arg<int>(7), ctx->get_arg<int>(8));
+		auto ped = PED::CREATE_PED(ctx->GetArg<Hash>(0), ctx->GetArg<float>(1), ctx->GetArg<float>(2), ctx->GetArg<float>(3), ctx->GetArg<float>(4), ctx->GetArg<int>(5), ctx->GetArg<int>(6), ctx->GetArg<int>(7), ctx->GetArg<int>(8));
 		g_ShowEntities.push_back(ped);
-		ctx->set_return_value(std::move(ped));
+		ctx->SetReturnValue(std::move(ped));
 	}
 
 	static void CREATE_OBJECT(rage::scrNativeCallContext* ctx)
 	{
-		auto obj = OBJECT::CREATE_OBJECT(ctx->get_arg<int>(0), ctx->get_arg<float>(1), ctx->get_arg<float>(2), ctx->get_arg<float>(3), ctx->get_arg<int>(4), ctx->get_arg<int>(5), ctx->get_arg<int>(6), ctx->get_arg<int>(7), ctx->get_arg<int>(8));
-		if (ctx->get_arg<int>(0) == -262339715)
+		auto obj = OBJECT::CREATE_OBJECT(ctx->GetArg<int>(0), ctx->GetArg<float>(1), ctx->GetArg<float>(2), ctx->GetArg<float>(3), ctx->GetArg<int>(4), ctx->GetArg<int>(5), ctx->GetArg<int>(6), ctx->GetArg<int>(7), ctx->GetArg<int>(8));
+		if (ctx->GetArg<int>(0) == -262339715)
 		{
 			// hide curtain
 			ENTITY::SET_ENTITY_VISIBLE(obj, false);
 			ENTITY::SET_ENTITY_COLLISION(obj, false, false);
 		}
 		g_ShowEntities.push_back(obj);
-		ctx->set_return_value<int>(std::move(obj));
+		ctx->SetReturnValue<int>(std::move(obj));
 	}
 
 	static void NETWORK_HAS_CONTROL_OF_ENTITY(rage::scrNativeCallContext* ctx)
 	{
-		ctx->set_return_value(TRUE);
+		ctx->SetReturnValue(TRUE);
 	}
 
 	static void CREATE_ANIM_SCENE(rage::scrNativeCallContext* ctx)
 	{
-		int handle = ANIMSCENE::_CREATE_ANIM_SCENE(ctx->get_arg<char*>(0), ctx->get_arg<int>(1), ctx->get_arg<char*>(2), ctx->get_arg<int>(3), ctx->get_arg<int>(4));
+		int handle = ANIMSCENE::_CREATE_ANIM_SCENE(ctx->GetArg<char*>(0), ctx->GetArg<int>(1), ctx->GetArg<char*>(2), ctx->GetArg<int>(3), ctx->GetArg<int>(4));
 		FiberPool::Push([handle] {
 			CAnimScene* scene = nullptr;
 			Pointers.GetAnimSceneFromHandle(&scene, handle);
@@ -247,7 +247,7 @@ namespace YimMenu::Submenus
 				}
 			}
 		});
-		ctx->set_return_value(std::move(handle));
+		ctx->SetReturnValue(std::move(handle));
 	}
 
 	inline void RenderActorDef(ActorDefinition& def, const std::string& name)

@@ -21,7 +21,7 @@ namespace YimMenu::Emote
     {
         const char* name;
         uint32_t hash;
-        eEmoteType type;
+        EmoteType type;
     };
 
     // Emote Items

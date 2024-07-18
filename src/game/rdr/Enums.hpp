@@ -1,6 +1,6 @@
 #pragma once
 
-enum class eInputGroup
+enum class InputGroup
 {
 	INPUT_GROUP_UNK1 = 0,
 	INPUT_GROUP_UNK2,
@@ -339,7 +339,7 @@ constexpr static auto g_NetEventsToString = std::to_array({
     "NETWORK_FORCE_IN_SCOPE_FOR_DUPLICATE_OBJECT_OWNER",
 });
 
-enum class eNativeInputs : unsigned
+enum class NativeInputs : unsigned
 {
 	INPUT_NEXT_CAMERA                       = 0x7f8d09b8,
 	INPUT_LOOK_LR                           = 0xa987235f,
@@ -1115,7 +1115,7 @@ enum class eNativeInputs : unsigned
 	INPUT_SCRIPTED_FLY_ZDOWN                = 0x9c5e030c,
 };
 
-enum class eAttributeCore
+enum class AttributeCore
 {
 	ATTRIBUTE_CORE_HEALTH,
 	ATTRIBUTE_CORE_STAMINA,
@@ -1137,7 +1137,7 @@ enum class MotivationState
 	DRUNK_STATE
 };
 
-enum class eCrimeType : unsigned
+enum class CrimeType : unsigned
 {
 	CRIME_ACCOMPLICE                 = 0xAF074F6D,
 	CRIME_ARSON                      = 0x68134DC7,
@@ -1199,7 +1199,7 @@ enum class eCrimeType : unsigned
 	CRIME_WANTED_LEVEL_UP_DEBUG_LOW  = 0xD891890F
 };
 
-enum class eLawRegion : unsigned
+enum class LawRegion : unsigned
 {
 	LAW_DISPATCH_REGION_NONE               = 0,
 	LAW_REGION_AGUASDULCES                 = 0x2F573EBE,
@@ -1253,14 +1253,14 @@ enum class eLawRegion : unsigned
 	LAW_REGION_WAPITI                      = 0x7A976E02
 };
 
-enum class ePedDamageCleanliness
+enum class PedDamageCleanliness
 {
 	PED_DAMAGE_CLEANLINESS_POOR,
 	PED_DAMAGE_CLEANLINESS_GOOD,
 	PED_DAMAGE_CLEANLINESS_PERFECT
 };
 
-enum class eNetObjType
+enum class NetObjType
 {
 	Animal             = 0x0,
 	Automobile         = 0x1,
@@ -1332,7 +1332,7 @@ enum class ExplosionTypes
 	GLASS_SMASHING_SOUND_TOXIC_GAS_CLOUD
 };
 
-enum class eCarryingFlags
+enum class CarryingFlags
 {
 	CARRYING_FLAG_CAN_BE_HOGTIED,
 	CARRYING_FLAG_CAN_BE_CUT_FREE,
@@ -1363,7 +1363,7 @@ enum class eCarryingFlags
 	CARRYING_FLAG_FORCE_HIDE_PROMPT_GROUP
 };
 
-enum class eLassoFlags
+enum class LassoFlags
 {
 	LHF_CAN_BE_LASSOED,
 	LHF_CAN_BE_LASSOED_WHEN_DEAD,
@@ -1381,10 +1381,19 @@ enum class eLassoFlags
 
 enum class ScriptEvent
 {
+	SCRIPT_EVENT_TICKER_MESSAGE                    = 0,
+	SCRIPT_EVENT_AMBIENT_CONTENT_EVALUATOR         = 4,
+	SCRIPT_EVENT_ACE_LAUNCHER                      = 5,
+	SCRIPT_EVENT_PARLAY                            = 28,
 	SCRIPT_EVENT_NOTORIETY_PRESS_CHARGES           = 35,
 	SCRIPT_EVENT_NOTORIETY_FORCE_PASSIVE           = 36,
 	SCRIPT_EVENT_NOTORIETY_FORCE_NOT_PASSIVE_HORSE = 37,
-	SCRIPT_EVENT_PERSONA_HONOR                     = 188
+	SCRIPT_EVENT_NET_STABLE                        = 46,
+	SCRIPT_EVENT_NET_STABLE_MOUNT                  = 47,
+	SCRIPT_EVENT_FETCH_MANAGER                     = 178,
+	SCRIPT_EVENT_NET_HUD                           = 186,
+	SCRIPT_EVENT_PERSONA_HONOR                     = 188,
+	SCRIPT_EVENT_PLAYER_CAMP                       = 201
 };
 
 enum class NetMessageType : uint32_t
@@ -1493,7 +1502,7 @@ enum class NetMessageType : uint32_t
 	UNK_0x59                                          = 0x59,
 };
 
-enum class eWeaponHash : uint32_t
+enum class WeaponHash : uint32_t
 {
 	WEAPON_BOW                                   = 2292731996, // Bow
 	WEAPON_BOW_CHARLES                           = 2031861036, // Charles' Bow
@@ -1608,7 +1617,7 @@ enum class eWeaponHash : uint32_t
 	WEAPON_UNARMED                               = 2725352035, // Unarmed
 };
 
-enum class ePresenceEvents : uint32_t
+enum class PresenceEvents : uint32_t
 {
 	PRESENCE_STAT_UPDATE                  = 0xedf54ce2,
 	PRESENCE_FRIEND_CREW_JOINED           = 0x12859620,
@@ -2304,7 +2313,7 @@ enum class PedConfigFlag
 	_0x640FF990                                            = 602,
 };
 
-enum eEmoteType
+enum EmoteType
 {
 	EMOTE_TYPE_INVALID = -1,
 	EMOTE_TYPE_REACT,
@@ -2315,10 +2324,22 @@ enum eEmoteType
 	EMOTE_TYPE_DANCE_FLOOR
 };
 
-enum eEmotePlaybackMode
+enum EmotePlaybackMode
 {
 	EMOTE_PM_INVALID = -1,
 	EMOTE_PM_UPPERBODY,
 	EMOTE_PM_UPPERBODY_LOOP,
 	EMOTE_PM_FULLBODY,
+};
+
+enum class EntityProofs : uint32_t
+{
+	BULLET = 1 << 0,
+	FIRE = 1 << 1,
+	EXPLOSION = 1 << 2,
+	COLLISION = 1 << 3,
+	MELEE = 1 << 4,
+	STEAM = 1 << 5,
+	SMOKE = 1 << 6,
+	HEADSHOT = 1 << 7
 };

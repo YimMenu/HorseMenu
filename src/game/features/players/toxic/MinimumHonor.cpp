@@ -1,11 +1,12 @@
 #include "game/backend/ScriptMgr.hpp"
-#include "game/commands/PlayerCommand.hpp"
 #include "game/backend/Self.hpp"
-#include "game/rdr/Scripts.hpp"
+#include "game/commands/PlayerCommand.hpp"
 #include "game/rdr/Enums.hpp"
+#include "game/rdr/Scripts.hpp"
 
 namespace YimMenu::Features
 {
+	// TODO: Refactor sender
 	void MinHonor(int bits)
 	{
 		uint64_t data[7]{};
@@ -17,13 +18,13 @@ namespace YimMenu::Features
 			data[4] = 2;
 			data[5] = "PERSONA_HONOR_ACTION__MISSION_NEG_FIFTY"_J;
 			data[6] = 1;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__MISSION_NEG_FORTYFIVE"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__MURDER_RAMPAGE"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__MURDER_BUTCHER"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			ScriptMgr::Yield(40ms);
 		}
 	}

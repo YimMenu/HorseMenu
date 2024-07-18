@@ -12,13 +12,13 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			ENTITY::_SET_ENTITY_CARRYING_FLAG(Self::GetPed().GetHandle(), (int)eCarryingFlags::CARRYING_FLAG_CAN_BE_HOGTIED, false);
+			ENTITY::_SET_ENTITY_CARRYING_FLAG(Self::GetPed().GetHandle(), (int)CarryingFlags::CARRYING_FLAG_CAN_BE_HOGTIED, false);
            
 		}
 
 		virtual void OnDisable() override
 		{
-			ENTITY::_SET_ENTITY_CARRYING_FLAG(Self::GetPed().GetHandle(), (int)eCarryingFlags::CARRYING_FLAG_CAN_BE_HOGTIED, true);
+			ENTITY::_SET_ENTITY_CARRYING_FLAG(Self::GetPed().GetHandle(), (int)CarryingFlags::CARRYING_FLAG_CAN_BE_HOGTIED, true);
 		}
 	};
 

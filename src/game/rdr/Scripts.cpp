@@ -33,12 +33,12 @@ namespace YimMenu::Scripts
 		*Pointers.CurrentScriptThread = og_thread;
 	}
 
-	void SendScriptEvent(uint64_t* data, int count, int bits)
+	void SendScriptEvent(uint64_t* data, int count, int metadataIndex, int bits)
 	{
 		if (auto thread = FindScriptThread("net_main_offline"_J))
 		{
-			RunAsScript(thread, [data, count, &bits] {
-				SCRIPTS::TRIGGER_SCRIPT_EVENT(1, data, count, 0, &bits);
+			RunAsScript(thread, [data, count, metadataIndex, &bits] {
+				SCRIPTS::TRIGGER_SCRIPT_EVENT(1, data, count, metadataIndex, &bits);
 			});
 		}
 	}

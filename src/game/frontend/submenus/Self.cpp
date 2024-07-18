@@ -149,20 +149,12 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("quickskin"_J));
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("clearcrimes"_J));
-		toolsGroup->AddItem(std::make_shared<ImGuiItem>([] {
-			if (ImGui::Button("Unfreeze"))
-				FiberPool::Push([] {
-					YimMenu::Self::GetPed().SetFrozen(false);
-					YimMenu::Self::GetPed().SetCollision(true);
-				});
-		}));
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("eagleeye"_J));
@@ -187,6 +179,7 @@ namespace YimMenu::Submenus
 		auto horseGlobalsGroup = std::make_shared<Group>("Globals");
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsegodmode"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsenoragdoll"_J));
+		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsesuperrun"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseclean"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horseclimbsteepslopes"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorsebarsfilled"_J));
