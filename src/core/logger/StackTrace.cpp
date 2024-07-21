@@ -27,12 +27,14 @@ namespace YimMenu
 
 		m_ExceptionInfo = exception_info;
 
+		Clear();
+
 		m_Dump << ExceptionCodeToString(exception_info->ExceptionRecord->ExceptionCode) << '\n';
 
 		DumpModuleInfo();
 		DumpRegisters();
 		DumpStacktrace();
-		DumpCPPExceptionInfo();
+		DumpExceptionInfo();
 
 		m_Dump << "\n--------End of exception--------\n";
 	}
@@ -40,6 +42,12 @@ namespace YimMenu
 	std::string StackTrace::GetString() const
 	{
 		return m_Dump.str();
+	}
+
+	void StackTrace::Clear()
+	{
+		m_Dump.str("");
+		m_Dump.clear();
 	}
 
 	// I'd prefer to make some sort of global instance that cache all modules once instead of doing this every time
@@ -71,8 +79,7 @@ namespace YimMenu
 			{
 				auto mod_info = ModuleInfo(table_entry->FullDllName.Buffer, table_entry->DllBase);
 
-				m_Dump << mod_info.m_Path.filename().string() << " Base Address: " << HEX(mod_info.m_Base)
-				       << " Size: " << mod_info.m_Size << '\n';
+				m_Dump << mod_info.m_Name << " Base Address: " << HEX(mod_info.m_Base) << " Size: " << mod_info.m_Size << '\n';
 
 				m_Modules.emplace_back(std::move(mod_info));
 			}
@@ -122,39 +129,70 @@ namespace YimMenu
 
 		for (size_t i = 0; i < m_FramePointers.size() && m_FramePointers[i]; ++i)
 		{
-			const auto addr = m_FramePointers[i];
+			const auto addr        = m_FramePointers[i];
+			const auto module_info = GetModuleByAddress(addr);
 
 			m_Dump << "\n[" << i << "]\t";
 			if (SymFromAddr(GetCurrentProcess(), addr, &displacement64, symbol))
 			{
 				if (SymGetLineFromAddr64(GetCurrentProcess(), addr, &displacement, &line))
 				{
-					m_Dump << line.FileName << " L: " << line.LineNumber << " " << std::string_view(symbol->Name, symbol->NameLen);
+					m_Dump << line.FileName << " L: " << line.LineNumber << ' ' << std::string_view(symbol->Name, symbol->NameLen);
 
 					continue;
 				}
-				const auto module_info = GetModuleByAddress(addr);
+				
+				if (module_info)
+				{
+					m_Dump << module_info->m_Name << ' ' << std::string_view(symbol->Name, symbol->NameLen) << " ("
+					       << module_info->m_Name << '+' << HEX(addr - module_info->m_Base) << ')';
 
-				if (module_info->m_Base == (uint64_t)GetModuleHandle(0))
-					m_Dump << module_info->m_Path.filename().string() << " " << std::string_view(symbol->Name, symbol->NameLen) << " ("
-					       << module_info->m_Path.filename().string() << "+" << HEX(addr - module_info->m_Base) << ")";
-				else
-					m_Dump << module_info->m_Path.filename().string() << " " << std::string_view(symbol->Name, symbol->NameLen);
+					continue;
+				}
+
+				m_Dump << HEX(addr) << ' ' << std::string_view(symbol->Name, symbol->NameLen);
 
 				continue;
 			}
-			const auto module_info = GetModuleByAddress(addr);
-			m_Dump << module_info->m_Path.filename().string() << "+" << HEX(addr - module_info->m_Base) << " " << HEX(addr);
+			
+			if (module_info)
+			{
+				m_Dump << module_info->m_Name << '+' << HEX(addr - module_info->m_Base) << ' ' << HEX(addr);
+
+				continue;
+			}
+
+			m_Dump << HEX(addr);
 		}
 	}
 
-	void StackTrace::DumpCPPExceptionInfo()
+	void StackTrace::DumpExceptionInfo()
 	{
+		DWORD exception_code = m_ExceptionInfo->ExceptionRecord->ExceptionCode;
+
 		constexpr DWORD msvc_exception_code = 0xe06d7363;
-		if (m_ExceptionInfo->ExceptionRecord->ExceptionCode == msvc_exception_code)
+		if (exception_code == msvc_exception_code)
 		{
-			m_Dump
-			    << reinterpret_cast<const std::exception*>(m_ExceptionInfo->ExceptionRecord->ExceptionInformation[1])->what() << '\n';
+			m_Dump << '\n'
+			       << reinterpret_cast<const std::exception*>(m_ExceptionInfo->ExceptionRecord->ExceptionInformation[1])->what() << '\n';
+		}
+		else if (exception_code == EXCEPTION_ACCESS_VIOLATION || exception_code == EXCEPTION_IN_PAGE_ERROR)
+		{
+			const auto flag = m_ExceptionInfo->ExceptionRecord->ExceptionInformation[0];
+			const auto addr = m_ExceptionInfo->ExceptionRecord->ExceptionInformation[1];
+
+			switch (flag)
+			{
+			case EXCEPTION_READ_FAULT: m_Dump << '\n' << "Attempted to read from " << HEX(addr) << '\n'; break;
+			case EXCEPTION_WRITE_FAULT: m_Dump << '\n' << "Attempted to write to " << HEX(addr) << '\n'; break;
+			case EXCEPTION_EXECUTE_FAULT: m_Dump << '\n' << "DEP at " << HEX(addr) << '\n'; break;
+			default: m_Dump << '\n' << "Inaccessible data at " << HEX(addr) << '\n';
+			}
+
+			if (exception_code == EXCEPTION_IN_PAGE_ERROR)
+			{
+				m_Dump << "NTSTATUS code " << HEX(m_ExceptionInfo->ExceptionRecord->ExceptionInformation[2]) << '\n';
+			}
 		}
 	}
 

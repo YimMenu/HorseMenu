@@ -192,7 +192,7 @@ namespace YimMenu::Submenus
 			}
 			if (ImGui::IsItemHovered())
 			{
-				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally unless enabled above.");
+				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally.");
 			}
 		}));
 		blipSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofprimaryicon"_J));
