@@ -77,6 +77,7 @@ namespace YimMenu
 
 def write_natives_header():
     natives_buf = ""
+    natives_index_buf = ""
 
     for ns, nvs in natives.items():
         natives_buf += f"namespace {ns}\n{{\n"
@@ -85,13 +86,19 @@ def write_natives_header():
                 continue
 
             natives_buf += f"\t{nat_data.get_native_def_str()}\n"
+            natives_index_buf += f"\t{nat_data.name} = {nat_data.native_index},\n"
         natives_buf += "}\n\n"
     
     natives_buf = natives_buf[:-2]
+
     open("../Natives.hpp", "w+").write(f"""#pragma once
-#include "invoker/Invoker.hpp"
+#include "invoker/invoker.hpp"
 
 // clang-format off
+enum class NativeIndex
+{{
+{natives_index_buf}}};
+
 {natives_buf}
 // clang-format on
 """)

@@ -10,14 +10,6 @@
 
 namespace YimMenu
 {
-	void patch_byte(PVOID address, const unsigned char* bytes, int numBytes) //TODO: make service
-	{
-		DWORD oldProtect;
-		VirtualProtect(address, numBytes, PAGE_EXECUTE_READWRITE, &oldProtect);
-		memcpy(address, bytes, numBytes);
-		VirtualProtect(address, numBytes, oldProtect, &oldProtect);
-	}
-
 	bool Pointers::Init()
 	{
 		const auto rdr2 = ModuleMgr.Get("RDR2.exe"_J);
@@ -55,11 +47,6 @@ namespace YimMenu
 				LOG(WARNING) << "Turn HDR off if your using DX12!";
 			}
 
-			if (gfx->m_motion_blur)
-			{
-				LOG(INFO) << "Ew motion blur. Seriously?";
-			}
-
 			//LOG(INFO) << GetGraphicsValue(gfx->m_gfx_lightingQuality); example
 
 			if (gfx->m_unk)
@@ -68,6 +55,11 @@ namespace YimMenu
 				ScreenResY = gfx->m_screen_resolution_y;
 				LOG(INFO) << "Screen Resolution: " << ScreenResX << "x" << ScreenResY;
 			}
+		});
+
+		constexpr auto keyboardHookPtrn = Pattern<"41 83 E9 5B 44 3B C8 76 15">("KeyboardHook");
+		scanner.Add(keyboardHookPtrn, [this](PointerCalculator ptr) {
+			UnhookWindowsHookEx(*ptr.Add(0xC).Rip().As<HHOOK*>()); // weird hook that gets set by an encrypted function
 		});
 
 		constexpr auto wndProcPtrn = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
@@ -96,9 +88,15 @@ namespace YimMenu
 			RunScriptThreads = ptr.Add(8).Rip().As<PVOID>();
 		});
 
-		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread");
+		constexpr auto scriptProgramsPtrn = Pattern<"C1 EF 0E 85 FF 74 21">("ScriptPrograms");
+		scanner.Add(scriptProgramsPtrn, [this](PointerCalculator ptr) {
+			ScriptPrograms = ptr.Sub(0x16).Add(3).Rip().Add(0xC8).As<rage::scrProgram**>();
+		});
+
+		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread&ScriptVM");
 		scanner.Add(currentScriptThreadPtrn, [this](PointerCalculator ptr) {
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
+			ScriptVM            = ptr.Add(0x28).Rip().As<PVOID>();
 		});
 
 		constexpr auto sendMetricPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B F1 48 8B FA B1">("SendMetric");
@@ -199,6 +197,27 @@ namespace YimMenu
 			ThrowFatalError = ptr.As<PVOID>();
 		});
 
+		constexpr auto isAnimSceneInScopePtrn = Pattern<"74 78 4C 8B 03 48 8B CB">("IsAnimSceneInScope");
+		scanner.Add(isAnimSceneInScopePtrn, [this](PointerCalculator ptr) {
+			IsAnimSceneInScope = ptr.Sub(0x37).As<PVOID>();
+		});
+
+		constexpr auto broadcastNetArrayPtrn = Pattern<"48 89 5C 24 ? 48 89 54 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 83 EC ? 48 8B 81 ? ? ? ? 4C 8B F1">("BroadcastNetArray");
+		scanner.Add(broadcastNetArrayPtrn, [this](PointerCalculator ptr) {
+			BroadcastNetArray = ptr.As<PVOID>();
+			NetArrayPatch     = ptr.Add(0x23B).As<std::uint8_t*>();
+		});
+
+		constexpr auto inventoryEventCtorPtrn = Pattern<"C7 41 10 55 2B 70 40">("InventoryEventConstructor");
+		scanner.Add(inventoryEventCtorPtrn, [this](PointerCalculator ptr) {
+			InventoryEventConstructor = ptr.Sub(0x81).As<Functions::InventoryEventConstructor>();
+		});
+
+		constexpr auto eventGroupNetworkPtrn = Pattern<"80 78 47 00 75 52 48 8B 35">("EventGroupNetwork");
+		scanner.Add(eventGroupNetworkPtrn, [this](PointerCalculator ptr) {
+			EventGroupNetwork = ptr.Add(0x9).Rip().As<CEventGroup**>();
+		});
+
 		constexpr auto networkRequestPtrn = Pattern<"4C 8B DC 49 89 5B 08 49 89 6B 10 49 89 73 18 57 48 81 EC ? ? ? ? 48 8B 01">("NetworkRequest");
 		scanner.Add(networkRequestPtrn, [this](PointerCalculator ptr) {
 			NetworkRequest = ptr.As<PVOID>();
@@ -259,14 +278,119 @@ namespace YimMenu
 			RequestControlOfNetObject = ptr.Add(1).Rip().As<Functions::RequestControlOfNetObject>();
 		});
 
-		constexpr auto networkObjectMgrPtrn = Pattern<"48 8B 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? 90 E9 ?? ?? ?? ?? EC">("NetworkObjectMgr");
-		scanner.Add(networkObjectMgrPtrn, [this](PointerCalculator ptr) {
-			NetworkObjectMgr = *ptr.Add(3).Rip().As<void**>();
+		constexpr auto getAnimSceneFromHandlePtrn = Pattern<"00 83 F9 04 7C 0F">("GetAnimSceneFromHandle");
+		scanner.Add(getAnimSceneFromHandlePtrn, [this](PointerCalculator ptr) {
+			GetAnimSceneFromHandle = ptr.Sub(0x13).Rip().As<Functions::GetAnimSceneFromHandle>();
 		});
 
-		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 56 57 41 54 41 56 41 57 48 83 EC 50 4D 8B F1 48 8B F9 48 81 C1 A0 00 00 00 4C 8D 48 08 41 8B E8 4C 8B FA 33 DB E8 ?? ?? ?? ?? 84 C0 0F 84 C8">("SendNetInfoToLobby");
+		constexpr auto networkObjectMgrPtrn = Pattern<"74 44 0F B7 56 40">("NetworkObjectMgr");
+		scanner.Add(networkObjectMgrPtrn, [this](PointerCalculator ptr) {
+			NetworkObjectMgr = ptr.Add(0xC).Rip().As<CNetworkObjectMgr**>();
+		});
+
+		constexpr auto sendPacketPtrn = Pattern<"8B 44 24 60 48 8B D6 48 8B CD">("SendPacket");
+		scanner.Add(sendPacketPtrn, [this](PointerCalculator ptr) {
+			SendPacket = ptr.Add(0xE).Add(1).Rip().As<Functions::SendPacket>();
+		});
+
+		constexpr auto queuePacketPtrn = Pattern<"E8 ?? ?? ?? ?? FF C6 49 83 C6 08 3B B7 88 40 00 00">("QueuePacket");
+		scanner.Add(queuePacketPtrn, [this](PointerCalculator ptr) {
+			QueuePacket = ptr.Add(1).Rip().As<Functions::QueuePacket>();
+		});
+
+		constexpr auto receiveNetMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 24 48 8D B7 90 02 00 00">("ReceiveNetMessage");
+		scanner.Add(receiveNetMessagePtrn, [this](PointerCalculator ptr) {
+			ReceiveNetMessage = ptr.Add(1).Rip().As<PVOID>();
+		});
+
+		constexpr auto handlePresenceEventPtrn = Pattern<"E8 ?? ?? ?? ?? 4C 8D 9C 24 B0 10 00 00 49 8B 5B 10">("HandlePresenceEvent");
+		scanner.Add(handlePresenceEventPtrn, [this](PointerCalculator ptr) {
+			HandlePresenceEvent = ptr.Add(1).Rip().As<PVOID>();
+		});
+
+		constexpr auto postMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 35 C7 44 24 20 D9 7A 70 E1">("PostPresenceMessage");
+		scanner.Add(postMessagePtrn, [this](PointerCalculator ptr) {
+			PostPresenceMessage = ptr.Add(1).Rip().As<Functions::PostPresenceMessage>();
+		});
+
+		constexpr auto sendNetInfoToLobbyPtrn = Pattern<"E8 ?? ?? ?? ?? 32 DB 84 C0 74 1B 44 8B 84 24 40 01 00 00">("SendNetInfoToLobby");
 		scanner.Add(sendNetInfoToLobbyPtrn, [this](PointerCalculator ptr) {
-			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
+			SendNetInfoToLobby = ptr.Add(1).Rip().As<Functions::SendNetInfoToLobby>();
+		});
+
+		constexpr auto pedPoolPtrn = Pattern<"0F 28 F0 48 85 DB 74 56 8A 05 ? ? ? ? 84 C0 75 05">("PedPool");
+		scanner.Add(pedPoolPtrn, [this](PointerCalculator ptr) {
+			PedPool = ptr.Add(10).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto objectPoolPtrn = Pattern<"3C 05 75 67">("ObjectPool");
+		scanner.Add(objectPoolPtrn, [this](PointerCalculator ptr) {
+			ObjectPool = ptr.Add(20).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto vehiclePoolPtrn = Pattern<"48 83 EC 20 8A 05 ? ? ? ? 45 33 E4">("VehiclePool");
+		scanner.Add(vehiclePoolPtrn, [this](PointerCalculator ptr) {
+			VehiclePool = ptr.Add(6).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto pickupPoolPtrn = Pattern<"0F 84 ? ? ? ? 8A 05 ? ? ? ? 48 85">("PickupPool");
+		scanner.Add(pickupPoolPtrn, [this](PointerCalculator ptr) {
+			PickupPool = ptr.Add(8).Rip().As<PoolEncryption*>();
+		});
+
+		constexpr auto fwScriptGuidCreateGuidPtrn = Pattern<"E8 ? ? ? ? B3 01 8B 15">("FwScriptGuidCreateGuid");
+		scanner.Add(fwScriptGuidCreateGuidPtrn, [this](PointerCalculator ptr) {
+			FwScriptGuidCreateGuid = ptr.Sub(141).As<uint32_t (*)(void*)>();
+		});
+
+		constexpr auto receiveServerMessagePtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 20 48 8B 02 48 8B F9 48 8B CA 48 8B DA FF 50 ?? 48 8B C8">("ReceiveServerMessage");
+		scanner.Add(receiveServerMessagePtrn, [this](PointerCalculator ptr) {
+			ReceiveServerMessage = ptr.As<PVOID>();
+		});
+
+		constexpr auto serializeServerRPCPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 48 8B 44 24 70">("SerializeServerRPC");
+		scanner.Add(serializeServerRPCPtrn, [this](PointerCalculator ptr) {
+			SerializeServerRPC = ptr.As<PVOID>();
+		});
+
+		constexpr auto readBBArrayPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 41 8B F8 4C">("ReadBitBufferArray");
+		scanner.Add(readBBArrayPtrn, [this](PointerCalculator ptr) {
+			ReadBitBufferArray = ptr.As<Functions::ReadBitBufferArray>();
+		});
+
+		constexpr auto writeBBArrayPtrn = Pattern<"48 89 5C 24 08 57 48 83 EC 30 F6 41 28">("WriteBitBufferArray");
+		scanner.Add(writeBBArrayPtrn, [this](PointerCalculator ptr) {
+			WriteBitBufferArray = ptr.As<Functions::WriteBitBufferArray>();
+		});
+
+		constexpr auto readBBStringPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 18 56 57 41 56 48 83 EC 20 45 8B">("ReadBitBufferString");
+		scanner.Add(readBBStringPtrn, [this](PointerCalculator ptr) {
+			ReadBitBufferString = ptr.As<Functions::ReadBitBufferString>();
+		});
+
+		constexpr auto initNativeTablesPtrn = Pattern<"41 B0 01 44 39 51 2C 0F">("InitNativeTables");
+		scanner.Add(initNativeTablesPtrn, [this](PointerCalculator ptr) {
+			InitNativeTables = ptr.Sub(0x10).As<PVOID>();
+		});
+
+		constexpr auto triggerWeaponDamageEventPtrn = Pattern<"89 44 24 58 8B 47 F8 89">("TriggerWeaponDamageEvent");
+		scanner.Add(triggerWeaponDamageEventPtrn, [this](PointerCalculator ptr) {
+			TriggerWeaponDamageEvent = ptr.Add(0x39).Rip().As<Functions::TriggerWeaponDamageEvent>();
+		});
+
+		constexpr auto scSessionPtrn = Pattern<"3B 1D ? ? ? ? 76 60">("ScSession");
+		scanner.Add(scSessionPtrn, [this](PointerCalculator ptr) {
+			ScSession = ptr.Add(0xB).Rip().As<CNetworkScSession**>();
+		});
+
+		constexpr auto receiveArrayUpdatePtrn = Pattern<"48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 50 48 8B D9 45">("ReceiveArrayUpdate");
+		scanner.Add(receiveArrayUpdatePtrn, [this](PointerCalculator ptr) {
+			ReceiveArrayUpdate = ptr.As<PVOID>();
+		});
+
+		constexpr auto createPoolItemPtrn = Pattern<"E8 ? ? ? ? 48 85 C0 74 ? 44 8A 4C 24 ? 48 8B C8 44 0F B7 44 24 ? 0F B7 54 24">("CreatePoolItem");
+		scanner.Add(createPoolItemPtrn, [this](PointerCalculator ptr) {
+			CreatePoolItem = ptr.Add(1).Rip().As<PVOID>();
 		});
 
 		if (!scanner.Scan())

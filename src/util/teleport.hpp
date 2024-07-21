@@ -10,51 +10,47 @@
 
 namespace YimMenu::Teleport
 {
-	inline bool LoadGroundAtCoords(rage::fvector3& coords)
+	inline bool LoadGroundAtCoords(rage::fvector3& location)
 	{
-		float groundZ;
-		bool done = false;
-		auto notificationId = Notifications::Show("Streaming", "Loading ground at coords", NotificationType::Info, 5000);
-
-		for (int i = 0; i < 20; i++)
+		constexpr float max_ground_check = 1000.f;
+		constexpr int max_attempts       = 300;
+		float ground_z                   = location.z;
+		int current_attempts             = 0;
+		bool found_ground;
+		float height;
+	
+		do
 		{
-			for (int z = 0; z < 1000; z += 25)
+			found_ground = MISC::GET_GROUND_Z_FOR_3D_COORD(location.x, location.y, max_ground_check, &ground_z, FALSE);
+			STREAMING::REQUEST_COLLISION_AT_COORD(location.x, location.y, location.z);
+	
+			if (current_attempts % 10 == 0)
 			{
-				float ground_iteration = static_cast<float>(z);
-				if (i >= 1 && (z % 100 == 0))
-				{
-					STREAMING::REQUEST_COLLISION_AT_COORD(coords.x, coords.y, ground_iteration);
-					ScriptMgr::Yield(1ms);
-				}
-				if (MISC::GET_GROUND_Z_FOR_3D_COORD(coords.x, coords.y, ground_iteration, &groundZ, false))
-				{
-					coords.z = groundZ + 1.f;
-					done     = true;
-				}
+				location.z += 25.f;
 			}
-
-			float height;
-			if (done && WATER::GET_WATER_HEIGHT(coords.x, coords.y, coords.z, &height))
-			{
-				coords.z = height + 1.f;
-			}
-
-			if (done)
-			{
-				Notifications::Erase(notificationId);
-
-				return true;
-			}
+	
+			++current_attempts;
+	
+			ScriptMgr::Yield();
+		} while (!found_ground && current_attempts < max_attempts);
+	
+		if (!found_ground)
+		{
+			return false;
 		}
-
-		Notifications::Erase(notificationId);
-		Notifications::Show("Streaming", "Failed loading ground at coords", NotificationType::Warning);
-
-		coords.z = 1000.f;
-
-		return false;
+	
+		if (WATER::GET_WATER_HEIGHT(location.x, location.y, location.z, &height))
+		{
+			location.z = height;
+		}
+		else
+		{
+			location.z = ground_z + 1.f;
+		}
+	
+		return true;
 	}
-
+	
 	// Entity typdef is being ambiguous with Entity class
 	inline bool TeleportEntity(int ent, rage::fvector3 coords, bool loadGround = false)
 	{

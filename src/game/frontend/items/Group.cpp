@@ -6,25 +6,38 @@
 
 namespace YimMenu
 {
-	Group::Group(const std::string& name, ImVec2 size) :
+	Group::Group(const std::string& name, int items_per_row) :
 	    m_Name(name),
-	    m_Size(size)
+	    m_ItemsPerRow(items_per_row)
 	{
 	}
 
 	void Group::Draw()
 	{
-		if (ImGui::BeginChild(m_Name.insert(0, "##").c_str(), m_Size, true))
+		if (!m_Name.empty())
 		{
 			ImGui::PushFont(Menu::Font::g_ChildTitleFont);
-			ImGui::Text(m_Name.erase(0, 2).c_str());
+			ImGui::Text(m_Name.c_str());
 			ImGui::PopFont();
 			ImGui::Separator();
 			ImGui::Spacing();
-
-			for (auto& item : m_Items)
-				item->Draw();
 		}
-		ImGui::EndChild();
+
+		int item_count = 0;
+
+		ImGui::BeginGroup();
+		for (auto& item : m_Items)
+		{
+			item->Draw();
+			item_count++;
+
+			if (m_ItemsPerRow != -1 && item_count % m_ItemsPerRow == 0)
+			{
+				ImGui::EndGroup();
+				ImGui::SameLine();
+				ImGui::BeginGroup();
+			}
+		}
+		ImGui::EndGroup();
 	}
 }

@@ -1,8 +1,11 @@
 #include "Scripts.hpp"
 #include <script/scrThread.hpp>
+#include <script/scriptHandlerNetComponent.hpp>
+#include <network/CNetworkPlayerMgr.hpp>
 #include <rage/tlsContext.hpp>
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/data/ScriptNames.hpp"
 
 namespace YimMenu::Scripts
 {
@@ -30,13 +33,41 @@ namespace YimMenu::Scripts
 		*Pointers.CurrentScriptThread = og_thread;
 	}
 
-	void SendScriptEvent(uint64_t* data, int count, int bits)
+	void SendScriptEvent(uint64_t* data, int count, int metadataIndex, int bits)
 	{
 		if (auto thread = FindScriptThread("net_main_offline"_J))
 		{
-			RunAsScript(thread, [data, count, &bits] {
-				SCRIPTS::TRIGGER_SCRIPT_EVENT(1, data, count, 0, &bits);
+			RunAsScript(thread, [data, count, metadataIndex, &bits] {
+				SCRIPTS::TRIGGER_SCRIPT_EVENT(1, data, count, metadataIndex, &bits);
 			});
 		}
+	}
+
+	const char* GetScriptName(joaat_t hash)
+	{
+		if (*Pointers.IsSessionStarted)
+		{
+			for (int i = 0; i < Data::g_MpScriptNames.size(); i++)
+			{
+				if (Data::g_MpScriptNames[i].first == hash)
+					return Data::g_MpScriptNames[i].second;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < Data::g_SpScriptNames.size(); i++)
+			{
+				if (Data::g_SpScriptNames[i].first == hash)
+					return Data::g_SpScriptNames[i].second;
+			}
+		}
+
+		return "Unknown";
+	}
+
+	void ForceScriptHost(rage::scrThread* thread)
+	{
+		auto handler = reinterpret_cast<rage::scriptHandlerNetComponent*>(thread->m_HandlerNetComponent);
+		handler->DoHostMigration(Pointers.NetworkPlayerMgr->m_LocalPlayer, 0xFFFF, true);
 	}
 }

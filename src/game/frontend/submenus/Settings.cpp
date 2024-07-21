@@ -3,7 +3,7 @@
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
 
 namespace YimMenu::Submenus
@@ -40,6 +40,7 @@ namespace YimMenu::Submenus
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
 		gui->AddItem(std::make_shared<BoolCommandItem>("esp"_J));
 		gui->AddItem(std::make_shared<BoolCommandItem>("ctxmenu"_J));
+		gui->AddItem(std::make_shared<BoolCommandItem>("popplayerlist"_J));
 		protections->AddItem(std::make_shared<BoolCommandItem>("detectspoofednames"_J));
 		AddCategory(std::move(hotkeys));
 		AddCategory(std::move(gui));

@@ -6,7 +6,8 @@ namespace YimMenu::Hooks
 {
 	bool Script::RunScriptThreads(void* threads, int unk)
 	{
-		ScriptMgr::Tick();
+		if (g_Running)
+			ScriptMgr::Tick();
 		return BaseHook::Get<Script::RunScriptThreads, DetourHook<decltype(&RunScriptThreads)>>()->Original()(threads, unk);
 	}
 }

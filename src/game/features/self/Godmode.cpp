@@ -1,7 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/rdr/Natives.hpp"
+#include "game/backend/Self.hpp"
 
 namespace YimMenu::Features
 {
@@ -11,18 +9,15 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (!Self::PlayerPed || PED::IS_PED_DEAD_OR_DYING(Self::PlayerPed, true) || ENTITY::IS_ENTITY_DEAD(Self::PlayerPed))
-			{
-				ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, false);
-				return;
-			}
-
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, true);
+			if (Self::GetPed().IsDead())
+				Self::GetPed().SetInvincible(false);
+			else
+				Self::GetPed().SetInvincible(true);
 		}
 
 		virtual void OnDisable() override
 		{
-			ENTITY::SET_ENTITY_INVINCIBLE(Self::PlayerPed, false);
+			Self::GetPed().SetInvincible(false);
 		}
 	};
 

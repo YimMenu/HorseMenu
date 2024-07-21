@@ -1,5 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "util/teleport.hpp"
 
 namespace YimMenu::Features
@@ -10,12 +10,12 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (MAP::IS_WAYPOINT_ACTIVE())
+			if (MAP::IS_WAYPOINT_ACTIVE() && Self::GetPed())
 			{
 				Vector3 coords = Teleport::GetWaypointCoords();
 				if (coords != Vector3{0, 0, 0})
 				{
-					Teleport::TeleportEntity(YimMenu::Self::PlayerPed, rage::fvector3{coords.x, coords.y, coords.z}, true);
+					Teleport::TeleportEntity(Self::GetPed().GetHandle(), rage::fvector3{coords.x, coords.y, coords.z}, true);
 				}
 			}
 		}

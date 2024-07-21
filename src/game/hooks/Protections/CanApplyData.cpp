@@ -14,7 +14,7 @@ namespace YimMenu::Hooks
 		if (!BaseHook::Get<Protections::CanApplyData, DetourHook<decltype(&Protections::CanApplyData)>>()->Original()(tree, object))
 			return false;
 
-		if (ShouldBlockSync(tree, (eNetObjType)object->m_ObjectType, object))
+		if (ShouldBlockSync(tree, (NetObjType)object->m_ObjectType, object))
 			return false;
 
 		return true;

@@ -42,7 +42,7 @@ namespace YimMenu
 
 	struct SyncNodeFinder
 	{
-		static constexpr size_t sm_SyncTreeCount = size_t(eNetObjType::Max);
+		static constexpr size_t sm_SyncTreeCount = size_t(NetObjType::Max);
 
 		std::array<SyncNodeVftToIds, sm_SyncTreeCount> m_SyncTressSyncNodeAddrToIds;
 		std::array<SyncTreeNodeArrayIndexToNodeId, sm_SyncTreeCount> m_SyncTreeNodeIdsMap;
@@ -57,8 +57,8 @@ namespace YimMenu
 		bool m_Initialized = false;
 		std::mutex m_InitMutex;
 
-		SyncNodeId& FindImpl(eNetObjType obj_type, uintptr_t addr);
-		SyncNodeVftToIds& GetNodesForTypeImpl(eNetObjType obj_type);
+		SyncNodeId& FindImpl(NetObjType obj_type, uintptr_t addr);
+		SyncNodeVftToIds& GetNodesForTypeImpl(NetObjType obj_type);
 		void InitImpl();
 
 		static Nodes& GetInstance()
@@ -82,12 +82,12 @@ namespace YimMenu
 			GetInstance().m_Initialized                         = false;
 		}
 
-		static SyncNodeId& Find(eNetObjType obj_type, uintptr_t addr)
+		static SyncNodeId& Find(NetObjType obj_type, uintptr_t addr)
 		{
 			return GetInstance().FindImpl(obj_type, addr);
 		}
 
-		static SyncNodeVftToIds& GetNodesForType(eNetObjType obj_type)
+		static SyncNodeVftToIds& GetNodesForType(NetObjType obj_type)
 		{
 			return GetInstance().GetNodesForTypeImpl(obj_type);
 		}

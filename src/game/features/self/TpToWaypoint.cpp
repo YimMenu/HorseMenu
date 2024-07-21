@@ -1,7 +1,5 @@
 #include "core/commands/Command.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Natives.hpp"
-#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Self.hpp"
 #include "util/teleport.hpp"
 #include "core/frontend/Notifications.hpp"
 
@@ -16,8 +14,9 @@ namespace YimMenu::Features
 		{
 			if (MAP::IS_WAYPOINT_ACTIVE())
 			{
+				// TODO!!!
 				auto waypointCoords = YimMenu::Teleport::GetWaypointCoords();
-				YimMenu::Teleport::TeleportEntity(Self::PlayerPed, {waypointCoords.x, waypointCoords.y, 0.0f}, true);
+				YimMenu::Teleport::TeleportEntity(Self::GetPed().GetHandle(), {waypointCoords.x, waypointCoords.y, 0.0f}, true);
 			}
 			else
 			{
