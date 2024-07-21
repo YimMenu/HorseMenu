@@ -1,8 +1,11 @@
 #include "PatternScanner.hpp"
 
 #include "Module.hpp"
+#include "game/pointers/Pointers.hpp"
 
+#include <functional>
 #include <future>
+
 
 namespace YimMenu
 {
@@ -17,13 +20,31 @@ namespace YimMenu
 		if (!m_Module || !m_Module->Valid())
 			return false;
 
+
+		Pointers.Cache.Load();
+		bool scanSuccess = true;
 		std::vector<std::future<bool>> jobs;
-		for (const auto& [pattern, func] : m_Patterns)
+		bool forceUpdate = false;
+		if (Pointers.Cache.IsCacheOutdated())
 		{
-			jobs.emplace_back(std::async(&PatternScanner::ScanInternal, this, pattern, func));
+			forceUpdate = true;
+			Pointers.Cache.IncrementCacheVersion();
 		}
 
-		bool scanSuccess = true;
+		for (const auto& [pattern, func] : m_Patterns)
+		{
+			uintptr_t cachedPointer = Pointers.Cache.GetData(pattern->Name().data());
+			if (cachedPointer != 0 && !forceUpdate)
+			{
+				std::invoke(func, cachedPointer);
+			}
+			else
+			{
+				jobs.emplace_back(std::async(&PatternScanner::ScanInternal, this, pattern, func));
+			}
+		}
+
+
 		for (auto& job : jobs)
 		{
 			job.wait();
@@ -35,6 +56,7 @@ namespace YimMenu
 		{
 			LOG(FATAL) << "Some patterns have not been found, continuing would be foolish.";
 		}
+
 		return scanSuccess;
 	}
 
@@ -62,6 +84,8 @@ namespace YimMenu
 				LOG(INFO) << "Found pattern [" << pattern->Name() << "] : [" << HEX(i) << "]";
 
 				std::invoke(func, i);
+
+				Pointers.Cache.GetOrUpdate(pattern->Name().data(), i);
 
 				return true;
 			}

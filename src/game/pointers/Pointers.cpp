@@ -13,6 +13,7 @@ namespace YimMenu
 	bool Pointers::Init()
 	{
 		const auto rdr2 = ModuleMgr.Get("RDR2.exe"_J);
+
 		if (!rdr2)
 		{
 			LOG(FATAL) << "Could not find RDR2.exe, is this RDR2?";
@@ -426,5 +427,6 @@ namespace YimMenu
 
 	void Pointers::Restore()
 	{
+		*ExplosionBypass = false;
 	}
 }
