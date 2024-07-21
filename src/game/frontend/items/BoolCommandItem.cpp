@@ -6,8 +6,9 @@
 
 namespace YimMenu
 {
-	BoolCommandItem::BoolCommandItem(joaat_t id) :
-	    m_Command(Commands::GetCommand<BoolCommand>(id))
+	BoolCommandItem::BoolCommandItem(joaat_t id, std::optional<std::string> label_override) :
+	    m_Command(Commands::GetCommand<BoolCommand>(id)),
+	    m_LabelOverride(label_override)
 	{
 	}
 
@@ -20,7 +21,7 @@ namespace YimMenu
 		}
 
 		bool enabled = m_Command->GetState();
-		if (ImGui::Toggle(m_Command->GetLabel().data(), &enabled))
+		if (ImGui::Toggle(m_LabelOverride.has_value() ? m_LabelOverride.value().data() : m_Command->GetLabel().data(), &enabled))
 			m_Command->SetState(enabled);
 
 		// TODO: refactor this

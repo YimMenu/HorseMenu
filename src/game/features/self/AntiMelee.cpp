@@ -1,5 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 
@@ -12,17 +12,23 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			for (int i = 0; i < 35; i++)
+			if (Self::GetPed())
 			{
-				PED::_SET_PED_TARGET_ACTION_DISABLE_FLAG(Self::PlayerPed, i);
+				for (int i = 0; i < 35; i++)
+				{
+					PED::_SET_PED_TARGET_ACTION_DISABLE_FLAG(Self::GetPed().GetHandle(), i);
+				}
 			}
 		}
 
 		virtual void OnDisable() override
 		{
-			for (int i = 0; i < 35; i++)
+			if (Self::GetPed())
 			{
-				PED::_CLEAR_PED_TARGET_ACTION_DISABLE_FLAG(Self::PlayerPed, i);
+				for (int i = 0; i < 35; i++)
+				{
+					PED::_CLEAR_PED_TARGET_ACTION_DISABLE_FLAG(Self::GetPed().GetHandle(), i);
+				}
 			}
 		}
 	};

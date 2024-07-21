@@ -9,7 +9,7 @@
 
 namespace YimMenu::Hooks
 {
-	int Protections::AddObjectToCreationQueue(void* mgr, eNetObjType type, CNetGamePlayer* src, CNetGamePlayer* dst)
+	int Protections::AddObjectToCreationQueue(void* mgr, NetObjType type, CNetGamePlayer* src, CNetGamePlayer* dst)
 	{
 		YimMenu::Protections::SetSyncingPlayer(src);
 

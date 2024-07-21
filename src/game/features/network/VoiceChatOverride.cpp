@@ -1,7 +1,7 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/Entity.hpp"
 
 namespace YimMenu::Features
 {
@@ -11,7 +11,6 @@ namespace YimMenu::Features
 
 		virtual void OnEnable() override
 		{
-
 		}
 
 		virtual void OnTick() override
@@ -21,7 +20,6 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
-
 		}
 	};
 

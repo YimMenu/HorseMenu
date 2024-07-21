@@ -1,11 +1,12 @@
-#include "game/commands/PlayerCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Scripts.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Self.hpp"
+#include "game/commands/PlayerCommand.hpp"
 #include "game/rdr/Enums.hpp"
+#include "game/rdr/Scripts.hpp"
 
 namespace YimMenu::Features
 {
+	// TODO: Refactor sender
 	void MaxHonor(int bits)
 	{
 		uint64_t data[7]{};
@@ -13,17 +14,17 @@ namespace YimMenu::Features
 		for (int i = 0; i < 5; i++)
 		{
 			data[0] = static_cast<uint64_t>(ScriptEvent::SCRIPT_EVENT_PERSONA_HONOR);
-			data[1] = Self::Id;
+			data[1] = Self::GetPlayer().GetId();
 			data[4] = 2;
 			data[5] = "PERSONA_HONOR_ACTION__FME_BOUNTY_RETURNED_ALIVE"_J;
 			data[6] = 1;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__HORSE_CARE"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__NB_KIDNAPPED_RESCUE"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			data[5] = "PERSONA_HONOR_ACTION__MISSION_POS_FIFTY"_J;
-			Scripts::SendScriptEvent(data, 13, bits);
+			Scripts::SendScriptEvent(data, 13, 6, bits);
 			ScriptMgr::Yield(40ms);
 		}
 	}
@@ -44,7 +45,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			MaxHonor(-1 & ~(1 << Self::Id));
+			MaxHonor(-1 & ~(1 << Self::GetPlayer().GetId()));
 		}
 	};
 

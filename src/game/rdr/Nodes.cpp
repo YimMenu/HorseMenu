@@ -1,21 +1,22 @@
 #include "Nodes.hpp"
 #include "game/pointers/Pointers.hpp"
+#include <network/sync/CProjectBaseSyncDataNode.hpp>
 
 namespace YimMenu
 {
-	SyncNodeId& Nodes::FindImpl(eNetObjType obj_type, uintptr_t addr)
+	SyncNodeId& Nodes::FindImpl(NetObjType obj_type, uintptr_t addr)
 	{
 		return m_Finder.m_SyncTressSyncNodeAddrToIds[(int)obj_type][addr];
 	}
 
-	SyncNodeVftToIds& Nodes::GetNodesForTypeImpl(eNetObjType obj_type)
+	SyncNodeVftToIds& Nodes::GetNodesForTypeImpl(NetObjType obj_type)
 	{
 		return m_Finder.m_SyncTressSyncNodeAddrToIds[(int)obj_type];
 	}
 
 	void Nodes::InitImpl()
 	{
-		for (int i = (int)eNetObjType::Animal; i < (int)eNetObjType::Max; i++)
+		for (int i = (int)NetObjType::Animal; i < (int)NetObjType::Max; i++)
 		{
 			rage::netSyncTree* tree = Pointers.GetSyncTreeForType(nullptr, i);
 
@@ -34,6 +35,9 @@ namespace YimMenu
 				const SyncNodeId node_id = m_Finder.m_SyncTreeNodeIdsMap[i][j];
 
 				m_Finder.m_SyncTressSyncNodeAddrToIds[i][addr] = node_id;
+				auto node = (CProjectBaseSyncDataNode*)(addr);
+
+				LOG(INFO) << node_id.name << ": V=RDR2.exe+" << HEX((*(__int64*)(node)) - (__int64)GetModuleHandleA(0)) << " S=RDR2.exe+" << HEX((*(__int64*)(node->m_CommonDataOpsVFT)) - (__int64)GetModuleHandleA(0));
 			}
 		}
 

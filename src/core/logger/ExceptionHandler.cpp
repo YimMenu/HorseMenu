@@ -17,8 +17,8 @@ namespace YimMenu
 	ExceptionHandler::ExceptionHandler()
 	{
 		LOG(INFO) << "ExceptionHandler initialized";
-		m_OldErrorMode    = SetErrorMode(0);
-		m_Handler      = AddVectoredExceptionHandler(0, &VectoredExceptionHandler);
+		m_OldErrorMode = SetErrorMode(0);
+		m_Handler      = SetUnhandledExceptionFilter(&VectoredExceptionHandler);
 	}
 
 	ExceptionHandler::~ExceptionHandler()
@@ -77,5 +77,3 @@ namespace YimMenu
 }
 
 static YimMenu::ExceptionHandler _ExceptionHandler{};
-// 48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 DB 44 0F
-//

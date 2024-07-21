@@ -1,7 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/rdr/Natives.hpp"
+#include "game/backend/Self.hpp"
 
 namespace YimMenu::Features
 {
@@ -12,13 +10,14 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (!ENTITY::DOES_ENTITY_EXIST(Self::Mount))
+			auto mount = Self::GetMount();
+			if (!mount || mount.IsDead())
 				return;
 
-			auto agitation = PED::_GET_PED_MOTIVATION(Self::Mount,(int) eMotivationState::AGITATION_STATE, 0);
+			auto agitation = mount.GetMotivation(MotivationState::AGITATION_STATE);
 
 			if (agitation > 0)
-				PED::_SET_PED_MOTIVATION(Self::Mount, (int)eMotivationState::AGITATION_STATE, 0, 0);
+				mount.SetMotivation(MotivationState::AGITATION_STATE, 0.0f);
 		}
 	};
 

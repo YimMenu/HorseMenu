@@ -1,6 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
@@ -11,19 +10,24 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (!Self::PlayerPed || PED::IS_PED_DEAD_OR_DYING(Self::PlayerPed, true) || ENTITY::IS_ENTITY_DEAD(Self::PlayerPed))
+			auto ped = Self::GetPed();
+			if (!ped || ped.IsDead())
 				return;
 
-			auto health_bar  = ENTITY::GET_ENTITY_HEALTH(Self::PlayerPed);
-			auto stamina_bar = PLAYER::_GET_PLAYER_STAMINA(Self::Id);
-			auto deadeye_bar = PLAYER::_GET_PLAYER_DEAD_EYE(Self::Id);
+			auto health_bar  = ped.GetHealth();
+			auto stamina_bar = PLAYER::_GET_PLAYER_STAMINA(Self::GetPlayer().GetId());
+			auto deadeye_bar = PLAYER::_GET_PLAYER_DEAD_EYE(Self::GetPlayer().GetId());
 
-			if (health_bar < ENTITY::GET_ENTITY_MAX_HEALTH(Self::PlayerPed, false))
-				ENTITY::SET_ENTITY_HEALTH(Self::PlayerPed, ENTITY::GET_ENTITY_MAX_HEALTH(Self::PlayerPed, false), 0);
-			if (stamina_bar < PED::_GET_PED_MAX_STAMINA(Self::PlayerPed))
-				PED::_CHANGE_PED_STAMINA(Self::PlayerPed, PED::_GET_PED_MAX_STAMINA(Self::PlayerPed));
-			if (deadeye_bar < PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::Id, 0))
-				PLAYER::_SPECIAL_ABILITY_RESTORE_BY_AMOUNT(Self::Id, PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::Id, false), 0, 0, 1);
+			if (health_bar < ped.GetMaxHealth())
+				ped.SetHealth(ped.GetMaxHealth());
+			if (stamina_bar < PED::_GET_PED_MAX_STAMINA(ped.GetHandle()))
+				PED::_CHANGE_PED_STAMINA(ped.GetHandle(), PED::_GET_PED_MAX_STAMINA(ped.GetHandle()) - stamina_bar);
+			if (deadeye_bar < PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::GetPlayer().GetId(), 0))
+				PLAYER::_SPECIAL_ABILITY_RESTORE_BY_AMOUNT(Self::GetPlayer().GetId(),
+				    PLAYER::_GET_PLAYER_MAX_DEAD_EYE(Self::GetPlayer().GetId(), false),
+				    0,
+				    0,
+				    1);
 		}
 	};
 

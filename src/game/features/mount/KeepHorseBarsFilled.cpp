@@ -1,27 +1,26 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
-#include "game/rdr/Enums.hpp"
-#include "game/rdr/Natives.hpp"
+#include "game/backend/Self.hpp"
 
 namespace YimMenu::Features
 {
-	// TODO: this should be moved out of self
 	class KeepHorseBarsFilled : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
 
 		virtual void OnTick() override
 		{
-			if (!ENTITY::DOES_ENTITY_EXIST(Self::Mount))
+			auto mount = Self::GetMount();
+
+			if (!mount || mount.IsDead())
 				return;
 
-			auto health_bar  = ENTITY::GET_ENTITY_HEALTH(Self::Mount);
-			auto stamina_bar = PED::_GET_PED_STAMINA(Self::Mount);
+			auto health_bar  = mount.GetHealth();
+			auto stamina_bar = mount.GetStamina();
 
-			if (health_bar < ENTITY::GET_ENTITY_MAX_HEALTH(Self::Mount, 0))
-				ENTITY::SET_ENTITY_HEALTH(Self::Mount, ENTITY::GET_ENTITY_MAX_HEALTH(Self::Mount, 0), 0);
-			if (stamina_bar < PED::_GET_PED_MAX_STAMINA(Self::Mount))
-				PED::_CHANGE_PED_STAMINA(Self::Mount, PED::_GET_PED_MAX_STAMINA(Self::Mount));
+			if (health_bar < mount.GetMaxHealth())
+				mount.SetHealth(mount.GetMaxHealth());
+			if (stamina_bar < mount.GetMaxStamina())
+				mount.SetStamina(mount.GetMaxStamina());
 		}
 	};
 

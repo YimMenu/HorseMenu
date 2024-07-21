@@ -1,5 +1,5 @@
 #include "core/commands/LoopedCommand.hpp"
-#include "game/features/Features.hpp"
+#include "game/backend/Self.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
@@ -19,7 +19,7 @@ namespace YimMenu::Features
 			{
 				if (timer.CanAccess() && afkSwitch.CanAccess())
 				{
-					*timer.As<int*>() = 999999;
+					*timer.As<int*>() = INT_MAX;
 					*afkSwitch.As<bool*>() = false;
 				}
 			}

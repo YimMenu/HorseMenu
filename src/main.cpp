@@ -1,14 +1,15 @@
 #include "common.hpp"
-#include "core/byte_patch_manager/byte_patch_manager.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/filemgr/FileMgr.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/Hooking.hpp"
 #include "core/memory/ModuleMgr.hpp"
+#include "core/player_database/PlayerDatabase.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/backend/NativeHooks.hpp"
 #include "game/bigfeatures/CustomTeleport.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/GUI.hpp"
@@ -20,7 +21,7 @@ namespace YimMenu
 	DWORD Main(void*)
 	{
 		const auto documents = std::filesystem::path(std::getenv("appdata")) / "HorseMenu";
-		FileMgr::Init(documents); // TODO
+		FileMgr::Init(documents);
 
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
@@ -28,14 +29,14 @@ namespace YimMenu
 		CustomTeleport::FetchSavedLocations();
 		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
 
+		auto PlayerDatabaseInstance = std::make_unique<PlayerDatabase>();
+
 		if (!ModuleMgr.LoadModules())
 			goto unload;
 		if (!Pointers.Init())
 			goto unload;
 		if (!Renderer::Init())
 			goto unload;
-
-		Byte_Patch_Manager::Init();
 
 		Hooking::Init();
 
@@ -53,6 +54,10 @@ namespace YimMenu
 
 		Notifications::Show("HorseMenu", "Loaded succesfully", NotificationType::Success);
 
+#ifndef NDEBUG
+		LOG(WARNING) << "Debug Build. Switch to RelWithDebInfo or Release build configurations to have a more stable experience.";
+#endif
+
 		while (g_Running)
 		{
 			// Needed incase UI is malfunctioning or for emergencies
@@ -67,17 +72,21 @@ namespace YimMenu
 
 		LOG(INFO) << "Unloading";
 
+		NativeHooks::Destroy();
+		LOG(INFO) << "NativeHooks Uninitialized";
+
 		ScriptMgr::Destroy();
 		LOG(INFO) << "ScriptMgr Uninitialized";
 
 		FiberPool::Destroy();
 		LOG(INFO) << "FiberPool Uninitialized";
 
+		PlayerDatabaseInstance.reset();
+
 	unload:
 		Pointers.Cache.Unload();
 		Hooking::Destroy();
 		Renderer::Destroy();
-		Pointers.Restore();
 
 		LogHelper::Destroy();
 

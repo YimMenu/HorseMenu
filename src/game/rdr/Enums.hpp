@@ -1,6 +1,6 @@
 #pragma once
 
-enum class eInputGroup
+enum class InputGroup
 {
 	INPUT_GROUP_UNK1 = 0,
 	INPUT_GROUP_UNK2,
@@ -60,7 +60,6 @@ enum class NetEventType
 	NETWORK_STOP_AUDIO_ENTITY_SOUND_EVENT,
 	UNUSED_EVENT_49,
 	NETWORK_TRAIN_REQUEST_EVENT,
-	NETWORK_INCREMENT_STAT_EVENT,
 	UNUSED_EVENT_52,
 	MODIFY_VEHICLE_LOCK_WORD_STATE_DATA,
 	UNUSED_EVENT_54,
@@ -227,7 +226,6 @@ constexpr static auto g_NetEventsToString = std::to_array({
     "NETWORK_STOP_AUDIO_ENTITY_SOUND_EVENT",
     "UNUSED_EVENT_49",
     "NETWORK_TRAIN_REQUEST_EVENT",
-    "NETWORK_INCREMENT_STAT_EVENT",
     "UNUSED_EVENT_52",
     "MODIFY_VEHICLE_LOCK_WORD_STATE_DATA",
     "UNUSED_EVENT_54",
@@ -341,7 +339,7 @@ constexpr static auto g_NetEventsToString = std::to_array({
     "NETWORK_FORCE_IN_SCOPE_FOR_DUPLICATE_OBJECT_OWNER",
 });
 
-enum class eNativeInputs : unsigned
+enum class NativeInputs : unsigned
 {
 	INPUT_NEXT_CAMERA                       = 0x7f8d09b8,
 	INPUT_LOOK_LR                           = 0xa987235f,
@@ -1117,14 +1115,14 @@ enum class eNativeInputs : unsigned
 	INPUT_SCRIPTED_FLY_ZDOWN                = 0x9c5e030c,
 };
 
-enum class eAttributeCore
+enum class AttributeCore
 {
 	ATTRIBUTE_CORE_HEALTH,
 	ATTRIBUTE_CORE_STAMINA,
 	ATTRIBUTE_CORE_DEADEYE
 };
 
-enum class eMotivationState
+enum class MotivationState
 {
 	TOILET_STATE,
 	FEAR_STATE,
@@ -1139,7 +1137,7 @@ enum class eMotivationState
 	DRUNK_STATE
 };
 
-enum class eCrimeType : unsigned
+enum class CrimeType : unsigned
 {
 	CRIME_ACCOMPLICE                 = 0xAF074F6D,
 	CRIME_ARSON                      = 0x68134DC7,
@@ -1201,7 +1199,7 @@ enum class eCrimeType : unsigned
 	CRIME_WANTED_LEVEL_UP_DEBUG_LOW  = 0xD891890F
 };
 
-enum class eLawRegion : unsigned
+enum class LawRegion : unsigned
 {
 	LAW_DISPATCH_REGION_NONE               = 0,
 	LAW_REGION_AGUASDULCES                 = 0x2F573EBE,
@@ -1255,14 +1253,14 @@ enum class eLawRegion : unsigned
 	LAW_REGION_WAPITI                      = 0x7A976E02
 };
 
-enum class ePedDamageCleanliness
+enum class PedDamageCleanliness
 {
 	PED_DAMAGE_CLEANLINESS_POOR,
 	PED_DAMAGE_CLEANLINESS_GOOD,
 	PED_DAMAGE_CLEANLINESS_PERFECT
 };
 
-enum class eNetObjType
+enum class NetObjType
 {
 	Animal             = 0x0,
 	Automobile         = 0x1,
@@ -1334,7 +1332,7 @@ enum class ExplosionTypes
 	GLASS_SMASHING_SOUND_TOXIC_GAS_CLOUD
 };
 
-enum class eCarryingFlags
+enum class CarryingFlags
 {
 	CARRYING_FLAG_CAN_BE_HOGTIED,
 	CARRYING_FLAG_CAN_BE_CUT_FREE,
@@ -1365,7 +1363,7 @@ enum class eCarryingFlags
 	CARRYING_FLAG_FORCE_HIDE_PROMPT_GROUP
 };
 
-enum class eLassoFlags
+enum class LassoFlags
 {
 	LHF_CAN_BE_LASSOED,
 	LHF_CAN_BE_LASSOED_WHEN_DEAD,
@@ -1383,9 +1381,271 @@ enum class eLassoFlags
 
 enum class ScriptEvent
 {
+	SCRIPT_EVENT_TICKER_MESSAGE                    = 0,
+	SCRIPT_EVENT_AMBIENT_CONTENT_EVALUATOR         = 4,
+	SCRIPT_EVENT_ACE_LAUNCHER                      = 5,
+	SCRIPT_EVENT_PARLAY                            = 28,
+	SCRIPT_EVENT_NOTORIETY_PRESS_CHARGES           = 35,
 	SCRIPT_EVENT_NOTORIETY_FORCE_PASSIVE           = 36,
 	SCRIPT_EVENT_NOTORIETY_FORCE_NOT_PASSIVE_HORSE = 37,
-	SCRIPT_EVENT_PERSONA_HONOR                     = 188
+	SCRIPT_EVENT_NET_STABLE                        = 46,
+	SCRIPT_EVENT_NET_STABLE_MOUNT                  = 47,
+	SCRIPT_EVENT_FETCH_MANAGER                     = 178,
+	SCRIPT_EVENT_NET_HUD                           = 186,
+	SCRIPT_EVENT_PERSONA_HONOR                     = 188,
+	SCRIPT_EVENT_PLAYER_CAMP                       = 201
+};
+
+enum class NetMessageType : uint32_t
+{
+	INVALID                                           = 0xFFFF,
+	JOIN_RESPONSE                                     = 0x61, // obsolete
+	PACKED_EVENTS                                     = 0x70,
+	PACKED_EVENT_RELIABLES_MSGS                       = 0x71,
+	MERGE_SESSION_DISTRIBUTE_OBJECT_ID_REMAPPINGS     = 0x27,
+	MERGE_SESSION_DISTRIBUTE_OBJECT_ID_REMAPPINGS_ACK = 0x28,
+	PLAYER_ID_REMAP_READY                             = 0x29,
+	OBJECT_ID_REMAP_READY                             = 0x2A,
+	OBJECT_ID_REMAP_COMPLETE                          = 0x2B,
+	OBJECT_ID_REMAP_READY_TO_RESTART                  = 0x2C,
+	NOTIFY_USING_NEW_OBJECT_IDS                       = 0x2D,
+	NOTIFY_USING_NEW_PLAYER_IDS                       = 0x2E,
+	REMOVE_GAMERS_FROM_SESSION_CMD                    = 0x64, // obsolete
+	TEXT_CHAT                                         = 0x40, // unused
+	TEXT_CHAT_STATUS                                  = 0x41, // unused
+	CLOCK_INFO_REQUEST                                = 0x21,
+	CLOCK_INFO                                        = 0x22,
+	CLONE_SYNC                                        = 0x75,
+	PACKED_CLONE_SYNC_ACKS                            = 0x76,
+	PACKED_RELIABLES                                  = 0x77,
+	NET_ARRAY_MGR_UPDATE                              = 0x6D,
+	NET_ARRAY_MGR_UPDATE_ACK                          = 0x6E,
+	NET_ARRAY_MGR_SPLIT_UPDATE_ACK                    = 0x6F,
+	SCRIPT_JOIN                                       = 0x7D,
+	SCRIPT_JOIN_ACK                                   = 0x7E,
+	SCRIPT_JOIN_HOST_ACK                              = 0x7F,
+	SCRIPT_HANDSHAKE                                  = 0x80,
+	SCRIPT_HANDSHAKE_ACK                              = 0x81,
+	SCRIPT_LEAVE                                      = 0x82,
+	SCRIPT_LEAVE_ACK                                  = 0x83,
+	SCRIPT_BOT_JOIN                                   = 0x84,
+	SCRIPT_BOT_JOIN_ACK                               = 0x85,
+	SCRIPT_BOT_HANDSHAKE                              = 0x86,
+	SCRIPT_BOT_HANDSHAKE_ACK                          = 0x87,
+	SCRIPT_BOT_LEAVE                                  = 0x88,
+	SCRIPT_MIGRATE_HOST                               = 0x89,
+	SCRIPT_MIGRATE_HOST_FAIL_ACK                      = 0x8A,
+	SCRIPT_HOST_REQUEST                               = 0x8B,
+	SCRIPT_NEW_HOST                                   = 0x8C,
+	SCRIPT_VERIFY_HOST                                = 0x8D,
+	SCRIPT_VERIFY_HOST_ACK                            = 0x8E,
+	SCRIPT_QUERY_EXISTING_HOST                        = 0x8F,
+	SCRIPT_QUERY_EXISTING_HOST_ACK                    = 0x90,
+	SCRIPT_SHUTTING_DOWN_FOR_MERGE                    = 0x32,
+	ADD_GAMER_TO_SESSION_CMD                          = 0x62, // obsolete
+	REASSIGN_RESPONSE                                 = 0x7A,
+	REASSIGN_NEGOTIATE                                = 0x78,
+	REASSIGN_CONFIRM                                  = 0x79,
+	REQUEST_OBJECT_IDS                                = 0x72,
+	INFORM_OBJECT_IDS                                 = 0x73,
+	NET_TIME_SYNC                                     = 0x4B,
+	TEXT_MESSAGE                                      = 0x3C, // unused
+	VOICE_CHAT_STATUS                                 = 0x3B,
+	REQUEST_RESET_POPULATION                          = 0x1D,
+	RESET_POPULATION                                  = 0x1E,
+	READY_TO_RESET_POPULATION                         = 0x1F,
+	FINISHED_RESET_POPULATION                         = 0x20,
+	READY_FOR_GAME_SYNC                               = 0x2F,
+	READY_FOR_GAME_SYNC_ACK                           = 0x30,
+	PLAYER_INITIALIZED                                = 0x31,
+	CONNECT_REQUEST                                   = 0x55,
+	CONNECT_RESPONSE                                  = 0x56,
+	QOS_PROBE_REQUEST                                 = 0x6B, // unused
+	QOS_PROBE_RESPONSE                                = 0x6C, // unused
+	NET_ICE_SESSION_OFFER                             = 0x4D,
+	NET_ICE_SESSION_ANSWER                            = 0x4E,
+	NET_ICE_SESSION_PING                              = 0x4F,
+	NET_ICE_SESSION_PONG                              = 0x50,
+	NET_ICE_SESSION_PORT_OPENER                       = 0x51,
+	NET_ICE_SESSION_DEBUG_INFO                        = 0x52,
+	PEER_PHYSICAL_INDEX                               = 0x1A, // obsolete
+	REQUEST_PEER_PHYSICAL_INDEX                       = 0x1B, // obsolete
+	JOIN_RESPONSE2                                    = 0x1C, // obsolete
+	SESSION_INFO                                      = 0x36, // unused
+	RADIO_STATION_SYNC                                = 0x23, // unused
+	RADIO_STATION_SYNC_REQUEST                        = 0x24, // unused
+	PLAYER_CARD_SYNC                                  = 0x25, // unused
+	PLAYER_CARD_REQUEST                               = 0x26, // unused
+	DEBUG_STALL                                       = 0x35, // unused
+	SESSION_ACCEPT_CHAT                               = 0x3A, 
+	SESSION_INFO_RESPONSE                             = 0x37, // unused
+	SESSION_JOIN_REQUEST                              = 0x38, // unused
+	SESSION_JOIN_REQUEST_RESPONSE                     = 0x39, // unused
+	NET_LAG_PING                                      = 0x49, // unused
+	NET_COMPLAINT                                     = 0x4A, // unused
+	CXN_REQUEST_REMOTE_TIMEOUT                        = 0x43, // unused
+	SEARCH_REQUEST                                    = 0x5B, // unused
+	SEARCH_RESPONSE                                   = 0x5C, // unused
+	CONFIG_REQUEST                                    = 0x5E, // obsolete
+	CONFIG_RESPONSE                                   = 0x5E, // obsolete
+	HOST_LEFT_WHILST_JOINING_CMD                      = 0x63, // obsolete
+	MIGRATE_HOST_REQUEST                              = 0x65, // obsolete
+	MIGRATE_HOST_RESPONSE                             = 0x66, // obsolete
+	SESSION_MEMBERS                                   = 0x67, // obsolete
+	PLAYER_DATA                                       = 0x7B,
+	ACTIVATE_NETWORK_BOT                              = 0x7C, // unused
+	NET_ROUTE_REQUEST                                 = 0x44,
+	NET_ROUTE_REPLY                                   = 0x45,
+	NET_ROUTE_ERROR                                   = 0x46,
+	PARTY_ENTER_GAME                                  = 0x57,
+	PARTY_LEAVE_GAME                                  = 0x58,
+	UNK_0x59                                          = 0x59,
+};
+
+enum class WeaponHash : uint32_t
+{
+	WEAPON_BOW                                   = 2292731996, // Bow
+	WEAPON_BOW_CHARLES                           = 2031861036, // Charles' Bow
+	WEAPON_FISHINGROD                            = 2879944532, // Fishing Rod
+	WEAPON_KIT_BINOCULARS                        = 4134042714, // Binoculars
+	WEAPON_KIT_CAMERA                            = 3278252925, // Camera
+	WEAPON_KIT_DETECTOR                          = 191707516,  // Electrostatic Detector
+	WEAPON_LASSO                                 = 2055893578, // Lasso
+	WEAPON_MELEE_ANCIENT_HATCHET                 = 567069252,  // Stone Hatchet
+	WEAPON_MELEE_BROKEN_SWORD                    = 4153512116, // Broken Pirate Sword
+	WEAPON_MELEE_CLEAVER                         = 4013072989, // Cleaver
+	WEAPON_MELEE_DAVY_LANTERN                    = 1247405313, // Lantern
+	WEAPON_MELEE_HATCHET                         = 165751297,  // Hatchet
+	WEAPON_MELEE_HATCHET_DOUBLE_BIT              = 3167106915, // Double Bit Hatchet
+	WEAPON_MELEE_HATCHET_DOUBLE_BIT_RUSTED       = 2400181774, // Rusted Double Bit Hatchet
+	WEAPON_MELEE_HATCHET_HEWING                  = 469927692,  // Hewing Hatchet
+	WEAPON_MELEE_HATCHET_HUNTER                  = 710736342,  // Hunter Hatchet
+	WEAPON_MELEE_HATCHET_HUNTER_RUSTED           = 3832592301, // Rusted Hunter Hatchet
+	WEAPON_MELEE_HATCHET_MELEEONLY               = 124604331,  // Hatchet (Melee Only)
+	WEAPON_MELEE_HATCHET_VIKING                  = 1960591597, // Viking Hatchet
+	WEAPON_MELEE_KNIFE                           = 3676417164, // Hunting Knife
+	WEAPON_MELEE_KNIFE_BEAR                      = 734080218,  // Antler Knife
+	WEAPON_MELEE_KNIFE_BILL                      = 3460051364, // Bill's Knife
+	WEAPON_MELEE_KNIFE_CHARLES                   = 3027717437, // Charles' Knife
+	WEAPON_MELEE_KNIFE_CIVIL_WAR                 = 3662994771, // Civil War Knife
+	WEAPON_MELEE_KNIFE_DUTCH                     = 747485975,  // Dutch's Knife
+	WEAPON_MELEE_KNIFE_HOSEA                     = 3402528270, // Hosea's Knife
+	WEAPON_MELEE_KNIFE_JAVIER                    = 4201006734, // Javier's Knife
+	WEAPON_MELEE_KNIFE_JAWBONE                   = 277270593,  // Jawbone Knife
+	WEAPON_MELEE_KNIFE_JOHN                      = 494733111,  // John's Knife
+	WEAPON_MELEE_KNIFE_KIERAN                    = 792644919,  // Kieran's Knife
+	WEAPON_MELEE_KNIFE_LENNY                     = 2648193454, // Lenny's Knife
+	WEAPON_MELEE_KNIFE_MICAH                     = 3911474488, // Micah's Knife
+	WEAPON_MELEE_KNIFE_MINER                     = 205894366,  // Wide-Blade Knife
+	WEAPON_MELEE_KNIFE_SADIE                     = 2942234376, // Sadie's Knife
+	WEAPON_MELEE_KNIFE_SEAN                      = 1683046969, // Sean's Knife
+	WEAPON_MELEE_KNIFE_UNCLE                     = 1189706512, // Uncle's Knife
+	WEAPON_MELEE_KNIFE_VAMPIRE                   = 349436237,  // Ornate Dagger
+	WEAPON_MELEE_LANTERN                         = 4130321315, // Old Lantern
+	WEAPON_MELEE_LANTERN_ELECTRIC                = 827679807,  // Electric Lantern
+	WEAPON_MELEE_MACHETE                         = 680856689,  // Machete
+	WEAPON_MELEE_TORCH                           = 1742487518, // Torch
+	WEAPON_MELEE_TORCH_CROWD                     = 3427109053, // Torch
+	WEAPON_MOONSHINEJUG                          = 2933179980, // Moonshine Jug
+	WEAPON_PISTOL_M1899                          = 1534638301, // M1899 Pistol
+	WEAPON_PISTOL_MAUSER                         = 2239809086, // Mauser Pistol
+	WEAPON_PISTOL_MAUSER_DRUNK                   = 1252941818, // Midnight's Pistol
+	WEAPON_PISTOL_SEMIAUTO                       = 1701864918, // Semi-Automatic Pistol
+	WEAPON_PISTOL_VOLCANIC                       = 34411519,   // Volcanic Pistol
+	WEAPON_REPEATER_CARBINE                      = 4111948705, // Carbine Repeater
+	WEAPON_REPEATER_CARBINE_SADIE                = 2077870112, // Sadie's Carbine Repeater
+	WEAPON_REPEATER_EVANS                        = 1905553950, // Evans Repeater
+	WEAPON_REPEATER_HENRY                        = 2511488402, // Litchfield Repeater
+	WEAPON_REPEATER_WINCHESTER                   = 2823250668, // Lancaster Repeater
+	WEAPON_REPEATER_WINCHESTER_JOHN              = 3195419004, // John's Lancaster Repeater
+	WEAPON_REVOLVER_CATTLEMAN                    = 379542007,  // Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_DUALWIELD          = 3696650808, // Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_HOSEA              = 2801701941, // Hosea's Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_HOSEA_DUALWIELD    = 514487158,  // Hosea's Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_JOHN               = 3378653015, // John's Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_KIERAN             = 2410574779, // Kieran's Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_LENNY              = 3372831782, // Lenny's Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_MEXICAN            = 383145463,  // Flaco's Revolver
+	WEAPON_REVOLVER_CATTLEMAN_PIG                = 4125368447, // Granger's Revolver
+	WEAPON_REVOLVER_CATTLEMAN_SADIE              = 1240907314, // Sadie's Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_SADIE_DUALWIELD    = 2206520830, // Sadie's Cattleman Revolver
+	WEAPON_REVOLVER_CATTLEMAN_SEAN               = 1055711880, // Sean's Cattleman Revolver
+	WEAPON_REVOLVER_DOUBLEACTION                 = 127400949,  // Double-Action Revolver
+	WEAPON_REVOLVER_DOUBLEACTION_DUALWIELD       = 1210039241, // Double-Action Revolver
+	WEAPON_REVOLVER_DOUBLEACTION_EXOTIC          = 600245965,  // Algernon's Revolver
+	WEAPON_REVOLVER_DOUBLEACTION_GAMBLER         = 2212320791, // High Roller Revolver
+	WEAPON_REVOLVER_DOUBLEACTION_JAVIER          = 1363884449, // Javier's Double-Action Revolver
+	WEAPON_REVOLVER_DOUBLEACTION_MICAH           = 36703333,   // Micah's Revolver
+	WEAPON_REVOLVER_DOUBLEACTION_MICAH_DUALWIELD = 13903789,   // Micah's Revolver
+	WEAPON_REVOLVER_LEMAT                        = 1529685685, // LeMat Revolver
+	WEAPON_REVOLVER_SCHOFIELD                    = 2075992054, // Schofield Revolver
+	WEAPON_REVOLVER_SCHOFIELD_BILL               = 1845380267, // Bill's Schofield Revolver
+	WEAPON_REVOLVER_SCHOFIELD_CALLOWAY           = 38266755,   // Calloway's Revolver
+	WEAPON_REVOLVER_SCHOFIELD_DUALWIELD          = 3489083810, // Schofield Revolver
+	WEAPON_REVOLVER_SCHOFIELD_DUTCH              = 4199230791, // Dutch's Schofield Revolver
+	WEAPON_REVOLVER_SCHOFIELD_DUTCH_DUALWIELD    = 3561642500, // Dutch's Schofield Revolver
+	WEAPON_REVOLVER_SCHOFIELD_GOLDEN             = 3784692313, // Otis Miller's Revolver
+	WEAPON_REVOLVER_SCHOFIELD_UNCLE              = 2571723782, // Uncle's Schofield Revolver
+	WEAPON_RIFLE_BOLTACTION                      = 1999408598, // Bolt Action Rifle
+	WEAPON_RIFLE_BOLTACTION_BILL                 = 3629369345, // Bill's Bolt Action Rifle
+	WEAPON_RIFLE_SPRINGFIELD                     = 1676963302, // Springfield Rifle
+	WEAPON_RIFLE_VARMINT                         = 3724000286, // Varmint Rifle
+	WEAPON_SHOTGUN_DOUBLEBARREL                  = 1845102363, // Double-Barreled Shotgun
+	WEAPON_SHOTGUN_DOUBLEBARREL_EXOTIC           = 575725904,  // Rare Shotgun
+	WEAPON_SHOTGUN_DOUBLEBARREL_UNCLE            = 2342956810, // Uncle's Double-Barreled Shotgun
+	WEAPON_SHOTGUN_PUMP                          = 834124286,  // Pump-Action Shotgun
+	WEAPON_SHOTGUN_REPEATING                     = 1674213418, // Repeating Shotgun
+	WEAPON_SHOTGUN_SAWEDOFF                      = 392538360,  // Sawed-Off Shotgun
+	WEAPON_SHOTGUN_SAWEDOFF_CHARLES              = 3196921446, // Charles' Sawed-Off Shotgun
+	WEAPON_SHOTGUN_SEMIAUTO                      = 1838922096, // Semi-Auto Shotgun
+	WEAPON_SHOTGUN_SEMIAUTO_HOSEA                = 4254814475, // Hosea's Semi-Auto Shotgun
+	WEAPON_SNIPERRIFLE_CARCANO                   = 1402226560, // Carcano Rifle
+	WEAPON_SNIPERRIFLE_ROLLINGBLOCK              = 3788682007, // Rolling Block Rifle
+	WEAPON_SNIPERRIFLE_ROLLINGBLOCK_EXOTIC       = 1311933014, // Rare Rolling Block Rifle
+	WEAPON_SNIPERRIFLE_ROLLINGBLOCK_LENNY        = 559247042,  // Lenny's Rolling Block Rifle
+	WEAPON_THROWN_DYNAMITE                       = 2790107742, // Dynamite
+	WEAPON_THROWN_MOLOTOV                        = 1885857703, // Fire Bottle
+	WEAPON_THROWN_THROWING_KNIVES                = 3530657096, // Throwing Knife
+	WEAPON_THROWN_THROWING_KNIVES_JAVIER         = 968365474,  // Javier's Throwing Knife
+	WEAPON_THROWN_TOMAHAWK                       = 2783539927, // Tomahawk
+	WEAPON_THROWN_TOMAHAWK_ANCIENT               = 2133046983, // Ancient Tomahawk
+	WEAPON_THROWN_TOMAHAWK_MELEEONLY             = 1147288274, // Tomahawk (Melee Only)
+	WEAPON_TURRET_CANNON                         = 1609145491, // Breach Cannon
+	WEAPON_TURRET_GATLING                        = 3666182381, // Gatling Gun
+	WEAPON_TURRET_MAXIM                          = 3101324918, // Maxim Gun
+	WEAPON_TURRET_REVOLVING_CANNON               = 2465730487, // Revolving Cannon
+	WEAPON_UNARMED                               = 2725352035, // Unarmed
+};
+
+enum class PresenceEvents : uint32_t
+{
+	PRESENCE_STAT_UPDATE                  = 0xedf54ce2,
+	PRESENCE_FRIEND_CREW_JOINED           = 0x12859620,
+	PRESENCE_FRIEND_CREATED_CREW          = 0x3f1009b2,
+	PRESENCE_MISSION_VERIFIED             = 0x8c571656,
+	PRESENCE_ROCKSTAR_MESSAGE             = 0x70e4d0e1,
+	PRESENCE_CREW_MESSAGE                 = 0xcbb12972,
+	PRESENCE_GAME_AWARD                   = 0xd36120ce,
+	PRESENCE_VOICE_INVITE                 = 0xb7aecb0c,
+	PRESENCE_VOICE_RESPONSE               = 0x7ec656f7,
+	PRESENCE_SESSION_SERVER_INFO_REQUEST  = 0x472fdbcd,
+	PRESENCE_SESSION_SERVER_INFO_RESPONSE = 0x6357fabb,
+	PRESENCE_INVITE                       = 0xfbcc029b,
+	PRESENCE_INVITE_CANCEL                = 0x193994f5,
+	PRESENCE_INVITE_REQUEST_RESULT_EVENT  = 0xe89a4022,
+	PRESENCE_INVITE_RESPONSE              = 0x391da84f, // used for presence kick
+	PRESENCE_INVITE_UPDATE_EVENT          = 0x4d9b285a,
+	PRESENCE_INVITE_SERVER_INFO           = 0xf3b22733,
+	PRESENCE_JOIN_REQUEST                 = 0x5e61ebb6,
+	PRESENCE_JOIN_RESPONSE                = 0x606d1ddb,
+	PRESENCE_ADMIN_JOIN_EVENT             = 0xc167b73,
+	PRESENCE_NEWS                         = 0x6eaf6b7d,
+	PRESENCE_FORCE_SESSION_UPDATE         = 0xecaa6fa0,
+	PRESENCE_GAME_TRIGGER_EVENT           = 0x28c617d9,
+	PRESENCE_TEXT_MESSAGE                 = 0x1a8a9221,
+	PRESENCE_GAME_SERVER_AWARD            = 0x76849aa6,
+	PRESENCE_ASSET_DATA_REQUEST           = 0xb179d727,
+	PRESENCE_ASSET_DATA_RESPONSE          = 0xbd14ef85
 };
 
 enum class OverheadTexture : unsigned int
@@ -1444,4 +1704,642 @@ enum class OverheadTexture : unsigned int
 	OVERHEAD_TROPHY            = 0x705F1A66,
 	OVERHEAD_VIP               = 0x0E630EB5,
 	OVERHEAD_WAGON             = 0x22421E9D
+};
+
+enum class PedConfigFlag
+{
+	AllowMedicsToAttend                                    = 0,
+	_0x24B45566                                            = 1,
+	DontAllowToBeDraggedOutOfVehicle                       = 2,
+	GetOutUndriveableVehicle                               = 3,
+	HasBounty                                              = 4,
+	WillFlyThroughWindscreen                               = 5,
+	DontInfluenceWantedLevel                               = 6,
+	DisableLockonToRandomPeds                              = 7,
+	AllowLockonToFriendlyPlayers                           = 8,
+	KilledByStealth                                        = 9,
+	KilledByTakedown                                       = 10,
+	Knockedout                                             = 11,
+	IsAimingGun                                            = 12,
+	ForcedAim                                              = 13,
+	OpenDoorArmIK                                          = 14,
+	DontActivateRagdollFromVehicleImpact                   = 15,
+	DontActivateRagdollFromBulletImpact                    = 16,
+	DontActivateRagdollFromExplosions                      = 17,
+	DontActivateRagdollFromFire                            = 18,
+	DontActivateRagdollFromElectrocution                   = 19,
+	KeepWeaponHolsteredUnlessFired                         = 20,
+	ForceControlledKnockout                                = 21,
+	FallsOutOfVehicleWhenKilled                            = 22,
+	GetOutBurningVehicle                                   = 23,
+	RunFromFiresAndExplosions                              = 24,
+	TreatAsPlayerDuringTargeting                           = 25,
+	DisableMelee                                           = 26,
+	DisableUnarmedDrivebys                                 = 27,
+	JustGetsPulledOutWhenElectrocuted                      = 28,
+	DisableMeleeHitReactions                               = 29,
+	WillNotHotwireLawEnforcementVehicle                    = 30,
+	WillCommandeerRatherThanJack                           = 31,
+	ForcePedToFaceLeftInCover                              = 32,
+	ForcePedToFaceRightInCover                             = 33,
+	BlockPedFromTurningInCover                             = 34,
+	KeepRelationshipGroupAfterCleanUp                      = 35,
+	ForcePedToBeDragged                                    = 36,
+	PreventPedFromReactingToBeingJacked                    = 37,
+	RemoveDeadExtraFarAway                                 = 38,
+	ArrestResult                                           = 39,
+	CanAttackFriendly                                      = 40,
+	WillJackAnyPlayer                                      = 41,
+	WillJackWantedPlayersRatherThanStealCar                = 42,
+	DisableLadderClimbing                                  = 43,
+	CowerInsteadOfFlee                                     = 44,
+	CanActivateRagdollWhenVehicleUpsideDown                = 45,
+	AlwaysRespondToCriesForHelp                            = 46,
+	DisableBloodPoolCreation                               = 47,
+	ShouldFixIfNoCollision                                 = 48,
+	CanPerformArrest                                       = 49,
+	CanPerformUncuff                                       = 50,
+	CanBeArrested                                          = 51,
+	PlayerPreferFrontSeatMP                                = 52,
+	DontEnterVehiclesInPlayersGroup                        = 53,
+	PreventAllMeleeTaunts                                  = 54,
+	ForceDirectEntry                                       = 55,
+	AlwaysSeeApproachingVehicles                           = 56,
+	CanDiveAwayFromApproachingVehicles                     = 57,
+	AllowPlayerToInterruptVehicleEntryExit                 = 58,
+	OnlyAttackLawIfPlayerIsWanted                          = 59,
+	PedsJackingMeDontGetIn                                 = 60,
+	PedIgnoresAnimInterruptEvents                          = 61,
+	IsInCustody                                            = 62,
+	ForceStandardBumpReactionThresholds                    = 63,
+	LawWillOnlyAttackIfPlayerIsWanted                      = 64,
+	PreventAutoShuffleToDriversSeat                        = 65,
+	UseKinematicModeWhenStationary                         = 66,
+	PlayerIsWeird                                          = 67,
+	DoNothingWhenOnFootByDefault                           = 68,
+	DontReactivateRagdollOnPedCollisionWhenDead            = 69,
+	DontActivateRagdollOnVehicleCollisionWhenDead          = 70,
+	HasBeenInArmedCombat                                   = 71,
+	Avoidance_Ignore_All                                   = 72,
+	Avoidance_Ignored_by_All                               = 73,
+	Avoidance_Ignore_Group1                                = 74,
+	Avoidance_Member_of_Group1                             = 75,
+	ForcedToUseSpecificGroupSeatIndex                      = 76,
+	DisableExplosionReactions                              = 77,
+	WaitingForPlayerControlInterrupt                       = 78,
+	ForcedToStayInCover                                    = 79,
+	GeneratesSoundEvents                                   = 80,
+	_0x5BE341F1                                            = 81, // [K-L]*
+	AllowToBeTargetedInAVehicle                            = 82,
+	WaitForDirectEntryPointToBeFreeWhenExiting             = 83,
+	OnlyRequireOnePressToExitVehicle                       = 84,
+	ForceExitToSkyDive                                     = 85,
+	DisableExitToSkyDive                                   = 86,
+	DisablePedAvoidance                                    = 87,
+	_0x4BF2D721                                            = 88,
+	DisablePanicInVehicle                                  = 89,
+	AllowedToDetachTrailer                                 = 90,
+	ForceSkinCharacterCloth                                = 91,
+	LeaveEngineOnWhenExitingVehicles                       = 92,
+	PhoneDisableTextingAnimations                          = 93,
+	PhoneDisableTalkingAnimations                          = 94,
+	PhoneDisableCameraAnimations                           = 95,
+	DisableBlindFiringInShotReactions                      = 96,
+	AllowNearbyCoverUsage                                  = 97,
+	CanAttackNonWantedPlayerAsLaw                          = 98,
+	WillTakeDamageWhenVehicleCrashes                       = 99,
+	AICanDrivePlayerAsRearPassenger                        = 100,
+	PlayerCanJackFriendlyPlayers                           = 101,
+	AIDriverAllowFriendlyPassengerSeatEntry                = 102,
+	AllowMissionPedToUseInjuredMovement                    = 103,
+	PreventUsingLowerPrioritySeats                         = 104,
+	TeleportToLeaderVehicle                                = 105,
+	Avoidance_Ignore_WeirdPedBuffer                        = 106,
+	DontBlipCop                                            = 107,
+	KillWhenTrapped                                        = 108,
+	AvoidTearGas                                           = 109,
+	OnlyUseForcedSeatWhenEnteringHeliInGroup               = 110,
+	DisableWeirdPedEvents                                  = 111,
+	ShouldChargeNow                                        = 112,
+	DisableShockingEvents                                  = 113,
+	_0x38D6E079                                            = 114,
+	DisableShockingDrivingOnPavementEvents                 = 115,
+	ShouldThrowSmokeGrenadeNow                             = 116,
+	ForceInitialPeekInCover                                = 117,
+	DisableJumpingFromVehiclesAfterLeader                  = 118,
+	ShoutToGroupOnPlayerMelee                              = 119,
+	IgnoredByAutoOpenDoors                                 = 120,
+	ForceIgnoreMeleeActiveCombatant                        = 121,
+	CheckLoSForSoundEvents                                 = 122,
+	CanSayFollowedByPlayerAudio                            = 123,
+	ActivateRagdollFromMinorPlayerContact                  = 124,
+	ForcePoseCharacterCloth                                = 125,
+	HasClothCollisionBounds                                = 126,
+	DontBehaveLikeLaw                                      = 127,
+	DisablePoliceInvestigatingBody                         = 128,
+	LowerPriorityOfWarpSeats                               = 129,
+	DisableTalkTo                                          = 130,
+	DontBlip                                               = 131,
+	IgnoreLegIkRestrictions                                = 132,
+	ForceNoTimesliceIntelligenceUpdate                     = 133,
+	_0x36E3CAE1                                            = 134,
+	NotAllowedToJackAnyPlayers                             = 135,
+	CannotBeMounted                                        = 136,
+	CannotBeTakenDown                                      = 137,
+	OneShotWillKillPed                                     = 138,
+	_0xF6076F5C                                            = 139,
+	IsDraftAnimal                                          = 140,
+	DisablePlayerAutoHolster                               = 141,
+	_0x8B989605                                            = 142,
+	_0x9239BD41                                            = 143,
+	DisableHorseMPAutoFlee                                 = 144,
+	EnableHorseMPAutoFleeInSP                              = 145,
+	CantWitnessCrimes                                      = 146,
+	_0xDB25067C                                            = 147, // Disable*
+	_0x0DD984BE                                            = 148,
+	_0x1A4C248B                                            = 149, // Allow*
+	ForceBleeding                                          = 150,
+	_0xB11C76E8                                            = 151,
+	_0x79114A20                                            = 152,
+	_0x23E3351E                                            = 153,
+	UseFollowLeaderThreatResponse                          = 154,
+	EnableCompanionAIAnalysis                              = 155,
+	EnableCompanionAISupport                               = 156,
+	DisableCompanionDragging                               = 157,
+	RequestStealthMovement                                 = 158,
+	_0xF95CE6DA                                            = 159,
+	DisableDragDamage                                      = 160,
+	IsWhistling                                            = 161,
+	AlwaysLeaveTrainUponArrival                            = 162,
+	UseSloMoBloodVfx                                       = 163,
+	_0x10E66933                                            = 164,
+	_0x63DA4710                                            = 165,
+	DontTeleportWithGroup                                  = 166,
+	ShouldBeOnMount                                        = 167,
+	EnableShockingEvents                                   = 168,
+	DisableGrappleByPlayer                                 = 169,
+	DisableGrappleByAi                                     = 170,
+	_0x6868B572                                            = 171,
+	ForceDeepSurfaceCheck                                  = 172,
+	_0xE0892826                                            = 173,
+	DisableEvasiveStep                                     = 174,
+	SwappingReins                                          = 175,
+	EnableAllyRevive                                       = 176,
+	EnableEvasiveScanner                                   = 177,
+	AllowNonTempExceptionEvents                            = 178,
+	_0x605C7288                                            = 179,
+	PreventDraggedOutOfCarThreatResponse                   = 180,
+	DisableDeepSurfaceAnims                                = 181,
+	DontBlipNotSynced                                      = 182,
+	IsDuckingInVehicle                                     = 183,
+	PreventAutoShuffleToTurretSeat                         = 184,
+	DisableEventInteriorStatusCheck                        = 185,
+	CorpseIsPersistent                                     = 186,
+	ForceMeleeDamage                                       = 187,
+	_0x66114902                                            = 188,
+	_0xB94900F7                                            = 189, // [D-E]*
+	_0x405A7A35                                            = 190,
+	_0x497EDECE                                            = 191,
+	DisableShootingAt                                      = 192,
+	_0x87C5E494                                            = 193,
+	ShouldPedFollowersIgnoreWaypointMBR                    = 194,
+	_0x308D5751                                            = 195,
+	_0xE821E96B                                            = 196,
+	_0xBE339BF1                                            = 197,
+	_0x8590C200                                            = 198,
+	_0x9C65B372                                            = 199,
+	BroadcastRepondedToThreatWhenGoingToPointShooting      = 200,
+	_0x11CB5DCC                                            = 201,
+	_0x88F47BBF                                            = 202,
+	_0x11D9FB08                                            = 203,
+	_0x435F091E                                            = 204,
+	_0x34D49B13                                            = 205,
+	_0xB78E3FC8                                            = 206,
+	FlamingHoovesActive                                    = 207,
+	_0x010FB89C                                            = 208,
+	_0xC44343FA                                            = 209,
+	_0xCEBE76AE                                            = 210,
+	GiveAmbientDefaultTaskIfMissionPed                     = 211,
+	_0x9C8397DB                                            = 212,
+	DisableCounterAttacks                                  = 213,
+	_0x3B611ABF                                            = 214, // C*
+	_0xBFC10292                                            = 215,
+	DontConfrontCriminal                                   = 216,
+	SupressShockingEvents                                  = 217,
+	DisablePickups                                         = 218,
+	_0x30675AE3                                            = 219,
+	_0x81BE4E79                                            = 220,
+	_0x5F20A08D                                            = 221,
+	EnableIntimidationDragging                             = 222,
+	IsCriticalCorpse                                       = 223,
+	DisableMeleeTargetSwitch                               = 224,
+	_0x0C5FB46A                                            = 225, // [P-R]*
+	DisableAIWeaponBlocking                                = 226,
+	_0x43176C67                                            = 227,
+	_0x5752DFD6                                            = 228,
+	_0xC8249A24                                            = 229,
+	KeepTasksAfterCleanUp                                  = 230,
+	AllowMinorReactionsAsMissionPed                        = 231,
+	ForceDieInCar                                          = 232,
+	PedIsEnemyToPlayer                                     = 233,
+	NeverDoScenarioExitProbeChecks                         = 234,
+	NeverDoScenarioNavChecks                               = 235,
+	ForceSynchronousScenarioExitChecking                   = 236,
+	ForcePlayNormalScenarioExitOnNextScriptCommand         = 237,
+	ForcePlayImmediateScenarioExitOnNextScriptCommand      = 238,
+	ForcePlayFleeScenarioExitOnNextScriptCommand           = 239,
+	_0xC0C73A04                                            = 240,
+	_0x6DEDF3DE                                            = 241,
+	_0x59BEF34E                                            = 242,
+	BlockDeadBodyShockingEventsWhenDead                    = 243,
+	DontAttackPlayerWithoutWantedLevel                     = 244,
+	DontActivateRagdollFromAnyPedImpact                    = 245,
+	ForcePedLoadCover                                      = 246,
+	BlockCoweringInCover                                   = 247,
+	BlockPeekingInCover                                    = 248,
+	BlockWeaponSwitching                                   = 249,
+	StopWeaponFiringOnImpact                               = 250,
+	_0x946BACEC                                            = 251,
+	SteerAroundDeadBodies                                  = 252,
+	_0x132E88AD                                            = 253, // C*
+	_0x17B799AE                                            = 254,
+	SteersAroundPeds                                       = 255,
+	SteersAroundVehicles                                   = 256,
+	BlocksPathingWhenDead                                  = 257,
+	_0x96AA3A9B                                            = 258,
+	CanAmbientHeadtrack                                    = 259,
+	IsScuba                                                = 260,
+	ResetLastVehicleOnVehicleExit                          = 261,
+	AllowPedInVehiclesOverrideTaskFlags                    = 262,
+	NoCriticalHits                                         = 263,
+	UpperBodyDamageAnimsOnly                               = 264,
+	DrownsInWater                                          = 265,
+	DiesInstantlyWhenSwimming                              = 266,
+	DrownsInSinkingVehicle                                 = 267,
+	DisableWeaponBlocking                                  = 268,
+	StayInCarOnJack                                        = 269,
+	CanBeShotInVehicle                                     = 270,
+	SuppressLowLODRagdollSwitchWhenCorpseSettles           = 271,
+	TreatAsAmbientPedForDriverLockOn                       = 272,
+	NeverEverTargetThisPed                                 = 273,
+	AllowPlayerLockOnIfFriendly                            = 274,
+	UseCameraHeadingForDesiredDirectionLockOnTest          = 275,
+	TargettableWithNoLos                                   = 276,
+	_0x5FE313B3                                            = 277, // Disable*
+	_0xB0D28E2E                                            = 278, // [C-D]*
+	NeverLeavesGroup                                       = 279,
+	DontEnterLeadersVehicle                                = 280,
+	BlockGroupPedAimedAtResponse                           = 281,
+	WillRemainOnBoatAfterMissionEnds                       = 282,
+	DisableInjuredRiderResponse                            = 283,
+	_0x9C118A4B                                            = 284, // Block*
+	ForcePlayDirectedNormalScenarioExitOnNextScriptCommand = 285,
+	DisableEvasiveDives                                    = 286,
+	AllowMissionDriverlessDraftAnimalResponse              = 287,
+	_0x4B822D03                                            = 288,
+	TreatDislikeAsHateWhenInCombat                         = 289,
+	TreatNonFriendlyAsHateWhenInCombat                     = 290,
+	CanPlayInCarIdles                                      = 291,
+	_0xA5E8F092                                            = 292,
+	_0x40EB5604                                            = 293,
+	DisableDriverlessDraftAnimalResponse                   = 294,
+	DisableInTrafficAvoidance                              = 295,
+	DisableAllAvoidance                                    = 296,
+	ForceInteractionLockonOnTargetPed                      = 297,
+	_0x58C8629F                                            = 298,
+	_0x7BE8B923                                            = 299,
+	DisablePlayerHorseLeading                              = 300,
+	DisableInteractionLockonOnTargetPed                    = 301,
+	DisableMeleeKnockout                                   = 302,
+	_0x5CBBBA25                                            = 303,
+	_0x8D86008F                                            = 304,
+	DisableHeadGore                                        = 305,
+	DisableLimbGore                                        = 306,
+	DisableMountSpawning                                   = 307,
+	AllowILOWithWeapon                                     = 308,
+	_0x4885CFA9                                            = 309, // [P-R]*
+	CanBeLassoedByFriendlyPlayers                          = 310,
+	_0x1C112278                                            = 311,
+	DisableHorseGunshotFleeResponse                        = 312,
+	DontFindTransportToFollowLeader                        = 313,
+	ForceHogtieOfUnconciousPedToCarryAround                = 314,
+	_0xD38AEF95                                            = 315, // [G-I]*
+	DontStopForTrains                                      = 316,
+	_0x8E385F10                                            = 317,
+	PreventScavengers                                      = 318,
+	EnableAsVehicleTransitionDestination                   = 319,
+	_0x743C18A9                                            = 320,
+	_0x4325A091                                            = 321,
+	_0x95B6BA5B                                            = 322,
+	UseRacingLines                                         = 323,
+	_0x8D1AEDEF                                            = 324,
+	_0xC0CCD94A                                            = 325,
+	_0x4938756F                                            = 326,
+	_0x6E6BF9A7                                            = 327,
+	_0x5E9A5F16                                            = 328,
+	_0xD8D066F2                                            = 329,
+	_0x7C7AF264                                            = 330, // Disable*
+	_0x9663C8F2                                            = 331, // [G-I]*
+	IsInStationaryScenario                                 = 332,
+	_0x27394ECA                                            = 333,
+	_0x23029D96                                            = 334,
+	_0x381A643F                                            = 335,
+	ForceInjuredMovement                                   = 336,
+	DontExitVehicleIfNoDraftAnimals                        = 337,
+	_0xEEA5619C                                            = 338,
+	_0x9E57DC18                                            = 339,
+	DisableAllMeleeTakedowns                               = 340,
+	ForceDismountLeft                                      = 341,
+	ForceDismountRight                                     = 342,
+	_0x8FD863AF                                            = 343,
+	_0x345B8591                                            = 344,
+	_0xE64EEB72                                            = 345,
+	_0x0CA2A010                                            = 346,
+	IsSanctionedShooter                                    = 347,
+	_0x3ED9A585                                            = 348,
+	_0x072C1C6D                                            = 349,
+	_0x88BDD64C                                            = 350,
+	DisableIntimidationBackingAway                         = 351,
+	_0x93AB4714                                            = 352,
+	_0xA662EDB3                                            = 353,
+	_0x28CBCEC7                                            = 354,
+	_0xEEBAF435                                            = 355,
+	BlockRobberyInteractionEscape                          = 356,
+	_0xA983D113                                            = 357,
+	_0x61EA3683                                            = 358,
+	AllowInCombatInteractionLockonOnTargetPed              = 359,
+	_0xF8AF9E5C                                            = 360,
+	IgnoreWeaponDegradation                                = 361,
+	_0xC92D591B                                            = 362,
+	_0x51801A92                                            = 363,
+	_0x8B88F526                                            = 364,
+	_0x0E185496                                            = 365,
+	DisableVehicleTransitions                              = 366,
+	_0x0E3CB695                                            = 367,
+	_0x696695E0                                            = 368,
+	_0x58D4CF33                                            = 369,
+	DisableDeadEyeTagging                                  = 370,
+	_0xAB673A85                                            = 371,
+	_0xDCB2DCC0                                            = 372,
+	AllowSlipstream                                        = 373,
+	_0x2E58B068                                            = 374,
+	_0x121018F9                                            = 375,
+	_0xDFA8EBA4                                            = 376,
+	_0x7E01056D                                            = 377,
+	_0x42736B4A                                            = 378,
+	_0x5213A517                                            = 379,
+	_0xE68FAAFB                                            = 380,
+	_0x248CF998                                            = 381,
+	_0xCA56246D                                            = 382,
+	_0xB65C7C8B                                            = 383,
+	_0x00888CD6                                            = 384,
+	_0x6B749DC5                                            = 385,
+	_0x03AA190E                                            = 386,
+	_0x913B0D20                                            = 387,
+	DisableFatallyWoundedBehaviour                         = 388,
+	_0xB80AFE95                                            = 389,
+	_0xF8276C9A                                            = 390,
+	_0x0E7F44B9                                            = 391,
+	_0x2255F330                                            = 392,
+	_0x96B7B497                                            = 393,
+	DisableInteractionWithAnimals                          = 394,
+	_0x665CE445                                            = 395,
+	_0x29BBB477                                            = 396,
+	DisableStuckResponse                                   = 397,
+	_0x1E1E8BA7                                            = 398, // [B-C]*
+	_0x3A95125A                                            = 399,
+	_0x3EECBCF6                                            = 400,
+	_0x198B5351                                            = 401,
+	_0xCA2DF96D                                            = 402,
+	_0x21ADF5CB                                            = 403,
+	_0x0E674773                                            = 404,
+	_0xCEAE53FA                                            = 405,
+	ForceOfferItemOnReceivingRobberyInteraction            = 406,
+	_0x0F79BB17                                            = 407,
+	IsPerformingEmote                                      = 408,
+	IsPerformingWeaponEmote                                = 409,
+	_0x4AFE2C68                                            = 410,
+	_0xBB887117                                            = 411,
+	BlockHorsePromptsForTargetPed                          = 412,
+	_0xD291BB15                                            = 413,
+	_0x7B05BE6D                                            = 414,
+	_0x3FA067F1                                            = 415,
+	StealthCoverEnter                                      = 416,
+	DisableEagleEyeHighlight                               = 417,
+	_0xC8ACAA6C                                            = 418,
+	BlockMountHorsePrompt                                  = 419,
+	IsKickingDoor                                          = 420,
+	AllowDoorBargingUnderCombat                            = 421,
+	_0x3AB3C6E2                                            = 422,
+	_0x86C10CF4                                            = 423,
+	_0x4F63DCAE                                            = 424,
+	_0x08F50AC5                                            = 425,
+	_0x7BA0E975                                            = 426,
+	DisableDrunkDecay                                      = 427,
+	_0xC0ACCB2D                                            = 428,
+	KnockOutDuringHogtie                                   = 429,
+	_0x0B237FF1                                            = 430,
+	_0xA5CB7C09                                            = 431,
+	DisableGaitReduction                                   = 432,
+	_0x785D4043                                            = 433,
+	_0x41EB527E                                            = 434,
+	AlwaysRejectPlayerRobberyAttempt                       = 435,
+	_0x553A6EF0                                            = 436,
+	DisableWeatherConditionPerceptionChecks                = 437,
+	_SetHorseFleeCommandDisabled                           = 438, // _0x14013CF9
+	_SetHorseStayCommandDisabled                           = 439, // _0x8519377E
+	_SetHorseFollowCommandDisabled                         = 440, // _0xDBD31C9C
+	_0xB61CE793                                            = 441,
+	_DisableHorseFleeILO                                   = 442, // _0x78525B66
+	_0x9F42C50C                                            = 443,
+	_0x16A14D9A                                            = 444,
+	DisableDoorBarge                                       = 445,
+	DisableDoorInteractionTask                             = 446,
+	_0xA1040728                                            = 447,
+	TreatAsMissionPopTypeForSpeech                         = 448,
+	_0x5CD355BD                                            = 449,
+	_0xA82B421F                                            = 450,
+	HorseDontEvaluateRiderForDamageChecks                  = 451,
+	_0x9909D028                                            = 452,
+	_0x43429291                                            = 453,
+	_0x089C3B7F                                            = 454,
+	_0xBB0F2E64                                            = 455,
+	ForcePedKnockOut                                       = 456,
+	_0xD5AB81E2                                            = 457,
+	_0xFD170B10                                            = 458,
+	_0xCD4DCBEC                                            = 459,
+	ForceWitnessIntimidationOnNextInteraction              = 460,
+	_0xD09EEF14                                            = 461,
+	_0xC3BB03BA                                            = 462,
+	_0xC2322EDE                                            = 463,
+	_0x219138E7                                            = 464,
+	_0x873F6A00                                            = 465,
+	_0xA9C6E67F                                            = 466,
+	DisableHonorModifiers                                  = 467,
+	_0xC6540731                                            = 468,
+	_0x5A314A89                                            = 469,
+	_0x691431BD                                            = 470,
+	DisableHorseKick                                       = 471,
+	DisableSittingScenarios                                = 472,
+	DisableAutoSittingScenarios                            = 473,
+	DisableRestingScenarios                                = 474,
+	DisableAutoRestingScenarios                            = 475,
+	RejectTrafficCalloutDisputes                           = 476,
+	CanInteractWithPlayerEvenIfInputsDisabled              = 477,
+	_0x957D269D                                            = 478,
+	_0x9BF41BF2                                            = 479,
+	_0xC78D54C4                                            = 480,
+	_0x6DEA76B1                                            = 481,
+	_0xC7A80079                                            = 482,
+	_0xED575704                                            = 483,
+	_0x154BFF03                                            = 484,
+	_0xB40114AF                                            = 485,
+	_0x6A84551F                                            = 486,
+	_0x2621982A                                            = 487,
+	DiesInstantlyToMeleeFromAnimals                        = 488,
+	_0xF9EE4C8A                                            = 489,
+	_0xF2A1A360                                            = 490,
+	_0xDB937F2C                                            = 491,
+	_0x391CCB82                                            = 492,
+	_0xA58B6703                                            = 493,
+	_0x5BD8B9DC                                            = 494,
+	_0xF8CF513A                                            = 495,
+	_0x110F10D1                                            = 496,
+	_0x0FB07F5A                                            = 497,
+	_0xC79F7785                                            = 498,
+	BlockWhistleEvents                                     = 499,
+	_0xC9CCA1E4                                            = 500,
+	_0x5F75066E                                            = 501,
+	_0x5B64E56A                                            = 502,
+	DisableSpecialGreetChains                              = 503,
+	_0x253C4B25                                            = 504,
+	AllowRobberyWhenInjured                                = 505,
+	RunToTransport                                         = 506,
+	_0xE98C1598                                            = 507,
+	_0x66B3CA93                                            = 508,
+	_0xE1B40374                                            = 509,
+	DisableConfrontCriminalTowardsThisPed                  = 510,
+	_0xFF691D47                                            = 511,
+	_0xA91A8F5D                                            = 512,
+	_0x07221A26                                            = 513,
+	DisableFriendlyAmbientAnimalFollowing                  = 514,
+	DisableReloadMultiplier                                = 515,
+	_0x6C3E1067                                            = 516,
+	AllowPersistenceOverride                               = 517,
+	DisableWalkAway                                        = 518,
+	_0xE6AC71E1                                            = 519,
+	_0x43C121FD                                            = 520,
+	_0x8186B12C                                            = 521,
+	DontFleeFromDroppedAnimals                             = 522,
+	_0x9D56AF0A                                            = 523,
+	_0x2F8FCCA7                                            = 524,
+	_0xD06E62C8                                            = 525,
+	DisableTacticalAnalysis                                = 526,
+	_0xED829B99                                            = 527,
+	_0xF1DEE14D                                            = 528,
+	_0xDD0B572E                                            = 529,
+	_0x41F0C11C                                            = 530,
+	_0x6FE93B06                                            = 531,
+	_0x760D1D40                                            = 532,
+	_0x508CC0C1                                            = 533,
+	_0x09CAAAC1                                            = 534,
+	_0xEFF1BFD7                                            = 535,
+	_0x97D22E0F                                            = 536,
+	CannotSwapReins                                        = 537,
+	_0x94928F59                                            = 538,
+	_0x13377872                                            = 539,
+	FollowLeaderRunToEnterTransport                        = 540,
+	PlayerCorpse                                           = 541,
+	_0x4ECF4D1E                                            = 542,
+	_0x32F7554D                                            = 543,
+	_0xB13329B4                                            = 544,
+	DontCreateCombatBlip                                   = 545,
+	_0x7F409486                                            = 546,
+	_0x665E5AB5                                            = 547,
+	_0xE357C75E                                            = 548,
+	_0xD5BFF570                                            = 549,
+	DisableAndBreakAimLockOntoThisPed                      = 550,
+	_0x75943079                                            = 551,
+	_0x74F95F2E                                            = 552,
+	_0x7BA7E665                                            = 553,
+	_0x544E47DB                                            = 554,
+	_0xC9A8DCFC                                            = 555,
+	_0x41C9EEAA                                            = 556,
+	_0xFC543F7D                                            = 557,
+	_0x27298865                                            = 558,
+	_0xF46AD61C                                            = 559,
+	EnableMountCoverForPedInMP                             = 560,
+	EnableHorseCollectPlantInteractionInMP                 = 561,
+	_0x74064B79                                            = 562,
+	_0x3090EC16                                            = 563,
+	_0x12300BC5                                            = 564,
+	IsValidForVehicleSeatStow                              = 565,
+	EnableSpecialActionBranches                            = 566,
+	DisableHorseShunting                                   = 567,
+	_0xCF2BF977                                            = 568,
+	CanBeAttackedByFriendlyPed                             = 569,
+	_0xAE180F85                                            = 570,
+	_0xEB0A3629                                            = 571,
+	_0x67843207                                            = 572,
+	_0xFFEDA2A0                                            = 573,
+	_0xB6B446DB                                            = 574,
+	DisableGuardAI                                         = 575,
+	_0xF965A657                                            = 576,
+	_0x65CB2911                                            = 577,
+	_0x47030DBE                                            = 578,
+	_0x04F84B32                                            = 579,
+	IsTranquilized                                         = 580,
+	_0x811D6F58                                            = 581,
+	AllowStudyInMP                                         = 582,
+	_0x107B0522                                            = 583,
+	DisableInjuredMovement                                 = 584,
+	RagdollFloatsIndefinitely                              = 585,
+	_0x938B8DD8                                            = 586,
+	_0xB6CE7423                                            = 587,
+	_0xD6A8CBCA                                            = 588,
+	_0x4DE6C4FB                                            = 589,
+	_0x64624B35                                            = 590,
+	_0x4E549A84                                            = 591,
+	_0x38F1812A                                            = 592,
+	_0x7115FE4E                                            = 593,
+	_0x683E58D5                                            = 594,
+	AllowAutoSwitchToProjectiles                           = 595,
+	_0x43CFCCB3                                            = 596,
+	_0x2FDAD8E5                                            = 597,
+	_0x5A17DA53                                            = 598,
+	DisableScenarioWarpWeaponDestruction                   = 599,
+	EnableProjectileAccuracy                               = 600,
+	_0x2C666858                                            = 601,
+	_0x640FF990                                            = 602,
+};
+
+enum EmoteType
+{
+	EMOTE_TYPE_INVALID = -1,
+	EMOTE_TYPE_REACT,
+	EMOTE_TYPE_ACTION,
+	EMOTE_TYPE_TAUNT,
+	EMOTE_TYPE_GREET,
+	EMOTE_TYPE_TWIRL_GUN,
+	EMOTE_TYPE_DANCE_FLOOR
+};
+
+enum EmotePlaybackMode
+{
+	EMOTE_PM_INVALID = -1,
+	EMOTE_PM_UPPERBODY,
+	EMOTE_PM_UPPERBODY_LOOP,
+	EMOTE_PM_FULLBODY,
+};
+
+enum class EntityProofs : uint32_t
+{
+	BULLET = 1 << 0,
+	FIRE = 1 << 1,
+	EXPLOSION = 1 << 2,
+	COLLISION = 1 << 3,
+	MELEE = 1 << 4,
+	STEAM = 1 << 5,
+	SMOKE = 1 << 6,
+	HEADSHOT = 1 << 7
 };

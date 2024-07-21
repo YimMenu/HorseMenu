@@ -26,5 +26,10 @@ namespace YimMenu
 					m_Command->Call(Players::GetSelected());
 			});
 		}
+
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetTooltip(m_Command->GetDescription().data());
+		}
 	}
 }
