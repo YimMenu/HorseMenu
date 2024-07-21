@@ -200,7 +200,8 @@ namespace YimMenu::Submenus
 
 		auto vehicle             = std::make_shared<Category>("Vehicle");
 		auto vehicleGlobalsGroup = std::make_shared<Group>("Globals");
-		auto vehicleFunGroup = std::make_shared<Group>("Fun");
+		auto vehicleFunGroup     = std::make_shared<Group>("Fun");
+		auto trainGroup     = std::make_shared<Group>("Train");
 
 		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
@@ -209,8 +210,11 @@ namespace YimMenu::Submenus
 		vehicleFunGroup->AddItem(std::make_shared<ConditionalItem>("superdrive"_J, std::make_shared<BoolCommandItem>("superdrivedirectional"_J, "Directional")));
 		vehicleFunGroup->AddItem(std::make_shared<ConditionalItem>("superdrive"_J, std::make_shared<IntCommandItem>("superdriveforce"_J, "Force")));
 		vehicleFunGroup->AddItem(std::make_shared<BoolCommandItem>("superbrake"_J));
+
+		trainGroup->AddItem(std::make_shared<BoolCommandItem>("fasttrain"_J));
 		vehicle->AddItem(vehicleGlobalsGroup);
 		vehicle->AddItem(vehicleFunGroup);
+		vehicle->AddItem(trainGroup);
 		AddCategory(std::move(vehicle));
 
 		auto animations = std::make_shared<Category>("Animations");
