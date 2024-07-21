@@ -11,6 +11,7 @@ namespace YimMenu
 		const std::vector<uint64_t>& GetFramePointers();
 		void NewStackTrace(EXCEPTION_POINTERS* exception_info);
 		std::string GetString() const;
+		void Clear();
 
 		friend std::ostream& operator<<(std::ostream& os, const StackTrace& st);
 		friend std::ostream& operator<<(std::ostream& os, const StackTrace* st);
@@ -19,7 +20,7 @@ namespace YimMenu
 		struct ModuleInfo
 		{
 			ModuleInfo(std::filesystem::path path, void* base) :
-			    m_Path(path),
+			    m_Name(path.filename().string()),
 			    m_Base(reinterpret_cast<uintptr_t>(base))
 			{
 				const auto dos_header = reinterpret_cast<IMAGE_DOS_HEADER*>(base);
@@ -28,7 +29,7 @@ namespace YimMenu
 				m_Size = nt_header->OptionalHeader.SizeOfCode;
 			}
 
-			std::filesystem::path m_Path;
+			std::string m_Name;
 			uintptr_t m_Base;
 			size_t m_Size;
 		};
@@ -37,7 +38,7 @@ namespace YimMenu
 		void DumpModuleInfo();
 		void DumpRegisters();
 		void DumpStacktrace();
-		void DumpCPPExceptionInfo();
+		void DumpExceptionInfo();
 		void GrabStacktrace();
 		const ModuleInfo* GetModuleByAddress(uint64_t addr) const;
 

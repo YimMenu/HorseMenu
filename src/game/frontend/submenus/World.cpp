@@ -28,19 +28,16 @@ namespace YimMenu::Submenus
 
 
 		time->AddItem(std::make_shared<ImGuiItem>([] {
-			static std::string hour, minute, second;
+			static int hour, minute, second;
 			static bool freeze;
-			InputTextWithHint("Hour", "Enter Hour", &hour).Draw();
-			InputTextWithHint("Minute", "Enter Minute", &minute).Draw();
-			InputTextWithHint("Second", "Enter Second", &second).Draw();
+			ImGui::SliderInt("Hour", &hour, 0, 23);
+			ImGui::SliderInt("Minute", &minute, 0, 59);
+			ImGui::SliderInt("Second", &second, 0, 59);
 			ImGui::Checkbox("Freeze", &freeze);
 			if (ImGui::Button("Change Time"))
 			{
-				int h = std::stoi(hour);
-				int m = std::stoi(minute);
-				int s = std::stoi(second);
-				FiberPool::Push([=] {
-					ChangeTime(h, m, s, 0, freeze);
+				FiberPool::Push([] {
+					ChangeTime(hour, minute, second, 0, freeze);
 				});
 			}
 			if (ImGui::Button("Restore"))
@@ -70,6 +67,12 @@ namespace YimMenu::Submenus
 						ImGui::SetItemDefaultFocus();
 				}
 				ImGui::EndCombo();
+			}
+			if (ImGui::Button("Restore"))
+			{
+				FiberPool::Push([] {
+					MISC::CLEAR_OVERRIDE_WEATHER();
+				});
 			}
 		}));
 
