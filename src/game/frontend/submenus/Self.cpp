@@ -1,12 +1,12 @@
 #include "Self.hpp"
 
 #include "core/commands/BoolCommand.hpp"
-#include "core/commands/IntCommand.hpp"
 #include "core/commands/Commands.hpp"
-#include "game/backend/Self.hpp"
+#include "core/commands/IntCommand.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Self.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
@@ -58,7 +58,7 @@ namespace YimMenu::Submenus
 				bool isSelected = (i == Emote::selectedEmoteCategoryIndex);
 				if (ImGui::Selectable(Emote::emoteCategories[i], isSelected))
 				{
-					Emote::selectedEmoteCategoryIndex          = i;
+					Emote::selectedEmoteCategoryIndex = i;
 					Emote::selectedEmoteMemberIndex   = 0;
 				}
 				if (isSelected)
@@ -71,8 +71,7 @@ namespace YimMenu::Submenus
 
 		ImGui::Text("Emote");
 		if (ImGui::BeginCombo("##Emote",
-		        Emote::emoteCategoryMembers[Emote::selectedEmoteCategoryIndex][Emote::selectedEmoteMemberIndex]
-		            .name))
+		        Emote::emoteCategoryMembers[Emote::selectedEmoteCategoryIndex][Emote::selectedEmoteMemberIndex].name))
 		{
 			for (int i = 0; i < Emote::maxEmotesPerCategory; i++)
 			{
@@ -129,21 +128,15 @@ namespace YimMenu::Submenus
 		auto globalsGroup    = std::make_shared<Group>("Globals");
 		auto movementGroup   = std::make_shared<Group>("Movement");
 		auto toolsGroup      = std::make_shared<Group>("Tools");
-		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
-
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));	
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("offtheradar"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antiafk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepbarsfilled"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepcoresfilled"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteclip"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("nospread"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autocock"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
@@ -175,6 +168,18 @@ namespace YimMenu::Submenus
 		main->AddItem(movementGroup);
 		AddCategory(std::move(main));
 
+		auto weapons         = std::make_shared<Category>("Weapons");
+		auto weaponsGlobalsGroup = std::make_shared<Group>("Globals");
+
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteclip"_J));
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("nospread"_J));
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("autocock"_J));
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepgunsclean"_J));
+
+		weapons->AddItem(weaponsGlobalsGroup);
+		AddCategory(std::move(weapons));
+
 		auto horse             = std::make_shared<Category>("Horse");
 		auto horseGlobalsGroup = std::make_shared<Group>("Globals");
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsegodmode"_J));
@@ -200,7 +205,7 @@ namespace YimMenu::Submenus
 
 		auto vehicle             = std::make_shared<Category>("Vehicle");
 		auto vehicleGlobalsGroup = std::make_shared<Group>("Globals");
-		auto vehicleFunGroup = std::make_shared<Group>("Fun");
+		auto vehicleFunGroup     = std::make_shared<Group>("Fun");
 
 		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
@@ -221,57 +226,6 @@ namespace YimMenu::Submenus
 
 		AddCategory(std::move(animations));
 
-		auto recovery               = std::make_shared<Category>("Recovery");
-		auto spawnCollectiblesGroup = std::make_shared<Group>("Spawn Collectibles");
-		auto recoveryOptions        = std::make_shared<Group>("Options");
-
-		static auto recoveryCommand = Commands::GetCommand<BoolCommand>("recoveryenabled"_J);
-
-		spawnCollectiblesGroup->AddItem(std::make_shared<ImGuiItem>([=] {
-			if (recoveryCommand->GetState())
-			{
-				static Rewards::eRewardType selected{};
-				std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
-
-				if (ImGui::BeginCombo("Rewards", reward_translations[selected].c_str()))
-				{
-					for (auto& [type, translation] : reward_translations)
-					{
-						if (ImGui::Selectable(std::string(translation).c_str(), type == selected, ImGuiSelectableFlags_AllowDoubleClick))
-						{
-							selected = type;
-						}
-						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-						{
-							FiberPool::Push([] {
-								Rewards::GiveRequestedRewards({selected});
-							});
-						}
-					}
-					ImGui::EndCombo();
-				}
-
-				if (ImGui::Button("Add Selected"))
-				{
-					FiberPool::Push([] {
-						Rewards::GiveRequestedRewards({selected});
-					});
-				}
-			}
-			else
-			{
-				ImGui::Text("Recovery Feature Restricted");
-				ImGui::Text("The recovery/collectibles feature is risky and you might face a ban for using it. You are responsible for what you do with this feature. None of the developers or the YimMenu organization are responsible for any damages to your account.");
-				if (ImGui::Button("Enable Recovery"))
-				{
-					recoveryCommand->SetState(true);
-				}
-			}
-		}));
-		recoveryOptions->AddItem(std::make_shared<BoolCommandItem>("unlimiteditems"_J));
-		recovery->AddItem(spawnCollectiblesGroup);
-		recovery->AddItem(recoveryOptions);
-
-		AddCategory(std::move(recovery));
+		
 	}
 }

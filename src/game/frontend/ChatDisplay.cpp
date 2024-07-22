@@ -62,4 +62,9 @@ namespace YimMenu
 		ImGui::PopStyleColor();
 		ImGui::End();
 	}
+
+	void ChatDisplay::ClearImpl()
+	{
+		m_Messages.clear();
+	}
 }

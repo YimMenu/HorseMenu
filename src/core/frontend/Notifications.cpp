@@ -72,7 +72,7 @@ namespace YimMenu
 
 		auto depletionProgress = 1.0f - (timeElapsed / (float)notification.m_Duration);
 
-		ImGui::ProgressBar(depletionProgress, ImVec2(-1, 1), "");
+		ImGui::ProgressBar(depletionProgress, ImVec2(-1, 3.5f), "");
 
 		auto style = ImGui::GetStyle();
 		// TODO: Add icon for type instead of colored text

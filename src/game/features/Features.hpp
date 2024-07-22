@@ -10,8 +10,6 @@ namespace YimMenu
 
 	void FeatureLoop();
 	void BlockControlsForUI();
-	void BlockAllControls();
 	void SpectateTick();
 	void ContextMenuTick();
-	void RegisterScriptPatches();
 }

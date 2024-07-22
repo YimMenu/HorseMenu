@@ -20,6 +20,7 @@ namespace YimMenu
 
 		void ShowImpl(std::string sender, std::string message);
 		void DrawImpl();
+		void ClearImpl();
 
 		static ChatDisplay& GetInstance()
 		{
@@ -36,6 +37,11 @@ namespace YimMenu
 		static void Draw()
 		{
 			GetInstance().DrawImpl();
+		}
+
+		static void Clear()
+		{
+			GetInstance().ClearImpl();
 		}
 	};
 

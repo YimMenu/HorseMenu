@@ -1393,7 +1393,7 @@ enum class ScriptEvent
 	SCRIPT_EVENT_FETCH_MANAGER                     = 178,
 	SCRIPT_EVENT_NET_HUD                           = 186,
 	SCRIPT_EVENT_PERSONA_HONOR                     = 188,
-	SCRIPT_EVENT_PLAYER_CAMP                       = 201
+	SCRIPT_EVENT_PLAYER_CAMP                       = 201,
 };
 
 enum class NetMessageType : uint32_t

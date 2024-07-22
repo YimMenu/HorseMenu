@@ -13,9 +13,10 @@ namespace YimMenu
 		m_ChildFiber = CreateFiber(
 		    0,
 		    [](void* param) {
-			    auto this_script    = static_cast<Script*>(param);
-			    this_script->m_Done = true;
+			    auto this_script = static_cast<Script*>(param);
 			    this_script->m_Callback();
+			    this_script->m_Done = true;
+			    SwitchToFiber(this_script->m_MainFiber);
 		    },
 		    this);
 	}
@@ -29,7 +30,7 @@ namespace YimMenu
 	void Script::Tick()
 	{
 		m_MainFiber = GetCurrentFiber();
-		if (!m_WakeTime.has_value() || m_WakeTime.value() <= std::chrono::high_resolution_clock::now())
+		if ((!m_WakeTime.has_value() || m_WakeTime.value() <= std::chrono::high_resolution_clock::now()) && !m_Done)
 		{
 			SwitchToFiber(m_ChildFiber);
 		}

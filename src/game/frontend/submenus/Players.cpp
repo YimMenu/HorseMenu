@@ -3,13 +3,12 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/player_database/PlayerDatabase.hpp"
-#include "game/backend/Players.hpp"
 #include "game/backend/PlayerData.hpp"
-#include "game/commands/PlayerCommand.hpp"
+#include "game/backend/Players.hpp"
 #include "game/backend/Self.hpp"
+#include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "util/network.hpp"
 #include "util/teleport.hpp"
 
 #include <string>
@@ -21,17 +20,18 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/rdr/Entity.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/Packet.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
-#include "game/rdr/Packet.hpp"
 
+#include <network/CNetworkScSession.hpp>
+#include <network/CNetworkScSessionPlayer.hpp>
 #include <network/netPeerAddress.hpp>
 #include <network/rlGamerInfo.hpp>
 #include <network/rlScPeerConnection.hpp>
 #include <script/scrThread.hpp>
-#include <network/CNetworkScSessionPlayer.hpp>
-#include <network/CNetworkScSession.hpp>
+
 
 namespace YimMenu::Features
 {
@@ -136,9 +136,9 @@ namespace YimMenu::Submenus
 					ImGui::Text("IP Address:");
 					ImGui::SameLine();
 					auto ipStr = std::string(std::to_string(ip.m_field1))
-					                  .append("." + std::to_string(ip.m_field2))
-					                  .append("." + std::to_string(ip.m_field3))
-					                  .append("." + std::to_string(ip.m_field4));
+					                 .append("." + std::to_string(ip.m_field2))
+					                 .append("." + std::to_string(ip.m_field3))
+					                 .append("." + std::to_string(ip.m_field4));
 					if (ImGui::Button(ipStr.c_str()))
 					{
 						ImGui::SetClipboardText(ipStr.c_str());
@@ -170,43 +170,12 @@ namespace YimMenu::Submenus
 				}
 			}));
 
-			// TODO: refactor teleport items
-
-			teleportGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				//Button Widget crashes the game, idk why. Changed to regular for now.
-				if (ImGui::Button("Teleport To"))
-				{
-					FiberPool::Push([] {
-						if (Teleport::TeleportEntity(Self::GetPed().GetHandle(),
-						        YimMenu::Players::GetSelected().GetPed().GetPosition(),
-						        false))
-							g_Spectating = false;
-					});
-				}
-				if (ImGui::Button("Teleport Behind"))
-				{
-					FiberPool::Push([] {
-						auto playerCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(
-						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
-						    0,
-						    -10,
-						    0);
-						if (Teleport::TeleportEntity(Self::GetPed().GetHandle(),
-						        {playerCoords.x, playerCoords.y, playerCoords.z},
-						        false))
-							g_Spectating = false;
-					});
-				}
-				if (ImGui::Button("Teleport Into Vehicle"))
-				{
-					FiberPool::Push([] {
-						auto playerVeh = PED::GET_VEHICLE_PED_IS_USING(
-						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
-						if (Teleport::WarpIntoVehicle(Self::GetPed().GetHandle(), playerVeh))
-							g_Spectating = false;
-					});
-				}
-			}));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tptoplayer"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpbehindplayer"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpintovehicle"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("bring"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpplayertowaypoint"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpplayertojail"_J));
 
 			main->AddItem(playerOptionsGroup);
 			main->AddItem(teleportGroup);
@@ -307,7 +276,7 @@ namespace YimMenu::Submenus
 		}
 
 		{
-			auto kick = std::make_shared<Category>("Kick"); 
+			auto kick = std::make_shared<Category>("Kick");
 
 			kick->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(true);
