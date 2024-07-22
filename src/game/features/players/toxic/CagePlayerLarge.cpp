@@ -14,7 +14,7 @@ namespace YimMenu::Features
 		{
 			Vector3 coords = ENTITY::GET_ENTITY_COORDS(player.GetPed().GetHandle(), true, true);
 			coords.z       = coords.z - 1.0f;
-			SpawnObject(0x99C0CFCF, coords);
+			SpawnObject(0x99C0CFCF, coords, 0, 0, 0, true, true, false, false);
 		}
 	};
 
