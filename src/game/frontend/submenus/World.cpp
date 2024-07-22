@@ -1,6 +1,7 @@
 #include "World.hpp"
 
 #include "World/PedSpawner.hpp"
+#include "World/ObjectSpawner.hpp"
 #include "World/Shows.hpp"
 #include "World/Weather.hpp"
 #include "core/commands/Commands.hpp"
@@ -12,6 +13,7 @@
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Ped.hpp"
 #include "game/rdr/data/PedModels.hpp"
+#include "game/rdr/data/ObjModels.hpp"
 
 #include <game/rdr/Natives.hpp>
 
@@ -76,12 +78,18 @@ namespace YimMenu::Submenus
 
 		auto spawners        = std::make_shared<Category>("Spawners");
 		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
+		auto objSpawnerGroup = std::make_shared<Group>("Object Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderPedSpawnerMenu();
 		}));
+		
+		objSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			RenderObjectSpawnerMenu();
+		}));
 
 		spawners->AddItem(pedSpawnerGroup);
+		spawners->AddItem(objSpawnerGroup);
 
 		auto killPeds = std::make_shared<Group>("", 1);
 		killPeds->AddItem(std::make_shared<CommandItem>("killallpeds"_J));
