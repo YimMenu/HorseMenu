@@ -11,9 +11,14 @@ namespace YimMenu
 		Player m_SelectedPlayer = Player((uint8_t)0);
 
 	public:
-		static void Tick()
+		static void OnPlayerJoin(CNetGamePlayer* player)
 		{
-			GetInstance().TickImpl();
+			GetInstance().OnPlayerJoinImpl(player);
+		}
+
+		static void OnPlayerLeave(CNetGamePlayer* player)
+		{
+			GetInstance().OnPlayerLeaveImpl(player);
 		}
 
 		static Player GetSelected()
@@ -61,13 +66,16 @@ namespace YimMenu
 		}
 
 	private:
+		Players();
+
 		static Players& GetInstance()
 		{
 			static Players Instance;
 			return Instance;
 		}
 
-		void TickImpl();
+		void OnPlayerJoinImpl(CNetGamePlayer* player);
+		void OnPlayerLeaveImpl(CNetGamePlayer* player);
 		Player GetByRIDImpl(uint64_t rid);
 		Player GetByHostTokenImpl(uint64_t token);
 	};

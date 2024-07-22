@@ -51,6 +51,7 @@ namespace YimMenu
 		PlayerData& GetData();
 
 		bool operator==(Player other);
+		inline operator bool();
 	};
 	static_assert(sizeof(Player) == 8, "don't add anything else to Player");
 }

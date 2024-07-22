@@ -4,6 +4,7 @@
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Self.hpp"
+#include "game/frontend/ChatDisplay.hpp"
 #include "game/frontend/GUI.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
@@ -15,10 +16,9 @@ namespace YimMenu::Features
 	{
 		using Command::Command;
 
-
 		virtual void OnCall() override
 		{
-			if (*Pointers.IsSessionStarted && !SCRIPTS::IS_LOADING_SCREEN_VISIBLE() && MISC::UPDATE_ONSCREEN_KEYBOARD() != 0 && !GUI::IsOpen())
+			if (*Pointers.IsSessionStarted && !SCRIPTS::IS_LOADING_SCREEN_VISIBLE() && MISC::UPDATE_ONSCREEN_KEYBOARD() != 0 && !GUI::IsOpen() && !HUD::IS_PAUSE_MENU_ACTIVE())
 			{
 				ScriptMgr::Yield(100ms); // Delay so hotkey key doesn't get mistaken as input
 				bool isChatCancelled = false;
@@ -44,5 +44,16 @@ namespace YimMenu::Features
 		}
 	};
 
+	class ClearChat : public Command
+	{
+		using Command::Command;
+
+		virtual void OnCall() override
+		{
+			ChatDisplay::Clear();
+		}
+	};
+
 	static Chat _Chat{"chathelper", "Chat", "Use this to open the chat!"};
+	static ClearChat _ClearChat{"clearchat", "Clear Chat", "Use this to clear the chat!"};
 }

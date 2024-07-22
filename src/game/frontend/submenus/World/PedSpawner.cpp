@@ -71,6 +71,8 @@ namespace YimMenu::Submenus
 
 	void RenderPedSpawnerMenu()
 	{
+		ImGui::PushID("peds"_J);
+
 		static auto model_hook = ([]() {
 			NativeHooks::AddHook("long_update"_J, NativeIndex::GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH, GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH);
 			NativeHooks::AddHook("long_update"_J, NativeIndex::_GET_META_PED_TYPE, _GET_META_PED_TYPE);
@@ -132,5 +134,7 @@ namespace YimMenu::Submenus
 				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
 			});
 		}
+
+		ImGui::PopID();
 	}
 }

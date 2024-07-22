@@ -1,5 +1,6 @@
 #include "Scripts.hpp"
 #include <script/scrThread.hpp>
+#include <script/scrProgram.hpp>
 #include <script/scriptHandlerNetComponent.hpp>
 #include <network/CNetworkPlayerMgr.hpp>
 #include <rage/tlsContext.hpp>
@@ -16,6 +17,19 @@ namespace YimMenu::Scripts
 			if (thread && thread->m_Context.m_ThreadId && thread->m_Context.m_ScriptHash == hash)
 			{
 				return thread;
+			}
+		}
+
+		return nullptr;
+	}
+
+	rage::scrProgram* FindScriptProgram(joaat_t hash)
+	{
+		for (int i = 0; i < 160; i++)
+		{
+			if (Pointers.ScriptPrograms[i] && Pointers.ScriptPrograms[i]->m_NameHash == hash)
+			{
+				return Pointers.ScriptPrograms[i];
 			}
 		}
 

@@ -188,9 +188,10 @@ namespace YimMenu::Submenus
 		auto main      = std::make_shared<Category>("Main");
 		auto miscGroup = std::make_shared<Group>("Misc");
 
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptowaypoint"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptomount"_J));
-		miscGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
+		miscGroup->AddItem(std::make_shared<CommandItem>("tptotraintrack"_J));
 
 		main->AddItem(miscGroup);
 

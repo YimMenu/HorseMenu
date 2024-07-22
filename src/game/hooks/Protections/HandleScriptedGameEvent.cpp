@@ -36,12 +36,11 @@ namespace YimMenu::Hooks
 			script_args += " };";
 
 			LOG(VERBOSE) << "Script Event:\n"
-			             << "\tPlayer: " << src->GetName() << "\n"
-			             << "\tArgs: " << script_args 
-				         << "\tScript: " << HEX(event->m_ScriptId.m_ScriptHash) 
-				         << "\tHas Metadata Index: " << (event->m_HasScriptMetadataIdx ? "YES" : "NO")
-				         << "\tID Overriden: " << (event->m_ScriptIdOverridden ? "YES" : "NO") 
-						 << "\tMetadata Index: " << event->m_ScriptMetadataIndex;
+			             << "\nPlayer: " << src->GetName() << "\n"
+			             << "\n\tArgs: " << script_args 
+				         << "\n\tScript: " << HEX(event->m_ScriptId.m_ScriptHash) 
+				         << "\n\tHas Metadata Index: " << (event->m_HasScriptMetadataIdx ? "YES" : "NO")
+				         << "\n\tID Overriden: " << (event->m_ScriptIdOverridden ? "YES" : "NO");
 		}
 
 		auto evnt_id = static_cast<ScriptEvent>((int)event->m_Data[0]);

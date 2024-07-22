@@ -3,6 +3,7 @@
 #include "World/PedSpawner.hpp"
 #include "World/ObjectSpawner.hpp"
 #include "World/Shows.hpp"
+#include "World/VehicleSpawner.hpp"
 #include "World/Weather.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
@@ -14,6 +15,8 @@
 #include "game/rdr/Ped.hpp"
 #include "game/rdr/data/PedModels.hpp"
 #include "game/rdr/data/ObjModels.hpp"
+
+#include "util/VehicleSpawner.hpp"
 
 #include <game/rdr/Natives.hpp>
 
@@ -30,19 +33,16 @@ namespace YimMenu::Submenus
 
 
 		time->AddItem(std::make_shared<ImGuiItem>([] {
-			static std::string hour, minute, second;
+			static int hour, minute, second;
 			static bool freeze;
-			InputTextWithHint("Hour", "Enter Hour", &hour).Draw();
-			InputTextWithHint("Minute", "Enter Minute", &minute).Draw();
-			InputTextWithHint("Second", "Enter Second", &second).Draw();
+			ImGui::SliderInt("Hour", &hour, 0, 23);
+			ImGui::SliderInt("Minute", &minute, 0, 59);
+			ImGui::SliderInt("Second", &second, 0, 59);
 			ImGui::Checkbox("Freeze", &freeze);
 			if (ImGui::Button("Change Time"))
 			{
-				int h = std::stoi(hour);
-				int m = std::stoi(minute);
-				int s = std::stoi(second);
-				FiberPool::Push([=] {
-					ChangeTime(h, m, s, 0, freeze);
+				FiberPool::Push([] {
+					ChangeTime(hour, minute, second, 0, freeze);
 				});
 			}
 			if (ImGui::Button("Restore"))
@@ -73,12 +73,18 @@ namespace YimMenu::Submenus
 				}
 				ImGui::EndCombo();
 			}
+			if (ImGui::Button("Restore"))
+			{
+				FiberPool::Push([] {
+					MISC::CLEAR_OVERRIDE_WEATHER();
+				});
+			}
 		}));
-
 
 		auto spawners        = std::make_shared<Category>("Spawners");
 		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
 		auto objSpawnerGroup = std::make_shared<Group>("Object Spawner");
+		auto vehicleSpawnerGroup = std::make_shared<Group>("Vehicle Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderPedSpawnerMenu();
@@ -88,8 +94,13 @@ namespace YimMenu::Submenus
 			RenderObjectSpawnerMenu();
 		}));
 
+		vehicleSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			RenderVehicleSpawnerMenu();
+		}));
+
 		spawners->AddItem(pedSpawnerGroup);
 		spawners->AddItem(objSpawnerGroup);
+		spawners->AddItem(vehicleSpawnerGroup);
 
 		auto killPeds = std::make_shared<Group>("", 1);
 		killPeds->AddItem(std::make_shared<CommandItem>("killallpeds"_J));
@@ -102,6 +113,7 @@ namespace YimMenu::Submenus
 		shows->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderShowsMenu();
 		}));
+
 
 		AddCategory(std::move(main));
 		AddCategory(std::move(weather));

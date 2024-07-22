@@ -1,9 +1,11 @@
 #pragma once
 #include "game/rdr/Pools.hpp"
+
 #include <D3D12.h>
 #include <dxgi1_4.h>
 #include <network/InFrame.hpp> // has to be imported
 #include <vulkan/vulkan.h>
+
 
 namespace rage
 {
@@ -29,6 +31,8 @@ class IDirectSoundCapture;
 class CScriptedGameEvent;
 enum class NetObjType;
 class CPlayerHealthData;
+class CVehicleProximityMigrationData;
+class CPed;
 
 namespace YimMenu::Hooks
 {
@@ -87,6 +91,7 @@ namespace YimMenu::Hooks
 		extern bool SerializeServerRPC(rage::ServerRPCSerializer* ser, void* a2, const char* message, void* def, void* structure, const char* rpc_guid, void* a7);
 		extern bool ReceiveServerMessage(void* a1, rage::ServerMsg* a2); // doesn't receive all messages
 		extern bool ReceiveArrayUpdate(void* array, CNetGamePlayer* sender, rage::datBitBuffer* buffer, int size, int16_t cycle);
+
 		extern void* CreatePoolItem(PoolUtils<Entity>* pool);
 	}
 
@@ -117,6 +122,7 @@ namespace YimMenu::Hooks
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
 		extern bool SendNetInfoToLobby(rage::rlGamerInfo* local_player, int64_t a2, int64_t a3, DWORD* a4);
+		extern void WriteVPMData(void* vehicle, CVehicleProximityMigrationData* data);
 	}
 
 	namespace Toxic

@@ -31,6 +31,11 @@ namespace YimMenu
 			GetInstance().m_IsOpen ^= true;
 		}
 
+		static bool IsUsingKeyboard()
+		{
+			return ImGui::GetIO().WantTextInput;
+		}
+
 	private:
 		void WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
