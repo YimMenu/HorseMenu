@@ -2,6 +2,7 @@
 
 #include "World/PedSpawner.hpp"
 #include "World/Shows.hpp"
+#include "World/VehicleSpawner.hpp"
 #include "World/Weather.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
@@ -10,8 +11,7 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "game/rdr/Ped.hpp"
-#include "game/rdr/data/PedModels.hpp"
+#include "util/VehicleSpawner.hpp"
 
 #include <game/rdr/Natives.hpp>
 
@@ -77,14 +77,20 @@ namespace YimMenu::Submenus
 		}));
 
 
-		auto spawners        = std::make_shared<Category>("Spawners");
-		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
+		auto spawners            = std::make_shared<Category>("Spawners");
+		auto pedSpawnerGroup     = std::make_shared<Group>("Ped Spawner");
+		auto vehicleSpawnerGroup = std::make_shared<Group>("Vehicle Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderPedSpawnerMenu();
 		}));
 
+		vehicleSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			RenderVehicleSpawnerMenu();
+		}));
+
 		spawners->AddItem(pedSpawnerGroup);
+		spawners->AddItem(vehicleSpawnerGroup);
 
 		auto killPeds = std::make_shared<Group>("", 1);
 		killPeds->AddItem(std::make_shared<CommandItem>("killallpeds"_J));
@@ -97,6 +103,7 @@ namespace YimMenu::Submenus
 		shows->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderShowsMenu();
 		}));
+
 
 		AddCategory(std::move(main));
 		AddCategory(std::move(weather));

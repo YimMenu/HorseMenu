@@ -14,6 +14,7 @@
 #include "submenus/Settings.hpp"
 #include "submenus/Teleport.hpp"
 #include "submenus/World.hpp"
+#include "submenus/Recovery.hpp"
 
 namespace YimMenu
 {
@@ -25,6 +26,7 @@ namespace YimMenu
 		UIManager::AddSubmenu(std::make_shared<Submenus::Network>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::Players>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::World>());
+		UIManager::AddSubmenu(std::make_shared<Submenus::Recovery>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::Settings>());
 		UIManager::AddSubmenu(std::make_shared<Submenus::Debug>());
 

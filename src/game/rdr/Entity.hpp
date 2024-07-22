@@ -31,14 +31,14 @@ namespace YimMenu
 		void AssertScriptContext(const std::string& function_name);
 
 		constexpr Entity(void* pointer) :
-			m_Pointer(pointer),
+		    m_Pointer(pointer),
 		    m_Handle(0)
 		{
 		}
 
 		constexpr Entity(int handle) :
 		    m_Pointer(nullptr),
-			m_Handle(handle)
+		    m_Handle(handle)
 		{
 		}
 
@@ -71,7 +71,10 @@ namespace YimMenu
 		}
 
 		bool IsValid();
-		inline operator bool() { return IsValid(); }
+		inline operator bool()
+		{
+			return IsValid();
+		}
 		inline operator int() = delete;
 
 		bool IsPed();
@@ -90,6 +93,7 @@ namespace YimMenu
 		// physical
 		void SetCollision(bool enabled);
 		void SetFrozen(bool enabled);
+		void Delete();
 
 		// networking
 		bool IsNetworked();

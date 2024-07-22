@@ -71,7 +71,6 @@ namespace YimMenu
 		{
 			if (scp->m_NameHash == script || script == ALL_SCRIPTS)
 			{
-				LOG(VERBOSE) << "Applying native hook on existing script";
 				program->Apply(Hook(index, hook));
 			}
 		}

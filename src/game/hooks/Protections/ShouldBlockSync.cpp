@@ -42,6 +42,7 @@
 namespace YimMenu::Features
 {
 	BoolCommand _LogClones("logclones", "Log Clones", "Log clone creates and clone syncs");
+	BoolCommand _AllowRemoteTPs("allowremotetp", "Allow Remote Teleports", "Allow trusted players to remote teleport you!");
 }
 
 namespace
@@ -406,9 +407,15 @@ namespace
 			auto& data = node->GetData<CVehicleProximityMigrationData>();
 			if (auto local = Pointers.GetLocalPed(); local && local->m_NetObject)
 			{
+				bool allowRemoteTp =
+				    g_PlayerDatabase
+				        ->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
+				            Protections::GetSyncingPlayer().GetName())
+				        ->trust
+				    && Features::_AllowRemoteTPs.GetState();
 				for (int i = 0; i < 17; i++)
 				{
-					if (data.m_PassengersActive[i] && data.m_PassengerObjectIds[i] == local->m_NetObject->m_ObjectId)
+					if (data.m_PassengersActive[i] && data.m_PassengerObjectIds[i] == local->m_NetObject->m_ObjectId && !allowRemoteTp)
 					{
 						// TODO: add more checks
 						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
