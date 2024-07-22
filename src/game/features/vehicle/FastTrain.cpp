@@ -10,7 +10,6 @@ namespace YimMenu::Features
 	class FastTrain : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
-		bool isDecelerating = false;
 
 		virtual void OnTick() override
 		{
