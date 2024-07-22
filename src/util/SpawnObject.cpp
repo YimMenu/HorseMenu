@@ -3,7 +3,7 @@
 
 namespace YimMenu
 {
-	void PreviewObject(uint32_t hash, Vector3 coords, float pitch, float yaw, float roll, bool isEnabled)
+	void PreviewObject(uint32_t hash, Vector3 coords, float pitch, float yaw, float roll, bool isEnabled) 
 	{
 		FiberPool::Push([=] {
 			if (STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_VALID(hash))

@@ -118,13 +118,18 @@ namespace YimMenu::Submenus
 		ImGui::SliderFloat("Roll", &roll, -180.0f, 180.0f);
 
 		ImGui::Checkbox("Place on Ground", &onGround);
+		ImGui::SetTooltip("Places the object properly on the ground. (Ignores Offset Z slider)");
 		ImGui::SameLine();
 		ImGui::Checkbox("Freeze Position", &isFrozen);
+		ImGui::SetTooltip("Locks the position of the object so it does not move.");
 		ImGui::SameLine();
 		ImGui::Checkbox("Set on Fire", &isBurning);
+		ImGui::SetTooltip("Sets things on fire when spawned. (Players, Peds, Structures)");
 		ImGui::SameLine();
 		ImGui::Checkbox("Set as Pickup", &isPickup);
+		ImGui::SetTooltip("Sets the object as a pickup (If supported, works with mp001_s_mp_boxsm01x)");
 		ImGui::Checkbox("Show Preview", &showPreview);
+		ImGui::SetTooltip("Shows a semi-transparent preview of the object and its position");
 
 		if (ImGui::Button("Spawn Object"))
 		{
