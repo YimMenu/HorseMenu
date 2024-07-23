@@ -24,8 +24,5 @@ namespace YimMenu
 				m_Callback();
 			}
 		}
-
-		if (ImGui::IsItemActive())
-			BlockAllControls();
 	}
 }

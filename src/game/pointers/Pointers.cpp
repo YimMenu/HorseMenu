@@ -95,7 +95,7 @@ namespace YimMenu
 		constexpr auto currentScriptThreadPtrn = Pattern<"48 89 2D ? ? ? ? 48 89 2D ? ? ? ? 48 8B 04 F9">("CurrentScriptThread&ScriptVM");
 		scanner.Add(currentScriptThreadPtrn, [this](PointerCalculator ptr) {
 			CurrentScriptThread = ptr.Add(3).Rip().As<rage::scrThread**>();
-			ScriptVM            = ptr.Add(0x28).Rip().As<PVOID>();
+			ScriptVM            = ptr.Add(0x28).Rip().As<Functions::ScriptVM>();
 		});
 
 		constexpr auto sendMetricPtrn = Pattern<"48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B F1 48 8B FA B1">("SendMetric");
@@ -385,6 +385,16 @@ namespace YimMenu
 		constexpr auto receiveArrayUpdatePtrn = Pattern<"48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 50 48 8B D9 45">("ReceiveArrayUpdate");
 		scanner.Add(receiveArrayUpdatePtrn, [this](PointerCalculator ptr) {
 			ReceiveArrayUpdate = ptr.As<PVOID>();
+		});
+
+		constexpr auto writeVPMDataPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 48 89 70 20 48 89 48 08 57 41 54 41 55 41 56 41 57 48 83 EC 30 4C 8B A9">("WriteVehicleProximityMigrationData");
+		scanner.Add(writeVPMDataPtrn, [this](PointerCalculator ptr) {
+			WriteVPMData = ptr.As<PVOID>();
+		});
+
+		constexpr auto triggerGiveControlEventPtrn = Pattern<"48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 54 41 56 41 57 48 83 EC ? 65 4C 8B 0C 25">("TriggerGiveControlEvent");
+		scanner.Add(triggerGiveControlEventPtrn, [this](PointerCalculator ptr) {
+			TriggerGiveControlEvent = ptr.As<Functions::TriggerGiveControlEvent>();
 		});
 
 		constexpr auto createPoolItemPtrn = Pattern<"E8 ? ? ? ? 48 85 C0 74 ? 44 8A 4C 24 ? 48 8B C8 44 0F B7 44 24 ? 0F B7 54 24">("CreatePoolItem");

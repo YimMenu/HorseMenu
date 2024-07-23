@@ -36,8 +36,6 @@ namespace YimMenu
 
 				m_Finder.m_SyncTressSyncNodeAddrToIds[i][addr] = node_id;
 				auto node = (CProjectBaseSyncDataNode*)(addr);
-
-				LOG(INFO) << node_id.name << ": V=RDR2.exe+" << HEX((*(__int64*)(node)) - (__int64)GetModuleHandleA(0)) << " S=RDR2.exe+" << HEX((*(__int64*)(node->m_CommonDataOpsVFT)) - (__int64)GetModuleHandleA(0));
 			}
 		}
 

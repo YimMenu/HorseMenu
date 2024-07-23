@@ -1,6 +1,5 @@
 #include "Player.hpp"
 
-#include "game/pointers/Pointers.hpp"
 #include "game/backend/Players.hpp"
 #include "game/pointers/Pointers.hpp"
 
@@ -163,5 +162,10 @@ namespace YimMenu
 	bool Player::operator==(Player other)
 	{
 		return m_Handle == other.m_Handle;
+	}
+
+	inline Player::operator bool()
+	{
+		return IsValid();
 	}
 }

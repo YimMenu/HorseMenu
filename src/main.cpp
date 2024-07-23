@@ -41,10 +41,10 @@ namespace YimMenu
 		Hooking::Init();
 
 		ScriptMgr::Init();
-		LOG(INFO) << "ScriptMgr Initialized";
+		LOG(INFO) << "ScriptMgr initialized";
 
 		FiberPool::Init(5);
-		LOG(INFO) << "FiberPool Initialized";
+		LOG(INFO) << "FiberPool initialized";
 
 		GUI::Init();
 
@@ -73,25 +73,26 @@ namespace YimMenu
 		LOG(INFO) << "Unloading";
 
 		NativeHooks::Destroy();
-		LOG(INFO) << "NativeHooks Uninitialized";
+		LOG(INFO) << "NativeHooks uninitialized";
 
 		ScriptMgr::Destroy();
-		LOG(INFO) << "ScriptMgr Uninitialized";
+		LOG(INFO) << "ScriptMgr uninitialized";
 
 		FiberPool::Destroy();
-		LOG(INFO) << "FiberPool Uninitialized";
+		LOG(INFO) << "FiberPool uninitialized";
 
 		PlayerDatabaseInstance.reset();
 
 	unload:
 		Hooking::Destroy();
+		LOG(INFO) << "Hooking uninitialized";
 		Renderer::Destroy();
+		LOG(INFO) << "Renderer uninitialized";
 
+		LOG(INFO) << "Goodbye!";
 		LogHelper::Destroy();
 
-		CloseHandle(g_MainThread);
 		FreeLibraryAndExitThread(g_DllInstance, EXIT_SUCCESS);
-
 		return EXIT_SUCCESS;
 	}
 }

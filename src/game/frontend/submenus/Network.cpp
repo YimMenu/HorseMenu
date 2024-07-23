@@ -15,6 +15,7 @@
 #include "game/rdr/Natives.hpp"
 #include "util/Chat.hpp"
 #include "util/Storage/Spoofing.hpp"
+#include "util/teleport.hpp"
 
 #include <map>
 #include <network/rlGamerHandle.hpp>
@@ -68,7 +69,12 @@ namespace YimMenu::Submenus
 		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
 		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
+		session->AddItem(std::make_shared<CommandItem>("bringall"_J));
+		session->AddItem(std::make_shared<CommandItem>("tpalltowaypoint"_J));
+		session->AddItem(std::make_shared<CommandItem>("tpalltojail"_J));
+
 		session->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
+
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
 		database->AddItem(std::make_shared<ImGuiItem>([] {
@@ -192,7 +198,7 @@ namespace YimMenu::Submenus
 			}
 			if (ImGui::IsItemHovered())
 			{
-				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally unless enabled above.");
+				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally.");
 			}
 		}));
 		blipSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofprimaryicon"_J));

@@ -137,6 +137,17 @@ namespace YimMenu
 		ENTITY::FREEZE_ENTITY_POSITION(GetHandle(), enabled);
 	}
 
+	void Entity::Delete()
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		ENTITY::DETACH_ENTITY(GetHandle(), true, true);
+		if (!ENTITY::IS_ENTITY_A_MISSION_ENTITY(GetHandle()))
+			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(GetHandle(), true, true);
+		auto hnd = GetHandle();
+		ENTITY::DELETE_ENTITY(&hnd); // TODO: force delete network entities
+	}
+
 	bool Entity::IsNetworked()
 	{
 		if (!IsValid())

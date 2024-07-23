@@ -317,6 +317,7 @@ namespace YimMenu::Submenus
 			});
 		}
 
+		ImGui::SetNextItemWidth(200);
 		ImGui::Combo("Show", (int*)&g_SelectedSceneType, g_SceneTypeStrs.data(), g_SceneTypeStrs.size(), -1);
 
 		if (g_SelectedSceneType == SceneType::CAN_CAN_01 || g_SelectedSceneType == SceneType::CAN_CAN_02)
