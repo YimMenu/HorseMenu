@@ -16,13 +16,13 @@ namespace YimMenu::Features
 			auto vehicle = Self::GetVehicle();
 			if (vehicle)
 			{
-				Hash vehicleModelHash = ENTITY::GET_ENTITY_MODEL(vehicle);
+				Hash vehicleModelHash = ENTITY::GET_ENTITY_MODEL(vehicle.GetHandle());
 
 				if (VEHICLE::IS_THIS_MODEL_A_TRAIN(vehicleModelHash))
 				{
-					VEHICLE::SET_TRAIN_SPEED(vehicle, 1000.0);
-					VEHICLE::SET_TRAIN_CRUISE_SPEED(vehicle, 1000.0);
-					VEHICLE::_SET_TRAIN_MAX_SPEED(vehicle, 1000.0);
+					VEHICLE::SET_TRAIN_SPEED(vehicle.GetHandle(), 1000.0);
+					VEHICLE::SET_TRAIN_CRUISE_SPEED(vehicle.GetHandle(), 1000.0);
+					VEHICLE::_SET_TRAIN_MAX_SPEED(vehicle.GetHandle(), 1000.0);
 				}
 			}
 		}
@@ -32,13 +32,13 @@ namespace YimMenu::Features
 			auto vehicle       = Self::GetVehicle();
 			if (vehicle)
 			{
-				Hash vehicleModelHash = ENTITY::GET_ENTITY_MODEL(vehicle);
+				Hash vehicleModelHash = ENTITY::GET_ENTITY_MODEL(vehicle.GetHandle());
 
 				if (VEHICLE::IS_THIS_MODEL_A_TRAIN(vehicleModelHash))
 				{
-					VEHICLE::SET_TRAIN_SPEED(vehicle, 0.0);
-					VEHICLE::SET_TRAIN_CRUISE_SPEED(vehicle, 0.0);
-					VEHICLE::_SET_TRAIN_MAX_SPEED(vehicle, 0.0);
+					VEHICLE::SET_TRAIN_SPEED(vehicle.GetHandle(), 0.0);
+					VEHICLE::SET_TRAIN_CRUISE_SPEED(vehicle.GetHandle(), 0.0);
+					VEHICLE::_SET_TRAIN_MAX_SPEED(vehicle.GetHandle(), 0.0);
 				}
 			}
 		}
