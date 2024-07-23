@@ -60,11 +60,13 @@ namespace YimMenu::Submenus
 		static float pitch           = 0.0f;
 		static float yaw             = 0.0f;
 		static float roll            = 0.0f;
+		static float alpha           = 125.0f;
 		static bool onGround         = false;
 		static bool isFrozen         = false;
 		static bool isBurning        = false;
 		static bool isPickup         = false;
 		static bool showPreview      = false;
+		static bool hasCollision     = false;
 		static int modelHash         = 0;
 
 		Vector3 playerCoords  = ENTITY::GET_ENTITY_COORDS(Self::GetPed().GetHandle(), true, true);
@@ -116,6 +118,7 @@ namespace YimMenu::Submenus
 		ImGui::SliderFloat("Pitch", &pitch, -180.0f, 180.0f);
 		ImGui::SliderFloat("Yaw", &yaw, -180.0f, 180.0f);
 		ImGui::SliderFloat("Roll", &roll, -180.0f, 180.0f);
+		ImGui::SliderFloat("Transparency", &alpha, 0.0f, 255.0f);
 
 		ImGui::Checkbox("Place on Ground", &onGround);
 		ImGui::SameLine();
@@ -124,12 +127,15 @@ namespace YimMenu::Submenus
 		ImGui::Checkbox("Set on Fire", &isBurning);
 		ImGui::SameLine();
 		ImGui::Checkbox("Set as Pickup", &isPickup);
+
+		ImGui::Checkbox("Set Collision", &hasCollision);
+		ImGui::SameLine();
 		ImGui::Checkbox("Show Preview", &showPreview);
 
 		if (ImGui::Button("Spawn Object"))
 		{
 			int modelHash = Joaat(objectModelBuffer.c_str());
-			SpawnObject(modelHash, spawnPosition, pitch, yaw, roll, onGround, isFrozen, isBurning, isPickup);
+			SpawnObject(modelHash, spawnPosition, pitch, yaw, roll, onGround, isFrozen, isBurning, isPickup, hasCollision);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Reset Sliders"))
@@ -140,12 +146,13 @@ namespace YimMenu::Submenus
 			pitch           = 0.0f;
 			yaw             = 0.0f;
 			roll            = 0.0f;
+			alpha           = 125.0f;
 		}
 
 		if (showPreview == true)
 		{
 			int modelHash = Joaat(objectModelBuffer.c_str());
-			PreviewObject(modelHash, spawnPosition, pitch, yaw, roll, showPreview);
+			PreviewObject(modelHash, spawnPosition, pitch, yaw, roll, alpha, showPreview);
 		}
 	}
 }

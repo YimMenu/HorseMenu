@@ -3,7 +3,7 @@
 
 namespace YimMenu
 {
-	void PreviewObject(uint32_t hash, Vector3 coords, float pitch, float yaw, float roll, bool isEnabled) 
+	void PreviewObject(uint32_t hash, Vector3 coords, float pitch, float yaw, float roll, float alpha, bool isEnabled) 
 	{
 		FiberPool::Push([=] {
 			if (STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_VALID(hash))
@@ -17,7 +17,7 @@ namespace YimMenu
 				Object hologram = OBJECT::CREATE_OBJECT(hash, coords.x, coords.y, coords.z, true, false, false, 0, 1);
 
 				ENTITY::SET_ENTITY_VISIBLE(hologram, true);
-				ENTITY::SET_ENTITY_ALPHA(hologram, 125, false);
+				ENTITY::SET_ENTITY_ALPHA(hologram, alpha, false);
 				ENTITY::SET_ENTITY_COLLISION(hologram, false, false);
 				ENTITY::SET_ENTITY_INVINCIBLE(hologram, true);
 				ENTITY::FREEZE_ENTITY_POSITION(hologram, true);
@@ -32,7 +32,7 @@ namespace YimMenu
 		});
 	}
 
-	void SpawnObject(uint32_t hash, Vector3 coords, float pitch, float yaw, float roll, bool onGround, bool isFrozen, bool isBurning, bool isPickup)
+	void SpawnObject(uint32_t hash, Vector3 coords, float pitch, float yaw, float roll, bool onGround, bool isFrozen, bool isBurning, bool isPickup, bool hasCollision)
 	{
 		FiberPool::Push([=] {
 			if (STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_VALID(hash))
@@ -71,7 +71,7 @@ namespace YimMenu
 					{
 						OBJECT::_MAKE_ITEM_CARRIABLE(obj);
 					}
-
+					ENTITY::SET_ENTITY_COLLISION(obj, hasCollision, false);
 					ENTITY::SET_ENTITY_SHOULD_FREEZE_WAITING_ON_COLLISION(obj, true);
 					NETWORK::SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(id, true);
 					NETWORK::NETWORK_REQUEST_CONTROL_OF_ENTITY(obj);
