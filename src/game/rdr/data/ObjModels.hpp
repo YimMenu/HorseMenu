@@ -12,7 +12,6 @@ namespace YimMenu::Data
 	};
 
 	const ObjModelInfo g_ObjModels[]{
-		{"nbx_saplin_palmetto_abl2", "areas | p_new_01.rpf"},
         {"p_balconyflagnbx01x", "Flag"},
         {"p_barbpolenbx01x", "Pole"},
         {"p_barrelhoistnbx01x", "Hoist"},

@@ -14,7 +14,7 @@ namespace YimMenu
 					ScriptMgr::Yield();
 				}
 
-				Object hologram = OBJECT::CREATE_OBJECT(hash, coords.x, coords.y, coords.z, true, false, false, 0, 1);
+				Object hologram = OBJECT::CREATE_OBJECT(hash, coords.x, coords.y, coords.z, false, false, false, 0, 1);
 
 				ENTITY::SET_ENTITY_VISIBLE(hologram, true);
 				ENTITY::SET_ENTITY_ALPHA(hologram, alpha, false);

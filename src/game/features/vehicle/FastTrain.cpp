@@ -13,27 +13,33 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			Vehicle vehicle       = PED::GET_VEHICLE_PED_IS_USING(Self::GetPed().GetHandle());
-			Hash vehicleModelHash = ENTITY::GET_ENTITY_MODEL(vehicle);
-
-			if (VEHICLE::IS_THIS_MODEL_A_TRAIN(vehicleModelHash))
+			auto vehicle = Self::GetVehicle();
+			if (vehicle)
 			{
-				VEHICLE::SET_TRAIN_SPEED(vehicle, 1000.0);
-				VEHICLE::SET_TRAIN_CRUISE_SPEED(vehicle, 1000.0);
-				VEHICLE::_SET_TRAIN_MAX_SPEED(vehicle, 1000.0);
+				Hash vehicleModelHash = ENTITY::GET_ENTITY_MODEL(vehicle);
+
+				if (VEHICLE::IS_THIS_MODEL_A_TRAIN(vehicleModelHash))
+				{
+					VEHICLE::SET_TRAIN_SPEED(vehicle, 1000.0);
+					VEHICLE::SET_TRAIN_CRUISE_SPEED(vehicle, 1000.0);
+					VEHICLE::_SET_TRAIN_MAX_SPEED(vehicle, 1000.0);
+				}
 			}
 		}
 
 		virtual void OnDisable() override
 		{
-			Vehicle vehicle       = PED::GET_VEHICLE_PED_IS_USING(Self::GetPed().GetHandle());
-			Hash vehicleModelHash = ENTITY::GET_ENTITY_MODEL(vehicle);
-
-			if (VEHICLE::IS_THIS_MODEL_A_TRAIN(vehicleModelHash))
+			auto vehicle       = Self::GetVehicle();
+			if (vehicle)
 			{
-				VEHICLE::SET_TRAIN_SPEED(vehicle, 0.0);
-				VEHICLE::SET_TRAIN_CRUISE_SPEED(vehicle, 0.0);
-				VEHICLE::_SET_TRAIN_MAX_SPEED(vehicle, 0.0);
+				Hash vehicleModelHash = ENTITY::GET_ENTITY_MODEL(vehicle);
+
+				if (VEHICLE::IS_THIS_MODEL_A_TRAIN(vehicleModelHash))
+				{
+					VEHICLE::SET_TRAIN_SPEED(vehicle, 0.0);
+					VEHICLE::SET_TRAIN_CRUISE_SPEED(vehicle, 0.0);
+					VEHICLE::_SET_TRAIN_MAX_SPEED(vehicle, 0.0);
+				}
 			}
 		}
 	};
