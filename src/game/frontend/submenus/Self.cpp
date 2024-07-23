@@ -205,7 +205,8 @@ namespace YimMenu::Submenus
 
 		auto vehicle             = std::make_shared<Category>("Vehicle");
 		auto vehicleGlobalsGroup = std::make_shared<Group>("Globals");
-		auto vehicleFunGroup = std::make_shared<Group>("Fun");
+		auto vehicleFunGroup	 = std::make_shared<Group>("Fun");
+		auto trainGroup          = std::make_shared<Group>("Train");
 
 		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
