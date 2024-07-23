@@ -115,22 +115,36 @@ namespace YimMenu::Submenus
 		ImGui::SliderFloat("Offset X", &positionOffsetX, -25.0f, 25.0f);
 		ImGui::SliderFloat("Offset Y", &positionOffsetY, -25.0f, 25.0f);
 		ImGui::SliderFloat("Offset Z", &positionOffsetZ, -10.0f, 10.0f);
+		ImGui::Separator();
 		ImGui::SliderFloat("Pitch", &pitch, -180.0f, 180.0f);
 		ImGui::SliderFloat("Yaw", &yaw, -180.0f, 180.0f);
 		ImGui::SliderFloat("Roll", &roll, -180.0f, 180.0f);
+		ImGui::Separator();
 		ImGui::SliderFloat("Transparency", &alpha, 0.0f, 255.0f);
 
 		ImGui::Checkbox("Place on Ground", &onGround);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Places the object properly on the ground when spawned.");
 		ImGui::SameLine();
 		ImGui::Checkbox("Freeze Position", &isFrozen);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Locks the object in place when spawned, preventing it from being moved.");
 		ImGui::SameLine();
 		ImGui::Checkbox("Set on Fire", &isBurning);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Sets things on fire near the object when spawned.");
 		ImGui::SameLine();
 		ImGui::Checkbox("Set as Pickup", &isPickup);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Sets the object as a pickup (if applicable) for spawning lootable items.");
 
 		ImGui::Checkbox("Set Collision", &hasCollision);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Sets the collision of the object making it so you cannot pass through it.");
 		ImGui::SameLine();
 		ImGui::Checkbox("Show Preview", &showPreview);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Shows a preview of the object in front of you.");
 
 		if (ImGui::Button("Spawn Object"))
 		{
