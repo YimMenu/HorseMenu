@@ -12,8 +12,8 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{
-			auto coords = player.GetPed().GetPosition();
-			coords.z -= 1.0f;
+			Vector3 coords = ENTITY::GET_ENTITY_COORDS(player.GetPed().GetHandle(), true, true);
+			coords.z       = coords.z - 1.0f;
 			SpawnObject(0x99C0CFCF, coords, 0, 0, 0, true, true, false, false, true); 
 		}
 	};
