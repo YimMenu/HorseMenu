@@ -69,7 +69,7 @@ namespace YimMenu::Submenus
 		static bool hasCollision     = false;
 		static int modelHash         = 0;
 
-		Vector3 playerCoords  = ENTITY::GET_ENTITY_COORDS(Self::GetPed().GetHandle(), true, true);
+		Vector3 playerCoords  = Self::GetPed().GetPosition();
 		Vector3 forwardVector = ENTITY::GET_ENTITY_FORWARD_VECTOR(Self::GetPed().GetHandle());
 
 		Vector3 spawnPosition;
