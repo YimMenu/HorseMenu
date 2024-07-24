@@ -163,7 +163,7 @@ namespace YimMenu::Submenus
 			alpha           = 125.0f;
 		}
 
-		if (showPreview == true)
+		if (showPreview)
 		{
 			int modelHash = Joaat(objectModelBuffer.c_str());
 			PreviewObject(modelHash, spawnPosition, pitch, yaw, roll, alpha, showPreview);
