@@ -1,7 +1,6 @@
 #include "Recovery.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "game/rdr/ScriptFunction.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/BoolCommand.hpp"
 #include "util/Rewards.hpp"
