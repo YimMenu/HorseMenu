@@ -53,14 +53,8 @@ namespace YimMenu
 				int id = NETWORK::OBJ_TO_NET(obj);
 				if (NETWORK::NETWORK_DOES_NETWORK_ID_EXIST(id))
 				{
-					if (onGround)
-					{
-						OBJECT::PLACE_OBJECT_ON_GROUND_PROPERLY(obj, true);
-					}
-					if (isFrozen)
-					{
-						ENTITY::FREEZE_ENTITY_POSITION(obj, true);
-					}
+						OBJECT::PLACE_OBJECT_ON_GROUND_PROPERLY(obj, onGround);
+						ENTITY::FREEZE_ENTITY_POSITION(obj, isFrozen);
 					if (isBurning)
 					{
 						int fx = Joaat("exp_air_firebottle");

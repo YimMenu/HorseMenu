@@ -81,7 +81,7 @@ namespace YimMenu::Submenus
 		strncpy(buffer, objectModelBuffer.c_str(), sizeof(buffer));
 
 		ImGui::InputTextWithHint("##objectmodel", "Object Model", buffer, sizeof(buffer), ImGuiInputTextFlags_CallbackCompletion, ObjectSpawnerInputCallback);
-
+		
 		objectModelBuffer = buffer;
 
 		if (ImGui::IsItemHovered())
