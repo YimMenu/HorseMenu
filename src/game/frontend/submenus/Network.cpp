@@ -4,7 +4,7 @@
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
 #include "core/frontend/Notifications.hpp"
-#include "core/player_database/PlayerDatabase.hpp"
+#include "game/backend/PlayerDatabase.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
@@ -21,6 +21,7 @@
 #include <network/rlGamerHandle.hpp>
 #include <ranges>
 #include <string>
+#include "Network.hpp"
 
 
 namespace YimMenu::Submenus
@@ -62,18 +63,33 @@ namespace YimMenu::Submenus
 		auto session          = std::make_shared<Category>("Session");
 		auto spoofing         = std::make_shared<Category>("Spoofing");
 		auto database         = std::make_shared<Category>("Player Database");
+		auto sessionSwitcherGroup = std::make_shared<Group>("Session Switcher");
+		auto teleportGroup  = std::make_shared<Group>("Teleport");
+		auto toxicGroup = std::make_shared<Group>("Toxic");
+		auto miscGroup = std::make_shared<Group>("Misc");
 		auto nameChangerGroup = std::make_shared<Group>("Name Changer");
 		auto blipSpoofingGroup = std::make_shared<Group>("Blip Spoofing");
+		auto sessionSpoofingGroup = std::make_shared<Group>("Session Spoofing");
 
-		session->AddItem(std::make_shared<BoolCommandItem>("revealall"_J));
-		session->AddItem(std::make_shared<CommandItem>("explodeall"_J));
-		session->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
-		session->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
-		session->AddItem(std::make_shared<CommandItem>("bringall"_J));
-		session->AddItem(std::make_shared<CommandItem>("tpalltowaypoint"_J));
-		session->AddItem(std::make_shared<CommandItem>("tpalltojail"_J));
+		sessionSwitcherGroup->AddItem(std::make_shared<Vector3CommandItem>("newsessionpos"_J));
+		sessionSwitcherGroup->AddItem(std::make_shared<BoolCommandItem>("newsessionposse"_J));
+		sessionSwitcherGroup->AddItem(std::make_shared<CommandItem>("newsession"_J));
 
-		session->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
+		teleportGroup->AddItem(std::make_shared<CommandItem>("bringall"_J, "Bring All"));
+		teleportGroup->AddItem(std::make_shared<CommandItem>("tpalltowaypoint"_J));
+		teleportGroup->AddItem(std::make_shared<CommandItem>("tpalltojail"_J));
+
+		toxicGroup->AddItem(std::make_shared<CommandItem>("explodeall"_J));
+		toxicGroup->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
+		toxicGroup->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
+
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("revealall"_J));
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
+
+		session->AddItem(sessionSwitcherGroup);
+		session->AddItem(teleportGroup);
+		session->AddItem(toxicGroup);
+		session->AddItem(miscGroup);
 
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
@@ -137,12 +153,27 @@ namespace YimMenu::Submenus
 						for (const auto& pair : count_map)
 						{
 							// TODO: find a better way to do this
-							ImGui::BulletText(std::string(g_PlayerDatabase->ConvertInfractionToDescription(pair.first))
+							ImGui::BulletText(std::string(g_PlayerDatabase->ConvertDetectionToDescription(Detection(pair.first)))
 							                      .append(" - ")
 							                      .append("x")
 							                      .append(std::to_string(pair.second))
 							                      .c_str());
 						}
+					}
+
+					if (ImGui::Button("Join Player"))
+					{
+						FiberPool::Push([] {
+							using gp = void*(*)();
+							using join = void(*)(void*, rage::rlGamerHandle*, int);
+
+							gp g = (gp)((__int64)GetModuleHandleA(0) + 0x22b9800);
+							join j = (join)((__int64)GetModuleHandleA(0) + 0x22d7080);
+
+							rage::rlGamerHandle hnd(current_player->rid);
+
+							j(g(), &hnd, 512);
+						});
 					}
 
 					if (ImGui::Button("Delete Player"))
@@ -205,8 +236,16 @@ namespace YimMenu::Submenus
 		blipSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofprimaryicon"_J, std::make_shared<ListCommandItem>("primaryicon"_J, "Icon##primary")));
 		blipSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofsecondaryicon"_J));
 		blipSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofsecondaryicon"_J, std::make_shared<ListCommandItem>("secondaryicon"_J, "Icon##secondary"))); 
+
+		auto discriminatorGroup = std::make_shared<Group>("", 1);
+		sessionSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofdiscriminator"_J));
+		discriminatorGroup->AddItem(std::make_shared<IntCommandItem>("discriminator"_J));
+		discriminatorGroup->AddItem(std::make_shared<CommandItem>("copydiscriminator"_J, "Copy Current"));
+		sessionSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofdiscriminator"_J, std::move(discriminatorGroup)));
+
 		spoofing->AddItem(nameChangerGroup);
 		spoofing->AddItem(blipSpoofingGroup);
+		spoofing->AddItem(sessionSpoofingGroup);
 		AddCategory(std::move(session));
 		AddCategory(std::move(spoofing));
 		AddCategory(std::move(database));

@@ -44,13 +44,20 @@ namespace YimMenu
 
 	void Entity::AssertScriptContext(const std::string& function_name)
 	{
-		// TODO
+		if (!*Pointers.CurrentScriptThread)
+		{
+			LOG(WARNING) << "*Pointers.CurrentScriptThread == nullptr for " << function_name;
+		}
 	}
 
-	// TODO: potential use after free
 	bool Entity::IsValid()
 	{
-		return m_Handle != 0 || m_Pointer != nullptr;
+		if (m_Handle)
+			return ENTITY::DOES_ENTITY_EXIST(m_Handle);
+		else if (m_Pointer)
+			return true; // TODO: potential use after free
+
+		return false;
 	}
 
 	bool Entity::IsPed()
@@ -78,6 +85,12 @@ namespace YimMenu
 	{
 		ENTITY_ASSERT_VALID();
 		return PED::IS_PED_A_PLAYER(GetHandle());
+	}
+
+	bool Entity::IsAnimal()
+	{
+		ENTITY_ASSERT_VALID();
+		return ENTITY::GET_IS_ANIMAL(GetHandle());
 	}
 
 	rage::fvector3 Entity::GetPosition()
@@ -140,12 +153,29 @@ namespace YimMenu
 	void Entity::Delete()
 	{
 		ENTITY_ASSERT_VALID();
-		ENTITY_ASSERT_CONTROL();
-		ENTITY::DETACH_ENTITY(GetHandle(), true, true);
-		if (!ENTITY::IS_ENTITY_A_MISSION_ENTITY(GetHandle()))
-			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(GetHandle(), true, true);
-		auto hnd = GetHandle();
-		ENTITY::DELETE_ENTITY(&hnd); // TODO: force delete network entities
+
+		if (!IsValid())
+			return;
+
+		if (IsNetworked())
+		{
+			auto net = GetPointer<rage::fwEntity*>()->m_NetObject;
+			if (net)
+			{
+				ForceControl();
+				for (int i = 0; i < 32; i++)
+					if (Pointers.NetworkPlayerMgr->m_PlayerList[i])
+						(*Pointers.NetworkObjectMgr)->PackCloneRemove(net, Pointers.NetworkPlayerMgr->m_PlayerList[i], true);
+				(*Pointers.NetworkObjectMgr)->UnregisterNetworkObject(net, 0, true, true);
+			}
+		}
+		else
+		{
+			if (!ENTITY::IS_ENTITY_A_MISSION_ENTITY(GetHandle()))
+				ENTITY::SET_ENTITY_AS_MISSION_ENTITY(GetHandle(), true, true);
+			auto hnd = GetHandle();
+			ENTITY::DELETE_ENTITY(&hnd);
+		}
 	}
 
 	bool Entity::IsNetworked()
@@ -183,7 +213,7 @@ namespace YimMenu
 		(*Pointers.NetworkObjectMgr)->ChangeOwner(GetPointer<rage::fwEntity*>()->m_NetObject, Pointers.NetworkPlayerMgr->m_LocalPlayer, 5, true);
 	}
 
-	bool Entity::GetInvincible()
+	bool Entity::IsInvincible()
 	{
 		// TODO this is bad!
 		ENTITY_ASSERT_VALID();

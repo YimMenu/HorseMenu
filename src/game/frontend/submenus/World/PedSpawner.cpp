@@ -7,6 +7,7 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
+#include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/data/PedModels.hpp"
 
@@ -81,7 +82,8 @@ namespace YimMenu::Submenus
 
 		static std::string pedModelBuffer;
 		static float scale = 1;
-		static bool dead, invis, godmode, freeze;
+		static bool dead, invis, godmode, freeze, companion;
+		static std::vector<YimMenu::Ped> spawnedPeds;
 		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback)
 		    .Draw();
 		if (ImGui::IsItemHovered())
@@ -109,11 +111,70 @@ namespace YimMenu::Submenus
 		ImGui::Checkbox("Invisible", &invis);
 		ImGui::Checkbox("GodMode", &godmode);
 		ImGui::Checkbox("Frozen", &freeze);
+		ImGui::Checkbox("Companion", &companion);
 		ImGui::SliderFloat("Scale", &scale, 0.1, 10);
 		if (ImGui::Button("Spawn"))
 		{
 			FiberPool::Push([] {
-				Ped::Create(Joaat(pedModelBuffer), Self::GetPed().GetPosition(), 0, freeze, dead, godmode, invis, scale);
+				auto ped = Ped::Create(Joaat(pedModelBuffer), Self::GetPed().GetPosition());
+
+				if (!ped)
+					return;
+
+				if (freeze)
+					ped.SetFrozen(true);
+
+				if (dead)
+					ped.Kill();
+
+				if (godmode)
+					ped.SetInvincible(true);
+
+				if (invis)
+					ped.SetVisible(false);
+
+				if (scale != 1.0f)
+					ped.SetScale(scale);
+
+				spawnedPeds.push_back(ped);
+
+				if (companion)
+				{
+					int group = PED::GET_PED_GROUP_INDEX(YimMenu::Self::GetPed().GetHandle());
+					if (!PED::DOES_GROUP_EXIST(group))
+					{
+						group = PED::CREATE_GROUP(0);
+						PED::SET_PED_AS_GROUP_LEADER(YimMenu::Self::GetPed().GetHandle(), group, true);
+					}
+
+					ENTITY::SET_ENTITY_AS_MISSION_ENTITY(ped.GetHandle(), true, false);
+					PED::SET_PED_AS_GROUP_MEMBER(ped.GetHandle(), group);
+					PED::SET_PED_CAN_BE_TARGETTED_BY_PLAYER(ped.GetHandle(), YimMenu::Self::GetPlayer().GetId(), false);
+					PED::SET_PED_RELATIONSHIP_GROUP_HASH(ped.GetHandle(),
+					    PED::GET_PED_RELATIONSHIP_GROUP_HASH(YimMenu::Self::GetPed().GetHandle()));
+					DECORATOR::DECOR_SET_INT(ped.GetHandle(), "SH_CMP_companion", 1);
+					ped.SetConfigFlag(PedConfigFlag::UseFollowLeaderThreatResponse, true);
+					ped.SetMotivation(MotivationState::BRAVE_STATE, 100.f);
+					PED::SET_PED_COMBAT_ATTRIBUTES(ped.GetHandle(), 58, false);
+					PED::SET_PED_COMBAT_ATTRIBUTES(ped.GetHandle(), 38, false);
+					PED::SET_PED_OWNS_ANIMAL(Self::GetPed().GetHandle(), ped.GetHandle(), true);
+
+					auto blip = MAP::BLIP_ADD_FOR_ENTITY("BLIP_STYLE_COMPANION"_J, ped.GetHandle());
+					MAP::BLIP_ADD_MODIFIER(blip, "BLIP_MODIFIER_COMPANION_DOG"_J);
+
+					if (ped.IsAnimal())
+					{
+						FLOCK::SET_ANIMAL_TUNING_BOOL_PARAM(ped.GetHandle(), 44, 0);
+						FLOCK::SET_ANIMAL_TUNING_BOOL_PARAM(ped.GetHandle(), 32, 1);
+						FLOCK::SET_ANIMAL_TUNING_FLOAT_PARAM(ped.GetHandle(), 74, 1);
+						FLOCK::SET_ANIMAL_TUNING_FLOAT_PARAM(ped.GetHandle(), 80, 1);
+						FLOCK::SET_ANIMAL_TUNING_FLOAT_PARAM(ped.GetHandle(), 115, 1);
+						FLOCK::SET_ANIMAL_TUNING_FLOAT_PARAM(ped.GetHandle(), 117, 1);
+						FLOCK::SET_ANIMAL_TUNING_FLOAT_PARAM(ped.GetHandle(), 119, 1);
+						FLOCK::SET_ANIMAL_TUNING_FLOAT_PARAM(ped.GetHandle(), 165, 5);
+						FLOCK::_SET_ANIMAL_IS_WILD(ped.GetHandle(), false);
+					}
+				}
 			});
 		}
 		ImGui::SameLine();
@@ -132,6 +193,27 @@ namespace YimMenu::Submenus
 				Self::Update();
 				PED::_SET_RANDOM_OUTFIT_VARIATION(Self::GetPed().GetHandle(), true);
 				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
+			});
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cleanup Peds"))
+		{
+			FiberPool::Push([] {
+				for (auto it = spawnedPeds.begin(); it != spawnedPeds.end();)
+				{
+					if (it->IsValid())
+					{
+						if (it->GetMount())
+						{
+							it->GetMount().ForceControl();
+							it->GetMount().Delete();
+						}
+
+						it->ForceControl();
+						it->Delete();
+					}
+					it = spawnedPeds.erase(it);
+				}
 			});
 		}
 

@@ -1,39 +1,50 @@
 #include "Ped.hpp"
+
 #include "Natives.hpp"
 #include "game/backend/ScriptMgr.hpp"
 
+
 namespace YimMenu
 {
-	Ped Ped::Create(std::uint32_t model, rage::fvector3 coords, float heading, bool blockNewPedMovement, bool spawnDead, bool invincible, bool invisible, int scale)
+	Ped Ped::Create(std::uint32_t model, rage::fvector3 coords, float heading)
 	{
+		ENTITY_ASSERT_SCRIPT_CONTEXT();
 		if (!STREAMING::IS_MODEL_IN_CDIMAGE(model))
 		{
 #ifdef ENTITY_DEBUG
-			LOG(WARNING) << "Invalid model passed to Ped::Create: " << HEX(model);
+			LOGF(WARNING, "Invalid model passed to Ped::Create: 0x{:X}", model);
 #endif
 			return nullptr;
 		}
 
-		for (int i = 0; i < 30 && !STREAMING::HAS_MODEL_LOADED(model); i++)
+		for (int i = 0; !STREAMING::HAS_MODEL_LOADED(model); i++)
 		{
 			STREAMING::REQUEST_MODEL(model, false);
 			ScriptMgr::Yield();
+
+			if (i > 30)
+			{
+#ifdef ENTITY_DEBUG
+				LOGF(WARNING, "Model 0x{:X} failed to load after 30 ticks, bailing out", model);
+#endif
+				return nullptr;
+			}
 		}
 
 		auto ped = Ped(PED::CREATE_PED(model, coords.x, coords.y, coords.z, heading, 1, 0, 0, 0));
 
+		if (!ped)
+		{
+#ifdef ENTITY_DEBUG
+			LOGF(WARNING, "CREATE_PED failed when creating a ped with model {:X}", model);
+#endif
+			return nullptr;
+		}
+
 		PED::_SET_RANDOM_OUTFIT_VARIATION(ped.GetHandle(), true);
 		ENTITY::PLACE_ENTITY_ON_GROUND_PROPERLY(ped.GetHandle(), true);
-
-		ped.SetFrozen(blockNewPedMovement);
-		ped.SetInvincible(invincible);
-		ped.SetVisible(!invisible);
-		PED::_SET_PED_SCALE(ped.GetHandle(), (float)scale);
-
-		if (spawnDead)
-			ped.SetHealth(0);
-
 		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
+
 		return ped;
 	}
 
@@ -114,7 +125,6 @@ namespace YimMenu
 	rage::fvector3 Ped::GetBonePosition(int bone)
 	{
 		ENTITY_ASSERT_VALID();
-		ENTITY_ASSERT_SCRIPT_CONTEXT();
 		auto coords = PED::GET_PED_BONE_COORDS(GetHandle(), bone, 0, 0, 0);
 		return rage::fvector3(coords.x, coords.y, coords.z);
 	}
@@ -135,14 +145,14 @@ namespace YimMenu
 	bool Ped::IsEnemy()
 	{
 		ENTITY_ASSERT_VALID();
-		
+
 		// TODO: maybe use a class member?
-		auto r1 = PED::GET_RELATIONSHIP_BETWEEN_PEDS(GetHandle(), PLAYER::PLAYER_PED_ID());
-		auto r2 = PED::GET_RELATIONSHIP_BETWEEN_PEDS(PLAYER::PLAYER_PED_ID(), GetHandle());
+		auto r1  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(GetHandle(), PLAYER::PLAYER_PED_ID());
+		auto r2  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(PLAYER::PLAYER_PED_ID(), GetHandle());
 		auto r3  = PED::IS_PED_IN_COMBAT(GetHandle(), PLAYER::PLAYER_PED_ID()) ? 5 : 0;
 		auto rel = std::max({r1, r2, r3});
 
-		return rel == 4 || rel == 5;
+		return rel == 3 || rel == 4 || rel == 5;
 	}
 
 	void Ped::SetScale(float scale)

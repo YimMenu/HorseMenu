@@ -33,12 +33,15 @@ namespace rage
 	class scrProgram;
 	enum class eThreadState : uint32_t;
 	class scrThreadContext;
+	class rlScSessionId;
+	class rlScSessionMultiplayer;
 }
 
 class CAnimScene;
 class CEventInventoryItemPickedUp;
 class CEventGroup;
 class CNetworkScSession;
+class CNetworkScSessionMultiplayerImpl;
 
 namespace YimMenu
 {
@@ -68,6 +71,9 @@ namespace YimMenu
 		using TriggerWeaponDamageEvent = void (*)(rage::netObject* source, rage::netObject* target, rage::netObject* unk, rage::fvector3* position, void* a5, void* a6, bool override_dmg, std::uint32_t* weapon_hash, float damage, float f10, int tire_index, int suspension_index, std::uint64_t flags, void* action_result, bool hit_entity_weapon, bool hit_ammo_attachment, bool silenced, bool a18, bool a19, int a20, int a21, int a22, int a23, int a24, int a25);
 		using TriggerGiveControlEvent = void (*)(CNetGamePlayer* player, rage::netObject* object, int type);
 		using ScriptVM = rage::eThreadState (*)(void* stack, int64_t** globals, bool* globals_enabled, rage::scrProgram* program, rage::scrThreadContext* ctx);
+		using RequestSessionSeamless = void(*)(CNetworkScSession* session, rage::rlScSessionId* req_id, int flags, rage::fvector3* position, int type);
+		using GetConnectPlayerData = void (*)(CNetworkScSessionMultiplayerImpl* mp, void* data);
+		using SendConnectResponse = void (*)(rage::rlScSessionMultiplayer* sess, int message_id, void* data, int flags);
 	};
 
 	struct PointerData
@@ -95,6 +101,10 @@ namespace YimMenu
 		PVOID InitNativeTables;
 		Functions::TriggerWeaponDamageEvent TriggerWeaponDamageEvent;
 		CNetworkScSession** ScSession;
+		PVOID HandleSessionEvent;
+		Functions::RequestSessionSeamless RequestSessionSeamless;
+		PVOID GetDiscriminator;
+		std::uint16_t** ObjectIdMap;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;
