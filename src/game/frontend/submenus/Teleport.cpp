@@ -180,6 +180,7 @@ namespace YimMenu::Submenus
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptowaypoint"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptomount"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptotraintrack"_J));
+		miscGroup->AddItem(std::make_shared<CommandItem>("tptocamp"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptomoonshineshack"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptonazar"_J));
 
