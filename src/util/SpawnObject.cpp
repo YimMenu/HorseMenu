@@ -11,7 +11,14 @@ namespace YimMenu
 				if (!STREAMING::HAS_MODEL_LOADED(hash))
 				{
 					STREAMING::REQUEST_MODEL(hash, false);
-					ScriptMgr::Yield();
+					for (int i = 0; i < 100; ++i)
+					{
+						if (STREAMING::HAS_MODEL_LOADED(hash))
+						{
+							break;
+						}
+						ScriptMgr::Yield();
+					}
 				}
 
 				Object hologram = OBJECT::CREATE_OBJECT(hash, coords.x, coords.y, coords.z, false, false, false, 0, 1);
