@@ -6,7 +6,8 @@
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/data/VehicleModels.hpp"
-#include "util/VehicleSpawner.hpp"
+#include "game/backend/Self.hpp"
+#include "game/rdr/Vehicle.hpp"
 
 
 namespace YimMenu::Submenus
@@ -82,7 +83,7 @@ namespace YimMenu::Submenus
 			FiberPool::Push([=] {
 				auto coords    = Self::GetPed().GetPosition();
 				auto newCoords = coords + rage::fvector3(10, 10, 0);
-				SpawnVehicle(vehModelBuffer, newCoords, Self::GetPed().GetRotation().z);
+				Vehicle::Create(Joaat(vehModelBuffer), newCoords, Self::GetPed().GetRotation().z);
 			});
 		}
 		ImGui::PopID();

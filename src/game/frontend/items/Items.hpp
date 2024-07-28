@@ -9,6 +9,7 @@ namespace YimMenu
 	class ListCommand;
 	class IntCommand;
 	class FloatCommand;
+	class Vector3Command;
 	class Command;
 
 	class Button : public UIItem
@@ -27,21 +28,23 @@ namespace YimMenu
 	class CommandItem : public UIItem
 	{
 	public:
-		explicit CommandItem(joaat_t id);
+		explicit CommandItem(joaat_t id, std::optional<std::string> label_override = std::nullopt);
 		void Draw() override;
 
 	private:
 		Command* m_Command;
+		std::optional<std::string> m_LabelOverride;
 	};
 
 	class PlayerCommandItem : public UIItem
 	{
 	public:
-		explicit PlayerCommandItem(joaat_t id);
+		explicit PlayerCommandItem(joaat_t id, std::optional<std::string> label_override = std::nullopt);
 		void Draw() override;
 
 	private:
 		PlayerCommand* m_Command;
+		std::optional<std::string> m_LabelOverride;
 	};
 
 	class BoolCommandItem : public UIItem
@@ -75,6 +78,19 @@ namespace YimMenu
 	private:
 		FloatCommand* m_Command;
 		std::optional<std::string> m_LabelOverride;
+	};
+
+	class Vector3CommandItem : public UIItem
+	{
+	public:
+		explicit Vector3CommandItem(joaat_t id, std::optional<std::string> label_override = std::nullopt);
+		void Draw() override;
+
+	private:
+		Vector3Command* m_Command;
+		std::optional<std::string> m_LabelOverride;
+		std::string m_CurrentCategory{};
+		std::string m_CurrentFilter{};
 	};
 
 	class ListCommandItem : public UIItem

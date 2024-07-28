@@ -8654,7 +8654,7 @@ namespace GRAPHICS
 	FORCEINLINE constexpr void DRAW_RECT(float CentreX, float CentreY, float Width, float Height, int R, int G, int B, int A, BOOL bStereo, BOOL p9) { return YimMenu::NativeInvoker::Invoke<1413, void>(CentreX, CentreY, Width, Height, R, G, B, A, bStereo, p9); }
 	FORCEINLINE constexpr void SET_SCRIPT_GFX_DRAW_BEHIND_PAUSEMENU(BOOL bValue) { return YimMenu::NativeInvoker::Invoke<1414, void>(bValue); }
 	FORCEINLINE constexpr void SET_SCRIPT_GFX_DRAW_ORDER(int iDrawOrder) { return YimMenu::NativeInvoker::Invoke<1415, void>(iDrawOrder); }
-	FORCEINLINE constexpr void DRAW_SPRITE(const char* pTextureDictionaryName, const char* pTextureName, float CentreX, float CentreY, float Width, float Height, float Rotation, int R, int G, int B, int A, BOOL DoStereorize) { return YimMenu::NativeInvoker::Invoke<1416, void>(pTextureDictionaryName, pTextureName, CentreX, CentreY, Width, Height, Rotation, R, G, B, A, DoStereorize); }
+	FORCEINLINE constexpr void DRAW_SPRITE(const char* pTextureDictionaryName, const char* pTextureName, float CentreX, float CentreY, float Width, float Height, float rotation, int R, int G, int B, int A, BOOL DoStereorize) { return YimMenu::NativeInvoker::Invoke<1416, void>(pTextureDictionaryName, pTextureName, CentreX, CentreY, Width, Height, rotation, R, G, B, A, DoStereorize); }
 	FORCEINLINE constexpr void ATTACH_TV_AUDIO_TO_ENTITY(Entity entity) { return YimMenu::NativeInvoker::Invoke<1417, void>(entity); }
 	FORCEINLINE constexpr void SET_TV_AUDIO_FRONTEND(BOOL frontend) { return YimMenu::NativeInvoker::Invoke<1418, void>(frontend); }
 	FORCEINLINE constexpr void GET_SCREEN_RESOLUTION(int* X, int* Y) { return YimMenu::NativeInvoker::Invoke<1419, void>(X, Y); }
@@ -8794,7 +8794,7 @@ namespace GRAPHICS
 	FORCEINLINE constexpr void SET_TV_CHANNEL(int iChannel) { return YimMenu::NativeInvoker::Invoke<1553, void>(iChannel); }
 	FORCEINLINE constexpr int GET_TV_CHANNEL() { return YimMenu::NativeInvoker::Invoke<1554, int>(); }
 	FORCEINLINE constexpr void SET_TV_VOLUME(float vol) { return YimMenu::NativeInvoker::Invoke<1555, void>(vol); }
-	FORCEINLINE constexpr void DRAW_TV_CHANNEL(float CentreX, float CentreY, float Width, float Height, float Rotation, int R, int G, int B, int A) { return YimMenu::NativeInvoker::Invoke<1556, void>(CentreX, CentreY, Width, Height, Rotation, R, G, B, A); }
+	FORCEINLINE constexpr void DRAW_TV_CHANNEL(float CentreX, float CentreY, float Width, float Height, float rotation, int R, int G, int B, int A) { return YimMenu::NativeInvoker::Invoke<1556, void>(CentreX, CentreY, Width, Height, rotation, R, G, B, A); }
 	FORCEINLINE constexpr void SET_TV_CHANNEL_PLAYLIST(int iChannel, const char* playlistName, BOOL startFromNow) { return YimMenu::NativeInvoker::Invoke<1557, void>(iChannel, playlistName, startFromNow); }
 	FORCEINLINE constexpr BOOL IS_TVSHOW_CURRENTLY_PLAYING(Hash nameHash) { return YimMenu::NativeInvoker::Invoke<1558, BOOL>(nameHash); }
 	FORCEINLINE constexpr Any _0x5C674EB487891F6B() { return YimMenu::NativeInvoker::Invoke<1559, Any>(); }

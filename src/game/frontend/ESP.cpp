@@ -1,11 +1,11 @@
 #include "Esp.hpp"
 
 #include "common.hpp"
+#include "core/commands/BoolCommand.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/Self.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "util/Math.hpp"
-#include "core/commands/BoolCommand.hpp"
 
 namespace
 {
@@ -24,7 +24,10 @@ namespace
 
 namespace YimMenu::Features
 {
-	BoolCommand _ESP("esp", "ESP", "Draws lines to nearby players and shows their skeleton");
+	BoolCommand _ESP("esp", "ESP", "Draws player info");
+	BoolCommand _ESPName("espname", "Show Name", "Should the ESP draw names?");
+	BoolCommand _ESPDistance("espdistance", "Show Distance", "Should the ESP draw distance?");
+	BoolCommand _ESPSkeleton("espskeleton", "Show Skeleton", "Should the ESP draw the skeleton?");
 }
 
 namespace YimMenu
@@ -76,11 +79,12 @@ namespace YimMenu
 	//TODO : Very bare bones currently, expand and possibly refactor
 	void ESP::DrawPlayer(Player& plyr, ImDrawList* drawList)
 	{
-		if (!plyr.IsValid() || !plyr.GetPed().IsValid() || plyr == Self::GetPlayer() || boneToScreen(plyr.GetPed().GetBonePosition(torsoBone)).x == 0)
+		if (!plyr.IsValid() || !plyr.GetPed().IsValid() || plyr == Self::GetPlayer()
+		    || boneToScreen(plyr.GetPed().GetBonePosition(torsoBone)).x == 0)
 			return;
 
-		float distanceToPlayer = Self::GetPed().GetPosition().GetDistance(plyr.GetPed().GetBonePosition(torsoBone));
-		int alphaBasedOnDistance     = 255;
+		float distanceToPlayer   = Self::GetPed().GetPosition().GetDistance(plyr.GetPed().GetBonePosition(torsoBone));
+		int alphaBasedOnDistance = 255;
 		ImColor colorBasedOnDistance = Red;
 
 		if (distanceToPlayer < 100.f)
@@ -94,23 +98,30 @@ namespace YimMenu
 		auto* currentFont           = ImGui::GetFont();
 		currentFont->Scale *= 1.2;
 		ImGui::PushFont(ImGui::GetFont());
-		//Name
-		drawList->AddText(boneToScreen(plyr.GetPed().GetBonePosition(headBone)), plyr == Players::GetSelected() ? Blue : ImColor(255, 255, 255, alphaBasedOnDistance), plyr.GetName());
-		//Distance
-		drawList->AddText({boneToScreen(plyr.GetPed().GetBonePosition(headBone)).x,
-		                      boneToScreen(plyr.GetPed().GetBonePosition(headBone)).y + 20},
-		    colorBasedOnDistance,
-		    std::to_string((int)Self::GetPed().GetPosition().GetDistance(plyr.GetPed().GetBonePosition(torsoBone)))
-		        .data());
+
+		if (Features::_ESPName.GetState())
+		{
+			drawList->AddText(boneToScreen(plyr.GetPed().GetBonePosition(headBone)), plyr == Players::GetSelected() ? Blue : ImColor(255, 255, 255, alphaBasedOnDistance), plyr.GetName());
+		}
+
+		if (Features::_ESPDistance.GetState())
+		{
+			drawList->AddText({boneToScreen(plyr.GetPed().GetBonePosition(headBone)).x,
+			                      boneToScreen(plyr.GetPed().GetBonePosition(headBone)).y + 20},
+			    colorBasedOnDistance,
+			    std::to_string((int)Self::GetPed().GetPosition().GetDistance(plyr.GetPed().GetBonePosition(torsoBone))).data());
+		}
 
 		currentFont->Scale = originalFontSize;
 		ImGui::PopFont();
 
 		//TODO Boxes, Distance colors, Friendlies, Tracers, Health bars
 
-		//TODO Make this a setting
-		if (distanceToPlayer < 100.f)
-			DrawSkeleton(plyr, drawList, ImColor(255, 255, 255, 255));
+		if (Features::_ESPSkeleton.GetState())
+		{
+			if (distanceToPlayer < 100.f)
+				DrawSkeleton(plyr, drawList, ImColor(255, 255, 255, 255));
+		}
 	}
 
 	void ESP::Draw()

@@ -1,4 +1,5 @@
 #include "PlayerDatabase.hpp"
+#include "Detections.hpp"
 
 namespace YimMenu
 {
@@ -56,6 +57,7 @@ namespace YimMenu
 
 	void PlayerDatabase::Save()
 	{
+		// TODO: save in thread pool
 		json data;
 
 		for (auto& [rid, player] : m_Data)
@@ -125,12 +127,14 @@ namespace YimMenu
 		return m_Selected;
 	}
 
-	std::string PlayerDatabase::ConvertInfractionToDescription(int infraction)
+	std::string PlayerDatabase::ConvertDetectionToDescription(Detection infraction)
 	{
-		return InfractionDescriptions[static_cast<eInfraction>(infraction)];
+		if (auto it = g_DetectionDescs.find(infraction); it != g_DetectionDescs.end())
+			return it->second;
+		return "";
 	}
 
-	void PlayerDatabase::AddInfraction(std::shared_ptr<persistent_player> player, int infraction)
+	void PlayerDatabase::AddDetection(std::shared_ptr<persistent_player> player, Detection infraction)
 	{
 		if (!player->trust)
 		{

@@ -402,6 +402,26 @@ namespace YimMenu
 			CreatePoolItem = ptr.Add(1).Rip().As<PVOID>();
 		});
 
+		constexpr auto handleSessionEventPtrn = Pattern<"83 F9 16 0F 8F 0B">("HandleSessionEvent");
+		scanner.Add(handleSessionEventPtrn, [this](PointerCalculator ptr) {
+			HandleSessionEvent = ptr.Sub(0x29).As<PVOID>();
+		});
+
+		constexpr auto requestSessionSeamlessPtrn = Pattern<"83 64 24 20 00 41 B8 40 00 00 00">("RequestSessionSeamless");
+		scanner.Add(requestSessionSeamlessPtrn, [this](PointerCalculator ptr) {
+			RequestSessionSeamless = ptr.Add(0x12).Rip().As<Functions::RequestSessionSeamless>();
+		});
+
+		constexpr auto getDiscriminatorPtrn = Pattern<"83 E3 01 C1 E3 0A E8">("GetDiscriminator");
+		scanner.Add(getDiscriminatorPtrn, [this](PointerCalculator ptr) {
+			GetDiscriminator = ptr.Sub(0x20).As<PVOID>();
+		});
+
+		constexpr auto objectIdMapPtrn = Pattern<"83 C0 13 3D 00 20 00 00">("ObjectIdMap");
+		scanner.Add(objectIdMapPtrn, [this](PointerCalculator ptr) {
+			ObjectIdMap = ptr.Add(0x24).Rip().As<std::uint16_t**>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

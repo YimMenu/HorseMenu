@@ -1,7 +1,6 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
-#include "core/player_database/PlayerDatabase.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/Enums.hpp"
 #include "util/Joaat.hpp"
@@ -38,14 +37,9 @@ namespace YimMenu::Hooks
 		}
 
 		nlohmann::json& event_payload = json[key];
-		if (event_payload["e"].is_null() || event_payload["d"].is_null())
-		{
-			return true;
-		}
-
 
 		std::string sender_str = "NULL";
-		if (!event_payload["d"]["n"].is_null())
+		if (!event_payload["d"].is_null() && !event_payload["d"]["n"].is_null())
 		{
 			sender_str = event_payload["d"]["n"];
 		}

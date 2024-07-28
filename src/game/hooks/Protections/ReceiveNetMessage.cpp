@@ -1,13 +1,15 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
-#include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/Self.hpp"
+#include "game/backend/FiberPool.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Player.hpp"
+#include "game/rdr/Packet.hpp"
 #include "game/rdr/data/MessageTypes.hpp"
 #include "util/Chat.hpp"
 #include "util/Helpers.hpp"
@@ -82,14 +84,12 @@ namespace YimMenu::Hooks
 	{
 		if (frame->GetEventType() != rage::netConnection::InFrame::EventType::FrameReceived)
 		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
-			    ->Original()(a1, ncm, frame);
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
 		}
 
 		if (frame->m_Data == nullptr || frame->m_Length == 0)
 		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
-			    ->Original()(a1, ncm, frame);
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
 		}
 
 		rage::datBitBuffer buffer(frame->m_Data, frame->m_Length);
@@ -99,8 +99,7 @@ namespace YimMenu::Hooks
 
 		if (!GetMessageType(msg_type, buffer))
 		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
-			    ->Original()(a1, ncm, frame);
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
 		}
 
 		if (Features::_LogPackets.GetState())
@@ -146,10 +145,8 @@ namespace YimMenu::Hooks
 			{
 				if (player)
 				{
-					g_PlayerDatabase->AddInfraction(
-					    g_PlayerDatabase->GetOrCreatePlayer(player->m_GamerInfo.m_GamerHandle.m_RockstarId,
-					        player->m_GamerInfo.m_Name),
-					    (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
+					if (auto p = Players::GetByMessageId(frame->m_MsgId))
+						p.AddDetection(Detection::TRIED_KICK_PLAYER);
 
 					Notifications::Show("Protections",
 					    std::string("Blocked Reset Population Kick from ").append(player->m_GamerInfo.m_Name),
