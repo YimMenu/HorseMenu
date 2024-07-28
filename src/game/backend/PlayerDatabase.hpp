@@ -30,6 +30,7 @@ namespace nlohmann
 
 namespace YimMenu
 {
+	enum class Detection : uint32_t;
 	struct persistent_player;
 
 	class PlayerDatabase
@@ -52,28 +53,9 @@ namespace YimMenu
 		std::unordered_map<uint64_t, std::shared_ptr<persistent_player>>& GetAllPlayers();
 		void SetSelected(std::shared_ptr<persistent_player> player);
 		std::shared_ptr<persistent_player> GetSelected();
-		std::string ConvertInfractionToDescription(int infraction);
-		void AddInfraction(std::shared_ptr<persistent_player> player, int infraction);
+		std::string ConvertDetectionToDescription(Detection infraction);
+		void AddDetection(std::shared_ptr<persistent_player> player, Detection infraction);
 		void RemoveRID(uint64_t rockstar_id);
-
-		enum class eInfraction
-		{
-			TRIED_CRASH_PLAYER,
-			TRIED_KICK_PLAYER,
-			REMOTE_NATIVE_CALL,
-			TRIED_ATTACH,
-			REMOTE_TELEPORT,
-			INVALID_PLAYER_MODEL,
-		};
-
-		std::unordered_map<eInfraction, std::string> InfractionDescriptions = {
-		    {eInfraction::TRIED_CRASH_PLAYER, "Tried to crash you!"},
-		    {eInfraction::TRIED_KICK_PLAYER, "Tried to kick you!"},
-		    {eInfraction::REMOTE_NATIVE_CALL, "Tried to call a native!"},
-		    {eInfraction::TRIED_ATTACH, "Tried to attach to you!"},
-		    {eInfraction::REMOTE_TELEPORT, "Tried to teleport to you!"},
-		    {eInfraction::INVALID_PLAYER_MODEL, "Tried to use an invalid player model!"},
-		};
 	};
 
 	struct persistent_player
@@ -84,13 +66,11 @@ namespace YimMenu
 		bool is_admin   = false;
 		bool block_join = false;
 		bool trust      = false;
-		std::unordered_set<int> infractions;
+		std::unordered_set<uint32_t> infractions;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(persistent_player, rid, name, is_modder, is_admin, block_join, trust, infractions);
 	};
 
 
-	inline PlayerDatabase* g_PlayerDatabase;
-
-
+	inline PlayerDatabase* g_PlayerDatabase; // TODO: REMOVE THIS!!!!!!
 }

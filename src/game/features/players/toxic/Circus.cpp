@@ -1,7 +1,6 @@
 #include "game/commands/PlayerCommand.hpp"
 #include "game/backend/Self.hpp"
-#include "game/rdr/Natives.hpp"
-#include "util/VehicleSpawner.hpp"
+#include "game/rdr/Vehicle.hpp"
 
 
 namespace YimMenu::Features
@@ -12,9 +11,9 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{
-			float rot      = ENTITY::GET_ENTITY_ROTATION(player.GetPed().GetHandle(), 0).z;
-			Vector3 coords = ENTITY::GET_ENTITY_COORDS(player.GetPed().GetHandle(), true, true);
-			SpawnVehicle("wagonCircus01x", coords, rot);
+			float rot = player.GetPed().GetRotation(0).z;
+			auto coords = player.GetPed().GetPosition();
+			Vehicle::Create("wagonCircus01x"_J, coords, rot);
 		}
 	};
 

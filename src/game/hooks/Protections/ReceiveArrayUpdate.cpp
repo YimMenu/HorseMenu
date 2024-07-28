@@ -1,6 +1,5 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
-#include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
@@ -27,7 +26,7 @@ namespace YimMenu::Hooks
 					{
 						auto plyr = Player(sender);
 						Notifications::Show("Protections", std::format("Blocked session split kick from {}", plyr.GetName()), NotificationType::Warning);
-						g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(plyr.GetRID(), plyr.GetName()), (int)PlayerDatabase::eInfraction::TRIED_KICK_PLAYER);
+						plyr.AddDetection(Detection::TRIED_KICK_PLAYER);
 
 						data->Missions.Datas[i].ScriptHash = 0;
 						data->RuntimeData.RuntimeMissionDatas[i].Locations[0].State = ACEHostRuntimeState::INVALID;
@@ -36,6 +35,7 @@ namespace YimMenu::Hooks
 					{
 						auto plyr = Player(sender);
 						Notifications::Show("Protections", std::format("Blocked faint player from {}", plyr.GetName()), NotificationType::Warning);
+						plyr.AddDetection(Detection::MODDER_EVENTS);
 
 						data->Missions.Datas[i].ScriptHash                          = 0;
 						data->RuntimeData.RuntimeMissionDatas[i].Locations[0].State = ACEHostRuntimeState::INVALID;

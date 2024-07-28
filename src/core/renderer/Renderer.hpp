@@ -1,22 +1,28 @@
 #pragma once
 #include "util/Joaat.hpp"
 
-#include <dxgi1_4.h>
+#include <backends/imgui_impl_vulkan.h>
+#include <comdef.h>
 #include <d3d12.h>
+#include <dxgi1_4.h>
 #include <functional>
 #include <map>
+#include <vulkan/vulkan.h>
 #include <windows.h>
 #include <wrl/client.h>
-#include <comdef.h>
-#include <vulkan/vulkan.h>
-#include <backends/imgui_impl_vulkan.h>
 
-#define REL(o) o->Release(); if (o) { o = nullptr; }
+
+#define REL(o)       \
+	o->Release();    \
+	if (o)           \
+	{                \
+		o = nullptr; \
+	}
 
 namespace YimMenu
 {
 	using namespace Microsoft::WRL;
-	using RendererCallBack              = std::function<void()>;
+	using RendererCallBack        = std::function<void()>;
 	using WindowProcedureCallback = std::function<void(HWND, UINT, WPARAM, LPARAM)>;
 
 	struct FrameContext
@@ -82,7 +88,7 @@ namespace YimMenu
 			{
 				LOG(FATAL) << "Invalid Vulkan Queue!";
 
-			    return;
+				return;
 			}
 
 			if (!pPresentInfo)
@@ -107,15 +113,20 @@ namespace YimMenu
 		static void DX12PostResize();
 
 		static void VkCleanupRenderTarget();
-		
+
 		static bool IsResizing()
 		{
 			return GetInstance().m_Resizing;
 		}
 
-		static void SetResizing(const bool &status)
+		static void SetResizing(const bool& status)
 		{
 			GetInstance().m_Resizing = status;
+		}
+
+		static void Resize(float scale)
+		{
+			GetInstance().ResizeImpl(scale);
 		}
 
 		static void VkSetDevice(VkDevice device)
@@ -130,19 +141,22 @@ namespace YimMenu
 			GetInstance().m_VkDevice = device;
 		}
 		static void VkSetScreenSize(VkExtent2D extent)
-		{			 
+		{
 			GetInstance().m_VkImageExtent = extent;
 		}
 
 	private:
 		static void DX12NewFrame();
 		static void DX12EndFrame();
+
 	private:
 		void DestroyImpl();
 		bool InitImpl();
 
 		bool InitDX12();
 		bool InitVulkan();
+
+		void ResizeImpl(float scale);
 
 		void VkCreateRenderTarget(VkDevice Device, VkSwapchainKHR Swapchain);
 
@@ -196,15 +210,15 @@ namespace YimMenu
 		uint32_t m_VkQueueFamily = (uint32_t)-1;
 		VkDevice m_VkFakeDevice;
 		VkDevice m_VkDevice;
-		ImGui_ImplVulkanH_Frame m_VkFrames[8] = {};
+		ImGui_ImplVulkanH_Frame m_VkFrames[8]                    = {};
 		ImGui_ImplVulkanH_FrameSemaphores m_VkFrameSemaphores[8] = {};
 		VkRenderPass m_VkRenderPass;
 		VkDescriptorPool m_VkDescriptorPool;
 		VkPipelineCache m_VkPipelineCache;
 		uint32_t m_VkMinImageCount = 2;
 		VkExtent2D m_VkImageExtent;
-	private:
 
+	private:
 		//Other
 		std::map<joaat_t, RendererCallBack> m_RendererCallBacks;
 		std::vector<WindowProcedureCallback> m_WindowProcedureCallbacks;

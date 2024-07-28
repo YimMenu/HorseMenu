@@ -64,9 +64,12 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Info::PlayerHasJoined>(new DetourHook("PlayerHasJoined", Pointers.PlayerHasJoined, Hooks::Info::PlayerHasJoined));
 		BaseHook::Add<Hooks::Info::PlayerHasLeft>(new DetourHook("PlayerHasLeft", Pointers.PlayerHasLeft, Hooks::Info::PlayerHasLeft));
 
+		BaseHook::Add<Hooks::Info::HandleSessionEvent>(new DetourHook("HandleSessionEvent", Pointers.HandleSessionEvent, Hooks::Info::HandleSessionEvent));
+
 		BaseHook::Add<Hooks::Spoofing::WritePlayerHealthData>(new DetourHook("WritePlayerHealthData", Pointers.WritePlayerHealthData, Hooks::Spoofing::WritePlayerHealthData));
 		BaseHook::Add<Hooks::Spoofing::SendNetInfoToLobby>(new DetourHook("SendNetInfoToLobby", Pointers.SendNetInfoToLobby, Hooks::Spoofing::SendNetInfoToLobby));
 		BaseHook::Add<Hooks::Spoofing::WriteVPMData>(new DetourHook("WriteVehicleProximityMigrationData", Pointers.WriteVPMData, Hooks::Spoofing::WriteVPMData));
+		BaseHook::Add<Hooks::Spoofing::GetDiscriminator>(new DetourHook("GetDiscriminator", Pointers.GetDiscriminator, Hooks::Spoofing::GetDiscriminator));
 
 		BaseHook::Add<Hooks::Toxic::BroadcastNetArray>(new DetourHook("BroadcastNetArray", Pointers.BroadcastNetArray, Hooks::Toxic::BroadcastNetArray));
 	}

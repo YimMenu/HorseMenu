@@ -1,13 +1,14 @@
 #pragma once
 #include "Storage/Spoofing.hpp"
-#include "VehicleSpawner.hpp"
 #include "common.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Entity.hpp"
+#include "game/rdr/Vehicle.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Player.hpp"
+#include "util/Joaat.hpp"
 
 #include <entity/fwEntity.hpp>
 #include <network/CNetObjectMgr.hpp>
@@ -141,18 +142,10 @@ namespace YimMenu::Teleport
 			player.GetPed().GetMount().ForceControl();
 		}
 
-
-		auto hnd = SpawnVehicle("buggy01", player.GetPed().GetPosition(), 0.0f, false);
-		if (!hnd)
-		{
-			Notifications::Show("Teleport", "Failed to create Vehicle!", NotificationType::Error);
-			return false;
-		}
-
-		auto ent = Entity(hnd);
+		auto ent = Vehicle::Create("buggy01"_J, player.GetPed().GetPosition());
 		auto ptr = ent.GetPointer<rage::fwEntity*>();
 
-		if (!ptr->m_NetObject)
+		if (!ptr || !ptr->m_NetObject)
 		{
 			Notifications::Show("Teleport", "Vehicle net object is null!", NotificationType::Error);
 			return false;
@@ -162,8 +155,8 @@ namespace YimMenu::Teleport
 		ent.SetCollision(false);
 		ent.SetFrozen(true);
 
-		auto vehId                               = ptr->m_NetObject->m_ObjectId;
-		auto playerId  = player.GetPed().GetPointer<rage::fwEntity*>()->m_NetObject->m_ObjectId;
+		auto vehId  = ptr->m_NetObject->m_ObjectId;
+		auto playerId = player.GetPed().GetPointer<rage::fwEntity*>()->m_NetObject->m_ObjectId;
 		Spoofing::RemotePlayerTeleport remoteTp = {playerId, {coords.x, coords.y, coords.z}};
 
 		g_SpoofingStorage.m_RemotePlayerTeleports.emplace(vehId, remoteTp);
@@ -178,7 +171,7 @@ namespace YimMenu::Teleport
 			Pointers.TriggerGiveControlEvent(player.GetHandle(), ptr->m_NetObject, 3);
 
 			auto newCoords = ent.GetPosition();
-			if (BUILTIN::VDIST(coords.x, coords.y, coords.z, newCoords.x, newCoords.y, newCoords.z) < 20 * 20 && VEHICLE::GET_PED_IN_VEHICLE_SEAT(hnd, 0) == handle)
+			if (BUILTIN::VDIST(coords.x, coords.y, coords.z, newCoords.x, newCoords.y, newCoords.z) < 20 * 20 && VEHICLE::GET_PED_IN_VEHICLE_SEAT(ent.GetHandle(), 0) == handle)
 			{
 				break;
 			}

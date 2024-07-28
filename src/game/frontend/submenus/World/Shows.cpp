@@ -1,14 +1,16 @@
 #include "Shows.hpp"
-#include "game/backend/NativeHooks.hpp"
-#include "game/rdr/Natives.hpp"
-#include "game/rdr/Scripts.hpp"
-#include "game/backend/Self.hpp"
-#include "game/rdr/Player.hpp"
+
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/NativeHooks.hpp"
 #include "game/backend/Players.hpp"
+#include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Self.hpp"
+#include "game/rdr/Natives.hpp"
+#include "game/rdr/Player.hpp"
+#include "game/rdr/Scripts.hpp"
 
 #include <network/CNetObjectMgr.hpp>
+
 
 namespace YimMenu::Submenus
 {
@@ -42,7 +44,7 @@ namespace YimMenu::Submenus
 		BAND_02,
 	};
 
-	constexpr auto g_SceneTypeScripts = std::to_array({
+	constexpr auto g_SceneTypeScriptsMP = std::to_array({
 	    "show_mp_nbx_cancan_01"_J,
 	    "show_mp_nbx_cancan_02"_J,
 	    "show_mp_nbx_firebreath"_J,
@@ -56,6 +58,22 @@ namespace YimMenu::Submenus
 	    "show_mp_nbx_flexfight"_J,
 	    "show_mp_nbx_bigband_01"_J,
 	    "show_mp_nbx_bigband_02"_J,
+	});
+
+	constexpr auto g_SceneTypeScriptsSP = std::to_array({
+	    "show_nbx_cancan"_J,
+	    "show_nbx_cancan_02"_J,
+	    "show_nbx_firebreath"_J,
+	    "show_nbx_firedance_01"_J,
+	    "show_nbx_firedance_02"_J,
+	    "show_nbx_snakedance_01"_J,
+	    "show_nbx_snakedance_02"_J,
+	    "show_nbx_sworddancer"_J,
+	    "show_nbx_oddfellows"_J,
+	    "show_nbx_escapeartist"_J,
+	    "show_nbx_flexfight"_J,
+	    "show_nbx_bigband"_J,
+	    "show_nbx_bigband_02"_J,
 	});
 
 	constexpr auto g_SceneTypeStrs = std::to_array({
@@ -98,14 +116,194 @@ namespace YimMenu::Submenus
 
 	// data
 	static SceneType g_SelectedSceneType = SceneType::CAN_CAN_01;
-	static int g_RunningSceneScriptID    = -1;
-	static std::vector<::Entity> g_ShowEntities;
+	static int g_RunningSceneScriptID = -1;
+	static int g_RunningSceneAnimscene = -1;
+	static bool g_AutoCleanup = true;
+	static bool g_SpawnAudience = true;
+	static std::vector<Entity> g_ShowEntities;
+	static std::vector<Ped> g_AudienceMembers;
+	constexpr int NUM_AUDIENCE_MEMBERS = 56;
+
+
+	// audience creation code from SP
+
+	static rage::fvector3 GetAudienceMemberPos(int idx)
+	{
+		switch (idx)
+		{
+		case 0: return {2541.9539f, -1303.6516f, 47.51162f};
+		case 1: return {2542.6248f, -1303.6276f, 47.50835f};
+		case 2: return {2543.2527f, -1303.5038f, 47.51194f};
+		case 3: return {2543.9138f, -1303.4467f, 47.50978f};
+		case 4: return {2544.5544f, -1303.3499f, 47.51124f};
+		case 5: return {2545.2117f, -1303.2858f, 47.48675f};
+		case 6: return {2540.8508f, -1302.3906f, 47.83032f};
+		case 7: return {2541.4048f, -1302.1624f, 47.83151f};
+		case 8: return {2542.039f, -1301.9946f, 47.83165f};
+		case 9: return {2542.659f, -1301.8953f, 47.83114f};
+		case 10: return {2543.2808f, -1301.7847f, 47.83141f};
+		case 11: return {2543.8872f, -1301.7189f, 47.8308f};
+		case 12: return {2544.5361f, -1301.6354f, 47.831f};
+		case 13: return {2545.165f, -1301.5907f, 47.81311f};
+		case 14: return {2540.8162f, -1300.6383f, 48.12306f};
+		case 15: return {2541.43f, -1300.4728f, 48.12244f};
+		case 16: return {2542.0337f, -1300.3115f, 48.12096f};
+		case 17: return {2542.644f, -1300.1532f, 48.12228f};
+		case 18: return {2543.269f, -1300.0386f, 48.12248f};
+		case 19: return {2543.8955f, -1299.9259f, 48.12423f};
+		case 20: return {2545.1692f, -1299.8176f, 48.10023f};
+		case 21: return {2540.8438f, -1298.8798f, 48.39516f};
+		case 22: return {2541.4421f, -1298.742f, 48.39409f};
+		case 23: return {2542.0696f, -1298.5867f, 48.39284f};
+		case 24: return {2543.3018f, -1298.2754f, 48.39411f};
+		case 25: return {2543.8982f, -1298.1788f, 48.39465f};
+		case 26: return {2544.5361f, -1298.0916f, 48.39633f};
+		case 27: return {2550.9575f, -1303.6145f, 47.48922f};
+		case 28: return {2550.3018f, -1303.5435f, 47.48922f};
+		case 29: return {2549.651f, -1303.4829f, 47.48394f};
+		case 30: return {2549.0054f, -1303.4297f, 47.48394f};
+		case 31: return {2548.3562f, -1303.3667f, 47.48394f};
+		case 32: return {2547.7126f, -1303.341f, 47.48394f};
+		case 33: return {2552.0967f, -1302.3553f, 47.80622f};
+		case 34: return {2551.5093f, -1302.1925f, 47.80622f};
+		case 35: return {2550.8994f, -1302.0336f, 47.80622f};
+		case 36: return {2550.2979f, -1301.8839f, 47.80622f};
+		case 37: return {2549.6611f, -1301.7599f, 47.80622f};
+		case 38: return {2549.0374f, -1301.6827f, 47.80622f};
+		case 39: return {2548.4128f, -1301.6241f, 47.80622f};
+		case 40: return {2552.1223f, -1300.5559f, 48.09521f};
+		case 41: return {2551.4993f, -1300.4144f, 48.09521f};
+		case 42: return {2550.8713f, -1300.2426f, 48.09521f};
+		case 43: return {2550.2546f, -1300.1294f, 48.09521f};
+		case 44: return {2549.6353f, -1300.0294f, 48.09521f};
+		case 45: return {2549.016f, -1299.9486f, 48.09521f};
+		case 46: return {2552.1152f, -1298.8127f, 48.36841f};
+		case 47: return {2551.4988f, -1298.6577f, 48.36841f};
+		case 48: return {2550.2537f, -1298.388f, 48.36841f};
+		case 49: return {2549.629f, -1298.3119f, 48.36841f};
+		case 50: return {2549.001f, -1298.207f, 48.36841f};
+		case 51: return {2548.3677f, -1298.1227f, 48.36841f};
+		case 52: return {2547.7332f, -1298.0409f, 48.36841f};
+		case 53: return {2553.102f, -1299.6674f, 49.214f};
+		case 54: return {2553.1287f, -1302.3986f, 49.214f};
+		case 55: return {2539.7886f, -1302.3699f, 49.214f};
+		default: return {};
+		}
+	}
+
+	static float GetAudienceMemberHeading(int idx)
+	{
+		switch (idx)
+		{
+		case 0: return 189.76f;
+		case 1: return 194.54f;
+		case 2: return 185.02f;
+		case 3: return 185.67f;
+		case 4: return 186.48f;
+		case 5: return 189.64f;
+		case 6: return 194.87f;
+		case 7: return 197.45f;
+		case 8: return 192.94f;
+		case 9: return 190.4f;
+		case 10: return 187.74f;
+		case 11: return 188.21f;
+		case 12: return 191.46f;
+		case 13: return 187.8f;
+		case 14: return 197.77f;
+		case 15: return 197.28f;
+		case 16: return 195.7f;
+		case 17: return 194.38f;
+		case 18: return 189.91f;
+		case 19: return 187.19f;
+		case 20: return 183.35f;
+		case 21: return 195.68f;
+		case 22: return 195.08f;
+		case 23: return 197.6f;
+		case 24: return 192.22f;
+		case 25: return 187.31f;
+		case 26: return 186.63f;
+		case 27: return 174.21f;
+		case 28: return 175.4f;
+		case 29: return 177.33f;
+		case 30: return 177.62f;
+		case 31: return 175.4f;
+		case 32: return 176.59f;
+		case 33: return 165.32f;
+		case 34: return 170.16f;
+		case 35: return 170.37f;
+		case 36: return 174.13f;
+		case 37: return 175.59f;
+		case 38: return 173.64f;
+		case 39: return 178.62f;
+		case 40: return 169.96f;
+		case 41: return 171.41f;
+		case 42: return 170.19f;
+		case 43: return 171.15f;
+		case 44: return 174.93f;
+		case 45: return 177.61f;
+		case 46: return 169.6f;
+		case 47: return 171.53f;
+		case 48: return 172.77f;
+		case 49: return 174.2f;
+		case 50: return 175.33f;
+		case 51: return 175.1f;
+		case 52: return 176.09f;
+		case 53: return 152.8307f;
+		case 54: return 152.8307f;
+		case 55: return 190.6648f;
+		default: return 0.0f;
+		}
+	}
+
+	static Ped CreateAudienceMemberForSlot(int idx)
+	{
+		auto position = GetAudienceMemberPos(idx);
+		auto heading  = GetAudienceMemberHeading(idx);
+		auto model = POPULATION::GET_RANDOM_MODEL_FROM_POPULATION_SET("nbx_civilians"_J, idx < 12 ? 2 : 0, -156825994, false, true, position.x, position.y, position.z); // the model is already loaded in memory
+
+		if (model == 0)
+			return nullptr;
+
+		auto ped = Ped::Create(model, position, heading);
+		ped.SetInvincible(true);
+		PED::SET_PED_KEEP_TASK(ped.GetHandle(), true);
+
+		return ped;
+	}
+
+	static void StartAudienceMemberTask(Ped ped, int idx)
+	{
+		auto position = GetAudienceMemberPos(idx);
+		auto heading  = GetAudienceMemberHeading(idx);
+
+		TASK::TASK_START_SCENARIO_AT_POSITION(ped.GetHandle(), "PROP_HUMAN_SEAT_CHAIR"_J, position.x, position.y, position.z, heading, -1, false, true, nullptr, 0.25f, false);
+	}
+
+	static void CreateAudienceMembers()
+	{
+		g_AudienceMembers.resize(NUM_AUDIENCE_MEMBERS, nullptr);
+		for (int i = 0; i < NUM_AUDIENCE_MEMBERS; i++)
+		{
+			auto ped = CreateAudienceMemberForSlot(i);
+			StartAudienceMemberTask(ped, i);
+			g_AudienceMembers[i] = ped;
+		}
+	}
 
 	static SceneType SceneTypeFromScript(joaat_t script)
 	{
-		for (auto i = 0; i < g_SceneTypeScripts.size(); i++)
-			if (g_SceneTypeScripts[i] == script)
-				return SceneType(i);
+		if (*Pointers.IsSessionStarted)
+		{
+			for (auto i = 0; i < g_SceneTypeScriptsMP.size(); i++)
+				if (g_SceneTypeScriptsMP[i] == script)
+					return SceneType(i);
+		}
+		else
+		{
+			for (auto i = 0; i < g_SceneTypeScriptsSP.size(); i++)
+				if (g_SceneTypeScriptsSP[i] == script)
+					return SceneType(i);
+		}
 
 		return SceneType(0); // should not reach here
 	}
@@ -115,7 +313,9 @@ namespace YimMenu::Submenus
 		if (def.Type == ActorOverrideType::DEFAULT)
 			return nullptr;
 		else if (def.Type == ActorOverrideType::SELF)
+		{
 			return Self::GetPed();
+		}
 		else
 		{
 			if (!def.OverridePlayer.IsValid())
@@ -169,7 +369,8 @@ namespace YimMenu::Submenus
 			switch (hash)
 			{
 			case "CS_ESCAPEARTIST"_J: return ProcessActorDef(g_EscapeArtistOverride);
-			case "CS_ESCAPEARTISTASSISTANT"_J: return ProcessActorDef(g_EscapeArtistAssistantOverride);
+			case "CS_ESCAPEARTISTASSISTANT"_J:
+				return ProcessActorDef(g_EscapeArtistAssistantOverride);
 				// note that the band member isn't actually used in the scene, so we aren't adding an override for that
 			};
 		}
@@ -206,6 +407,7 @@ namespace YimMenu::Submenus
 
 		auto ped = PED::CREATE_PED(ctx->GetArg<Hash>(0), ctx->GetArg<float>(1), ctx->GetArg<float>(2), ctx->GetArg<float>(3), ctx->GetArg<float>(4), ctx->GetArg<int>(5), ctx->GetArg<int>(6), ctx->GetArg<int>(7), ctx->GetArg<int>(8));
 		g_ShowEntities.push_back(ped);
+		Ped(ped).SetInvincible(true);
 		ctx->SetReturnValue(std::move(ped));
 	}
 
@@ -219,6 +421,7 @@ namespace YimMenu::Submenus
 			ENTITY::SET_ENTITY_COLLISION(obj, false, false);
 		}
 		g_ShowEntities.push_back(obj);
+		Entity(obj).SetInvincible(true);
 		ctx->SetReturnValue<int>(std::move(obj));
 	}
 
@@ -247,13 +450,17 @@ namespace YimMenu::Submenus
 				}
 			}
 		});
+		g_RunningSceneAnimscene = handle;
 		ctx->SetReturnValue(std::move(handle));
 	}
 
 	inline void RenderActorDef(ActorDefinition& def, const std::string& name)
 	{
 		ImGui::SetNextItemWidth(100);
-		ImGui::Combo(name.c_str(), (int*)&def.Type, "Default\0Yourself\0Player\0");
+		if (*Pointers.IsSessionStarted)
+			ImGui::Combo(name.c_str(), (int*)&def.Type, "Default\0Yourself\0Player\0");
+		else
+			ImGui::Combo(name.c_str(), (int*)&def.Type, "Default\0Yourself\0");
 		if (def.Type == ActorOverrideType::PLAYER)
 		{
 			ImGui::SameLine();
@@ -279,20 +486,66 @@ namespace YimMenu::Submenus
 		}
 	}
 
+	static void ShutdownShow()
+	{
+		SCRIPTS::TERMINATE_THREAD(g_RunningSceneScriptID);
+		MISC::CLEAR_AREA(2546.5646f, -1301.4119f, 48.3564f, 500.0f, -1); // clear stage area
+		for (auto& entity : g_ShowEntities)
+		{
+			entity.Delete();
+		}
+		for (auto& entity : g_AudienceMembers)
+		{
+			if (entity)
+			{
+				entity.Delete();
+			}
+		}
+		g_ShowEntities.clear();
+		g_AudienceMembers.clear();
+		g_RunningSceneScriptID  = -1;
+		g_RunningSceneAnimscene = -1;
+	}
+
+	static void ShowsTick()
+	{
+		while (g_Running)
+		{
+			if (g_RunningSceneScriptID != -1 && g_RunningSceneAnimscene != -1)
+			{
+				if (ANIMSCENE::_IS_ANIM_SCENE_PAUSED(g_RunningSceneAnimscene) || ANIMSCENE::IS_ANIM_SCENE_FINISHED(g_RunningSceneAnimscene, false))
+				{
+					ShutdownShow();
+					return;
+				}
+			}
+			ScriptMgr::Yield();
+		}
+	}
+
 	void RenderShowsMenu()
 	{
 		static bool _run_once = ([] {
-			for (auto& script : g_SceneTypeScripts)
-			{
+			static auto hook_natives = [](auto& script) {
 				NativeHooks::AddHook(script, NativeIndex::CREATE_PED, CREATE_PED);
 				NativeHooks::AddHook(script, NativeIndex::NETWORK_HAS_CONTROL_OF_ENTITY, NETWORK_HAS_CONTROL_OF_ENTITY);
 				NativeHooks::AddHook(script, NativeIndex::CREATE_OBJECT, CREATE_OBJECT);
 				NativeHooks::AddHook(script, NativeIndex::_CREATE_ANIM_SCENE, CREATE_ANIM_SCENE);
-			}
+			};
+
+			for (auto& script : g_SceneTypeScriptsMP)
+				hook_natives(script);
+
+			for (auto& script : g_SceneTypeScriptsSP)
+				hook_natives(script);
+
+			ScriptMgr::AddScript(std::make_unique<Script>(&ShowsTick));
+
 			return true;
 		})();
 
-		ImGui::Text("Warning: Modders might prevent themselves from being forced into shows");
+		if (*Pointers.IsSessionStarted)
+			ImGui::Text("Warning: Modders might prevent themselves from being forced into shows");
 
 		if (ImGui::Button("Teleport to Theater"))
 		{
@@ -306,6 +559,8 @@ namespace YimMenu::Submenus
 			FiberPool::Push([] {
 				if (OBJECT::IS_DOOR_REGISTERED_WITH_SYSTEM(340151973))
 					OBJECT::DOOR_SYSTEM_SET_DOOR_STATE(340151973, 0);
+				if (OBJECT::IS_DOOR_REGISTERED_WITH_SYSTEM(544106233))
+					OBJECT::DOOR_SYSTEM_SET_DOOR_STATE(544106233, 0);
 			});
 		}
 		ImGui::SameLine();
@@ -314,6 +569,8 @@ namespace YimMenu::Submenus
 			FiberPool::Push([] {
 				if (OBJECT::IS_DOOR_REGISTERED_WITH_SYSTEM(340151973))
 					OBJECT::DOOR_SYSTEM_SET_DOOR_STATE(340151973, 1);
+				if (OBJECT::IS_DOOR_REGISTERED_WITH_SYSTEM(544106233))
+					OBJECT::DOOR_SYSTEM_SET_DOOR_STATE(544106233, 1);
 			});
 		}
 
@@ -359,7 +616,7 @@ namespace YimMenu::Submenus
 		else if (g_SelectedSceneType == SceneType::FLEX_FIGHT)
 		{
 			RenderActorDef(g_FlexFightStrongwomanOverride, "Strongwoman");
-			RenderActorDef(g_FlexFightAudienceMemberOverride, "Audience Member");	
+			RenderActorDef(g_FlexFightAudienceMemberOverride, "Audience Member");
 		}
 		else if (g_SelectedSceneType == SceneType::BAND_01 || g_SelectedSceneType == SceneType::BAND_02)
 		{
@@ -369,11 +626,21 @@ namespace YimMenu::Submenus
 			RenderActorDef(g_BandSingerOverride, "Singer");
 		}
 
+		ImGui::Checkbox("Auto Cleanup", &g_AutoCleanup);
+		if (*Pointers.IsSessionStarted)
+		{
+			ImGui::Checkbox("Spawn Audience Members", &g_SpawnAudience);
+		}
+
 		ImGui::BeginDisabled(g_RunningSceneScriptID != -1);
 		if (ImGui::Button("Start"))
 		{
 			FiberPool::Push([] {
-				auto hash = g_SceneTypeScripts[(int)g_SelectedSceneType];
+				std::uint32_t hash;
+				if (*Pointers.IsSessionStarted)
+					hash = g_SceneTypeScriptsMP[(int)g_SelectedSceneType];
+				else
+					hash = g_SceneTypeScriptsSP[(int)g_SelectedSceneType];
 
 				if (MISC::GET_NUMBER_OF_FREE_STACKS_OF_THIS_SIZE(7000) == 0)
 				{
@@ -386,6 +653,8 @@ namespace YimMenu::Submenus
 					ScriptMgr::Yield();
 				}
 
+				if (*Pointers.IsSessionStarted)
+					CreateAudienceMembers();
 				g_RunningSceneScriptID = SCRIPTS::START_NEW_SCRIPT_WITH_NAME_HASH(hash, 7000);
 				SCRIPTS::SET_SCRIPT_WITH_NAME_HASH_AS_NO_LONGER_NEEDED(hash);
 			});
@@ -396,14 +665,7 @@ namespace YimMenu::Submenus
 		if (ImGui::Button("Stop"))
 		{
 			FiberPool::Push([] {
-				SCRIPTS::TERMINATE_THREAD(g_RunningSceneScriptID);
-				MISC::CLEAR_AREA(2546.5646f, -1301.4119f, 48.3564f, 500.0f, -1); // clear stage area
-				for (auto& entity : g_ShowEntities)
-				{
-					ENTITY::DELETE_ENTITY(&entity);
-				}
-				g_ShowEntities.clear();
-				g_RunningSceneScriptID = -1;
+				ShutdownShow();
 			});
 		}
 		ImGui::EndDisabled();

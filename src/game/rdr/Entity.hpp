@@ -28,7 +28,7 @@ namespace YimMenu
 		// debug
 		void AssertValid(const std::string& function_name);
 		void AssertControl(const std::string& function_name);
-		void AssertScriptContext(const std::string& function_name);
+		static void AssertScriptContext(const std::string& function_name);
 
 		constexpr Entity(void* pointer) :
 		    m_Pointer(pointer),
@@ -81,6 +81,7 @@ namespace YimMenu
 		bool IsVehicle();
 		bool IsObject();
 		bool IsPlayer();
+		bool IsAnimal();
 
 		// position
 		rage::fvector3 GetPosition();
@@ -105,7 +106,7 @@ namespace YimMenu
 		void ForceControl();
 
 		// health
-		bool GetInvincible();
+		bool IsInvincible();
 		void SetInvincible(bool status);
 		bool IsDead();
 		void Kill();

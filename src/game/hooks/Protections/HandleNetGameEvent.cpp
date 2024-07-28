@@ -1,7 +1,7 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
-#include "core/player_database/PlayerDatabase.hpp"
 #include "game/backend/Protections.hpp"
+#include "game/backend/Self.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
@@ -108,6 +108,7 @@ namespace YimMenu::Hooks
 				if (!IsVehicleType((NetObjType)object->m_ObjectType))
 				{
 					LOG(WARNING) << "Blocked mismatched NETWORK_DESTROY_VEHICLE_LOCK_EVENT entity from " << sourcePlayer->GetName();
+					Player(sourcePlayer).AddDetection(Detection::TRIED_CRASH_PLAYER);
 					Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 					return;
 				}
@@ -123,9 +124,13 @@ namespace YimMenu::Hooks
 
 		if (type == NetEventType::NETWORK_CLEAR_PED_TASKS_EVENT && sourcePlayer)
 		{
-			LOG(WARNING) << "Blocked NETWORK_CLEAR_PED_TASKS_EVENT from " << sourcePlayer->GetName();
-			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
-			return;
+			auto net_id = new_buffer.Read<uint16_t>(13);
+			if (net_id == Self::GetPed().GetNetworkObjectId())
+			{
+				LOG(WARNING) << "Blocked NETWORK_CLEAR_PED_TASKS_EVENT from " << sourcePlayer->GetName();
+				Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+				return;
+			}
 		}
 
 		if (type == NetEventType::SCRIPT_COMMAND_EVENT && sourcePlayer)
@@ -133,42 +138,9 @@ namespace YimMenu::Hooks
 			LogScriptCommandEvent(sourcePlayer, new_buffer);
 			LOG(WARNING) << "Blocked remote native call from " << sourcePlayer->GetName();
 			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
-			g_PlayerDatabase->AddInfraction(
-			    g_PlayerDatabase->GetOrCreatePlayer(sourcePlayer->GetGamerInfo()->m_GamerHandle.m_RockstarId),
-			    (int)PlayerDatabase::eInfraction::REMOTE_NATIVE_CALL);
+			Player(sourcePlayer).AddDetection(Detection::MODDER_EVENTS);
 			return;
 		}
-
-		// breaks game sync
-		#if 0
-		if (type == NetEventType::GIVE_PED_SCRIPTED_TASK_EVENT && sourcePlayer)
-		{
-			LOG(WARNING) << "Blocked Remote Ped Animation from " << sourcePlayer->GetName();
-			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
-			return;
-		}
-
-		if (type == NetEventType::GIVE_PED_SEQUENCE_TASK_EVENT && sourcePlayer)
-		{
-			LOG(WARNING) << "Blocked Remote Ped Animation from " << sourcePlayer->GetName();
-			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
-			return;
-		}
-
-		if (type == NetEventType::EXPLOSION_EVENT && sourcePlayer)
-		{
-			LOG(WARNING) << "Blocked Explosion from " << sourcePlayer->GetName();
-			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
-			return;
-		}
-
-		if (type == NetEventType::LIGHTNING_EVENT && sourcePlayer)
-		{
-			LOG(WARNING) << "Blocked Lightning from " << sourcePlayer->GetName();
-			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
-			return;
-		}
-		#endif
 
 		if (type == NetEventType::GIVE_CONTROL_EVENT && sourcePlayer)
 		{

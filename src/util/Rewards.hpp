@@ -1,8 +1,10 @@
 #pragma once
 
 #include "util/Joaat.hpp"
+
 #include <string>
 #include <vector>
+
 
 namespace YimMenu::Rewards
 {
@@ -12,7 +14,7 @@ namespace YimMenu::Rewards
 		joaat_t reward_hash;
 		std::string description;
 	};
-	// inline const RewardInfo GoldRewards[]{{"mp001_s_mp_boxsm01x", "Reward Box"}, {"s_inv_moneyclip01x", "Money Clip"}, {"p_moneyStack01x", "Money Stack"}, {"s_pu_coinpurse02x", "Coin Purse"}};
+	inline const RewardInfo GoldRewards[]{{"mp001_s_mp_boxsm01x"_J, "mp001_s_mp_boxsm01x"_J, "Reward Box"}};
 
 	inline const RewardInfo Heirlooms[]{{"MP005_S_HL_BR_BOARBRISTLE"_J, "PROVISION_HRLM_BRUSH_BOAR"_J, "Boar Bristle Brush"}, {"MP005_S_HL_BR_EBNY"_J, "PROVISION_HRLM_BRUSH_EBONY"_J, "Ebony Hairbrush"}, {"MP005_S_HL_BR_GOAT"_J, "PROVISION_HRLM_BRUSH_GOATHAIR"_J, "Goat Hair Brush"}, {"MP005_S_HL_BR_HORSE"_J, "PROVISION_HRLM_BRUSH_HORSEHAIR"_J, "Horse Hair Brush"}, {"MP005_S_HL_BR_NG_RSEWD"_J, "PROVISION_HRLM_BRUSH_ROSEWOOD_NG"_J, "New Guinea Rosewood Brush"}, {"MP005_S_HL_BR_RSEWD"_J, "PROVISION_HRLM_BRUSH_ROSEWOOD"_J, "Rosewood Brush"}, {"MP005_S_HL_CMB_BOXWOOD"_J, "PROVISION_HRLM_COMB_BOXWOOD"_J, "Boxwood Comb"}, {"MP005_S_HL_CMB_CHRYWD"_J, "PROVISION_HRLM_COMB_CHERRYWOOD"_J, "Cherrywood Comb"}, {"MP005_S_HL_CMB_IVRY"_J, "PROVISION_HRLM_COMB_IVORY"_J, "Ivory Comb"}, {"MP005_S_HL_CMB_TORTSHELL"_J, "PROVISION_HRLM_COMB_TORTOISESHELL"_J, "Tortoiseshell Comb"}, {"MP005_S_HL_HP_CRVDWD"_J, "PROVISION_HRLM_HAIRPIN_WOODEN"_J, "Carved Wood Hairpin"}, {"MP005_S_HL_HP_EBNY"_J, "PROVISION_HRLM_HAIRPIN_EBONY"_J, "Ebony Hairpin"}, {"MP005_S_HL_HP_IVRY"_J, "PROVISION_HRLM_HAIRPIN_IVORY"_J, "Ivory Hairpin"}, {"MP005_S_HL_HP_JDE"_J, "PROVISION_HRLM_HAIRPIN_JADE"_J, "Jade Hairpin"}, {"MP005_S_HL_HP_MTL"_J, "PROVISION_HRLM_HAIRPIN_METAL"_J, "Metal Hairpin"}};
 
@@ -62,7 +64,7 @@ namespace YimMenu::Rewards
 
 	enum class eRewardType : int
 	{
-		// GOLD_REWARDS,
+		GOLD_REWARDS,
 		HEIRLOOMS,
 		COINS,
 		ALCBOTTLES,
