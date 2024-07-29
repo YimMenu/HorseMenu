@@ -4,13 +4,13 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/Hooking.hpp"
 #include "core/memory/ModuleMgr.hpp"
-#include "core/player_database/PlayerDatabase.hpp"
+#include "game/backend/PlayerDatabase.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/NativeHooks.hpp"
-#include "game/bigfeatures/CustomTeleport.hpp"
+#include "game/backend/SavedLocations.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/GUI.hpp"
 #include "game/pointers/Pointers.hpp"
@@ -26,7 +26,7 @@ namespace YimMenu
 		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
 
 		g_HotkeySystem.RegisterCommands();
-		CustomTeleport::FetchSavedLocations();
+		SavedLocations::FetchSavedLocations();
 		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
 
 		auto PlayerDatabaseInstance = std::make_unique<PlayerDatabase>();

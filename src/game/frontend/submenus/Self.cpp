@@ -124,10 +124,10 @@ namespace YimMenu::Submenus
 	Self::Self() :
 	    Submenu::Submenu("Self")
 	{
-		auto main            = std::make_shared<Category>("Main");
-		auto globalsGroup    = std::make_shared<Group>("Globals");
-		auto movementGroup   = std::make_shared<Group>("Movement");
-		auto toolsGroup      = std::make_shared<Group>("Tools");
+		auto main          = std::make_shared<Category>("Main");
+		auto globalsGroup  = std::make_shared<Group>("Globals");
+		auto movementGroup = std::make_shared<Group>("Movement");
+		auto toolsGroup    = std::make_shared<Group>("Tools");
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
@@ -151,8 +151,6 @@ namespace YimMenu::Submenus
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("npcignore"_J));
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("eagleeye"_J));
-		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnbountywagon"_J));
-		toolsGroup->AddItem(std::make_shared<CommandItem>("spawnhuntingwagon"_J));
 
 		toolsGroup->AddItem(std::make_shared<BoolCommandItem>("overridewhistle"_J));
 		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistlepitch"_J, "Pitch")));
@@ -162,13 +160,14 @@ namespace YimMenu::Submenus
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superrun"_J));
+		movementGroup->AddItem(std::make_shared<BoolCommandItem>("freecam"_J));
 
 		main->AddItem(globalsGroup);
 		main->AddItem(toolsGroup);
 		main->AddItem(movementGroup);
 		AddCategory(std::move(main));
 
-		auto weapons         = std::make_shared<Category>("Weapons");
+		auto weapons             = std::make_shared<Category>("Weapons");
 		auto weaponsGlobalsGroup = std::make_shared<Group>("Globals");
 
 		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
@@ -230,7 +229,5 @@ namespace YimMenu::Submenus
 		}));
 
 		AddCategory(std::move(animations));
-
-		
 	}
 }

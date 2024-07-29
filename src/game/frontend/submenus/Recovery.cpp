@@ -20,7 +20,31 @@ namespace YimMenu::Submenus
 			if (recoveryCommand->GetState())
 			{
 				static Rewards::eRewardType selected{};
-				std::map<Rewards::eRewardType, std::string> reward_translations = {{Rewards::eRewardType::HEIRLOOMS, "Heirlooms"}, {Rewards::eRewardType::COINS, "Coins"}, {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"}, {Rewards::eRewardType::ARROWHEADS, "Arrowheads"}, {Rewards::eRewardType::BRACELETS, "Bracelets"}, {Rewards::eRewardType::EARRINGS, "Earrings"}, {Rewards::eRewardType::NECKLACES, "Necklaces"}, {Rewards::eRewardType::RINGS, "Rings"}, {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"}, {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"}, {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"}, {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"}};
+				std::map<Rewards::eRewardType, std::string> reward_translations = {
+				    {Rewards::eRewardType::HEIRLOOMS, "Heirlooms"},
+				    {Rewards::eRewardType::COINS, "Coins"},
+				    {Rewards::eRewardType::ALCBOTTLES, "Alcohol Bottles"},
+				    {Rewards::eRewardType::ARROWHEADS, "Arrowheads"},
+				    {Rewards::eRewardType::BRACELETS, "Bracelets"},
+				    {Rewards::eRewardType::EARRINGS, "Earrings"},
+				    {Rewards::eRewardType::NECKLACES, "Necklaces"},
+				    {Rewards::eRewardType::RINGS, "Rings"},
+				    {Rewards::eRewardType::TAROTCARDS_CUPS, "Tarot Cards - Cups"},
+				    {Rewards::eRewardType::TAROTCARDS_PENTACLES, "Tarot Cards - Pentacles"},
+				    {Rewards::eRewardType::TAROTCARDS_SWORDS, "Tarot Cards - Swords"},
+				    {Rewards::eRewardType::TAROTCARDS_WANDS, "Tarot Cards - Wands"},
+				    {Rewards::eRewardType::FOSSILS, "Fossils"},
+				    {Rewards::eRewardType::EGGS, "Eggs"},
+				    {Rewards::eRewardType::HERBS, "Herbs"},
+				    {Rewards::eRewardType::TREASURE, "Treasure Reward"},
+				    {Rewards::eRewardType::CAPITALE, "Capitale"},
+				    {Rewards::eRewardType::XP, "25K XP"},
+				    {Rewards::eRewardType::MOONSHINERXP, "200 Moonshiner XP"},
+				    {Rewards::eRewardType::TRADERXP, "200 Trader XP"},
+				    {Rewards::eRewardType::COLLECTORXP, "200 Collector XP"},
+				    {Rewards::eRewardType::NATURALISTXP, "300 Naturalist XP"},
+				    {Rewards::eRewardType::BOUNTYHUNTERXP, "200 Bounty Hunter XP"},
+				};
 
 				if (ImGui::BeginCombo("Rewards", reward_translations[selected].c_str()))
 				{

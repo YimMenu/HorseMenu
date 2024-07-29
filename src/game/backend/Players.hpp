@@ -46,6 +46,11 @@ namespace YimMenu
 			return GetInstance().GetByHostTokenImpl(token);
 		}
 
+		static Player GetByMessageId(int id)
+		{
+			return GetInstance().GetByMessageIdImpl(id);
+		}
+
 		static PlayerData& GetPlayerData(uint8_t idx)
 		{
 			return GetInstance().m_PlayerDatas[idx];
@@ -78,5 +83,6 @@ namespace YimMenu
 		void OnPlayerLeaveImpl(CNetGamePlayer* player);
 		Player GetByRIDImpl(uint64_t rid);
 		Player GetByHostTokenImpl(uint64_t token);
+		Player GetByMessageIdImpl(int id);
 	};
 }

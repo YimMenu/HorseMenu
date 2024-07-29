@@ -18,7 +18,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			if (*Pointers.IsSessionStarted && !SCRIPTS::IS_LOADING_SCREEN_VISIBLE() && MISC::UPDATE_ONSCREEN_KEYBOARD() != 0 && !GUI::IsOpen() && !HUD::IS_PAUSE_MENU_ACTIVE())
+			if (*Pointers.IsSessionStarted && !SCRIPTS::IS_LOADING_SCREEN_VISIBLE() && MISC::UPDATE_ONSCREEN_KEYBOARD() != 0 && !GUI::IsOpen())
 			{
 				ScriptMgr::Yield(100ms); // Delay so hotkey key doesn't get mistaken as input
 				bool isChatCancelled = false;

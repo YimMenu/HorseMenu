@@ -3,6 +3,7 @@
 #include "World/PedSpawner.hpp"
 #include "World/ObjectSpawner.hpp"
 #include "World/Shows.hpp"
+#include "World/Train.hpp"
 #include "World/VehicleSpawner.hpp"
 #include "World/Weather.hpp"
 #include "core/commands/Commands.hpp"
@@ -85,6 +86,7 @@ namespace YimMenu::Submenus
 		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
 		auto objSpawnerGroup = std::make_shared<Group>("Object Spawner");
 		auto vehicleSpawnerGroup = std::make_shared<Group>("Vehicle Spawner");
+		auto trainSpawnerGroup   = std::make_shared<Group>("Train Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderPedSpawnerMenu();
@@ -98,15 +100,30 @@ namespace YimMenu::Submenus
 			RenderVehicleSpawnerMenu();
 		}));
 
+		trainSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			RenderTrainsMenu();
+		}));
+
 		spawners->AddItem(pedSpawnerGroup);
 		spawners->AddItem(objSpawnerGroup);
 		spawners->AddItem(vehicleSpawnerGroup);
+		spawners->AddItem(trainSpawnerGroup);
 
-		auto killPeds = std::make_shared<Group>("", 1);
+		auto killPeds = std::make_shared<Group>("Kill", 1);
 		killPeds->AddItem(std::make_shared<CommandItem>("killallpeds"_J));
 		killPeds->AddItem(std::make_shared<CommandItem>("killallenemies"_J));
+		auto deleteOpts = std::make_shared<Group>("Delete", 1);
+		deleteOpts->AddItem(std::make_shared<CommandItem>("delpeds"_J));
+		deleteOpts->AddItem(std::make_shared<CommandItem>("delvehs"_J));
+		deleteOpts->AddItem(std::make_shared<CommandItem>("delobjs"_J));
+		auto bringOpts = std::make_shared<Group>("Bring", 1);
+		bringOpts->AddItem(std::make_shared<CommandItem>("bringpeds"_J));
+		bringOpts->AddItem(std::make_shared<CommandItem>("bringvehs"_J));
+		bringOpts->AddItem(std::make_shared<CommandItem>("bringobjs"_J));
 
 		main->AddItem(std::move(killPeds));
+		main->AddItem(std::move(deleteOpts));
+		main->AddItem(std::move(bringOpts));
 		main->AddItem(std::make_shared<BoolCommandItem>("disableguardzones"_J));
 		main->AddItem(std::make_shared<CommandItem>("forcelighting"_J));
 

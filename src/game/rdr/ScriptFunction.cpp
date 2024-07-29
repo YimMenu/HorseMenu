@@ -61,32 +61,63 @@ namespace YimMenu
 	{
 	}
 
-	void ScriptFunction::Call(const std::vector<uint64_t>& args)
+	void ScriptFunction::RunScript(rage::scrThread* thread, rage::scrProgram* program, const std::vector<uint64_t>& args)
 	{
-		auto pc = GetPC();
-		auto thread = Scripts::FindScriptThread(m_Hash);
-		auto program = Scripts::FindScriptProgram(m_Hash);
-
 		const auto globals_initialized = std::vector<std::uint8_t>(50, true); // std::vector<bool> does weird stuff so we aren't using that
 
-		if (!pc || !thread || !program)
-			return;
-
-		auto old_thread = *Pointers.CurrentScriptThread;
+		auto old_thread         = *Pointers.CurrentScriptThread;
 		auto old_thread_running = rage::tlsContext::Get()->m_RunningScript;
-		auto stack = reinterpret_cast<uint64_t*>(thread->m_Stack);
-		auto context = thread->m_Context;
+		auto stack              = reinterpret_cast<uint64_t*>(thread->m_Stack);
+		auto context            = thread->m_Context;
 
 		for (auto& arg : args)
 			stack[context.m_StackPointer++] = arg;
 
 		stack[context.m_StackPointer++] = 0; // return address
-		context.m_ProgramCounter = pc.value();
-		context.m_State = rage::eThreadState::idle;
+		context.m_ProgramCounter        = m_Pc.value();
+		context.m_State                 = rage::eThreadState::idle;
 
-		Pointers.ScriptVM(stack, Pointers.ScriptGlobals, reinterpret_cast<bool*>(const_cast<uint8_t*>(globals_initialized.data())), program, &context);
+		Pointers.ScriptVM(stack,
+		    Pointers.ScriptGlobals,
+		    reinterpret_cast<bool*>(const_cast<uint8_t*>(globals_initialized.data())),
+		    program,
+		    &context);
 
 		rage::tlsContext::Get()->m_RunningScript = old_thread_running;
-		*Pointers.CurrentScriptThread = old_thread;
+		*Pointers.CurrentScriptThread            = old_thread;
+	}
+
+	void ScriptFunction::StaticCall(const std::vector<uint64_t>& args)
+	{
+		auto pc = GetPC();
+		auto program = Scripts::FindScriptProgram(m_Hash);
+
+		if (!pc || !program)
+			return;
+
+		rage::scrThread* thread = (rage::scrThread*)new uint8_t[sizeof(rage::scrThread)];
+		memcpy(thread, *Pointers.CurrentScriptThread, sizeof(rage::scrThread));
+
+		void* stack                      = new uint64_t[25000];
+		thread->m_Stack                  = stack;
+		thread->m_Context.m_StackSize    = 25000;
+		thread->m_Context.m_StackPointer = 1;
+
+		RunScript(thread, program, args);
+
+		delete[] stack;
+		delete[] (uint8_t*)thread;
+	}
+
+	void ScriptFunction::Call(const std::vector<uint64_t>& args)
+	{
+		auto pc      = GetPC();
+		auto thread  = Scripts::FindScriptThread(m_Hash);
+		auto program = Scripts::FindScriptProgram(m_Hash);
+
+		if (!pc || !thread || !program)
+			return;
+
+		RunScript(thread, program, args);
 	}
 }

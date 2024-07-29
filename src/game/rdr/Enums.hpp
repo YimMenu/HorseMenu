@@ -1477,7 +1477,7 @@ enum class NetMessageType : uint32_t
 	PLAYER_CARD_SYNC                                  = 0x25, // unused
 	PLAYER_CARD_REQUEST                               = 0x26, // unused
 	DEBUG_STALL                                       = 0x35, // unused
-	SESSION_ACCEPT_CHAT                               = 0x3A, 
+	SESSION_ACCEPT_CHAT                               = 0x3A,
 	SESSION_INFO_RESPONSE                             = 0x37, // unused
 	SESSION_JOIN_REQUEST                              = 0x38, // unused
 	SESSION_JOIN_REQUEST_RESPONSE                     = 0x39, // unused
@@ -2334,12 +2334,12 @@ enum EmotePlaybackMode
 
 enum class EntityProofs : uint32_t
 {
-	BULLET = 1 << 0,
-	FIRE = 1 << 1,
+	BULLET    = 1 << 0,
+	FIRE      = 1 << 1,
 	EXPLOSION = 1 << 2,
 	COLLISION = 1 << 3,
-	MELEE = 1 << 4,
-	STEAM = 1 << 5,
-	SMOKE = 1 << 6,
-	HEADSHOT = 1 << 7
+	MELEE     = 1 << 4,
+	STEAM     = 1 << 5,
+	SMOKE     = 1 << 6,
+	HEADSHOT  = 1 << 7
 };

@@ -22,6 +22,8 @@ namespace rage
 	class ServerRPCSerializer;
 	class scrProgram;
 	class scrThreadContext;
+	class rlScSessionMultiplayer;
+	class rlScSessionEvent;
 }
 
 class CNetGamePlayer;
@@ -33,6 +35,7 @@ enum class NetObjType;
 class CPlayerHealthData;
 class CVehicleProximityMigrationData;
 class CPed;
+class CNetworkScServerConnection;
 
 namespace YimMenu::Hooks
 {
@@ -116,6 +119,8 @@ namespace YimMenu::Hooks
 
 		extern void PlayerHasJoined(CNetGamePlayer* player);
 		extern void PlayerHasLeft(CNetGamePlayer* player);
+
+		extern void HandleSessionEvent(rage::rlScSessionMultiplayer* mp, CNetworkScServerConnection* cxn, rage::rlScSessionEvent* evt);
 	}
 
 	namespace Spoofing
@@ -123,6 +128,7 @@ namespace YimMenu::Hooks
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
 		extern bool SendNetInfoToLobby(rage::rlGamerInfo* local_player, int64_t a2, int64_t a3, DWORD* a4);
 		extern void WriteVPMData(void* vehicle, CVehicleProximityMigrationData* data);
+		extern int GetDiscriminator();
 	}
 
 	namespace Toxic

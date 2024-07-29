@@ -1,10 +1,15 @@
 #include "Player.hpp"
 
 #include "game/backend/Players.hpp"
+#include "game/backend/PlayerDatabase.hpp"
 #include "game/pointers/Pointers.hpp"
+#include "game/rdr/ScriptGlobal.hpp"
+#include "game/rdr/Natives.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/netPeerAddress.hpp>
+#include <network/rlScPeerConnection.hpp>
+#include <network/CNetworkScSession.hpp>
 #include <player/CPlayerInfo.hpp>
 
 
@@ -79,79 +84,147 @@ namespace YimMenu
 		if (!IsValid())
 			return 0;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_GamerHandle.m_RockstarId;
+		return m_Handle->m_PlayerInfo->m_GamerInfo.m_GamerHandle2.m_RockstarId;
 	}
 
-	netAddress Player::GetExternalIpAddress()
+	netAddress Player::GetExternalAddress()
 	{
-		if (!IsValid())
-			return (netAddress)0;
+		if (auto addr = GetConnectPeerAddress())
+			return addr->m_ExternalAddress;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_ExternalAddress;
+		return {};
 	}
 
-	netAddress Player::GetInternalIpAddress()
+	netAddress Player::GetInternalAddress()
 	{
-		if (!IsValid())
-			return (netAddress)0;
+		if (auto addr = GetConnectPeerAddress())
+			return addr->m_InternalAddress;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_InternalAddress;
+		return {};
 	}
 
-	netAddress Player::GetRelayIpAddress()
+	netAddress Player::GetRelayAddress()
 	{
-		if (!IsValid())
-			return (netAddress)0;
+		if (auto addr = GetConnectPeerAddress())
+			return addr->m_RelayAddress;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayAddress;
-	}
-
-	netAddress Player::GetUnkIpAddress()
-	{
-		if (!IsValid())
-			return (netAddress)0;
-
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_UnkAddress;
+		return {};
 	}
 
 	uint16_t Player::GetExternalPort()
 	{
-		if (!IsValid())
-			return 0;
+		if (auto addr = GetConnectPeerAddress())
+			return addr->m_ExternalPort;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_ExternalPort;
+		return {};
 	}
 
 	uint16_t Player::GetInternalPort()
 	{
-		if (!IsValid())
-			return 0;
+		if (auto addr = GetConnectPeerAddress())
+			return addr->m_InternalPort;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_InternalPort;
+		return {};
 	}
 
 	uint16_t Player::GetRelayPort()
 	{
-		if (!IsValid())
-			return 0;
+		if (auto addr = GetConnectPeerAddress())
+			return addr->m_RelayPort;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayPort;
-	}
-
-	uint16_t Player::GetUnkPort()
-	{
-		if (!IsValid())
-			return 0;
-
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_UnkPort;
+		return {};
 	}
 
 	uint32_t Player::GetRelayState()
 	{
-		if (!IsValid())
-			return 0;
+		if (auto addr = GetConnectPeerAddress())
+			return addr->m_RelayState;
 
-		return m_Handle->m_PlayerInfo->m_GamerInfo.m_RelayState;
+		return {};
+	}
+
+	int Player::GetRank()
+	{
+		if (!IsValid())
+			return -1;
+
+		auto data = ScriptGlobal(1155150).As<PLAYER_PERSONA_DATA*>();
+		return data->Entries[GetId()].Rank;
+	}
+
+	int Player::GetHonor()
+	{
+		if (!IsValid())
+			return -1;
+
+		auto data = ScriptGlobal(1155150).As<PLAYER_PERSONA_DATA*>();
+		return data->Entries[GetId()].HonorInfo.HonorLevel;
+	}
+
+	Language Player::GetLanguage()
+	{
+		if (!IsValid())
+			return Language::UNDEFINED;
+
+		auto data = ScriptGlobal(1101558).As<PLAYER_STATUS_SYNC_DATA*>();
+		return data->Entries[GetId()].PlayerLanguage;
+	}
+
+	District Player::GetDistrict()
+	{
+		if (!IsValid())
+			return District::INVALID;
+
+		auto data = ScriptGlobal(1101558).As<PLAYER_STATUS_SYNC_DATA*>();
+		return data->Entries[GetId()].CurrentDistrict;
+	}
+
+	Region Player::GetRegion()
+	{
+		if (!IsValid())
+			return Region::INVALID;
+
+		auto data = ScriptGlobal(1101558).As<PLAYER_STATUS_SYNC_DATA*>();
+		return data->Entries[GetId()].CurrentRegion;
+	}
+
+	float Player::GetAverageLatency()
+	{
+		if (!IsValid())
+			return -1.f;
+
+		return NETWORK::NETWORK_GET_AVERAGE_LATENCY(GetId());
+	}
+
+	float Player::GetAveragePacketLoss()
+	{
+		if (!IsValid())
+			return -1.f;
+
+		return NETWORK::NETWORK_GET_AVERAGE_PACKET_LOSS(GetId());
+	}
+
+	rage::rlGamerInfoBase* Player::GetConnectPeerAddress()
+	{
+		if (!IsValid())
+			return nullptr;
+
+		auto sess = *Pointers.ScSession;
+
+		if (!sess)
+			return nullptr;
+
+		auto session = sess->m_SessionMultiplayer;
+
+		if (!session)
+			return nullptr;
+
+		auto peer = session->GetPlayerByIndex(GetId());
+
+		if (!peer)
+			return nullptr;
+
+		return &peer->m_SessionPeer->m_Connection->m_PeerAddress;
 	}
 
 	PlayerData& Player::GetData()
@@ -159,13 +232,23 @@ namespace YimMenu
 		return Players::GetPlayerData(GetId());
 	}
 
+	bool Player::IsModder()
+	{
+		return !GetData().m_Detections.empty();
+	}
+
+	void Player::AddDetection(Detection det)
+	{
+		if (!GetData().m_Detections.contains(det))
+		{
+			GetData().m_Detections.insert(det);
+			g_PlayerDatabase->AddDetection(g_PlayerDatabase->GetOrCreatePlayer(GetRID(), GetName()), det);
+
+		}
+	}
+
 	bool Player::operator==(Player other)
 	{
 		return m_Handle == other.m_Handle;
-	}
-
-	inline Player::operator bool()
-	{
-		return IsValid();
 	}
 }
