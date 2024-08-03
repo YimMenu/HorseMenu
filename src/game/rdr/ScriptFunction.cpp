@@ -61,7 +61,7 @@ namespace YimMenu
 	{
 	}
 
-	void ScriptFunction::RunScript(rage::scrThread* thread, rage::scrProgram* program, const std::vector<uint64_t>& args)
+	void ScriptFunction::RunScript(rage::scrThread* thread, rage::scrProgram* program, const std::vector<uint64_t>& args, void* returnValue, uint32_t returnSize)
 	{
 		const auto globals_initialized = std::vector<std::uint8_t>(50, true); // std::vector<bool> does weird stuff so we aren't using that
 
@@ -69,6 +69,7 @@ namespace YimMenu
 		auto old_thread_running = rage::tlsContext::Get()->m_RunningScript;
 		auto stack              = reinterpret_cast<uint64_t*>(thread->m_Stack);
 		auto context            = thread->m_Context;
+		auto top                = context.m_StackPointer;
 
 		for (auto& arg : args)
 			stack[context.m_StackPointer++] = arg;
@@ -85,9 +86,12 @@ namespace YimMenu
 
 		rage::tlsContext::Get()->m_RunningScript = old_thread_running;
 		*Pointers.CurrentScriptThread            = old_thread;
+
+		if (returnValue)
+			memcpy(returnValue, stack + top, returnSize);
 	}
 
-	void ScriptFunction::StaticCall(const std::vector<uint64_t>& args)
+	void ScriptFunction::StaticCallImpl(const std::vector<uint64_t>& args, void* returnValue, uint32_t returnSize)
 	{
 		auto pc = GetPC();
 		auto program = Scripts::FindScriptProgram(m_Hash);
@@ -103,13 +107,13 @@ namespace YimMenu
 		thread->m_Context.m_StackSize    = 25000;
 		thread->m_Context.m_StackPointer = 1;
 
-		RunScript(thread, program, args);
+		RunScript(thread, program, args, returnValue, returnSize);
 
 		delete[] stack;
 		delete[] (uint8_t*)thread;
 	}
 
-	void ScriptFunction::Call(const std::vector<uint64_t>& args)
+	void ScriptFunction::CallImpl(const std::vector<uint64_t>& args, void* returnValue, uint32_t returnSize)
 	{
 		auto pc      = GetPC();
 		auto thread  = Scripts::FindScriptThread(m_Hash);
@@ -118,6 +122,6 @@ namespace YimMenu
 		if (!pc || !thread || !program)
 			return;
 
-		RunScript(thread, program, args);
+		RunScript(thread, program, args, returnValue, returnSize);
 	}
 }

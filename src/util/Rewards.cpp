@@ -1,8 +1,7 @@
 #include "Rewards.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "game/pointers/Pointers.hpp"
-#include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptFunction.hpp"
+#include "game/rdr/Scripts.hpp"
 #include <event/CEventGroup.hpp>
 #include <event/CEventInventoryItemPickedUp.hpp>
 
@@ -17,12 +16,8 @@ namespace YimMenu::Rewards
 
 	void GiveScriptReward(const RewardInfo& info, bool loottable)
 	{
-		if (!SCRIPTS::HAS_SCRIPT_WITH_NAME_HASH_LOADED("interactive_campfire"_J))
-		{
-			SCRIPTS::REQUEST_SCRIPT_WITH_NAME_HASH("interactive_campfire"_J);
-			for (int i = 0; i < 150 && !SCRIPTS::HAS_SCRIPT_WITH_NAME_HASH_LOADED("interactive_campfire"_J); i++)
-				ScriptMgr::Yield(10ms);
-		}
+		if (!Scripts::RequestScript("interactive_campfire"_J))
+			return;
 
 		if (loottable)
 			ScriptFunctions::GiveLootTableAward.StaticCall(info.reward_hash, 0);
@@ -127,12 +122,6 @@ namespace YimMenu::Rewards
 					GiveScriptReward(egg);
 				}
 				break;
-			case eRewardType::HERBS:
-				for (const auto& herb : Herbs)
-				{
-					GiveScriptReward(herb);
-				}
-				break;
 			case eRewardType::TREASURE:
 				for (const auto& treasure : TreasureReward)
 				{
@@ -179,6 +168,12 @@ namespace YimMenu::Rewards
 				for (const auto& xp : BountyHunterXP)
 				{
 					GiveScriptReward(xp, false);
+				}
+				break;
+			case eRewardType::TRADERGOODS:
+				for (const auto& good : TraderGoods)
+				{
+					GiveScriptReward(good, false);
 				}
 				break;
 			}

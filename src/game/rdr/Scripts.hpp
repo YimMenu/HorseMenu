@@ -15,4 +15,5 @@ namespace YimMenu::Scripts
 	extern void SendScriptEvent(uint64_t* data, int count, int metadataIndex, int bits);
 	extern const char* GetScriptName(joaat_t hash);
 	extern void ForceScriptHost(rage::scrThread* thread);
+	extern bool RequestScript(joaat_t script);
 }
