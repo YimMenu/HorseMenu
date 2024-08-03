@@ -4,78 +4,13 @@
 #include "core/commands/Commands.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
-#include "game/backend/NativeHooks.hpp"
 #include "game/frontend/items/Items.hpp"
-#include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptFunction.hpp"
 #include "game/rdr/Scripts.hpp"
 #include "util/Rewards.hpp"
 
 namespace YimMenu::Submenus
 {
-	namespace NetshoppingHooks
-	{
-		void _CASHINVENTORY_TRANSACTION_FIRE_AND_FORGET_ITEM(rage::scrNativeCallContext* ctx)
-		{
-			Hash ActionHash    = ctx->GetArg<Hash>(0);
-			int* TransactionID = ctx->GetArg<int*>(1);
-			uint64_t* ItemInfo = ctx->GetArg<uint64_t*>(2);
-			int ItemInfoCount  = ctx->GetArg<int>(3);
-			std::stringstream iss;
-			iss << "\nCTFAFI\nAction Hash: " << ActionHash << "\n";
-			iss << "ItemInfo[" << ItemInfoCount << "]:\n";
-			for (int i = 0; i < ItemInfoCount; i++)
-			{
-				iss << "\tItemInfo[" << i << "] = " << ItemInfo[i] << ";\n";
-			}
-			LOG(INFO) << iss.str() << "***************************************";
-			ctx->SetReturnValue<BOOL>(NETSHOPPING::_CASHINVENTORY_TRANSACTION_FIRE_AND_FORGET_ITEM(ActionHash, TransactionID, ItemInfo, ItemInfoCount));
-		}
-
-		void _0xA3B8D31C13CB4239(rage::scrNativeCallContext* ctx)
-		{
-			int TransactionID   = ctx->GetArg<int>(0);
-			Hash ActionHash     = ctx->GetArg<Hash>(1);
-			uint64_t* ItemInfo  = ctx->GetArg<uint64_t*>(2);
-			int ItemInfoCount   = ctx->GetArg<int>(3);
-			uint64_t* ItemInfo2 = ctx->GetArg<uint64_t*>(4);
-			int arg6            = ctx->GetArg<int>(5);
-			std::stringstream iss;
-			iss << "\nC_0xA3B8D31C13CB4239\nAction Hash: " << ActionHash << "\n";
-			iss << "ItemInfo[" << ItemInfoCount << "]:\n";
-			for (int i = 0; i < ItemInfoCount; i++)
-			{
-				iss << "\tItemInfo[" << i << "] = " << ItemInfo[i] << ";\n";
-			}
-			LOG(INFO) << iss.str() << "***************************************";
-			ctx->SetReturnValue<BOOL>(NETSHOPPING::_0xA3B8D31C13CB4239(TransactionID, ActionHash, ItemInfo, ItemInfoCount, ItemInfo2, arg6));
-		}
-
-		void _0xD1555FBC96C88444(rage::scrNativeCallContext* ctx)
-		{
-			joaat_t CurrencyHash = ctx->GetArg<joaat_t>(0);
-			joaat_t ItemPathset  = ctx->GetArg<joaat_t>(1);
-			int Balance          = ctx->GetArg<int>(2);
-			uint64_t* arg4       = ctx->GetArg<uint64_t*>(3);
-			int arg5             = ctx->GetArg<int>(4);
-			std::stringstream iss;
-			iss << "\nC_0xD1555FBC96C88444\n";
-			iss << "CurrencyHash: " << CurrencyHash << "\n";
-			iss << "ItemPathset: " << ItemPathset << "\n";
-			iss << "Balance: " << Balance << "\n";
-			iss << "arg4: " << *arg4 << "\n";
-			iss << "arg5: " << arg5 << "\n";
-			LOG(INFO) << iss.str() << "***************************************";
-			ctx->SetReturnValue<BOOL>(NETSHOPPING::_0xD1555FBC96C88444(CurrencyHash, ItemPathset, Balance, (Any)arg4, arg5));
-		}
-
-		void AWARDS_GET_RESULT_ITEM(rage::scrNativeCallContext* ctx)
-		{
-			joaat_t AwardHash = ctx->GetArg<joaat_t>(1);
-			LOG(INFO) << "AGRI award hash: " << HEX(AwardHash);
-			ctx->SetReturnValue<Any>(SCRIPTS::AWARDS_GET_RESULT_ITEM(ctx->GetArg<Any*>(0), AwardHash, ctx->GetArg<int>(2), ctx->GetArg<Any*>(3)));
-		}
-	}
 
 	Recovery::Recovery() :
 	    Submenu::Submenu("Recovery")
@@ -140,16 +75,6 @@ namespace YimMenu::Submenus
 					FiberPool::Push([] {
 						Rewards::GiveRequestedRewards({selected});
 					});
-				}
-
-				static bool hooked = false;
-				if (!hooked && ImGui::Button("Hook Netshopping Natives"))
-				{
-					NativeHooks::AddHook("ALL_SCRIPTS"_J, NativeIndex::_CASHINVENTORY_TRANSACTION_FIRE_AND_FORGET_ITEM, NetshoppingHooks::_CASHINVENTORY_TRANSACTION_FIRE_AND_FORGET_ITEM);
-					NativeHooks::AddHook("ALL_SCRIPTS"_J, NativeIndex::_0xA3B8D31C13CB4239, NetshoppingHooks::_0xA3B8D31C13CB4239);
-					//NativeHooks::AddHook("ALL_SCRIPTS"_J, NativeIndex::_0xD1555FBC96C88444, NetshoppingHooks::_0xD1555FBC96C88444);
-					NativeHooks::AddHook("ALL_SCRIPTS"_J, NativeIndex::AWARDS_GET_RESULT_ITEM, NetshoppingHooks::AWARDS_GET_RESULT_ITEM);
-					hooked = true;
 				}
 			}
 			else
