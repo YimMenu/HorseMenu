@@ -287,6 +287,7 @@ namespace YimMenu::Submenus
 			}));
 
 			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tptoplayer"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tptoplayercamp"_J));
 			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpbehindplayer"_J));
 			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpintovehicle"_J));
 			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("bring"_J));

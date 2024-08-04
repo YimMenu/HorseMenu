@@ -2,6 +2,8 @@
 #include "core/memory/Pattern.hpp"
 #include "util/Joaat.hpp"
 
+#include <type_traits>
+
 namespace rage
 {
 	class scrThread;
@@ -19,22 +21,48 @@ namespace YimMenu
 
 		std::optional<std::int32_t> GetPC();
 
-		void RunScript(rage::scrThread* thread, rage::scrProgram* program, const std::vector<uint64_t>& args);
+		void RunScript(rage::scrThread* thread, rage::scrProgram* program, const std::vector<uint64_t>& args, void* returnValue, uint32_t returnSize);
 
-		void Call(const std::vector<uint64_t>& args);
+		void CallImpl(const std::vector<uint64_t>& args, void* returnValue = 0, uint32_t returnSize = 0);
 
-		void StaticCall(const std::vector<uint64_t>& args);
+		void StaticCallImpl(const std::vector<uint64_t>& args, void* returnValue = 0, uint32_t returnSize = 0);
 	public:
 		ScriptFunction(joaat_t hash, SimplePattern pattern);
 
-		// TODO: return value support
-
-		template<typename... Args>
-		void StaticCall(Args... args)
+		template<typename Ret = void, typename... Args>
+		Ret StaticCall(Args... args)
 		{
 			std::vector<uint64_t> params;
 			(params.push_back(static_cast<std::uint64_t>(args)), ...);
-			StaticCall(params);
+
+			if constexpr (!std::is_same_v<Ret, void>)
+			{
+				Ret returnValue;
+				StaticCallImpl(params, &returnValue, sizeof(returnValue));
+				return returnValue;
+			}
+			else
+			{
+				StaticCallImpl(params);
+			}
+		}
+
+		template<typename Ret = void, typename... Args>
+		Ret Call(Args... args)
+		{
+			std::vector<uint64_t> params;
+			(params.push_back(static_cast<std::uint64_t>(args)), ...);
+
+			if constexpr (!std::is_same_v<Ret, void>)
+			{
+				Ret returnValue;
+				CallImpl(params, &returnValue, sizeof(returnValue));
+				return returnValue;
+			}
+			else
+			{
+				CallImpl(params);
+			}
 		}
 		
 		template<typename... Args>
@@ -42,7 +70,7 @@ namespace YimMenu
 		{
 			std::vector<uint64_t> params;
 			(params.push_back(static_cast<std::uint64_t>(args)), ...);
-			Call(params);
+			CallImpl(params);
 		}
 	};
 

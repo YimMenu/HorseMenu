@@ -43,8 +43,6 @@ namespace YimMenu::Rewards
 	inline const RewardInfo Fossils[]{{0, "COLLECTIBLE_FOSSIL_CORAL"_J, ""}, {0, "COLLECTIBLE_FOSSIL_BIVALVE"_J, ""}, {0, "COLLECTIBLE_FOSSIL_BRACHIOPOD"_J, ""}, {0, "COLLECTIBLE_FOSSIL_BROW_HORN"_J, ""}, {0, "COLLECTIBLE_FOSSIL_CEPHALOPOD"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TRILOBITE_CRYPTO"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TRILOBITE_ISO"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TOOTH_MEGA"_J, ""}, {0, "COLLECTIBLE_FOSSIL_NEO"_J, ""}, {0, "COLLECTIBLE_FOSSIL_STONE"_J, ""}, {0, "COLLECTIBLE_FOSSIL_PET_WOOD"_J, ""}, {0, "COLLECTIBLE_FOSSIL_PET_WOOD_RAINBOW"_J, ""}, {0, "COLLECTIBLE_FOSSIL_SEA_LILY"_J, ""}, {0, "COLLECTIBLE_FOSSIL_SEA_SCORPION"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TOOTH_SERRATED"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TAIL_SPIKE"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TOE_CLAW"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TOOTH_TREX"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TULLY_MONSTER"_J, ""}, {0, "COLLECTIBLE_FOSSIL_PET_WOOD_YELLOW"_J, ""}};
 	
 	inline const RewardInfo Eggs[]{{0, "COLLECTIBLE_EGG_VULTURE"_J, ""}, {0, "COLLECTIBLE_EGG_LOON"_J, ""}, {0, "COLLECTIBLE_EGG_DUCK"_J, ""}, {0, "COLLECTIBLE_EGG_GOOSE"_J, ""}, {0, "COLLECTIBLE_EGG_HERON"_J, ""}, {0, "COLLECTIBLE_EGG_EGRET"_J, ""}, {0, "COLLECTIBLE_EGG_EAGLE"_J, ""}, {0, "COLLECTIBLE_EGG_HAWK"_J, ""}, {0, "COLLECTIBLE_EGG_SPOONBILL"_J, ""}, {0, "COLLECTIBLE_EGG_CONDOR"_J, ""}};
-
-	inline const RewardInfo Herbs[]{{0, "HERB_LOOT_ALASKAN_GINSENG"_J, "Alaskan Ginseng"}, {0, "HERB_LOOT_AMERICAN_GINSENG"_J, "American Ginseng"}, {0, "HERB_LOOT_BAY_BOLETE"_J, "Bay Bolete"}, {0, "HERB_LOOT_BLACK_BERRY"_J, "Black Berry"}, {0, "HERB_LOOT_BLACK_CURRANT"_J, "Black Currant"}, {0, "HERB_LOOT_BURDOCK_ROOT"_J, "Burdock Root"}, {0, "HERB_LOOT_CHANTERELLES"_J, "Chanterelles"}, {0, "HERB_LOOT_COMMON_BULRUSH"_J, "Common Bulrush"}, {0, "HERB_LOOT_CREEPING_THYME"_J, "Creeping Thyme"}, {0, "HERB_LOOT_DESERT_SAGE"_J, "Desert Sage"}, {0, "HERB_LOOT_ENGLISH_MACE"_J, "English Mace"}, {0, "HERB_LOOT_EVERGREEN_HUCKLEBERRY"_J, "Evergreen Huckleberry"}, {0, "HERB_LOOT_GOLDEN_CURRANT"_J, "Golden Currant"}, {0, "HERB_LOOT_HUMMINGBIRD_SAGE"_J, "Hummingbird Sage"}, {0, "HERB_LOOT_INDIAN_TOBACCO"_J, "Indian Tobacco"}, {0, "HERB_LOOT_MILKWEED"_J, "Milkweed"}, {0, "HERB_LOOT_OLEANDER_SAGE"_J, "Oleander Sage"}, {0, "HERB_LOOT_OREGANO"_J, "Oregano"}, {0, "HERB_LOOT_PARASOL_MUSHROOM"_J, "Parasol Mushroom"}, {0, "HERB_LOOT_PRAIRIE_POPPY"_J, "Prairie Poppy"}, {0, "HERB_LOOT_RAMS_HEAD"_J, "Rams Head"}, {0, "HERB_LOOT_RED_RASPBERRY"_J, "Red Raspberry"}, {0, "HERB_LOOT_RED_SAGE"_J, "Red Sage"}, {0, "HERB_LOOT_VANILLA_FLOWER"_J, "Vanilla Flower"}, {0, "HERB_LOOT_VIOLET_SNOWDROP"_J, "Violet Snowdrop"}, {0, "HERB_LOOT_WILD_CARROTS"_J, "Wild Carrots"}, {0, "HERB_LOOT_WILD_FEVERFEW"_J, "Wild Feverfew"}, {0, "HERB_LOOT_WILD_MINT"_J, "Wild Mint"}, {0, "HERB_LOOT_WINTERGREEN_BERRY"_J, "Wintergreen Berry"}, {0, "HERB_LOOT_YARROW"_J, "Yarrow"}, {0, "HERB_LOOT_AGARITA"_J, "Agarita"}, {0, "HERB_LOOT_BITTERWEED"_J, "Bitterweed"}, {0, "HERB_LOOT_BLUE_BONNET"_J, "Blue Bonnet"}, {0, "HERB_LOOT_BLOOD_FLOWER"_J, "Blood Flower"}, {0, "HERB_LOOT_CARDINAL_FLOWER"_J, "Cardinal Flower"}, {0, "HERB_LOOT_CHOCOLATE_DAISY"_J, "Chocolate Daisy"}, {0, "HERB_LOOT_CREEK_PLUM"_J, "Creek Plum"}, {0, "HERB_LOOT_RHUBARB"_J, "Rhubarb"}, {0, "HERB_LOOT_WISTERIA"_J, "Wisteria"}, {0, "HERB_LOOT_HARRIETUM"_J, "Harrietum"}};
 	
 	inline const RewardInfo TreasureReward[]{{0, "REWARD_ABANDONED_LOOT_MALE"_J, "Treasure Reward"}};
 
@@ -61,6 +59,8 @@ namespace YimMenu::Rewards
 	inline const RewardInfo NaturalistXP[]{{0, 0x05839847, "Naturalist XP Reward"}};
 
 	inline const RewardInfo BountyHunterXP[]{{0, 0x5424CC1A, "Bounty Hunter XP Reward"}};
+
+	inline const RewardInfo TraderGoods[]{{0, 0xFD780631, "Trader Goods"}};
 
 	enum class eRewardType : int
 	{
@@ -79,7 +79,6 @@ namespace YimMenu::Rewards
 		TAROTCARDS_WANDS,
 		FOSSILS,
 		EGGS,
-		HERBS,
 		TREASURE,
 		CAPITALE,
 		XP,
@@ -88,6 +87,7 @@ namespace YimMenu::Rewards
 		COLLECTORXP,
 		NATURALISTXP,
 		BOUNTYHUNTERXP,
+		TRADERGOODS,
 	};
 
 	void GiveRequestedRewards(std::vector<eRewardType> rewards);

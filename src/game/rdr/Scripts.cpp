@@ -4,6 +4,7 @@
 #include <script/scriptHandlerNetComponent.hpp>
 #include <network/CNetworkPlayerMgr.hpp>
 #include <rage/tlsContext.hpp>
+#include "game/backend/ScriptMgr.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/data/ScriptNames.hpp"
@@ -83,5 +84,20 @@ namespace YimMenu::Scripts
 	{
 		auto handler = reinterpret_cast<rage::scriptHandlerNetComponent*>(thread->m_HandlerNetComponent);
 		handler->DoHostMigration(Pointers.NetworkPlayerMgr->m_LocalPlayer, 0xFFFF, true);
+	}
+
+	bool RequestScript(joaat_t script)
+	{
+		if (!SCRIPTS::HAS_SCRIPT_WITH_NAME_HASH_LOADED(script))
+		{
+			SCRIPTS::REQUEST_SCRIPT_WITH_NAME_HASH(script);
+			for (int i = 0; i < 150 && !SCRIPTS::HAS_SCRIPT_WITH_NAME_HASH_LOADED(script); i++)
+				ScriptMgr::Yield(10ms);
+		}
+
+		if (SCRIPTS::HAS_SCRIPT_WITH_NAME_HASH_LOADED(script))
+			return true;
+		
+		return false;
 	}
 }
