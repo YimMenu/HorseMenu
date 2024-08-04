@@ -39,6 +39,7 @@ namespace YimMenu
 			{
 				Ret returnValue;
 				StaticCallImpl(params, &returnValue, sizeof(returnValue));
+				return returnValue;
 			}
 			else
 			{
@@ -56,6 +57,7 @@ namespace YimMenu
 			{
 				Ret returnValue;
 				CallImpl(params, &returnValue, sizeof(returnValue));
+				return returnValue;
 			}
 			else
 			{
