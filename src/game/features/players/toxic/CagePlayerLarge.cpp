@@ -14,7 +14,7 @@ namespace YimMenu::Features
 		{
 			auto coords = player.GetPed().GetPosition();
 			coords.z -= 1.0f;
-			SpawnObject(0x99C0CFCF, coords);
+			SpawnObject(0x99C0CFCF, coords, 0, 0, 0, true, true, false, false, true); 
 		}
 	};
 
