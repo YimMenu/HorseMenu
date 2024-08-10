@@ -323,11 +323,11 @@ namespace YimMenu::Submenus
 						honorLevel += " (" + std::to_string(honor) + "/15)";
 						ImGui::Text("Honor: %s", honorLevel.c_str());
 
-						ImGui::Text("Model: %s", YimMenu::Players::GetSelected().GetPed().GetModel());
+						if (auto it = g_DistrictMap.find(YimMenu::Players::GetSelected().GetDistrict()); it != g_DistrictMap.end())
+							ImGui::Text("District: %s", it->second.c_str());
 
-						ImGui::Text("District: %s", g_DistrictMap[YimMenu::Players::GetSelected().GetDistrict()].c_str());
-
-						ImGui::Text("Region: %s", g_RegionMap[YimMenu::Players::GetSelected().GetRegion()].c_str());
+						if (auto it = g_RegionMap.find(YimMenu::Players::GetSelected().GetRegion()); it != g_RegionMap.end())
+							ImGui::Text("Region: %s", it->second.c_str());
 
 						auto internalIp = YimMenu::Players::GetSelected().GetInternalAddress();
 						ImGui::Text("Internal IP: %s",
