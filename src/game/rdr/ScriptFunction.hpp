@@ -26,6 +26,7 @@ namespace YimMenu
 		void CallImpl(const std::vector<uint64_t>& args, void* returnValue = 0, uint32_t returnSize = 0);
 
 		void StaticCallImpl(const std::vector<uint64_t>& args, void* returnValue = 0, uint32_t returnSize = 0);
+
 	public:
 		ScriptFunction(joaat_t hash, SimplePattern pattern);
 
@@ -64,7 +65,7 @@ namespace YimMenu
 				CallImpl(params);
 			}
 		}
-		
+
 		template<typename... Args>
 		void operator()(Args... args)
 		{
@@ -78,5 +79,6 @@ namespace YimMenu
 	{
 		static inline ScriptFunction GiveItemDatabaseAward("interactive_campfire"_J, "22 05 24");
 		static inline ScriptFunction GiveLootTableAward("interactive_campfire"_J, "22 02 14 00 00 2F");
+		static inline ScriptFunction TriggerMoonshineProduction("net_moonshine_manager"_J, "22 00 15")
 	}
 }
