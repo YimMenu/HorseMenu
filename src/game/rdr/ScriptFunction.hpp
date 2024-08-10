@@ -79,6 +79,6 @@ namespace YimMenu
 	{
 		static inline ScriptFunction GiveItemDatabaseAward("interactive_campfire"_J, "22 05 24");
 		static inline ScriptFunction GiveLootTableAward("interactive_campfire"_J, "22 02 14 00 00 2F");
-		static inline ScriptFunction TriggerMoonshineProduction("net_moonshine_manager"_J, "22 00 15")
+		static inline ScriptFunction TriggerMoonshineProduction("net_moonshine_manager"_J, "22 00 15");
 	}
 }
