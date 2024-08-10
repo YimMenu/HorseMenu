@@ -33,7 +33,7 @@ namespace YimMenu
 		Ret StaticCall(Args... args)
 		{
 			std::vector<uint64_t> params;
-			(params.push_back(static_cast<std::uint64_t>(args)), ...);
+			(params.push_back(*reinterpret_cast<std::uint64_t*>(&args)), ...);
 
 			if constexpr (!std::is_same_v<Ret, void>)
 			{
@@ -51,7 +51,7 @@ namespace YimMenu
 		Ret Call(Args... args)
 		{
 			std::vector<uint64_t> params;
-			(params.push_back(static_cast<std::uint64_t>(args)), ...);
+			(params.push_back(*reinterpret_cast<std::uint64_t*>(&args)), ...);
 
 			if constexpr (!std::is_same_v<Ret, void>)
 			{
@@ -69,7 +69,7 @@ namespace YimMenu
 		void operator()(Args... args)
 		{
 			std::vector<uint64_t> params;
-			(params.push_back(static_cast<std::uint64_t>(args)), ...);
+			(params.push_back(*reinterpret_cast<std::uint64_t*>(&args)), ...);
 			CallImpl(params);
 		}
 	};
@@ -78,6 +78,5 @@ namespace YimMenu
 	{
 		static inline ScriptFunction GiveItemDatabaseAward("interactive_campfire"_J, "22 05 24");
 		static inline ScriptFunction GiveLootTableAward("interactive_campfire"_J, "22 02 14 00 00 2F");
-		static inline ScriptFunction TriggerMoonshineProduction("net_moonshine_manager"_J, "22 00 15");
 	}
 }

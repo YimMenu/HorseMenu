@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.hpp"
 #include "Enums.hpp"
+#include "Vehicle.hpp"
 
 namespace YimMenu
 {
@@ -9,12 +10,12 @@ namespace YimMenu
 	public:
 		using Entity::Entity;
 
-		static Ped Create(std::uint32_t model, rage::fvector3 coords, float heading = 0.0f);
+		static Ped Create(uint32_t model, rage::fvector3 coords, float heading = 0.0f);
 
 		// info
 		Ped GetMount();
 		Ped GetLastMount();
-		Entity GetVehicle();
+		Vehicle GetVehicle();
 
 		// stamina
 		float GetStamina();
@@ -38,6 +39,7 @@ namespace YimMenu
 		// config flags
 		bool GetConfigFlag(PedConfigFlag flag);
 		void SetConfigFlag(PedConfigFlag flag, bool value);
+		void SetTargetActionDisableFlag(int flag, bool enabled);
 
 		// relationships
 		bool IsEnemy();

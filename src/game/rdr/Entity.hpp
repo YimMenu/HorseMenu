@@ -14,8 +14,14 @@
 	#define ENTITY_ASSERT_SCRIPT_CONTEXT()
 #endif
 
+namespace rage
+{
+	class netObject;
+}
+
 namespace YimMenu
 {
+	class Player;
 	class Entity
 	{
 		void* m_Pointer;
@@ -83,6 +89,9 @@ namespace YimMenu
 		bool IsPlayer();
 		bool IsAnimal();
 
+		// info
+		int GetModel();
+
 		// position
 		rage::fvector3 GetPosition();
 		void SetPosition(rage::fvector3 position);
@@ -98,12 +107,17 @@ namespace YimMenu
 
 		// networking
 		bool IsNetworked();
+		rage::netObject* GetNetworkObject();
 		bool HasControl();
 		std::uint16_t GetNetworkObjectId();
 		/// <summary>
 		/// WARNING: This function is potentially unstable when used on vehicles and horses. Use RequestControl instead
 		/// </summary>
 		void ForceControl();
+		/// <summary>
+		/// Forces creation of a networked entity for a specified player or the entire session
+		/// </summary>
+		void ForceSync(Player* for_player = nullptr); // pointer because we want to avoid cyclic imports
 
 		// health
 		bool IsInvincible();

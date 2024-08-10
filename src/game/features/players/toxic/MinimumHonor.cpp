@@ -1,8 +1,10 @@
+#include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Self.hpp"
 #include "game/commands/PlayerCommand.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Scripts.hpp"
+
 
 namespace YimMenu::Features
 {
@@ -45,10 +47,13 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			MinHonor(-1 & ~(1 << Self::GetPlayer().GetId()));
+			for (const auto& [idx, _] : Players::GetPlayers())
+			{
+				MinHonor(1 << idx);
+			}
 		}
 	};
 
 	static MinimumHonor _MinimumHonor{"minhonor", "Min Honor", "Sets the player's honor to the minimum value", 0, false};
-	static MinimumHonorAll _MinimumHonorAll{"minhonorall", "Min Honor", "Sets the player's honor to the minimum value"};
+	static MinimumHonorAll _MinimumHonorAll{"minhonorall", "Give All Min Honor", "Sets all player's honor to the minimum value"};
 }

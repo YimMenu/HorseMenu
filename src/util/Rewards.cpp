@@ -27,16 +27,13 @@ namespace YimMenu::Rewards
 
 	void GiveRequestedRewards(std::vector<eRewardType> rewards)
 	{
+		if (!Scripts::UsingMPScripts())
+			return;
+
 		for (auto& reward : rewards)
 		{
 			switch (reward)
 			{
-			//case eRewardType::GOLD_REWARDS:
-			//	for (const auto& goldreward : GoldRewards)
-			//	{
-			//		SpawnRequestedRewards_Helper(goldreward);
-			//	}
-			//	break;
 			case eRewardType::HEIRLOOMS:
 				for (const auto& heirloom : Heirlooms)
 				{

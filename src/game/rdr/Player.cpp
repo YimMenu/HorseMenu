@@ -6,6 +6,7 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Natives.hpp"
 
+#include <network/CFriend.hpp>
 #include <network/CNetGamePlayer.hpp>
 #include <network/netPeerAddress.hpp>
 #include <network/rlScPeerConnection.hpp>
@@ -20,7 +21,7 @@ namespace YimMenu
 		m_Handle = Pointers.GetNetPlayerFromPid(id);
 	}
 
-	bool Player::IsValid()
+	bool Player::IsValid() const
 	{
 		return m_Handle && m_Handle->IsValid() && m_Handle->m_PlayerInfo;
 	}
@@ -72,6 +73,23 @@ namespace YimMenu
 	bool Player::IsHost()
 	{
 		return m_Handle->IsHost();
+	}
+
+	bool Player::IsFriend()
+	{
+		if (!IsValid())
+			return false;
+
+		for (int i = 0; i < 250; i++)
+		{
+			if (!Pointers.FriendRegistry[i])
+				break;
+
+			if (Pointers.FriendRegistry[i]->m_RockstarId == GetRID())
+				return true;
+		}
+
+		return false;
 	}
 
 	uint32_t Player::GetMessageId()

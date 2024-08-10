@@ -10,7 +10,7 @@
 #include "game/rdr/Player.hpp"
 #include "util/Joaat.hpp"
 
-#include <entity/fwEntity.hpp>
+#include <entity/CDynamicEntity.hpp>
 #include <network/CNetObjectMgr.hpp>
 #include <network/netObject.hpp>
 
@@ -143,7 +143,7 @@ namespace YimMenu::Teleport
 		}
 
 		auto ent = Vehicle::Create("buggy01"_J, player.GetPed().GetPosition());
-		auto ptr = ent.GetPointer<rage::fwEntity*>();
+		auto ptr = ent.GetPointer<CDynamicEntity*>();
 
 		if (!ptr || !ptr->m_NetObject)
 		{
@@ -156,7 +156,7 @@ namespace YimMenu::Teleport
 		ent.SetFrozen(true);
 
 		auto vehId  = ptr->m_NetObject->m_ObjectId;
-		auto playerId = player.GetPed().GetPointer<rage::fwEntity*>()->m_NetObject->m_ObjectId;
+		auto playerId = player.GetPed().GetPointer<CDynamicEntity*>()->m_NetObject->m_ObjectId;
 		Spoofing::RemotePlayerTeleport remoteTp = {playerId, {coords.x, coords.y, coords.z}};
 
 		g_SpoofingStorage.m_RemotePlayerTeleports.emplace(vehId, remoteTp);

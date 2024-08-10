@@ -1,13 +1,14 @@
 #include "Items.hpp"
-#include "misc/cpp/imgui_stdlib.h"
 #include "game/features/Features.hpp"
+#include "misc/cpp/imgui_stdlib.h"
+
 
 namespace YimMenu
 {
 	InputTextWithHint::InputTextWithHint(std::string label, std::string hint, std::string* buf, int flags, std::function<void()> cb, ImGuiInputTextCallback inputCallback) :
 	    m_Id(label),
 	    m_Hint(hint),
-		m_Buf(buf),
+	    m_Buf(buf),
 	    m_Flags(flags),
 	    m_Callback(cb),
 	    m_ImGuiInputTextCallback(inputCallback)

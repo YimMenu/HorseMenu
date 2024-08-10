@@ -292,7 +292,7 @@ namespace YimMenu::Submenus
 
 	static SceneType SceneTypeFromScript(joaat_t script)
 	{
-		if (*Pointers.IsSessionStarted)
+		if (Scripts::UsingMPScripts())
 		{
 			for (auto i = 0; i < g_SceneTypeScriptsMP.size(); i++)
 				if (g_SceneTypeScriptsMP[i] == script)
@@ -637,7 +637,7 @@ namespace YimMenu::Submenus
 		{
 			FiberPool::Push([] {
 				std::uint32_t hash;
-				if (*Pointers.IsSessionStarted)
+				if (Scripts::UsingMPScripts())
 					hash = g_SceneTypeScriptsMP[(int)g_SelectedSceneType];
 				else
 					hash = g_SceneTypeScriptsSP[(int)g_SelectedSceneType];
@@ -653,7 +653,7 @@ namespace YimMenu::Submenus
 					ScriptMgr::Yield();
 				}
 
-				if (*Pointers.IsSessionStarted)
+				if (Scripts::UsingMPScripts())
 					CreateAudienceMembers();
 				g_RunningSceneScriptID = SCRIPTS::START_NEW_SCRIPT_WITH_NAME_HASH(hash, 7000);
 				SCRIPTS::SET_SCRIPT_WITH_NAME_HASH_AS_NO_LONGER_NEEDED(hash);

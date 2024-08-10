@@ -1,5 +1,6 @@
 #include "ScriptPatches.hpp"
 #include "game/pointers/Pointers.hpp"
+#include "game/rdr/Scripts.hpp"
 #include <script/scrProgram.hpp>
 
 namespace YimMenu
@@ -115,14 +116,15 @@ namespace YimMenu
 		memcpy(GetCodeLocation(data, pc.value()), m_OriginalBytes.data(), m_OriginalBytes.size());
 	}
 
-	ScriptPatches::Patch::Patch(joaat_t script, SimplePattern pattern, int32_t offset, std::vector<uint8_t> patch) :
+	ScriptPatches::Patch::Patch(joaat_t script, bool is_mp, SimplePattern pattern, int32_t offset, std::vector<uint8_t> patch) :
 	    m_ScriptHash(script),
 	    m_Pattern(pattern),
 	    m_Offset(offset),
 	    m_PatchedBytes(patch),
 	    m_Enabled(false),
 	    m_Pc(std::nullopt),
-	    m_OriginalBytes({})
+	    m_OriginalBytes({}),
+	    m_IsMP(is_mp)
 	{
 	}
 
@@ -158,12 +160,13 @@ namespace YimMenu
 
 	bool ScriptPatches::Patch::InScope(joaat_t hash)
 	{
-		return m_ScriptHash == hash;
+		return m_ScriptHash == hash && m_IsMP == Scripts::UsingMPScripts();
 	}
 
-	std::shared_ptr<ScriptPatches::Patch> ScriptPatches::AddPatchImpl(joaat_t script, const std::string& pattern, int32_t offset, std::vector<uint8_t> patch)
+	std::shared_ptr<ScriptPatches::Patch> ScriptPatches::AddPatchImpl(joaat_t script, bool is_mp, const std::string& pattern, int32_t offset, std::vector<uint8_t> patch)
 	{
-		auto scr_patch = std::make_shared<Patch>(script, SimplePattern(pattern), offset, patch);
+		UpdateScriptMPStatus();
+		auto scr_patch = std::make_shared<Patch>(script, is_mp, SimplePattern(pattern), offset, patch);
 
 		// add patch to map
 		m_Patches.push_back(scr_patch);
@@ -180,6 +183,7 @@ namespace YimMenu
 
 	void ScriptPatches::RegisterProgramImpl(rage::scrProgram* program)
 	{
+		UpdateScriptMPStatus();
 		if (auto it = m_Datas.find(program->m_NameHash); it != m_Datas.end())
 		{
 			return;
@@ -220,6 +224,7 @@ namespace YimMenu
 
 	void ScriptPatches::OnScriptVMEnterImpl(rage::scrProgram* program)
 	{
+		UpdateScriptMPStatus();
 		if (m_CurrentlyReplacedBytecode)
 		{
 			LOG(FATAL) << "We've already shadowed the bytecode of another program!";
@@ -254,9 +259,19 @@ namespace YimMenu
 		return nullptr;
 	}
 
+	void ScriptPatches::UpdateScriptMPStatus()
+	{
+		if (m_UsingMPScripts != Scripts::UsingMPScripts())
+		{
+			m_Datas.clear();
+			m_UsingMPScripts = Scripts::UsingMPScripts();
+		}
+	}
+
 	ScriptPatches::ScriptPatches() :
 	    m_CurrentlyReplacedBytecode(nullptr)
 	{
+		UpdateScriptMPStatus();
 	}
 
 	ScriptPatches::~ScriptPatches()

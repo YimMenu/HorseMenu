@@ -10,8 +10,10 @@ namespace YimMenu
 	private:
 		std::filesystem::path m_SettingsFile;
 		std::vector<IStateSerializer*> m_StateSerializers;
+		std::queue<IStateSerializer*> m_LateLoaders;
 		bool m_InitialLoadDone;
 		nlohmann::json m_Json;
+		std::mutex m_Mutex;
 
 	public:
 		Settings();
@@ -21,14 +23,14 @@ namespace YimMenu
 			GetInstance().InitializeImpl(settingsFile);
 		}
 
-		static void Save()
+		static void Tick()
 		{
-			GetInstance().SaveImpl();
+			GetInstance().TickImpl();
 		}
 
 		static void AddComponent(IStateSerializer* serializer)
 		{
-			GetInstance().m_StateSerializers.push_back(serializer);
+			GetInstance().AddComponentImpl(serializer);
 		}
 
 		// TODO: this is broken
@@ -55,7 +57,8 @@ namespace YimMenu
 		}
 
 		void InitializeImpl(File settingsFile);
-		void SaveImpl();
+		void TickImpl();
+		void AddComponentImpl(IStateSerializer* serializer);
 		void LoadComponentImpl(IStateSerializer* serializer);
 		void SaveComponentImpl(IStateSerializer* serializer);
 		void Reset();

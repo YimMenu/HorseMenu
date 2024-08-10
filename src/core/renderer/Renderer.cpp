@@ -1,3 +1,4 @@
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "Renderer.hpp"
 
 #include "core/memory/ModuleMgr.hpp"
@@ -691,9 +692,9 @@ namespace YimMenu
 				init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
 				init_info.Allocator                 = m_VkAllocator;
 
-				ImGui_ImplVulkan_Init(&init_info, m_VkRenderPass);
+				ImGui_ImplVulkan_Init(&init_info);
 
-				ImGui_ImplVulkan_CreateFontsTexture(fd->CommandBuffer);
+				ImGui_ImplVulkan_CreateFontsTexture();
 			}
 
 			ImGui_ImplVulkan_NewFrame();

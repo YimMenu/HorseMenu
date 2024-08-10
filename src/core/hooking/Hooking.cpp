@@ -1,6 +1,7 @@
 #include "Hooking.hpp"
 
 #include "BaseHook.hpp"
+#include "CallHook.hpp"
 #include "DetourHook.hpp"
 #include "VMTHook.hpp"
 #include "core/memory/ModuleMgr.hpp"
@@ -50,11 +51,14 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::SerializeServerRPC>(new DetourHook("SerializeServerRPC", Pointers.SerializeServerRPC, Hooks::Protections::SerializeServerRPC));
 		BaseHook::Add<Hooks::Protections::ReceiveServerMessage>(new DetourHook("ReceiveServerMessage", Pointers.ReceiveServerMessage, Hooks::Protections::ReceiveServerMessage));
 		BaseHook::Add<Hooks::Protections::ReceiveArrayUpdate>(new DetourHook("ReceiveArrayUpdate", Pointers.ReceiveArrayUpdate, Hooks::Protections::ReceiveArrayUpdate));
-
 		BaseHook::Add<Hooks::Protections::CreatePoolItem>(new DetourHook("CreatePoolItem", Pointers.CreatePoolItem, Hooks::Protections::CreatePoolItem));
-
+		BaseHook::Add<Hooks::Protections::HandleCloneRemove>(new DetourHook("HandleCloneRemove", Pointers.HandleCloneRemove, Hooks::Protections::HandleCloneRemove));
+		BaseHook::Add<Hooks::Protections::PackCloneCreate>(new DetourHook("PackCloneCreate", Pointers.PackCloneCreate, Hooks::Protections::PackCloneCreate));
+		
 		BaseHook::Add<Hooks::Voice::EnumerateAudioDevices>(new DetourHook("EnumerateAudioDevices", Pointers.EnumerateAudioDevices, Hooks::Voice::EnumerateAudioDevices));
 		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));
+		BaseHook::Add<Hooks::Voice::SendVoicePacket>(new CallHook("SendVoicePacket", Pointers.SendVoicePacket, Hooks::Voice::SendVoicePacket));
+		BaseHook::Add<Hooks::Voice::WriteVoiceInfoData>(new DetourHook("WriteVoiceInfoData", Pointers.WriteVoiceInfoData, Hooks::Voice::WriteVoiceInfoData));
 
 		BaseHook::Add<Hooks::Misc::ThrowFatalError>(new DetourHook("ThrowFatalError", Pointers.ThrowFatalError, Hooks::Misc::ThrowFatalError));
 		BaseHook::Add<Hooks::Misc::IsAnimSceneInScope>(new DetourHook("IsAnimSceneInScope", Pointers.IsAnimSceneInScope, Hooks::Misc::IsAnimSceneInScope));
@@ -66,10 +70,11 @@ namespace YimMenu
 
 		BaseHook::Add<Hooks::Info::HandleSessionEvent>(new DetourHook("HandleSessionEvent", Pointers.HandleSessionEvent, Hooks::Info::HandleSessionEvent));
 
-		BaseHook::Add<Hooks::Spoofing::WritePlayerHealthData>(new DetourHook("WritePlayerHealthData", Pointers.WritePlayerHealthData, Hooks::Spoofing::WritePlayerHealthData));
+	//	BaseHook::Add<Hooks::Spoofing::WritePlayerHealthData>(new DetourHook("WritePlayerHealthData", Pointers.WritePlayerHealthData, Hooks::Spoofing::WritePlayerHealthData));
 		BaseHook::Add<Hooks::Spoofing::SendNetInfoToLobby>(new DetourHook("SendNetInfoToLobby", Pointers.SendNetInfoToLobby, Hooks::Spoofing::SendNetInfoToLobby));
 		BaseHook::Add<Hooks::Spoofing::WriteVPMData>(new DetourHook("WriteVehicleProximityMigrationData", Pointers.WriteVPMData, Hooks::Spoofing::WriteVPMData));
 		BaseHook::Add<Hooks::Spoofing::GetDiscriminator>(new DetourHook("GetDiscriminator", Pointers.GetDiscriminator, Hooks::Spoofing::GetDiscriminator));
+		BaseHook::Add<Hooks::Spoofing::WriteNodeData>(new DetourHook("WriteNodeData", Pointers.WriteNodeData, Hooks::Spoofing::WriteNodeData));
 
 		BaseHook::Add<Hooks::Toxic::BroadcastNetArray>(new DetourHook("BroadcastNetArray", Pointers.BroadcastNetArray, Hooks::Toxic::BroadcastNetArray));
 	}

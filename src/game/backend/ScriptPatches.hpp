@@ -42,22 +42,23 @@ namespace YimMenu
 			int32_t m_Offset;
 			joaat_t m_ScriptHash;
 			bool m_Enabled;
+			bool m_IsMP;
 
 			std::optional<int32_t> GetPC();
 			void Apply();
 			void Restore();
 
 		public:
-			Patch(joaat_t script, SimplePattern pattern, int32_t offset, std::vector<uint8_t> patch);
+			Patch(joaat_t script, bool is_mp, SimplePattern pattern, int32_t offset, std::vector<uint8_t> patch);
 			void Enable();
 			void Disable();
 			void Update();
 			bool InScope(joaat_t hash);
 		};
 
-		static std::shared_ptr<Patch> AddPatch(joaat_t script, const std::string& pattern, int32_t offset, std::vector<uint8_t> patch)
+		static std::shared_ptr<Patch> AddPatch(joaat_t script, bool is_mp, const std::string& pattern, int32_t offset, std::vector<uint8_t> patch)
 		{
-			return GetInstance().AddPatchImpl(script, pattern, offset, patch);
+			return GetInstance().AddPatchImpl(script, is_mp, pattern, offset, patch);
 		}
 
 		static void RegisterProgram(rage::scrProgram* program)
@@ -90,15 +91,17 @@ namespace YimMenu
 			return Instance;
 		}
 
-		std::shared_ptr<Patch> AddPatchImpl(joaat_t script, const std::string& pattern, int32_t offset, std::vector<uint8_t> patch);
+		std::shared_ptr<Patch> AddPatchImpl(joaat_t script, bool is_mp, const std::string& pattern, int32_t offset, std::vector<uint8_t> patch);
 		void RegisterProgramImpl(rage::scrProgram* program);
 		void UnregisterProgramImpl(rage::scrProgram* program);
 		void OnScriptVMEnterImpl(rage::scrProgram* program);
 		void OnScriptVMLeaveImpl(rage::scrProgram* program);
 		Data* GetDataImpl(joaat_t script);
+		void UpdateScriptMPStatus();
 
 		std::vector<std::shared_ptr<Patch>> m_Patches;
 		std::unordered_map<joaat_t, std::unique_ptr<Data>> m_Datas;
 		std::uint8_t** m_CurrentlyReplacedBytecode;
+		bool m_UsingMPScripts;
 	};
 }

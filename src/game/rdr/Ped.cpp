@@ -6,7 +6,7 @@
 
 namespace YimMenu
 {
-	Ped Ped::Create(std::uint32_t model, rage::fvector3 coords, float heading)
+	Ped Ped::Create(uint32_t model, rage::fvector3 coords, float heading)
 	{
 		ENTITY_ASSERT_SCRIPT_CONTEXT();
 		if (!STREAMING::IS_MODEL_IN_CDIMAGE(model))
@@ -63,10 +63,10 @@ namespace YimMenu
 		return Ped(PED::_GET_LAST_MOUNT(GetHandle()));
 	}
 
-	Entity Ped::GetVehicle()
+	Vehicle Ped::GetVehicle()
 	{
 		ENTITY_ASSERT_VALID();
-		return Entity(PED::GET_VEHICLE_PED_IS_IN(GetHandle(), true));
+		return Vehicle(PED::GET_VEHICLE_PED_IS_IN(GetHandle(), true));
 	}
 
 	float Ped::GetStamina()
@@ -125,8 +125,7 @@ namespace YimMenu
 	rage::fvector3 Ped::GetBonePosition(int bone)
 	{
 		ENTITY_ASSERT_VALID();
-		auto coords = PED::GET_PED_BONE_COORDS(GetHandle(), bone, 0, 0, 0);
-		return rage::fvector3(coords.x, coords.y, coords.z);
+		return PED::GET_PED_BONE_COORDS(GetHandle(), bone, 0, 0, 0);
 	}
 
 	bool Ped::GetConfigFlag(PedConfigFlag flag)
@@ -140,6 +139,17 @@ namespace YimMenu
 		ENTITY_ASSERT_VALID();
 		ENTITY_ASSERT_CONTROL();
 		PED::SET_PED_CONFIG_FLAG(GetHandle(), (int)flag, value);
+	}
+
+	void Ped::SetTargetActionDisableFlag(int flag, bool enabled)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+
+		if (enabled)
+			PED::_SET_PED_TARGET_ACTION_DISABLE_FLAG(GetHandle(), flag);
+		else
+			PED::_CLEAR_PED_TARGET_ACTION_DISABLE_FLAG(GetHandle(), flag);
 	}
 
 	bool Ped::IsEnemy()

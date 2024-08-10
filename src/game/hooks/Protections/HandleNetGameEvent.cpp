@@ -1,5 +1,6 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
+#include "game/backend/PlayerData.hpp"
 #include "game/backend/Protections.hpp"
 #include "game/backend/Self.hpp"
 #include "game/hooks/Hooks.hpp"
@@ -32,6 +33,10 @@ namespace
 namespace YimMenu::Features
 {
 	BoolCommand _LogEvents("logevents", "Log Network Events", "Log network events");
+	BoolCommand _BlockExplosions("blockexplosions", "Block Explosions", "Blocks all explosion events", false);
+	BoolCommand _BlockPtfx("blockptfx", "Block PTFX", "Blocks all particle effect events", true);
+	BoolCommand _BlockClearTasks("blockclearpedtasks", "Block Clear Tasks", "Blocks all clear ped tasks events", true);
+	BoolCommand _BlockScriptCommand("blockscriptcommand", "Block Remote Native Calls", "Blocks all remote native call events", true);
 }
 
 namespace YimMenu::Hooks
@@ -48,14 +53,14 @@ namespace YimMenu::Hooks
 
 		std::uint32_t parameters[255]{};
 
-		auto net_id = buffer.Read<uint16_t>(13);
-		auto count  = buffer.Read<int>(3);
+		auto net_id      = buffer.Read<uint16_t>(13);
+		auto count       = buffer.Read<int>(3);
 		int total_params = 0;
 
 		for (int i = 0; i < count; i++)
 		{
-			datas[i].Hash = buffer.Read<uint64_t>(64);
-			datas[i].NumParams = buffer.Read<uint32_t>(5);
+			datas[i].Hash       = buffer.Read<uint64_t>(64);
+			datas[i].NumParams  = buffer.Read<uint32_t>(5);
 			datas[i].ScriptHash = buffer.Read<uint32_t>(32);
 			total_params += datas[i].NumParams;
 		}
@@ -90,14 +95,9 @@ namespace YimMenu::Hooks
 	{
 		rage::datBitBuffer new_buffer = *buffer;
 
-		if (Features::_LogEvents.GetState() && type < NetEventType::NETWORK_EVENT_MAX)
+		if (Features::_LogEvents.GetState() && (int)type < 164)
 		{
 			LOG(INFO) << "NETWORK_EVENT: " << g_NetEventsToString[(int)type] << " from " << sourcePlayer->GetName();
-		}
-
-		if (sourcePlayer == targetPlayer) // why does this happen?
-		{
-			LOG(WARNING) << "NETWORK_EVENT: " << g_NetEventsToString[(int)type] << " from " << sourcePlayer->GetName() << ", which is ourselves?!?!";
 		}
 
 		if (type == NetEventType::NETWORK_DESTROY_VEHICLE_LOCK_EVENT)
@@ -107,7 +107,7 @@ namespace YimMenu::Hooks
 			{
 				if (!IsVehicleType((NetObjType)object->m_ObjectType))
 				{
-					LOG(WARNING) << "Blocked mismatched NETWORK_DESTROY_VEHICLE_LOCK_EVENT entity from " << sourcePlayer->GetName();
+					LOG(WARNING) << "Blocked mismatched destroy vehicle lock event entity from " << sourcePlayer->GetName();
 					Player(sourcePlayer).AddDetection(Detection::TRIED_CRASH_PLAYER);
 					Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 					return;
@@ -115,25 +115,39 @@ namespace YimMenu::Hooks
 			}
 		}
 
-		if (type == NetEventType::NETWORK_PTFX_EVENT && sourcePlayer)
+		if (type == NetEventType::EXPLOSION_EVENT && sourcePlayer)
 		{
-			LOG(WARNING) << "Blocked NETWORK_PTFX_EVENT from " << sourcePlayer->GetName();
-			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
-			return;
-		}
-
-		if (type == NetEventType::NETWORK_CLEAR_PED_TASKS_EVENT && sourcePlayer)
-		{
-			auto net_id = new_buffer.Read<uint16_t>(13);
-			if (net_id == Self::GetPed().GetNetworkObjectId())
+			if (Features::_BlockExplosions.GetState()
+			    || (Player(sourcePlayer).IsValid() && Player(sourcePlayer).GetData().m_BlockExplosions))
 			{
-				LOG(WARNING) << "Blocked NETWORK_CLEAR_PED_TASKS_EVENT from " << sourcePlayer->GetName();
+				LOG(WARNING) << "Blocked explosion from " << sourcePlayer->GetName();
 				Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 				return;
 			}
 		}
 
-		if (type == NetEventType::SCRIPT_COMMAND_EVENT && sourcePlayer)
+		if (type == NetEventType::NETWORK_PTFX_EVENT && sourcePlayer)
+		{
+			if (Features::_BlockPtfx.GetState() || (Player(sourcePlayer).IsValid() && Player(sourcePlayer).GetData().m_BlockParticles))
+			{
+				LOG(WARNING) << "Blocked particle effects from " << sourcePlayer->GetName();
+				Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+				return;
+			}
+		}
+
+		if (type == NetEventType::NETWORK_CLEAR_PED_TASKS_EVENT && sourcePlayer && Features::_BlockClearTasks.GetState())
+		{
+			auto net_id = new_buffer.Read<uint16_t>(13);
+			if (net_id == Self::GetPed().GetNetworkObjectId())
+			{
+				LOG(WARNING) << "Blocked clear ped tasks from " << sourcePlayer->GetName();
+				Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+				return;
+			}
+		}
+
+		if (type == NetEventType::SCRIPT_COMMAND_EVENT && sourcePlayer && Features::_BlockScriptCommand.GetState())
 		{
 			LogScriptCommandEvent(sourcePlayer, new_buffer);
 			LOG(WARNING) << "Blocked remote native call from " << sourcePlayer->GetName();

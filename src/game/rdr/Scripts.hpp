@@ -16,4 +16,5 @@ namespace YimMenu::Scripts
 	extern const char* GetScriptName(joaat_t hash);
 	extern void ForceScriptHost(rage::scrThread* thread);
 	extern bool RequestScript(joaat_t script);
+	extern bool UsingMPScripts();
 }

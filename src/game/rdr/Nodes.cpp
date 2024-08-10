@@ -440,7 +440,7 @@ namespace YimMenu
 		        {"Node_14359b8a8"},
 		        {"CEntityScriptGameStateNode"},
 		        {"Node_14359cd00"},
-		        {"Node_14359ce90"},
+		        {"CPlayerGameStateUncommonNode"},
 		        {"Node_14359d020"},
 		        {"CPedAttachNode"},
 		        {"Node_1435995f0"},

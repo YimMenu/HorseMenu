@@ -1,3 +1,4 @@
+#include "core/commands/FloatCommand.hpp"
 #include "core/commands/LoopedCommand.hpp"
 #include "game/backend/Self.hpp"
 #include "game/rdr/Enums.hpp"
@@ -6,7 +7,7 @@
 namespace YimMenu::Features
 {
 	static constexpr NativeInputs controls[] = {NativeInputs::INPUT_SPRINT, NativeInputs::INPUT_MOVE_UP_ONLY, NativeInputs::INPUT_MOVE_DOWN_ONLY, NativeInputs::INPUT_MOVE_LEFT_ONLY, NativeInputs::INPUT_MOVE_RIGHT_ONLY, NativeInputs::INPUT_DUCK, NativeInputs::INPUT_HORSE_STOP};
-	static constexpr float speed = 0.57f;
+	static FloatCommand _NoclipSpeed{"noclipspeed", "Noclip Speed", "Features", 0.1f, 15.0f, 0.5f};
 
 	class Noclip : public LoopedCommand
 	{
@@ -42,22 +43,22 @@ namespace YimMenu::Features
 
 			// Left Shift
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_SPRINT))
-				vel.z += speed / 2;
+				vel.z += _NoclipSpeed.GetState() / 2;
 			// Left Control
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_DUCK) || PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_HORSE_STOP))
-				vel.z -= speed / 2;
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_DUCK) || PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_HORSE_STOP) || PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_VEH_DRAFT_BRAKE))
+				vel.z -= _NoclipSpeed.GetState() / 2;
 			// Forward
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_MOVE_UP_ONLY))
-				vel.y += speed;
+				vel.y += _NoclipSpeed.GetState();
 			// Backward
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_MOVE_DOWN_ONLY))
-				vel.y -= speed;
+				vel.y -= _NoclipSpeed.GetState();
 			// Left
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_MOVE_LEFT_ONLY))
-				vel.x -= speed;
+				vel.x -= _NoclipSpeed.GetState();
 			// Right
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_MOVE_RIGHT_ONLY))
-				vel.x += speed;
+				vel.x += _NoclipSpeed.GetState();
 
 			auto rot = CAM::GET_GAMEPLAY_CAM_ROT(2);
 			ent.SetRotation({0.0f, rot.y, rot.z});
@@ -76,20 +77,20 @@ namespace YimMenu::Features
 
 				ent.SetFrozen(false);
 
-				#if 0
+#if 0
 				// TODO
 				const auto offset = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ent.GetHandle(), vel.x, vel.y, 0.f);
 				vel.x             = offset.x - location.x;
 				vel.y             = offset.y - location.y;
 
 				ent.SetVelocity({vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier});
-				#else
+#else
 
 				// TODO: we definitely need vector arithmetic
 				const auto offset = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ent.GetHandle(), vel.x * m_SpeedMultiplier, vel.y * m_SpeedMultiplier, vel.z * m_SpeedMultiplier);
 				ent.SetVelocity({});
 				ent.SetPosition({offset.x, offset.y, offset.z});
-				#endif
+#endif
 			}
 		}
 

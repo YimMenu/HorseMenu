@@ -44,8 +44,19 @@ namespace YimMenu
 		m_InitialLoadDone = true;
 	}
 
-	void Settings::SaveImpl()
+	void Settings::TickImpl()
 	{
+		std::lock_guard lock(m_Mutex);
+		while (!m_LateLoaders.empty())
+		{
+			if (auto component = std::move(m_LateLoaders.front()))
+			{
+				LoadComponent(component);
+			}
+
+			m_LateLoaders.pop();
+		}
+
 		if (m_InitialLoadDone && ShouldSave())
 		{
 			for (auto& serializer : m_StateSerializers)
@@ -58,12 +69,19 @@ namespace YimMenu
 		}
 	}
 
+	void Settings::AddComponentImpl(IStateSerializer* serializer)
+	{
+		std::lock_guard lock(m_Mutex);
+		m_StateSerializers.push_back(serializer);
+		if (m_InitialLoadDone)
+			m_LateLoaders.push(serializer);
+	}
+
 	void Settings::LoadComponentImpl(IStateSerializer* serializer)
 	{
 		LOG(VERBOSE) << "Loading component: " << serializer->GetSerializerComponentName();
 
-		if (!m_Json.contains(serializer->GetSerializerComponentName())
-		    || !m_Json[serializer->GetSerializerComponentName()].is_object())
+		if (!m_Json.contains(serializer->GetSerializerComponentName()) || !m_Json[serializer->GetSerializerComponentName()].is_object())
 			m_Json[serializer->GetSerializerComponentName()] = nlohmann::json::object();
 
 		serializer->LoadState(m_Json[serializer->GetSerializerComponentName()]);

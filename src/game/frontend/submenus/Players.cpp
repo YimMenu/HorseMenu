@@ -15,7 +15,6 @@
 #include <string>
 
 
-
 // remove after testing
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/FiberPool.hpp"
@@ -80,7 +79,7 @@ namespace YimMenu::Submenus
 			}
 		};
 
-		std::map<uint8_t, Player, ComparePlayerNames> sortedPlayers(YimMenu::Players::GetPlayers().begin(),
+		std::multimap<uint8_t, Player, ComparePlayerNames> sortedPlayers(YimMenu::Players::GetPlayers().begin(),
 		    YimMenu::Players::GetPlayers().end());
 
 		if (external)
@@ -155,40 +154,122 @@ namespace YimMenu::Submenus
 			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
 				if (YimMenu::Players::GetSelected().IsValid())
 				{
-					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 					ImGui::Text(YimMenu::Players::GetSelected().GetName());
+					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+					ImGui::Checkbox("Block Explosions", &YimMenu::Players::GetSelected().GetData().m_BlockExplosions);
+					ImGui::Checkbox("Block Particles", &YimMenu::Players::GetSelected().GetData().m_BlockParticles);
+					if (ImGui::Checkbox("Ghost Mode", &YimMenu::Players::GetSelected().GetData().m_GhostMode))
+					{
+						if (YimMenu::Players::GetSelected().GetData().m_GhostMode)
+						{
+							FiberPool::Push([] {
+								if (YimMenu::Players::GetSelected().IsValid())
+								{
+									Network::ForceRemoveNetworkEntity(Self::GetPed().GetNetworkObject(), false, YimMenu::Players::GetSelected());
+								}
+							});
+						}
+					}
 
 					ImGui::Text("Rank: %s", std::to_string(YimMenu::Players::GetSelected().GetRank()));
 
-					auto health    = YimMenu::Players::GetSelected().GetPed().GetHealth();
-					auto maxHealth = YimMenu::Players::GetSelected().GetPed().GetMaxHealth();
-					std::string healthStr = std::format("HP: {}/{} ({:.2f}%)", health, maxHealth, (float)health / maxHealth * 100.0f);
-					ImGui::Text("%s", healthStr.c_str());
-
-					auto coords = YimMenu::Players::GetSelected().GetPed().GetPosition();
-					ImGui::Text("Coords: %.2f, %.2f, %.2f", coords.x, coords.y, coords.z);
-
-					auto distance = YimMenu::Players::GetSelected().GetPed().GetPosition().GetDistance(Self::GetPed().GetPosition());
-					ImGui::Text("Distance: %.2f", distance);
-
-					auto ridStr = std::to_string(YimMenu::Players::GetSelected().GetRID());
-					ImGui::Text("RID:");
-					ImGui::SameLine();
-					if (ImGui::Button(ridStr.c_str()))
+					if (YimMenu::Players::GetSelected().GetPed())
 					{
-						ImGui::SetClipboardText(ridStr.c_str());
+						auto health    = YimMenu::Players::GetSelected().GetPed().GetHealth();
+						auto maxHealth = YimMenu::Players::GetSelected().GetPed().GetMaxHealth();
+						std::string healthStr = std::format("HP: {}/{} ({:.2f}%)", health, maxHealth, (float)health / maxHealth * 100.0f);
+						ImGui::Text("%s", healthStr.c_str());
+
+						auto coords = YimMenu::Players::GetSelected().GetPed().GetPosition();
+						ImGui::Text("Coords: %.2f, %.2f, %.2f", coords.x, coords.y, coords.z);
+
+						auto distance =
+						    YimMenu::Players::GetSelected().GetPed().GetPosition().GetDistance(Self::GetPed().GetPosition());
+						ImGui::Text("Distance: %.2f", distance);
+					}
+					else
+					{
+						ImGui::Text("Ped missing or deleted");
 					}
 
-					auto ip = YimMenu::Players::GetSelected().GetExternalAddress();
-					ImGui::Text("IP Address:");
-					ImGui::SameLine();
-					auto ipStr = std::string(std::to_string(ip.m_field1))
-					                 .append("." + std::to_string(ip.m_field2))
-					                 .append("." + std::to_string(ip.m_field3))
-					                 .append("." + std::to_string(ip.m_field4));
-					if (ImGui::Button(ipStr.c_str()))
+					auto rid        = YimMenu::Players::GetSelected().GetGamerInfo()->m_GamerHandle.m_RockstarId;
+					auto rid1       = YimMenu::Players::GetSelected().GetRID();
+					bool spoofedRid = (rid != rid1);
+
+					if (!spoofedRid)
 					{
-						ImGui::SetClipboardText(ipStr.c_str());
+						std::string ridStr = std::to_string(rid1);
+
+						ImGui::Text("RID:");
+						ImGui::SameLine();
+						if (ImGui::Button(std::to_string(rid1).c_str()))
+						{
+							ImGui::SetClipboardText(std::to_string(rid1).c_str());
+						}
+					}
+					else
+					{
+						std::string spoofedRidStr = std::to_string(rid);
+						std::string ridStr        = std::to_string(rid1);
+
+						ImGui::Text("Spoofed RID:");
+						ImGui::SameLine();
+						if (ImGui::Button(spoofedRidStr.c_str()))
+						{
+							ImGui::SetClipboardText(spoofedRidStr.c_str());
+						}
+
+						ImGui::Text("Real RID:");
+						ImGui::SameLine();
+						if (ImGui::Button(ridStr.c_str()))
+						{
+							ImGui::SetClipboardText(ridStr.c_str());
+						}
+					}
+
+					auto ip        = YimMenu::Players::GetSelected().GetExternalAddress();
+					auto ip1       = YimMenu::Players::GetSelected().GetGamerInfo()->m_ExternalAddress;
+					bool spoofedIp = (ip.m_packed != ip1.m_packed);
+
+					if (!spoofedIp)
+					{
+						auto ipStr = std::string(std::to_string(ip.m_field1))
+						                 .append("." + std::to_string(ip.m_field2))
+						                 .append("." + std::to_string(ip.m_field3))
+						                 .append("." + std::to_string(ip.m_field4));
+
+						ImGui::Text("IP Address:");
+						ImGui::SameLine();
+						if (ImGui::Button(ipStr.c_str()))
+						{
+							ImGui::SetClipboardText(ipStr.c_str());
+						}
+					}
+					else
+					{
+						auto spoofedIpStr = std::string(std::to_string(ip1.m_field1))
+						                        .append("." + std::to_string(ip1.m_field2))
+						                        .append("." + std::to_string(ip1.m_field3))
+						                        .append("." + std::to_string(ip1.m_field4));
+
+						auto realIpStr = std::string(std::to_string(ip.m_field1))
+						                     .append("." + std::to_string(ip.m_field2))
+						                     .append("." + std::to_string(ip.m_field3))
+						                     .append("." + std::to_string(ip.m_field4));
+
+						ImGui::Text("Spoofed IP Address:");
+						ImGui::SameLine();
+						if (ImGui::Button(spoofedIpStr.c_str()))
+						{
+							ImGui::SetClipboardText(spoofedIpStr.c_str());
+						}
+
+						ImGui::Text("Real IP Address:");
+						ImGui::SameLine();
+						if (ImGui::Button(realIpStr.c_str()))
+						{
+							ImGui::SetClipboardText(realIpStr.c_str());
+						}
 					}
 
 					if (ImGui::Button("View SC Profile"))
@@ -197,14 +278,15 @@ namespace YimMenu::Submenus
 							NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
 							NETWORK::NETWORK_SHOW_PROFILE_UI((Any*)&handle);
 						});
-
+					ImGui::SameLine();
 					if (ImGui::Button("Add Friend"))
 						FiberPool::Push([] {
 							uint64_t handle[18];
 							NETWORK::NETWORK_HANDLE_FROM_PLAYER(YimMenu::Players::GetSelected().GetId(), (Any*)&handle);
 							NETWORK::NETWORK_ADD_FRIEND((Any*)&handle, "");
 						});
-					if (ImGui::Button("Add to Player Database"))
+					ImGui::SameLine();
+					if (ImGui::Button("Add to Database"))
 					{
 						auto plyr = YimMenu::Players::GetSelected();
 						g_PlayerDatabase->AddPlayer(plyr.GetRID(), plyr.GetName());
@@ -240,6 +322,8 @@ namespace YimMenu::Submenus
 
 						honorLevel += " (" + std::to_string(honor) + "/15)";
 						ImGui::Text("Honor: %s", honorLevel.c_str());
+
+						ImGui::Text("Model: %s", YimMenu::Players::GetSelected().GetPed().GetModel());
 
 						ImGui::Text("District: %s", g_DistrictMap[YimMenu::Players::GetSelected().GetDistrict()].c_str());
 
@@ -307,6 +391,9 @@ namespace YimMenu::Submenus
 				DrawPlayerList(!Features::_PopPlayerList.GetState());
 			}));
 
+			helpful->AddItem(std::make_shared<PlayerCommandItem>("spawngoldchest"_J));
+			helpful->AddItem(std::make_shared<PlayerCommandItem>("deletegoldchests"_J));
+
 			helpful->AddItem(std::make_shared<ImGuiItem>([] {
 				if (ImGui::Button("Spawn Bounty Wagon for Player"))
 				{
@@ -352,6 +439,10 @@ namespace YimMenu::Submenus
 			trolling->AddItem(std::make_shared<PlayerCommandItem>("cageplayersmall"_J));
 			trolling->AddItem(std::make_shared<PlayerCommandItem>("cageplayerlarge"_J));
 			trolling->AddItem(std::make_shared<PlayerCommandItem>("circus"_J));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("spank"_J));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("rideonshoulders"_J));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("touchplayer"_J));
+			trolling->AddItem(std::make_shared<PlayerCommandItem>("slap"_J));
 
 			AddCategory(std::move(trolling));
 		}
@@ -385,10 +476,15 @@ namespace YimMenu::Submenus
 
 			auto mount = std::make_shared<Group>("Mount");
 			mount->AddItem(std::make_shared<PlayerCommandItem>("kickhorse"_J));
+			mount->AddItem(std::make_shared<PlayerCommandItem>("deletehorse"_J));
+
+			auto vehicle = std::make_shared<Group>("Vehicle");
+		    vehicle->AddItem(std::make_shared<PlayerCommandItem>("deletevehicle"_J));
 
 			toxic->AddItem(general);
 			toxic->AddItem(events);
 			toxic->AddItem(mount);
+			toxic->AddItem(vehicle);
 
 			AddCategory(std::move(toxic));
 		}

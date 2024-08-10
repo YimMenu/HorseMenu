@@ -36,13 +36,14 @@ namespace YimMenu
 		}
 
 		// object
-		bool IsValid();
+		bool IsValid() const;
 		int GetId();
 		const char* GetName();
 		CNetGamePlayer* GetHandle();
 		rage::rlGamerInfo* GetGamerInfo();
 		Ped GetPed();
 		bool IsHost();
+		bool IsFriend();
 		uint32_t GetMessageId();
 		uint64_t GetRID();
 		netAddress GetExternalAddress();

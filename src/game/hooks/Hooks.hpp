@@ -24,6 +24,7 @@ namespace rage
 	class scrThreadContext;
 	class rlScSessionMultiplayer;
 	class rlScSessionEvent;
+	class netPeerAddress;
 }
 
 class CNetGamePlayer;
@@ -36,6 +37,7 @@ class CPlayerHealthData;
 class CVehicleProximityMigrationData;
 class CPed;
 class CNetworkScServerConnection;
+class CProjectBaseSyncDataNode;
 
 namespace YimMenu::Hooks
 {
@@ -84,6 +86,7 @@ namespace YimMenu::Hooks
 		extern void HandleNetGameEvent(rage::netEventMgr* pEventMgr, CNetGamePlayer* pSourcePlayer, CNetGamePlayer* pTargetPlayer, NetEventType type, int index, int handledBits, std::int16_t unk, rage::datBitBuffer* buffer);
 		extern int HandleCloneCreate(void* mgr, CNetGamePlayer* sender, uint16_t objectType, uint16_t objectId, int flags, void* encryptedMem, rage::datBitBuffer* buffer, int a8, int a9, bool isQueued);
 		extern int HandleCloneSync(void* mgr, CNetGamePlayer* src, CNetGamePlayer* dst, uint16_t objectType, uint16_t objectId, rage::datBitBuffer* buffer, int a7, int a8, void* a9);
+		extern bool PackCloneCreate(void* mgr, rage::netObject* object, CNetGamePlayer* dst, rage::datBitBuffer* buffer);
 		extern bool CanApplyData(rage::netSyncTree* tree, rage::netObject* object);
 		extern void ResetSyncNodes();
 		extern bool HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst);
@@ -91,11 +94,11 @@ namespace YimMenu::Hooks
 		extern bool ReceiveNetMessage(void* a1, void* ncm, rage::netConnection::InFrame* frame);
 		extern bool HandlePresenceEvent(uint64_t a1, rage::rlGamerInfo* gamerInfo, unsigned int sender, const char** payload, const char* channel);
 		extern bool PPostMessage(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
-		extern bool SerializeServerRPC(rage::ServerRPCSerializer* ser, void* a2, const char* message, void* def, void* structure, const char* rpc_guid, void* a7);
-		extern bool ReceiveServerMessage(void* a1, rage::ServerMsg* a2); // doesn't receive all messages
+		extern bool SerializeServerRPC(rage::ServerRPCSerializer* serializer, void* a2, const char* message, void* def, void* structure, const char* RPCGuid, void* a7);
+		extern bool ReceiveServerMessage(void* a1, rage::ServerMsg* message); // doesn't receive all messages
 		extern bool ReceiveArrayUpdate(void* array, CNetGamePlayer* sender, rage::datBitBuffer* buffer, int size, int16_t cycle);
-
 		extern void* CreatePoolItem(PoolUtils<Entity>* pool);
+		extern int HandleCloneRemove(void* mgr, CNetGamePlayer* sender, CNetGamePlayer* target, uint16_t objectId, int ownershipToken, bool unk);
 	}
 
 	namespace Voice
@@ -105,6 +108,8 @@ namespace YimMenu::Hooks
 
 		extern int EnumerateAudioDevices(CFoundDevice* devices, int count, int flags);
 		extern HRESULT DirectSoundCaptureCreate(GUID* guid, IDirectSoundCapture** sound, void* unknown);
+		extern void SendVoicePacket(void* net_cxn_mgr, rage::netPeerAddress* address, int voice_cxn, void* packet, int size, int flags);
+		extern bool WriteVoiceInfoData(rage::datBitBuffer* buffer, __int64 data);
 	}
 
 	namespace Misc
@@ -125,6 +130,7 @@ namespace YimMenu::Hooks
 
 	namespace Spoofing
 	{
+		extern void WriteNodeData(CProjectBaseSyncDataNode* node, rage::netObject* object, rage::datBitBuffer* buffer, void* logger, bool update);
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
 		extern bool SendNetInfoToLobby(rage::rlGamerInfo* local_player, int64_t a2, int64_t a3, DWORD* a4);
 		extern void WriteVPMData(void* vehicle, CVehicleProximityMigrationData* data);

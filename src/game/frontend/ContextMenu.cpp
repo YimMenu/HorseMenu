@@ -25,7 +25,6 @@ namespace YimMenu
 		return std::abs(screenPos.x - 0.5) + std::abs(screenPos.y - 0.5);
 	}
 
-	// TODO: Refactor this - LOS check
 	inline int GetEntityHandleClosestToMiddleOfScreen(bool includePlayers, bool includePeds, bool includeVehicles, bool includeObjects)
 	{
 		int closestHandle{};
@@ -63,19 +62,19 @@ namespace YimMenu
 
 		if (includeVehicles)
 		{
-			for (Entity obj : Pools::GetObjects())
+			for (Entity veh : Pools::GetVehicles())
 			{
-				if (obj.IsValid() || obj.GetPointer<void*>())
-					updateClosestEntity(obj.GetHandle());
+				if (veh.IsValid() || veh.GetPointer<void*>())
+					updateClosestEntity(veh.GetHandle());
 			}
 		}
 
 		if (includeObjects)
 		{
-			for (Entity veh : Pools::GetVehicles())
+			for (Entity obj : Pools::GetObjects())
 			{
-				if (veh.IsValid() || veh.GetPointer<void*>())
-					updateClosestEntity(veh.GetHandle());
+				if (obj.IsValid() || obj.GetPointer<void*>())
+					updateClosestEntity(obj.GetHandle());
 			}
 		}
 

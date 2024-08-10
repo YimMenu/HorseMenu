@@ -1,3 +1,4 @@
+#include "core/commands/FloatCommand.hpp"
 #include "core/commands/LoopedCommand.hpp"
 #include "game/backend/Self.hpp"
 #include "game/frontend/GUI.hpp"
@@ -9,6 +10,8 @@
 
 namespace YimMenu::Features
 {
+	static FloatCommand _FreecamSpeed{"freecamspeed", "Freecam Speed", "How fast the freecam will move positions", 0.01f, 10.0f, 0.10f};
+
 	class Freecam : public LoopedCommand
 	{
 		using LoopedCommand::LoopedCommand;
@@ -37,33 +40,38 @@ namespace YimMenu::Features
 			if (GUI::IsOpen())
 				return;
 			Vector3 PosChange{};
-			static float speed = 0.5f;
 			static float accel = 0.0f;
 
-			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (Hash)NativeInputs::INPUT_JUMP))
+			// Left Shift
+			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (Hash)NativeInputs::INPUT_SPRINT))
 			{
-				PosChange.z += speed / 2;
-			} // Left Shift
+				PosChange.z += _FreecamSpeed.GetState() / 2;
+			}
+			// Left Control
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_DUCK) || PAD::IS_DISABLED_CONTROL_PRESSED(0, (int)NativeInputs::INPUT_HORSE_STOP))
 			{
-				PosChange.z -= speed / 2;
-			} // Left Control
+				PosChange.z -= _FreecamSpeed.GetState() / 2;
+			}
+			// Forward
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (Hash)NativeInputs::INPUT_MOVE_UP_ONLY))
 			{
-				PosChange.y += speed;
-			} // Forward
+				PosChange.y += _FreecamSpeed.GetState();
+			}
+			// Backward
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (Hash)NativeInputs::INPUT_MOVE_DOWN_ONLY))
 			{
-				PosChange.y -= speed;
-			} // Backward
+				PosChange.y -= _FreecamSpeed.GetState();
+			}
+			// Left
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (Hash)NativeInputs::INPUT_MOVE_LEFT_ONLY))
 			{
-				PosChange.x -= speed;
-			} // Left
+				PosChange.x -= _FreecamSpeed.GetState();
+			}
+			// Right
 			if (PAD::IS_DISABLED_CONTROL_PRESSED(0, (Hash)NativeInputs::INPUT_MOVE_RIGHT_ONLY))
 			{
-				PosChange.x += speed;
-			} // Right
+				PosChange.x += _FreecamSpeed.GetState();
+			}
 
 
 			if (PosChange.x == 0.0f && PosChange.y == 0.0f && PosChange.z == 0.0f)
