@@ -15,29 +15,35 @@ namespace YimMenu::Features
 
 namespace YimMenu::Hooks
 {
-	bool Protections::ReceiveServerMessage(void* a1, rage::ServerMsg* a2)
+	bool Protections::ReceiveServerMessage(void* a1, rage::ServerMsg* message)
 	{
 		if (Features::_LogServerMessages.GetState())
 		{
-			LOG(INFO) << __FUNCTION__ << ": " << a2->GetName() << ": "
-			          << hexStr((unsigned char*)a2->GetMsgData()->data, a2->GetMsgData()->size);
+			LOG(INFO) << __FUNCTION__ << ": " << message->GetName() << ": "
+			          << hexStr((unsigned char*)message->GetMsgData()->data, message->GetMsgData()->size);
 		}
-		return BaseHook::Get<ReceiveServerMessage, DetourHook<decltype(&ReceiveServerMessage)>>()->Original()(a1, a2);
+
+		return BaseHook::Get<ReceiveServerMessage, DetourHook<decltype(&ReceiveServerMessage)>>()->Original()(a1, message);
 	}
 
-	bool Protections::SerializeServerRPC(rage::ServerRPCSerializer* ser, void* a2, const char* message, void* def, void* structure, const char* rpc_guid, void* a7)
+	bool Protections::SerializeServerRPC(rage::ServerRPCSerializer* serializer, void* a2, const char* message, void* def, void* structure, const char* RPCGuid, void* a7)
 	{
-		bool ret = BaseHook::Get<SerializeServerRPC, DetourHook<decltype(&SerializeServerRPC)>>()->Original()(ser, a2, message, def, structure, rpc_guid, a7);
+		bool ret = BaseHook::Get<SerializeServerRPC, DetourHook<decltype(&SerializeServerRPC)>>()->Original()(serializer, a2, message, def, structure, RPCGuid, a7);
+
 		if (Features::_LogServerMessages.GetState())
 		{
-			LOG(INFO) << __FUNCTION__ << ": " << message << ": " << hexStr((unsigned char*)ser->GetData(), ser->GetSize());
-			if (rpc_guid)
+			LOG(INFO) << __FUNCTION__ << ": " << message << ": "
+			          << hexStr((unsigned char*)serializer->GetData(), serializer->GetSize());
+
+			if (RPCGuid)
 				LOG(INFO) << "RPC Guid"
 				             " = "
-				          << rpc_guid;
+				          << RPCGuid;
 		}
+
 		if (Joaat(message) == "UseItems"_J && Features::_UnlimitedItems.GetState())
 			return false;
+
 		return ret;
 	}
 }

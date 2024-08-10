@@ -26,6 +26,7 @@ namespace YimMenu
 		void CallImpl(const std::vector<uint64_t>& args, void* returnValue = 0, uint32_t returnSize = 0);
 
 		void StaticCallImpl(const std::vector<uint64_t>& args, void* returnValue = 0, uint32_t returnSize = 0);
+
 	public:
 		ScriptFunction(joaat_t hash, SimplePattern pattern);
 
@@ -33,7 +34,7 @@ namespace YimMenu
 		Ret StaticCall(Args... args)
 		{
 			std::vector<uint64_t> params;
-			(params.push_back(static_cast<std::uint64_t>(args)), ...);
+			(params.push_back(*reinterpret_cast<std::uint64_t*>(&args)), ...);
 
 			if constexpr (!std::is_same_v<Ret, void>)
 			{
@@ -51,7 +52,7 @@ namespace YimMenu
 		Ret Call(Args... args)
 		{
 			std::vector<uint64_t> params;
-			(params.push_back(static_cast<std::uint64_t>(args)), ...);
+			(params.push_back(*reinterpret_cast<std::uint64_t*>(&args)), ...);
 
 			if constexpr (!std::is_same_v<Ret, void>)
 			{
@@ -64,12 +65,12 @@ namespace YimMenu
 				CallImpl(params);
 			}
 		}
-		
+
 		template<typename... Args>
 		void operator()(Args... args)
 		{
 			std::vector<uint64_t> params;
-			(params.push_back(static_cast<std::uint64_t>(args)), ...);
+			(params.push_back(*reinterpret_cast<std::uint64_t*>(&args)), ...);
 			CallImpl(params);
 		}
 	};

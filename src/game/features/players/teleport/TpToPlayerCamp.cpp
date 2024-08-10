@@ -6,32 +6,40 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include "util/teleport.hpp"
 
+#include <script/globals/NetCampHostData.hpp>
+
 namespace YimMenu::Features
 {
+	static bool IsPlayerUsingCamp(NET_HOST_CAMP& camp, int id)
+	{
+		if (camp.Owner == id)
+			return true;
+
+		for (int i = 0; i < camp.TentOwners.Size; i++)
+			if (camp.TentOwners[i] == id)
+				return true;
+
+		return false;
+	}
+
 	class TpToPlayerCamp: public PlayerCommand
 	{
 		using PlayerCommand::PlayerCommand;
-		static constexpr auto PlayerList = ScriptGlobal(1141332);
+		static constexpr auto netCampHostData = ScriptGlobal(1141332);
 
 		virtual void OnCall(Player player) override
 		{
-			if (!PlayerList.CanAccess())
+			if (!netCampHostData.CanAccess())
 				return;
 
 			for (int i = 0; i < 32; i++)
 			{
-				if (*PlayerList.At(i, 27).At(9).As<int*>() == player.GetId())
+				if (IsPlayerUsingCamp(netCampHostData.As<NetCampHostData*>()->Camps[i], player.GetId()))
 				{
-					auto Camp = ScriptGlobal(1141332).At(i, 27).At(20);
-
-					if (!Camp.CanAccess())
-						return;
-
-					Vector3 CampCoords = *Camp.As<Vector3*>();
+					Vector3 CampCoords = netCampHostData.As<NetCampHostData*>()->Camps[i].Position;
 					if (CampCoords != Vector3(0.f, 0.f, 0.f))
 					{
-						if(YimMenu::Teleport::TeleportEntity(Self::GetPed().GetHandle(), CampCoords + Vector3(1, 0, 0), true))
-							g_Spectating = false;
+						YimMenu::Teleport::TeleportEntity(Self::GetPed().GetHandle(), CampCoords + Vector3(1, 0, 0), true);
 					}
 					else
 					{

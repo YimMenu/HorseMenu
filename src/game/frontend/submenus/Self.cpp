@@ -142,7 +142,6 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("quickskin"_J));
 
@@ -157,10 +156,13 @@ namespace YimMenu::Submenus
 		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistleclarity"_J, "Clarity")));
 		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistleshape"_J, "Shape")));
 
-		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
+		movementGroup->AddItem(std::make_shared<BoolCommandItem>("climbsteepslopes"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superrun"_J));
+		movementGroup->AddItem(std::make_shared<BoolCommandItem>("noclip"_J));
+		movementGroup->AddItem(std::make_shared<ConditionalItem>("noclip"_J, std::make_shared<FloatCommandItem>("noclipspeed"_J)));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("freecam"_J));
+		movementGroup->AddItem(std::make_shared<ConditionalItem>("freecam"_J, std::make_shared<FloatCommandItem>("freecamspeed"_J)));
 
 		main->AddItem(globalsGroup);
 		main->AddItem(toolsGroup);
@@ -207,6 +209,8 @@ namespace YimMenu::Submenus
 		auto vehicleFunGroup     = std::make_shared<Group>("Fun");
 
 		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
+		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclenodetach"_J));
+		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("flaminghoovesdraft"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
 
 		vehicleFunGroup->AddItem(std::make_shared<BoolCommandItem>("superdrive"_J));

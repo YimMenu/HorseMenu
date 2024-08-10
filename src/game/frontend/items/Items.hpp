@@ -1,3 +1,4 @@
+#pragma once
 #include "core/frontend/manager/UIItem.hpp"
 #include "util/Joaat.hpp"
 #include "game/frontend/GUI.hpp"

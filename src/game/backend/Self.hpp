@@ -2,6 +2,7 @@
 #include "game/rdr/Player.hpp"
 #include "game/rdr/Ped.hpp"
 #include "game/rdr/Entity.hpp"
+#include "game/rdr/Vehicle.hpp"
 
 namespace YimMenu
 {
@@ -10,7 +11,7 @@ namespace YimMenu
 		Ped m_SelfPed;
 		Player m_SelfPlayer;
 		Ped m_Mount;
-		Entity m_Vehicle;
+		Vehicle m_Vehicle;
 
 	public:
 		static Ped GetPed()
@@ -28,7 +29,7 @@ namespace YimMenu
 			return GetInstance().m_Mount;
 		}
 
-		static Entity GetVehicle()
+		static Vehicle GetVehicle()
 		{
 			return GetInstance().m_Vehicle;
 		}

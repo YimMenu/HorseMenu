@@ -7,7 +7,6 @@ namespace YimMenu
     {
     public:
         BaseObj(const std::filesystem::path& path);
-
         [[nodiscard]] bool Exists() const;
         const std::filesystem::path& Path() const;
 
@@ -17,7 +16,7 @@ namespace YimMenu
         }
 
     protected:
-        const std::filesystem::path m_Path;
+        std::filesystem::path m_Path;
 
     };
 }

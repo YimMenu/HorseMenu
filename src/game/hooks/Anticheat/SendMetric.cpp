@@ -18,7 +18,7 @@ namespace YimMenu::Hooks
 {
 	bool Anticheat::SendMetric(void* manager, rage::rlMetric* metric)
 	{
-		static auto bad_metrics = std::unordered_set<std::string_view>({"PCSETTINGS", "CHEAT", "WEATHER", "FIRST_VEH", "HARDWARE_OS", "HARDWARE_CPU", "HARDWARE_GPU", "HARDWARE_MOBO", "HARDWARE_MEM", "CASH_CREATED", "PELLETDROPS"});
+		static auto bad_metrics = std::unordered_set<std::string_view>({"PCSETTINGS", "CHEAT", "WEATHER", "FIRST_VEH", "HARDWARE_OS", "HARDWARE_CPU", "HARDWARE_GPU", "HARDWARE_MOBO", "HARDWARE_MEM", "CASH_CREATED", "PELLETDROPS", "GAMESERVER_TXN_CLAIMLOOT"});
 		char buffer[256]{};
 		rage::rlJson serializer(buffer, sizeof(buffer));
 

@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "core/filemgr/File.hpp"
+
 namespace YimMenu
 {
 #define ADD_COLOR_TO_STREAM(color) "\x1b[" << int(color) << "m"
@@ -19,7 +21,7 @@ namespace YimMenu
 		LogHelper& operator=(LogHelper&&)      = delete;
 
 		static void Destroy();
-		static bool Init(const std::string_view consoleName, const std::filesystem::path& file, const bool attachConsole = true);
+		static bool Init(const std::string_view consoleName, File file, const bool attachConsole = true);
 
 		static void ToggleConsole(bool toggle);
 
@@ -33,12 +35,14 @@ namespace YimMenu
 		}
 
 		void DestroyImpl();
-		bool InitImpl(const std::string_view consoleName, const std::filesystem::path& file, const bool attachConsole);
+		bool InitImpl(const std::string_view consoleName, File file, const bool attachConsole);
 
 		void ToggleConsoleImpl(bool toggle);
 
 		void CloseOutputStreams();
 		void OpenOutputStreams();
+
+		void AttemptCreateBackup();
 
 	private:
 		bool m_AttachConsole;
@@ -49,7 +53,7 @@ namespace YimMenu
 		HANDLE m_ConsoleHandle;
 
 		std::ofstream m_ConsoleOut;
-		std::filesystem::path m_File;
+		File m_File = std::filesystem::path();
 		std::ofstream m_FileOut;
 	};
 }

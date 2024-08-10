@@ -1,5 +1,6 @@
 #include "core/commands/LoopedCommand.hpp"
 #include "game/backend/Self.hpp"
+#include "game/rdr/Natives.hpp"
 
 namespace YimMenu::Features
 {
@@ -9,14 +10,36 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (Self::GetVehicle())
-				Self::GetVehicle().SetInvincible(true);
+			auto veh = Self::GetVehicle();
+			if (veh)
+			{
+				veh.SetInvincible(true);
+				if (veh.IsDraft())
+				{
+					for (int i = 0; i < veh.GetNumDraftAnimals(); i++)
+					{
+						auto ped = veh.GetPedInHarness(i);
+						ped.SetInvincible(true);
+					}
+				}
+			}
 		}
 
 		virtual void OnDisable() override
 		{
-			if (Self::GetVehicle())
-				Self::GetVehicle().SetInvincible(false);
+			auto veh = Self::GetVehicle();
+			if (veh)
+			{
+				veh.SetInvincible(false);
+				if (veh.IsDraft())
+				{
+					for (int i = 0; i < veh.GetNumDraftAnimals(); i++)
+					{
+						auto ped = veh.GetPedInHarness(i);
+						ped.SetInvincible(false);
+					}
+				}
+			}
 		}
 	};
 

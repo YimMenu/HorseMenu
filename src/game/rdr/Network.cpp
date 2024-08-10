@@ -4,6 +4,7 @@
 #include "game/backend/Self.hpp"
 #include "util/Helpers.hpp" /// TODO WHY DOES THIS STILL EXIST?!
 
+#include <network/netObject.hpp>
 #include <network/CNetObjectMgr.hpp>
 
 namespace YimMenu::Network
@@ -19,7 +20,7 @@ namespace YimMenu::Network
 		return 0;
 	}
 
-	void ForceRemoveNetworkEntity(std::uint16_t net_id, int ownership_token, bool delete_locally)
+	void ForceRemoveNetworkEntity(std::uint16_t net_id, int ownership_token, bool delete_locally, Player for_player)
 	{
 		auto mapped_id = (*Pointers.ObjectIdMap)[net_id];
 
@@ -31,6 +32,7 @@ namespace YimMenu::Network
 		{
 			remove_buf.Write<std::uint16_t>(mapped_id, 13);
 			remove_buf.Write<int>(GetNextTokenValue(ownership_token), 5);
+			remove_buf.Write<int>(false, 1);
 			msgs_written++;
 		}
 		else
@@ -52,16 +54,28 @@ namespace YimMenu::Network
 		pack.GetBuffer().Write(remove_buf.m_BitsRead, 13);
 		Helpers::WriteArray(&buf, remove_buf.m_BitsRead, &pack.GetBuffer());
 	
-		for (auto& [_, player] : Players::GetPlayers())
+		if (for_player.IsValid())
 		{
-			if (player != Self::GetPlayer())
+			pack.Send(for_player, 7);
+		}
+		else
+		{
+			for (auto& [_, player] : Players::GetPlayers())
 			{
-				pack.Send(player, 7);
+				if (player != Self::GetPlayer())
+				{
+					pack.Send(player, 7);
+				}
 			}
 		}
 
 		if (delete_locally)
 			if (auto object = Pointers.GetNetObjectById(net_id))
 				(*Pointers.NetworkObjectMgr)->UnregisterNetworkObject(object, 8, true, true);
+	}
+
+	void Network::ForceRemoveNetworkEntity(rage::netObject* object, bool delete_locally, Player for_player)
+	{
+		ForceRemoveNetworkEntity(object->m_ObjectId, object->m_OwnershipToken, delete_locally, for_player);
 	}
 }

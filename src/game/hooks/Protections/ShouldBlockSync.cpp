@@ -1,18 +1,22 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "game/backend/FiberPool.hpp"
+#include "game/backend/PlayerData.hpp"
 #include "game/backend/Protections.hpp"
+#include "game/backend/Self.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
-#include "game/rdr/Nodes.hpp"
 #include "game/rdr/Network.hpp"
-#include "game/backend/FiberPool.hpp"
+#include "game/rdr/Nodes.hpp"
+#include "game/rdr/data/PedModels.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/netObject.hpp>
 #include <network/rlGamerInfo.hpp>
 #include <network/sync/CProjectBaseSyncDataNode.hpp>
+#include <network/sync/animal/CAnimalCreationData.hpp>
 #include <network/sync/object/CObjectCreationData.hpp>
 #include <network/sync/ped/CPedAttachData.hpp>
 #include <network/sync/ped/CPedCreationData.hpp>
@@ -20,10 +24,15 @@
 #include <network/sync/physical/CPhysicalAttachData.hpp>
 #include <network/sync/pickup/CPickupCreationData.hpp>
 #include <network/sync/player/CPlayerAppearanceData.hpp>
+#include <network/sync/player/CPlayerCreationData.hpp>
+#include <network/sync/player/CPlayerGameStateUncommonData.hpp>
+#include <network/sync/projectile/CProjectileCreationData.hpp>
+#include <network/sync/propset/CPropSetCreationData.hpp>
 #include <network/sync/vehicle/CVehicleCreationData.hpp>
 #include <network/sync/vehicle/CVehicleGadgetData.hpp>
 #include <network/sync/vehicle/CVehicleProximityMigrationData.hpp>
 #include <ped/CPed.hpp>
+#include <rage/vector.hpp>
 #include <unordered_set>
 
 
@@ -39,11 +48,16 @@
 	          << " Y: " << ((node->GetData<type>().field)).y << " Z: " << ((node->GetData<type>().field)).z \
 	          << " W: " << ((node->GetData<type>().field)).w;
 #define LOG_FIELD_APPLY(type, field, func) LOG(INFO) << "\t" << #field << ": " << func((node->GetData<type>().field));
+#define LOG_FIELD_UNDOCUM(num, type) \
+	LOG(INFO) << "\tFIELD_" << #num << ": " << *(type*)((&node->GetData<char>()) + num);
 
 namespace YimMenu::Features
 {
 	BoolCommand _LogClones("logclones", "Log Clones", "Log clone creates and clone syncs");
 	BoolCommand _AllowRemoteTPs("allowremotetp", "Allow Remote Teleports", "Allow trusted players to remote teleport you!");
+
+	BoolCommand _BlockSpectate("blockspectate", "Block Spectate", "Attempts to prevent modders from spectating you", true);
+	BoolCommand _BlockSpectateSession("blockspectatesession", "Block Spectate for Session", "Attempts to prevent modders from spectating anyone", false);
 }
 
 namespace
@@ -66,6 +80,11 @@ namespace
 			LOG_FIELD(CPedCreationData, m_PopulationType);
 			LOG_FIELD_H(CPedCreationData, m_ModelHash);
 			LOG_FIELD_B(CPedCreationData, m_BannedPed);
+			break;
+		case "CAnimalCreationNode"_J:
+			LOG_FIELD(CAnimalCreationData, m_PopulationType);
+			LOG_FIELD_H(CAnimalCreationData, m_ModelHash);
+			LOG_FIELD_B(CAnimalCreationData, m_BannedPed);
 			break;
 		case "CObjectCreationNode"_J:
 			LOG_FIELD(CObjectCreationData, m_ObjectType);
@@ -101,7 +120,6 @@ namespace
 			LOG_FIELD(CVehicleProximityMigrationData, m_Timestamp);
 			LOG_FIELD_B(CVehicleProximityMigrationData, m_HasPositionData);
 			LOG_FIELD_V3(CVehicleProximityMigrationData, m_Position);
-			LOG_FIELD_V3(CVehicleProximityMigrationData, m_Velocity);
 			LOG_FIELD(CVehicleProximityMigrationData, m_UnkAmount);
 			break;
 		case "CPedTaskTreeNode"_J:
@@ -113,6 +131,10 @@ namespace
 				for (int j = 0; j < node->GetData<CPedTaskTreeData>().m_Trees[i].m_NumTasks; j++)
 				{
 					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskType);
+					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskUnk1);
+					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskTreeType);
+					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskSequenceId);
+					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskTreeDepth);
 				}
 			}
 			LOG_FIELD_H(CPedTaskTreeData, m_ScriptCommand);
@@ -123,19 +145,24 @@ namespace
 			LOG_FIELD(CPedAttachData, m_AttachObjectId);
 			break;
 		case "CVehicleGadgetNode"_J:
-			LOG_FIELD_B(CVehicleGadgetDataNode, m_HasPosition);
-			LOG_FIELD(CVehicleGadgetDataNode, m_Position[0]);
-			LOG_FIELD(CVehicleGadgetDataNode, m_Position[1]);
-			LOG_FIELD(CVehicleGadgetDataNode, m_Position[2]);
-			LOG_FIELD(CVehicleGadgetDataNode, m_Position[3]);
-			LOG_FIELD(CVehicleGadgetDataNode, m_NumGadgets);
-			if (node->GetData<CVehicleGadgetDataNode>().m_NumGadgets <= 2)
+			LOG_FIELD_B(CVehicleGadgetData, m_HasPosition);
+			LOG_FIELD(CVehicleGadgetData, m_Position[0]);
+			LOG_FIELD(CVehicleGadgetData, m_Position[1]);
+			LOG_FIELD(CVehicleGadgetData, m_Position[2]);
+			LOG_FIELD(CVehicleGadgetData, m_Position[3]);
+			LOG_FIELD(CVehicleGadgetData, m_NumGadgets);
+			if (node->GetData<CVehicleGadgetData>().m_NumGadgets <= 2)
 			{
-				for (int i = 0; i < node->GetData<CVehicleGadgetDataNode>().m_NumGadgets; i++)
+				for (int i = 0; i < node->GetData<CVehicleGadgetData>().m_NumGadgets; i++)
 				{
-					LOG_FIELD(CVehicleGadgetDataNode, m_Gadgets[i].m_Type);
+					LOG_FIELD(CVehicleGadgetData, m_Gadgets[i].m_Type);
 				}
 			}
+			break;
+		case "CProjectileCreationNode"_J:
+			LOG_FIELD_UNDOCUM(4, int);
+			LOG_FIELD_UNDOCUM(8, int);
+			LOG_FIELD_UNDOCUM(0x2C, int);
 			break;
 		}
 	}
@@ -375,13 +402,60 @@ namespace
 		{
 			auto& data = node->GetData<CPedTaskTreeData>();
 
-			if (data.m_ScriptCommand == 0x2E85A751 && data.m_ScriptTaskStage == 1)
+			if (type == NetObjType::Player && data.m_ScriptCommand == 0x811E343C && data.m_ScriptTaskStage == 3)
 			{
-				// TODO: really bad protection
-				LOG(WARNING) << "Blocked unknown task crash from " << Protections::GetSyncingPlayer().GetName();
-				return true;
+				if (data.GetNumTaskTrees() == 1 && data.m_Trees[0].m_NumTasks == 2 && data.m_Trees[0].m_Tasks[0].m_TaskType == 320
+				    && data.m_Trees[0].m_Tasks[0].m_TaskUnk1 == 255 && data.m_Trees[0].m_Tasks[0].m_TaskTreeType == 0
+				    && data.m_Trees[0].m_Tasks[1].m_TaskType == 609 && data.m_Trees[0].m_Tasks[1].m_TaskUnk1 == 1
+				    && data.m_Trees[0].m_Tasks[1].m_TaskTreeType == 1)
+				{
+					SyncCrashBlocked("Invalid player task crash");
+					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
+					return true;
+				}
 			}
 
+			if (type == NetObjType::Animal && data.m_ScriptCommand == 0xD5CBE228 && data.m_ScriptTaskStage == 1)
+			{
+				if (data.GetNumTaskTrees() == 1 && data.m_Trees[0].m_NumTasks == 1 && data.m_Trees[0].m_Tasks[0].m_TaskType == 322
+				    && data.m_Trees[0].m_Tasks[0].m_TaskUnk1 == 255 && data.m_Trees[0].m_Tasks[0].m_TaskTreeType == 0)
+				{
+					SyncCrashBlocked("Invalid animal task crash");
+					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
+					return true;
+				}
+
+				if (data.GetNumTaskTrees() == 1 && data.m_Trees[0].m_NumTasks == 2 && data.m_Trees[0].m_Tasks[0].m_TaskType == 322
+				    && data.m_Trees[0].m_Tasks[0].m_TaskUnk1 == 255 && data.m_Trees[0].m_Tasks[0].m_TaskTreeType == 0
+				    && data.m_Trees[0].m_Tasks[1].m_TaskType == 368 && data.m_Trees[0].m_Tasks[1].m_TaskUnk1 == 1
+				    && data.m_Trees[0].m_Tasks[1].m_TaskTreeType == 1)
+				{
+					SyncCrashBlocked("Invalid animal task crash");
+					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
+					return true;
+				}
+			}
+
+			for (int i = 0; i < data.GetNumTaskTrees(); i++)
+			{
+				for (int j = 0; j < data.m_Trees[i].m_NumTasks; j++)
+				{
+					if (data.m_Trees[i].m_Tasks[j].m_TaskType == -1)
+					{
+						SyncCrashBlocked("task fuzzer crash");
+						Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER); // no false positives possible
+						return true;
+					}
+
+					// TODO: better heuristics
+					if (data.m_Trees[i].m_Tasks[j].m_TaskTreeType == 31)
+					{
+						SyncCrashBlocked("task fuzzer crash");
+						Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER); // no false positives possible
+						return true;
+					}
+				}
+			}
 			break;
 		}
 		case "CPedAttachNode"_J:
@@ -394,7 +468,14 @@ namespace
 					SyncCrashBlocked("ped attachment");
 					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_ATTACH);
 					if (object->m_ObjectType != (int)NetObjType::Player)
+					{
 						DeleteSyncObject(object->m_ObjectId);
+					}
+					else
+					{
+						// delete us on their end
+						Network::ForceRemoveNetworkEntity(Self::GetPed().GetNetworkObjectId(), -1, false, Protections::GetSyncingPlayer());
+					}
 					return true;
 				}
 
@@ -408,12 +489,8 @@ namespace
 		}
 		case "CPropSetCreationNode"_J:
 		{
-			auto& data = node->GetData<int>();
-			//"Rainbow smash crash" from Nightfall
-			int64_t a2   = (int64_t)&data;
-			Hash hash    = *(int32_t*)(a2 + 16);
-			int32_t type = *(int32_t*)(a2 + 28);
-			if (hash == 0x97D540A4 || hash == 0x3701844F || type == 0xFFFFFFFFFFFFFFFF)
+			auto& data = node->GetData<CPropSetCreationData>();
+			if (data.m_Hash == 0x97D540A4 || data.m_Hash == 0x3701844F || data.m_Type == 0xFFFFFFFFFFFFFFFF)
 			{
 				SyncCrashBlocked("invalid propset crash");
 				return true;
@@ -422,13 +499,74 @@ namespace
 		}
 		case "CPlayerCreationNode"_J:
 		{
-			auto& playerModelHash = node->GetData<Hash>();
-			if (!STREAMING::IS_MODEL_A_PED(playerModelHash))
+			auto& data = node->GetData<CPlayerCreationData>();
+			if (!STREAMING::IS_MODEL_A_PED(data.m_Hash))
 			{
 				SyncCrashBlocked("invalid player creation crash");
 				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				// fix the crash instead of rejecting sync
-				playerModelHash = "MP_MALE"_J;
+				data.m_Hash = "MP_MALE"_J;
+			}
+			break;
+		}
+		case "CProjectileCreationNode"_J:
+		{
+			auto& data = node->GetData<CProjectileCreationData>();
+			if (!WEAPON::IS_WEAPON_VALID(data.m_WeaponHash))
+			{
+				SyncCrashBlocked("invalid projectile weapon crash");
+				return true;
+			}
+			break;
+		}
+		case "CPlayerGameStateUncommonNode"_J:
+		{
+			auto& data = node->GetData<CPlayerGameStateUncommonData>();
+			if (data.m_IsSpectating && !data.m_IsSpectatingStaticPos)
+			{
+				auto object = Pointers.GetNetObjectById(data.m_SpectatorId);
+				if (object && ((NetObjType)object->m_ObjectType) == NetObjType::Player)
+				{
+					if (Protections::GetSyncingPlayer())
+					{
+						auto old_spectator = Protections::GetSyncingPlayer().GetData().m_SpectatingPlayer;
+						Protections::GetSyncingPlayer().GetData().m_SpectatingPlayer = object->m_OwnerId;
+
+						if (old_spectator != Protections::GetSyncingPlayer().GetData().m_SpectatingPlayer)
+						{
+							bool spectating_local = Protections::GetSyncingPlayer().GetData().m_SpectatingPlayer == Self::GetPlayer();
+							if (spectating_local)
+							{
+								Notifications::Show("Protections",
+								    std::format("{} is spectating you", Protections::GetSyncingPlayer().GetName()),
+								    NotificationType::Warning);
+							}
+
+							if (Features::_BlockSpectate.GetState()
+							    && (spectating_local || Features::_BlockSpectateSession.GetState())
+							    && Protections::GetSyncingPlayer().GetData().m_SpectatingPlayer != Protections::GetSyncingPlayer())
+							{
+								Network::ForceRemoveNetworkEntity(
+								    Protections::GetSyncingPlayer().GetData().m_SpectatingPlayer.GetPed().GetNetworkObjectId(),
+								    -1,
+								    false,
+								    Protections::GetSyncingPlayer());
+							}
+						}
+
+						Protections::GetSyncingPlayer().AddDetection(Detection::USED_SPECTATE);
+					}
+				}
+				else
+				{
+					if (Protections::GetSyncingPlayer())
+						Protections::GetSyncingPlayer().GetData().m_SpectatingPlayer = nullptr;
+				}
+			}
+			else
+			{
+				if (Protections::GetSyncingPlayer())
+					Protections::GetSyncingPlayer().GetData().m_SpectatingPlayer = nullptr;
 			}
 			break;
 		}

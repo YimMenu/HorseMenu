@@ -60,7 +60,7 @@ namespace YimMenu::Scripts
 
 	const char* GetScriptName(joaat_t hash)
 	{
-		if (*Pointers.IsSessionStarted)
+		if (UsingMPScripts())
 		{
 			for (int i = 0; i < Data::g_MpScriptNames.size(); i++)
 			{
@@ -84,6 +84,11 @@ namespace YimMenu::Scripts
 	{
 		auto handler = reinterpret_cast<rage::scriptHandlerNetComponent*>(thread->m_HandlerNetComponent);
 		handler->DoHostMigration(Pointers.NetworkPlayerMgr->m_LocalPlayer, 0xFFFF, true);
+	}
+
+	bool UsingMPScripts()
+	{
+		return Pointers.ScriptGlobals[14] != nullptr; // TODO
 	}
 
 	bool RequestScript(joaat_t script)

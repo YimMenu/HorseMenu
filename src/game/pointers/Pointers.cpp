@@ -402,6 +402,11 @@ namespace YimMenu
 			CreatePoolItem = ptr.Add(1).Rip().As<PVOID>();
 		});
 
+		constexpr auto handleCloneRemovePtrn = Pattern<"48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 54 41 56 41 57 48 81 EC ? ? ? ? 4D 8B E0 4C 8B FA">("HandleCloneRemove");
+		scanner.Add(handleCloneRemovePtrn, [this](PointerCalculator ptr) {
+			HandleCloneRemove = ptr.As<PVOID>();
+		});
+
 		constexpr auto handleSessionEventPtrn = Pattern<"83 F9 16 0F 8F 0B">("HandleSessionEvent");
 		scanner.Add(handleSessionEventPtrn, [this](PointerCalculator ptr) {
 			HandleSessionEvent = ptr.Sub(0x29).As<PVOID>();
@@ -420,6 +425,37 @@ namespace YimMenu
 		constexpr auto objectIdMapPtrn = Pattern<"83 C0 13 3D 00 20 00 00">("ObjectIdMap");
 		scanner.Add(objectIdMapPtrn, [this](PointerCalculator ptr) {
 			ObjectIdMap = ptr.Add(0x24).Rip().As<std::uint16_t**>();
+		});
+
+		constexpr auto writeNodeDataPtrn = Pattern<"48 8B 89 18 01 00 00 4C 8B 11 49 FF 62 10">("WriteNodeData");
+		scanner.Add(writeNodeDataPtrn, [this](PointerCalculator ptr) {
+			WriteNodeData = ptr.As<PVOID>();
+		});
+
+		constexpr auto totalProgramCountPtrn = Pattern<"44 3B CF 75 E9 41 8B DB">("TotalProgramCount");
+		scanner.Add(totalProgramCountPtrn, [this](PointerCalculator ptr) {
+			TotalProgramCount = ptr.Add(0xB).Rip().As<int*>() + 1;
+		});
+
+		constexpr auto sendVoicePacketPtrn = Pattern<"4C 8D 8C 24 B0 00 00 00 45 8B C4">("SendVoicePacket");
+		scanner.Add(sendVoicePacketPtrn, [this](PointerCalculator ptr) {
+			SendVoicePacket = ptr.Add(0x15).As<PVOID>();
+			GetPeerAddressByMessageId = ptr.Sub(0x18).Rip().As<Functions::GetPeerAddressByMessageId>();
+		});
+
+		constexpr auto writeVoiceInfoDataPtrn = Pattern<"8B 57 04 41 B8 07 00 00 00">("WriteVoiceInfoData");
+		scanner.Add(writeVoiceInfoDataPtrn, [this](PointerCalculator ptr) {
+			WriteVoiceInfoData = ptr.Sub(0x25).As<PVOID>();
+		});
+
+		constexpr auto friendRegistryPtrn = Pattern<"4C 8D 05 ? ? ? ? 48 8B CB E8 ? ? ? ? 84 C0 75 07 B8 4F 3D E1 01">("FriendRegistry");
+		scanner.Add(friendRegistryPtrn, [this](PointerCalculator ptr) {
+			FriendRegistry = ptr.Add(3).Rip().As<CFriend**>();
+		});
+
+		constexpr auto packCloneCreatePtrn = Pattern<"FF 90 90 01 00 00 33 DB">("PackCloneCreate");
+		scanner.Add(packCloneCreatePtrn, [this](PointerCalculator ptr) {
+			PackCloneCreate = ptr.Sub(0x34).As<PVOID>();
 		});
 
 		if (!scanner.Scan())

@@ -44,4 +44,22 @@ namespace YimMenu
 
 		return veh;
 	}
+
+	bool Vehicle::IsDraft()
+	{
+		ENTITY_ASSERT_VALID();
+		return VEHICLE::IS_DRAFT_VEHICLE(GetHandle());
+	}
+
+	int Vehicle::GetNumDraftAnimals()
+	{
+		ENTITY_ASSERT_VALID();
+		return VEHICLE::_GET_NUM_DRAFT_VEHICLE_HARNESS_PED(GetModel());
+	}
+
+	Entity Vehicle::GetPedInHarness(int id)
+	{
+		ENTITY_ASSERT_VALID();
+		return VEHICLE::_GET_PED_IN_DRAFT_HARNESS(GetHandle(), id);
+	}
 }

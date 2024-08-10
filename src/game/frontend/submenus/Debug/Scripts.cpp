@@ -116,7 +116,7 @@ namespace YimMenu::Submenus
 
 		if (ImGui::BeginCombo("Name", s_SelectedNewScriptName))
 		{
-			auto& map = *Pointers.IsSessionStarted ? Data::g_MpScriptNames : Data::g_SpScriptNames;
+			auto& map = Scripts::UsingMPScripts() ? Data::g_MpScriptNames : Data::g_SpScriptNames;
 			for (auto& el : map)
 			{
 				if (ImGui::Selectable(el.second, el.second == s_SelectedNewScriptName))

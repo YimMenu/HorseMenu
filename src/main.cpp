@@ -60,14 +60,7 @@ namespace YimMenu
 
 		while (g_Running)
 		{
-			// Needed incase UI is malfunctioning or for emergencies
-			if (GetAsyncKeyState(VK_DELETE) & 0x8000 && !*Pointers.IsSessionStarted)
-			{
-				g_Running = false;
-			}
-
-			std::this_thread::sleep_for(3000ms);
-			Settings::Save(); // TODO: move this somewhere else
+			Settings::Tick(); // TODO: move this somewhere else
 		}
 
 		LOG(INFO) << "Unloading";

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20.x)
 
-project(HorseMenu VERSION 0.0.1 DESCRIPTION "A new base using new C++ features optimised for speed and ease of use")
+project(HorseMenu VERSION 0.0.1 DESCRIPTION "HorseMenu, a beta-stage mod menu for Red Dead Redemption 2 and Red Dead Online, inspired by YimMenu, that protects against crashes and enhances your experience.")
 
 # libs
 include(cmake/vulkan.cmake)

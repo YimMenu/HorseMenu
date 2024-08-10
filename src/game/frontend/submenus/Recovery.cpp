@@ -119,7 +119,6 @@ namespace YimMenu::Submenus
 			}
 		}));
 		recoveryOptions->AddItem(std::make_shared<BoolCommandItem>("unlimiteditems"_J));
-		recoveryOptions->AddItem(std::make_shared<BoolCommandItem>("fastmoonshine"_J));
 		recovery->AddItem(spawnCollectiblesGroup);
 		recovery->AddItem(spawnHerbsGroup);
 		recovery->AddItem(recoveryOptions);

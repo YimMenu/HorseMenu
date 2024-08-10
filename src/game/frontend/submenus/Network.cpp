@@ -1,11 +1,11 @@
-#include "Network.hpp"
+﻿#include "Network.hpp"
 
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
 #include "core/frontend/Notifications.hpp"
-#include "game/backend/PlayerDatabase.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/backend/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Self.hpp"
@@ -17,11 +17,12 @@
 #include "util/Storage/Spoofing.hpp"
 #include "util/teleport.hpp"
 
+#include "Network/Voice.hpp"
+
 #include <map>
 #include <network/rlGamerHandle.hpp>
 #include <ranges>
 #include <string>
-#include "Network.hpp"
 
 
 namespace YimMenu::Submenus
@@ -60,15 +61,15 @@ namespace YimMenu::Submenus
 	    Submenu::Submenu("Network")
 	{
 		// TODO: this needs a rework
-		auto session          = std::make_shared<Category>("Session");
-		auto spoofing         = std::make_shared<Category>("Spoofing");
-		auto database         = std::make_shared<Category>("Player Database");
+		auto session              = std::make_shared<Category>("Session");
+		auto spoofing             = std::make_shared<Category>("Spoofing");
+		auto database             = std::make_shared<Category>("Player Database");
 		auto sessionSwitcherGroup = std::make_shared<Group>("Session Switcher");
-		auto teleportGroup  = std::make_shared<Group>("Teleport");
-		auto toxicGroup = std::make_shared<Group>("Toxic");
-		auto miscGroup = std::make_shared<Group>("Misc");
-		auto nameChangerGroup = std::make_shared<Group>("Name Changer");
-		auto blipSpoofingGroup = std::make_shared<Group>("Blip Spoofing");
+		auto teleportGroup        = std::make_shared<Group>("Teleport");
+		auto toxicGroup           = std::make_shared<Group>("Toxic");
+		auto miscGroup            = std::make_shared<Group>("Misc");
+		auto infoSpoofingGroup    = std::make_shared<Group>("Info Spoofing");
+		auto blipSpoofingGroup    = std::make_shared<Group>("Blip Spoofing");
 		auto sessionSpoofingGroup = std::make_shared<Group>("Session Spoofing");
 
 		sessionSwitcherGroup->AddItem(std::make_shared<Vector3CommandItem>("newsessionpos"_J));
@@ -92,7 +93,8 @@ namespace YimMenu::Submenus
 		session->AddItem(miscGroup);
 
 		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidegod"_J));
-		spoofing->AddItem(std::make_shared<BoolCommandItem>("voicechatoverride"_J));
+		spoofing->AddItem(std::make_shared<BoolCommandItem>("hidespectate"_J));
+
 		database->AddItem(std::make_shared<ImGuiItem>([] {
 			ImGui::SetNextItemWidth(300.f);
 			ImGui::PushID(3);
@@ -164,10 +166,10 @@ namespace YimMenu::Submenus
 					if (ImGui::Button("Join Player"))
 					{
 						FiberPool::Push([] {
-							using gp = void*(*)();
-							using join = void(*)(void*, rage::rlGamerHandle*, int);
+							using gp   = void* (*)();
+							using join = void (*)(void*, rage::rlGamerHandle*, int);
 
-							gp g = (gp)((__int64)GetModuleHandleA(0) + 0x22b9800);
+							gp g   = (gp)((__int64)GetModuleHandleA(0) + 0x22b9800);
 							join j = (join)((__int64)GetModuleHandleA(0) + 0x22d7080);
 
 							rage::rlGamerHandle hnd(current_player->rid);
@@ -203,39 +205,68 @@ namespace YimMenu::Submenus
 				ImGui::PopID();
 			}
 		}));
-		static std::string name_input_buf, color_spoof_buf = "";
-		nameChangerGroup->AddItem(std::make_shared<ImGuiItem>([=] {
-			static std::map<std::string, std::string> color_translations = {{"~e~", "Red"}, {"~f~", "Off White"}, {"~p~", "White"}, {"~o~", "Yellow"}, {"~q~", "Pure White"}, {"~d~", "Orange"}, {"~m~", "Light Grey"}, {"~t~", "Grey"}, {"~v~", "Black"}, {"~pa~", "Blue"}, {"~t1~", "Purple"}, {"~t2~", "Orange"}, {"~t3~", "Teal"}, {"~t4~", "Light Yellow"}, {"~t5~", "Pink"}, {"~t6~", "Green"}, {"~t7~", "Dark Blue"}, {"", "None"}};
+		static std::string nameBuf, colorBuf = "";
+		static const char* iconBuf = "";
+		infoSpoofingGroup->AddItem(std::make_shared<ImGuiItem>([=] {
+			static std::map<std::string, std::string> colors = {{"", "None"}, {"~e~", "Red"}, {"~f~", "Off White"}, {"~p~", "White"}, {"~o~", "Yellow"}, {"~q~", "Pure White"}, {"~d~", "Orange"}, {"~m~", "Light Grey"}, {"~t~", "Grey"}, {"~v~", "Black"}, {"~pa~", "Blue"}, {"~t1~", "Purple"}, {"~t2~", "Orange"}, {"~t3~", "Teal"}, {"~t4~", "Light Yellow"}, {"~t5~", "Pink"}, {"~t6~", "Green"}, {"~t7~", "Dark Blue"}};
+			static std::map<const char*, std::string> icons = {{"", "None"}, {"∑", "Rockstar Icon"}};
+			ImGui::Text("Spoofed data will not appear locally, and will only be visible when joining a new session,\n or when a player joins you");
 
+			ImGui::Text("Name");
+			ImGui::Checkbox("Spoof Name", &g_SpoofingStorage.spoofName);
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Spoof your Name");
 
-			InputTextWithHint("New Name", "Enter New Name", &name_input_buf).Draw();
-
-			if (ImGui::BeginCombo("Color Selection", color_translations[color_spoof_buf].c_str()))
+			if (ImGui::BeginCombo("Color Prefix", colors[colorBuf].c_str()))
 			{
-				for (auto& [code, translation] : color_translations)
+				for (auto& [code, translation] : colors)
 				{
-					if (ImGui::Selectable(translation.c_str(), code == color_spoof_buf))
+					if (ImGui::Selectable(translation.c_str(), code == colorBuf))
 					{
-						color_spoof_buf = code;
+						colorBuf = code;
 					}
 				}
 				ImGui::EndCombo();
 			}
 
+			if (ImGui::BeginCombo("Icon Prefix", icons[iconBuf].c_str()))
+			{
+				for (auto& [icon, translation] : icons)
+				{
+					if (ImGui::Selectable(translation.c_str(), icon == iconBuf))
+					{
+						iconBuf = icon;
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			InputTextWithHint("Spoofed Name", "Enter spoofed name", &nameBuf).Draw();
+
 			if (ImGui::Button("Set Spoofed Name"))
 			{
-				std::string concat_name        = std::string(color_spoof_buf) + name_input_buf;
-				g_SpoofingStorage.spoofed_name = concat_name;
+				std::string concatName        = std::string(colorBuf) + std::string(iconBuf) + nameBuf;
+				g_SpoofingStorage.spoofedName = concatName;
 			}
+
+			ImGui::Text("IP Address");
+			ImGui::Checkbox("Spoof IP", &g_SpoofingStorage.spoofIP);
 			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetTooltip("This will take affect once a new player joins the session. This effect does not appear locally.");
-			}
+				ImGui::SetTooltip("Spoof your IP");
+
+			ImGui::DragInt4("##ip_fields", g_SpoofingStorage.spoofedIP.data(), 0, 255);
+
+			ImGui::Text("Rockstar ID");
+			ImGui::Checkbox("Spoof RID", &g_SpoofingStorage.spoofRID);
+			ImGui::InputScalar("##rockstar_id_input", ImGuiDataType_U64, &g_SpoofingStorage.spoofedRID);
 		}));
+
+		blipSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofblip"_J));
+		blipSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofblip"_J, std::make_shared<ListCommandItem>("blipsprite"_J, "Blip")));
 		blipSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofprimaryicon"_J));
 		blipSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofprimaryicon"_J, std::make_shared<ListCommandItem>("primaryicon"_J, "Icon##primary")));
 		blipSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofsecondaryicon"_J));
-		blipSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofsecondaryicon"_J, std::make_shared<ListCommandItem>("secondaryicon"_J, "Icon##secondary"))); 
+		blipSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofsecondaryicon"_J, std::make_shared<ListCommandItem>("secondaryicon"_J, "Icon##secondary")));
 
 		auto discriminatorGroup = std::make_shared<Group>("", 1);
 		sessionSpoofingGroup->AddItem(std::make_shared<BoolCommandItem>("spoofdiscriminator"_J));
@@ -243,11 +274,15 @@ namespace YimMenu::Submenus
 		discriminatorGroup->AddItem(std::make_shared<CommandItem>("copydiscriminator"_J, "Copy Current"));
 		sessionSpoofingGroup->AddItem(std::make_shared<ConditionalItem>("spoofdiscriminator"_J, std::move(discriminatorGroup)));
 
-		spoofing->AddItem(nameChangerGroup);
+		spoofing->AddItem(infoSpoofingGroup);
 		spoofing->AddItem(blipSpoofingGroup);
 		spoofing->AddItem(sessionSpoofingGroup);
+
+		auto voice = BuildVoiceMenu();
+
 		AddCategory(std::move(session));
 		AddCategory(std::move(spoofing));
+		AddCategory(std::move(voice));
 		AddCategory(std::move(database));
 	}
 }

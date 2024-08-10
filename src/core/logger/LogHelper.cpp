@@ -1,15 +1,24 @@
 #include "LogHelper.hpp"
-
 #include "LogSink.hpp"
+
+#include "core/filemgr/FileMgr.hpp"
 
 namespace YimMenu
 {
+	template<typename TP>
+	static std::time_t to_time_t(TP tp)
+	{
+		using namespace std::chrono;
+		auto sctp = time_point_cast<system_clock::duration>(tp - TP::clock::now() + system_clock::now());
+		return system_clock::to_time_t(sctp);
+	}
+
 	void LogHelper::Destroy()
 	{
 		GetInstance().DestroyImpl();
 	}
 
-	bool LogHelper::Init(const std::string_view consoleName, const std::filesystem::path& file, const bool attachConsole)
+	bool LogHelper::Init(const std::string_view consoleName, File file, const bool attachConsole)
 	{
 		return GetInstance().InitImpl(consoleName, file, attachConsole);
 	}
@@ -31,7 +40,7 @@ namespace YimMenu
 			FreeConsole();
 	}
 
-	bool LogHelper::InitImpl(const std::string_view consoleName, const std::filesystem::path& file, const bool attachConsole)
+	bool LogHelper::InitImpl(const std::string_view consoleName, File file, const bool attachConsole)
 	{
 		m_ConsoleTitle  = consoleName;
 		m_File          = file;
@@ -59,6 +68,7 @@ namespace YimMenu
 			}
 		}
 
+		AttemptCreateBackup();
 		OpenOutputStreams();
 
 		Logger::Init();
@@ -107,5 +117,24 @@ namespace YimMenu
 		if (m_AttachConsole)
 			m_ConsoleOut.open("CONOUT$", std::ios_base::out | std::ios_base::app);
 		m_FileOut.open(m_File, std::ios::out | std::ios::trunc);
+	}
+
+	void LogHelper::AttemptCreateBackup()
+	{
+		if (m_File.Exists())
+		{
+			auto file_time  = std::filesystem::last_write_time(m_File.Path());
+			auto time_t     = to_time_t(file_time);
+			auto local_time = std::localtime(&time_t);
+
+			m_File.Move(std::format("./backup/{:0>2}-{:0>2}-{}-{:0>2}-{:0>2}-{:0>2}_{}",
+			    local_time->tm_mon + 1,
+			    local_time->tm_mday,
+			    local_time->tm_year + 1900,
+			    local_time->tm_hour,
+			    local_time->tm_min,
+			    local_time->tm_sec,
+			    m_File.Path().filename().string().c_str()));
+		}
 	}
 }

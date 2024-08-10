@@ -69,7 +69,7 @@ namespace YimMenu
 	            }},
 	        {"Copy Hash",
 	            [&](Entity entity) {
-		            Hash modelHash = ENTITY::GET_ENTITY_MODEL(entity.GetHandle());
+		            Hash modelHash = entity.GetModel();
 
 		            ImGui::SetClipboardText(std::format("0x{:08X}", (joaat_t)modelHash).c_str());
 		            LOG(INFO) << std::format("Copied hash 0x{:08X}", (joaat_t)modelHash).c_str();
@@ -99,7 +99,7 @@ namespace YimMenu
 	            }},
 	        {"Copy Hash",
 	            [&](Entity entity) {
-		            Hash modelHash = ENTITY::GET_ENTITY_MODEL(entity.GetHandle());
+		            Hash modelHash = entity.GetModel();
 
 		            ImGui::SetClipboardText(std::format("0x{:08X}", (joaat_t)modelHash).c_str());
 		            LOG(INFO) << std::format("Copied hash 0x{:08X}", (joaat_t)modelHash).c_str();
@@ -129,7 +129,7 @@ namespace YimMenu
 	            }},
 	        {"Copy Hash",
 	            [&](Entity entity) {
-		            Hash modelHash = ENTITY::GET_ENTITY_MODEL(entity.GetHandle());
+		            Hash modelHash = entity.GetModel();
 
 		            ImGui::SetClipboardText(std::format("0x{:08X}", (joaat_t)modelHash).c_str());
 		            LOG(INFO) << std::format("Copied hash 0x{:08X}", (joaat_t)modelHash).c_str();
