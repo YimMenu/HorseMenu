@@ -1,6 +1,7 @@
 #include "World.hpp"
 
 #include "World/PedSpawner.hpp"
+#include "World/ObjectSpawner.hpp"
 #include "World/Shows.hpp"
 #include "World/Train.hpp"
 #include "World/VehicleSpawner.hpp"
@@ -12,6 +13,12 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
+#include "game/rdr/Ped.hpp"
+#include "game/rdr/data/PedModels.hpp"
+#include "game/rdr/data/ObjModels.hpp"
+
+#include "util/VehicleSpawner.hpp"
+
 #include <game/rdr/Natives.hpp>
 
 
@@ -75,14 +82,18 @@ namespace YimMenu::Submenus
 			}
 		}));
 
-
-		auto spawners            = std::make_shared<Category>("Spawners");
-		auto pedSpawnerGroup     = std::make_shared<Group>("Ped Spawner");
+		auto spawners        = std::make_shared<Category>("Spawners");
+		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
+		auto objSpawnerGroup = std::make_shared<Group>("Object Spawner");
 		auto vehicleSpawnerGroup = std::make_shared<Group>("Vehicle Spawner");
 		auto trainSpawnerGroup   = std::make_shared<Group>("Train Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderPedSpawnerMenu();
+		}));
+		
+		objSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			RenderObjectSpawnerMenu();
 		}));
 
 		vehicleSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
@@ -94,6 +105,7 @@ namespace YimMenu::Submenus
 		}));
 
 		spawners->AddItem(pedSpawnerGroup);
+		spawners->AddItem(objSpawnerGroup);
 		spawners->AddItem(vehicleSpawnerGroup);
 		spawners->AddItem(trainSpawnerGroup);
 
