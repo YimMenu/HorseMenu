@@ -166,8 +166,8 @@ namespace
 			break;
 		}
 	}
-
-	static const std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60, 0x6927D266};
+	/* {mp_a_c_elk_01} model does not crash & our new hook already avoids crash from {s_chuckwagonawning01b} but lets keep it for notifications.*/
+	static const std::unordered_set<uint32_t> g_CrashObjects = {"s_chuckwagonawning01b"_J};
 	static const std::unordered_set<uint32_t> g_FishModels   = {
         "A_C_Crawfish_01"_J,
         "A_C_FishBluegil_01_ms"_J,
@@ -284,13 +284,7 @@ namespace
 		{
 		case "CPedCreationNode"_J:
 		{
-			// this is a really bad protection, but it works
 			auto& data = node->GetData<CPedCreationData>();
-			if (data.m_ModelHash == "CS_MP_BOUNTYHUNTER"_J)
-			{
-				SyncCrashBlocked("unknown ped crash");
-				return true;
-			}
 
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
 			{
