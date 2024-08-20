@@ -166,7 +166,7 @@ namespace
 			break;
 		}
 	}
-	/* {mp_a_c_elk_01} model does not crash & our new hook already avoids crash from {s_chuckwagonawning01b} but lets keep it for notifications.*/
+
 	static const std::unordered_set<uint32_t> g_CrashObjects = {"s_chuckwagonawning01b"_J};
 	static const std::unordered_set<uint32_t> g_FishModels   = {
         "A_C_Crawfish_01"_J,

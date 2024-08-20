@@ -6,7 +6,6 @@
 
 namespace YimMenu::Hooks
 {
-	// This not only prevents certain crashes but also helps block lag from some objects. Maybe we should call it LodCrash
 	__int64 Protections::PhysicCrash(__int64 a1, unsigned int a2, int* a3)
 	{
 		unsigned int v11; // esi

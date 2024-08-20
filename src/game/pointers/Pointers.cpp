@@ -458,9 +458,9 @@ namespace YimMenu
 			PackCloneCreate = ptr.Sub(0x34).As<PVOID>();
 		});
 
-		constexpr auto physicCrashPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 70 20 55 48 8D 68 E8 48 81 EC ? ? ? ? 0F 28 1D ? ? ? ? 0F 57 D2">("PhysicCrash");
+		constexpr auto physicCrashPtrn = Pattern<"E8 ?? ?? ?? ?? EB 67 48 8B 41 20">("PhysicCrash");
 		scanner.Add(physicCrashPtrn, [this](PointerCalculator ptr) {
-			PhysicCrash = ptr.As<PVOID>();
+			PhysicCrash = ptr.Add(1).Rip().As<PVOID>();
 		});
 
 		if (!scanner.Scan())
