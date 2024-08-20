@@ -5,15 +5,15 @@
 
 namespace YimMenu::Hooks
 {
-	__int64 Protections::PhysicCrash(__int64 a1, unsigned int a2, int* a3)
+	int64_t Protections::PhysicCrash(int64_t a1, unsigned int a2, int* a3)
 	{
 		unsigned int v11; // esi
-		__int64 v9;       // rbx
+		int64_t v9;       // rbx
 
-		v9 = *(unsigned long long*)(a1 + 40) + 80i64 * a2;
+		v9 = *(uint64_t*)(a1 + 40) + 80i64 * a2;
 		if (v9)
 		{
-			v11 = *(unsigned __int16*)(v9 + 72);
+			v11 = *(uint16_t*)(v9 + 72);
 			if (v11 > 1000) 
 			{
 				return 0;

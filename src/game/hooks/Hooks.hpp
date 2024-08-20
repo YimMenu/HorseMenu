@@ -99,7 +99,7 @@ namespace YimMenu::Hooks
 		extern bool ReceiveArrayUpdate(void* array, CNetGamePlayer* sender, rage::datBitBuffer* buffer, int size, int16_t cycle);
 		extern void* CreatePoolItem(PoolUtils<Entity>* pool);
 		extern int HandleCloneRemove(void* mgr, CNetGamePlayer* sender, CNetGamePlayer* target, uint16_t objectId, int ownershipToken, bool unk);
-		extern __int64 PhysicCrash(__int64 a1, unsigned int a2, int* a3); // Don't really know what to call it. Lets go with PhysicCrash
+		extern int64_t PhysicCrash(int64_t a1, unsigned int a2, int* a3);
 	}
 
 	namespace Voice
