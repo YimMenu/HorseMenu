@@ -14,14 +14,19 @@ namespace YimMenu
 		m_Commands.insert({command->GetHash(), command});
 	}
 
+	void Commands::AddBoolCommandImpl(BoolCommand* command)
+	{
+		m_BoolCommands.push_back(command);
+	}
+
 	void Commands::AddLoopedCommandImpl(LoopedCommand* command)
 	{
 		m_LoopedCommands.push_back(command);
 	}
 
-	void Commands::EnableLoopedCommandsImpl()
+	void Commands::EnableBoolCommandsImpl()
 	{
-		for (auto& command : m_LoopedCommands)
+		for (auto& command : m_BoolCommands)
 			if (command->GetState())
 				command->Initialize();
 	}

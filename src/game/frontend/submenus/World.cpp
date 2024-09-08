@@ -12,11 +12,39 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Self.hpp"
 #include "game/frontend/items/Items.hpp"
+#include "game/rdr/Natives.hpp"
+#include "game/rdr/Pools.hpp"
+
 #include <game/rdr/Natives.hpp>
+#include <rage/fwBasePool.hpp>
+#include <rage/pools.hpp>
 
 
 namespace YimMenu::Submenus
 {
+	void DisplayCurrentDate()
+	{
+		auto hours      = CLOCK::GET_CLOCK_HOURS();
+		auto minutes    = CLOCK::GET_CLOCK_MINUTES();
+		auto seconds    = CLOCK::GET_CLOCK_SECONDS();
+		auto dayOfWeek  = CLOCK::GET_CLOCK_DAY_OF_WEEK();
+		auto dayOfMonth = CLOCK::GET_CLOCK_DAY_OF_MONTH();
+		auto month      = CLOCK::GET_CLOCK_MONTH();
+		auto year       = CLOCK::GET_CLOCK_YEAR();
+
+		const char* daysOfWeek[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+		const char* months[] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
+		std::string dayOfWeekStr = daysOfWeek[dayOfWeek];
+		std::string monthStr     = months[month];
+
+		std::string dateString = std::format("{}, {} {}, {}", dayOfWeekStr, monthStr, dayOfMonth, year);
+		std::string time       = std::format("{:02}:{:02}:{:02}", hours, minutes, seconds);
+
+		ImGui::Text("Date: %s", dateString.c_str());
+		ImGui::Text("Time: %s", time.c_str());
+	}
+
 	World::World() :
 	    Submenu::Submenu("World")
 	{
@@ -29,6 +57,9 @@ namespace YimMenu::Submenus
 		time->AddItem(std::make_shared<ImGuiItem>([] {
 			static int hour, minute, second;
 			static bool freeze;
+
+			DisplayCurrentDate();
+
 			ImGui::SliderInt("Hour", &hour, 0, 23);
 			ImGui::SliderInt("Minute", &minute, 0, 59);
 			ImGui::SliderInt("Second", &second, 0, 59);
@@ -97,6 +128,25 @@ namespace YimMenu::Submenus
 		spawners->AddItem(vehicleSpawnerGroup);
 		spawners->AddItem(trainSpawnerGroup);
 
+		auto poolCounter = std::make_shared<ImGuiItem>([] {
+			if (GetPedPool())
+				ImGui::Text("%s",
+				    std::format("Peds: {}/{}", GetPedPool()->m_Size - GetPedPool()->GetNumFreeSlots(), GetPedPool()->m_Size)
+				        .data());
+			if (GetVehiclePool())
+				ImGui::Text("%s",
+				    std::format("Vehicles: {}/{}",
+				        GetVehiclePool()->m_Size - GetVehiclePool()->GetNumFreeSlots(),
+				        GetVehiclePool()->m_Size)
+				        .data());
+			if (GetObjectPool())
+				ImGui::Text("%s",
+				    std::format("Objects: {}/{}",
+				        GetObjectPool()->m_Size - GetObjectPool()->GetNumFreeSlots(),
+				        GetObjectPool()->m_Size)
+				        .data());
+		});
+
 		auto killPeds = std::make_shared<Group>("Kill", 1);
 		killPeds->AddItem(std::make_shared<CommandItem>("killallpeds"_J));
 		killPeds->AddItem(std::make_shared<CommandItem>("killallenemies"_J));
@@ -108,12 +158,20 @@ namespace YimMenu::Submenus
 		bringOpts->AddItem(std::make_shared<CommandItem>("bringpeds"_J));
 		bringOpts->AddItem(std::make_shared<CommandItem>("bringvehs"_J));
 		bringOpts->AddItem(std::make_shared<CommandItem>("bringobjs"_J));
+		auto minigames = std::make_shared<Group>("Minigames", 1);
+		minigames->AddItem(std::make_shared<BoolCommandItem>("undeadnightmare"_J));
+		minigames->AddItem(std::make_shared<ConditionalItem>("undeadnightmare"_J, std::make_shared<BoolCommandItem>("zombieslogging"_J)));
+		minigames->AddItem(std::make_shared<ConditionalItem>("undeadnightmare"_J, std::make_shared<BoolCommandItem>("hardmode"_J)));
+		auto misc = std::make_shared<Group>("Misc", 1);
+		misc->AddItem(std::make_shared<BoolCommandItem>("disableguardzones"_J));
 
+		main->AddItem(std::move(poolCounter));
 		main->AddItem(std::move(killPeds));
 		main->AddItem(std::move(deleteOpts));
 		main->AddItem(std::move(bringOpts));
-		main->AddItem(std::make_shared<BoolCommandItem>("disableguardzones"_J));
-		main->AddItem(std::make_shared<CommandItem>("forcelighting"_J));
+		main->AddItem(std::move(minigames));
+		main->AddItem(std::move(misc));
+
 
 		shows->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderShowsMenu();

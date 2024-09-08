@@ -176,7 +176,7 @@ namespace YimMenu
 
 		// never returns false, useless to check return
 		ImGui::CreateContext(&GetInstance().m_FontAtlas);
-		ImGui_ImplWin32_Init(Pointers.Hwnd);
+		ImGui_ImplWin32_Init(*Pointers.Hwnd);
 		ImGui_ImplDX12_Init(m_Device.Get(),
 		    m_SwapChainDesc.BufferCount,
 		    DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -299,7 +299,7 @@ namespace YimMenu
 		m_VkFakeDevice = NULL;
 
 		ImGui::CreateContext(&GetInstance().m_FontAtlas);
-		ImGui_ImplWin32_Init(Pointers.Hwnd);
+		ImGui_ImplWin32_Init(*Pointers.Hwnd);
 
 
 		LOG(INFO) << "Vulkan renderer has finished initializing.";
@@ -318,17 +318,17 @@ namespace YimMenu
 		DX12PostResize();
 	}
 
-	void Renderer::VkCreateRenderTarget(VkDevice Device, VkSwapchainKHR Swapchain)
+	void Renderer::VkCreateRenderTarget(VkDevice device, VkSwapchainKHR swapchain)
 	{
 		uint32_t uImageCount;
-		if (const VkResult result = vkGetSwapchainImagesKHR(Device, Swapchain, &uImageCount, NULL))
+		if (const VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &uImageCount, NULL))
 		{
 			LOG(WARNING) << "vkGetSwapchainImagesKHR failed with result: [" << result << "]";
 			return;
 		}
 
 		VkImage BackBuffers[8] = {};
-		if (const VkResult result = vkGetSwapchainImagesKHR(Device, Swapchain, &uImageCount, BackBuffers))
+		if (const VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &uImageCount, BackBuffers))
 		{
 			LOG(WARNING) << "vkGetSwapchainImagesKHR 2 failed with result: [" << result << "]";
 			return;
@@ -346,7 +346,7 @@ namespace YimMenu
 				info.flags                   = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 				info.queueFamilyIndex        = m_VkQueueFamily;
 
-				if (const VkResult result = vkCreateCommandPool(Device, &info, m_VkAllocator, &fd->CommandPool))
+				if (const VkResult result = vkCreateCommandPool(device, &info, m_VkAllocator, &fd->CommandPool))
 				{
 					LOG(WARNING) << "vkCreateCommandPool failed with result: [" << result << "]";
 					return;
@@ -359,7 +359,7 @@ namespace YimMenu
 				info.level                       = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 				info.commandBufferCount          = 1;
 
-				if (const VkResult result = vkAllocateCommandBuffers(Device, &info, &fd->CommandBuffer))
+				if (const VkResult result = vkAllocateCommandBuffers(device, &info, &fd->CommandBuffer))
 				{
 					LOG(WARNING) << "vkAllocateCommandBuffers failed with result: [" << result << "]";
 					return;
@@ -369,7 +369,7 @@ namespace YimMenu
 				VkFenceCreateInfo info = {};
 				info.sType             = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 				info.flags             = VK_FENCE_CREATE_SIGNALED_BIT;
-				if (const VkResult result = vkCreateFence(Device, &info, m_VkAllocator, &fd->Fence))
+				if (const VkResult result = vkCreateFence(device, &info, m_VkAllocator, &fd->Fence))
 				{
 					LOG(WARNING) << "vkCreateFence failed with result: [" << result << "]";
 					return;
@@ -378,13 +378,13 @@ namespace YimMenu
 			{
 				VkSemaphoreCreateInfo info = {};
 				info.sType                 = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-				if (const VkResult result = vkCreateSemaphore(Device, &info, m_VkAllocator, &fsd->ImageAcquiredSemaphore))
+				if (const VkResult result = vkCreateSemaphore(device, &info, m_VkAllocator, &fsd->ImageAcquiredSemaphore))
 				{
 					LOG(WARNING) << "vkCreateSemaphore failed with result: [" << result << "]";
 					return;
 				}
 
-				if (const VkResult result = vkCreateSemaphore(Device, &info, m_VkAllocator, &fsd->RenderCompleteSemaphore))
+				if (const VkResult result = vkCreateSemaphore(device, &info, m_VkAllocator, &fsd->RenderCompleteSemaphore))
 				{
 					LOG(WARNING) << "vkCreateSemaphore 2 failed with result: [" << result << "]";
 					return;
@@ -419,7 +419,7 @@ namespace YimMenu
 			info.subpassCount           = 1;
 			info.pSubpasses             = &subpass;
 
-			if (const VkResult result = vkCreateRenderPass(Device, &info, m_VkAllocator, &m_VkRenderPass))
+			if (const VkResult result = vkCreateRenderPass(device, &info, m_VkAllocator, &m_VkRenderPass))
 			{
 				LOG(WARNING) << "vkCreateRenderPass failed with result: [" << result << "]";
 				return;
@@ -442,7 +442,7 @@ namespace YimMenu
 				ImGui_ImplVulkanH_Frame* fd = &m_VkFrames[i];
 				info.image                  = fd->Backbuffer;
 
-				if (const VkResult result = vkCreateImageView(Device, &info, m_VkAllocator, &fd->BackbufferView))
+				if (const VkResult result = vkCreateImageView(device, &info, m_VkAllocator, &fd->BackbufferView))
 				{
 					LOG(WARNING) << "vkCreateImageView failed with result: [" << result << "]";
 					return;
@@ -463,7 +463,7 @@ namespace YimMenu
 				ImGui_ImplVulkanH_Frame* fd = &m_VkFrames[i];
 				attachment[0]               = fd->BackbufferView;
 
-				if (const VkResult result = vkCreateFramebuffer(Device, &info, m_VkAllocator, &fd->Framebuffer))
+				if (const VkResult result = vkCreateFramebuffer(device, &info, m_VkAllocator, &fd->Framebuffer))
 				{
 					LOG(WARNING) << "vkCreateFramebuffer failed with result: [" << result << "]";
 					return;
@@ -482,7 +482,7 @@ namespace YimMenu
 			pool_info.poolSizeCount              = (uint32_t)IM_ARRAYSIZE(pool_sizes);
 			pool_info.pPoolSizes                 = pool_sizes;
 
-			if (const VkResult result = vkCreateDescriptorPool(Device, &pool_info, m_VkAllocator, &m_VkDescriptorPool))
+			if (const VkResult result = vkCreateDescriptorPool(device, &pool_info, m_VkAllocator, &m_VkDescriptorPool))
 			{
 				LOG(WARNING) << "vkCreateDescriptorPool failed with result: [" << result << "]";
 				return;
@@ -542,31 +542,12 @@ namespace YimMenu
 			}
 		}
 
-		//Reason we have to rescan is when window is resized the HWND changes and Vulkan ImGui does not like this at all. (Grabbing from IDXGISwapchain does not work, it simply doesn't update or is too slow in my testing. Feel free)
 		if (IsResizing())
 		{
 			ImGui_ImplWin32_Shutdown();
 			ImGui::DestroyContext();
-
-			const auto rdr2 = ModuleMgr.Get("RDR2.exe"_J);
-
-			auto scanner = PatternScanner(rdr2);
-
-			constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
-			scanner.Add(hwnd, [](PointerCalculator ptr) {
-				Pointers.Hwnd = *ptr.Add(3).Rip().As<HWND*>();
-				LOG(INFO) << "HWND: " << Pointers.Hwnd;
-			});
-
-			if (!scanner.Scan())
-			{
-				LOG(FATAL) << "Failed to scan new HWND!";
-
-				return;
-			}
-
 			ImGui::CreateContext(&GetInstance().m_FontAtlas);
-			ImGui_ImplWin32_Init(Pointers.Hwnd);
+			ImGui_ImplWin32_Init(*Pointers.Hwnd);
 			Menu::SetupStyle();
 
 			SetResizing(false);
@@ -612,7 +593,7 @@ namespace YimMenu
 		if (!ImGui::GetCurrentContext())
 		{
 			ImGui::CreateContext(&GetInstance().m_FontAtlas);
-			ImGui_ImplWin32_Init(Pointers.Hwnd);
+			ImGui_ImplWin32_Init(*Pointers.Hwnd);
 		}
 
 		VkQueue GraphicQueue            = VK_NULL_HANDLE;
@@ -778,6 +759,33 @@ namespace YimMenu
 
 	bool Renderer::InitImpl()
 	{
+		while (!*Pointers.Hwnd)
+		{
+			std::this_thread::sleep_for(1s);
+		}
+
+		if (const auto& RendererInfo = Pointers.GetRendererInfo(); RendererInfo)
+		{
+			if (RendererInfo->is_rendering_type(eRenderingType::DX12))
+			{
+				Pointers.IsVulkan = false;
+			}
+			else if (RendererInfo->is_rendering_type(eRenderingType::Vulkan))
+			{
+				Pointers.IsVulkan = true;
+			}
+			else
+			{
+				LOG(INFO) << "Unknown renderer type!";
+				return false;
+			}
+		}
+		else
+		{
+			LOG(INFO) << "Invalid renderer info!";
+			return false;
+		}
+
 		if (Pointers.IsVulkan)
 		{
 			LOG(INFO) << "Using Vulkan";
@@ -785,7 +793,7 @@ namespace YimMenu
 		}
 		else if (!Pointers.IsVulkan)
 		{
-			LOG(INFO) << "Using DX12, clear shader cache if your having issues.";
+			LOG(INFO) << "Using DX12, clear shader cache if you're having issues.";
 			LOG(INFO) << "Waiting...";
 			std::this_thread::sleep_for(5s); //Early injection could result in errors.
 			return InitDX12();

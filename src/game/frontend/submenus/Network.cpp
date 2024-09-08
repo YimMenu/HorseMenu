@@ -1,5 +1,6 @@
 ﻿#include "Network.hpp"
 
+#include "Network/Voice.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
@@ -16,14 +17,41 @@
 #include "util/Chat.hpp"
 #include "util/Storage/Spoofing.hpp"
 #include "util/teleport.hpp"
-
-#include "Network/Voice.hpp"
+#include "Self.hpp"
+#include "game/rdr/Packet.hpp"
 
 #include <map>
 #include <network/rlGamerHandle.hpp>
+#include <network/CNetworkScSession.hpp>
+#include <network/snConnectToPeerTask.hpp>
+#include <rage/rlTaskStatus.hpp>
+#include <network/CNetworkPlayerMgr.hpp>
+#include <network/netEncryption.hpp>
 #include <ranges>
 #include <string>
 
+namespace rage
+{
+	class rlQueryPresenceAttributesContext
+	{
+	public:
+		char m_presence_attribute_key[64]; //0x0000
+		union {
+			char m_presence_attribute_string_value[256]; //0x0040
+			uint64_t m_presence_attribute_int_value;
+		};
+		uint32_t m_presence_attibute_type; //0x0140
+		char pad_0144[4];                  //0x0144
+	};                                     //Size: 0x0148
+	static_assert(sizeof(rlQueryPresenceAttributesContext) == 0x148);
+
+	struct rlScTaskStatus
+	{
+		void* pad  = 0;
+		int status = 0;
+		int unk    = 0;
+	};
+}
 
 namespace YimMenu::Submenus
 {
@@ -85,7 +113,12 @@ namespace YimMenu::Submenus
 		toxicGroup->AddItem(std::make_shared<CommandItem>("minhonorall"_J));
 
 		miscGroup->AddItem(std::make_shared<BoolCommandItem>("revealall"_J));
-		miscGroup->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J));
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("disableshopunavailable"_J)); // finish this
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("disablecampshopunavailable"_J));
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("disablecampraids"_J));
+
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J)); // move this to protections->misc
+		miscGroup->AddItem(std::make_shared<BoolCommandItem>("locklobby"_J));
 
 		session->AddItem(sessionSwitcherGroup);
 		session->AddItem(teleportGroup);
@@ -163,21 +196,6 @@ namespace YimMenu::Submenus
 						}
 					}
 
-					if (ImGui::Button("Join Player"))
-					{
-						FiberPool::Push([] {
-							using gp   = void* (*)();
-							using join = void (*)(void*, rage::rlGamerHandle*, int);
-
-							gp g   = (gp)((__int64)GetModuleHandleA(0) + 0x22b9800);
-							join j = (join)((__int64)GetModuleHandleA(0) + 0x22d7080);
-
-							rage::rlGamerHandle hnd(current_player->rid);
-
-							j(g(), &hnd, 512);
-						});
-					}
-
 					if (ImGui::Button("Delete Player"))
 					{
 						g_PlayerDatabase->RemoveRID(current_player->rid);
@@ -209,13 +227,13 @@ namespace YimMenu::Submenus
 		static const char* iconBuf = "";
 		infoSpoofingGroup->AddItem(std::make_shared<ImGuiItem>([=] {
 			static std::map<std::string, std::string> colors = {{"", "None"}, {"~e~", "Red"}, {"~f~", "Off White"}, {"~p~", "White"}, {"~o~", "Yellow"}, {"~q~", "Pure White"}, {"~d~", "Orange"}, {"~m~", "Light Grey"}, {"~t~", "Grey"}, {"~v~", "Black"}, {"~pa~", "Blue"}, {"~t1~", "Purple"}, {"~t2~", "Orange"}, {"~t3~", "Teal"}, {"~t4~", "Light Yellow"}, {"~t5~", "Pink"}, {"~t6~", "Green"}, {"~t7~", "Dark Blue"}};
-			static std::map<const char*, std::string> icons = {{"", "None"}, {"∑", "Rockstar Icon"}};
+			static std::map<const char*, std::string> icons = {{"", "None"}, {"\u2211", "Rockstar Icon"}};
 			ImGui::Text("Spoofed data will not appear locally, and will only be visible when joining a new session,\n or when a player joins you");
 
 			ImGui::Text("Name");
 			ImGui::Checkbox("Spoof Name", &g_SpoofingStorage.spoofName);
 			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Spoof your Name");
+				ImGui::SetTooltip("Spoof your name");
 
 			if (ImGui::BeginCombo("Color Prefix", colors[colorBuf].c_str()))
 			{
@@ -242,12 +260,13 @@ namespace YimMenu::Submenus
 			}
 
 			InputTextWithHint("Spoofed Name", "Enter spoofed name", &nameBuf).Draw();
-
 			if (ImGui::Button("Set Spoofed Name"))
 			{
 				std::string concatName        = std::string(colorBuf) + std::string(iconBuf) + nameBuf;
 				g_SpoofingStorage.spoofedName = concatName;
 			}
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Update your spoofed name");
 
 			ImGui::Text("IP Address");
 			ImGui::Checkbox("Spoof IP", &g_SpoofingStorage.spoofIP);
@@ -258,6 +277,9 @@ namespace YimMenu::Submenus
 
 			ImGui::Text("Rockstar ID");
 			ImGui::Checkbox("Spoof RID", &g_SpoofingStorage.spoofRID);
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Spoof your Rockstar ID");
+
 			ImGui::InputScalar("##rockstar_id_input", ImGuiDataType_U64, &g_SpoofingStorage.spoofedRID);
 		}));
 

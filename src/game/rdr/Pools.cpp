@@ -1,6 +1,9 @@
 #include "Pools.hpp"
+
 #include "game/pointers/Pointers.hpp"
+
 #include <rage/pools.hpp>
+
 
 namespace YimMenu
 {
@@ -43,6 +46,17 @@ namespace YimMenu
 		{
 			uint64_t x = _rotl64(Pointers.PickupPool->m_Second, 30);
 			return reinterpret_cast<rage::fwBasePool*>(~_rotl64(_rotl64(Pointers.PickupPool->m_First ^ x, 32), ((x & 0xFF) & 31) + 2));
+		}
+
+		return nullptr;
+	}
+	// This doesnt work
+	rage::fwBasePool* GetScriptHandlePool()
+	{
+		if (Pointers.ScriptHandlePool->m_IsSet)
+		{
+			uint64_t x = _rotl64(Pointers.ScriptHandlePool->m_Second, 30);
+			return reinterpret_cast<rage::fwBasePool*>(~_rotl64(_rotl64(Pointers.ScriptHandlePool->m_First ^ x, 32), ((x & 0xFF) & 31) + 2));
 		}
 
 		return nullptr;

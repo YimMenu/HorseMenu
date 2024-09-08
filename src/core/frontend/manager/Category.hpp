@@ -16,6 +16,11 @@ namespace YimMenu
 			m_Items.push_back(std::move(item));
 		}
 
+		void PrependItem(std::shared_ptr<UIItem>&& item)
+		{
+			m_Items.insert(m_Items.begin(), std::move(item));
+		}
+
 		void Draw();
 		int GetLength();
 

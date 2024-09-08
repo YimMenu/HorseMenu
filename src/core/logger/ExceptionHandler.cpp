@@ -1,8 +1,10 @@
 #include "ExceptionHandler.hpp"
+
 #include "StackTrace.hpp"
 
-#include <unordered_set>
 #include <hde64.h>
+#include <unordered_set>
+
 
 namespace YimMenu
 {
@@ -27,7 +29,7 @@ namespace YimMenu
 		SetUnhandledExceptionFilter(reinterpret_cast<decltype(&VectoredExceptionHandler)>(m_Handler));
 	}
 
-	inline static StackTrace trace;
+	inline thread_local static StackTrace trace;
 	LONG VectoredExceptionHandler(EXCEPTION_POINTERS* exception_info)
 	{
 		const auto exception_code = exception_info->ExceptionRecord->ExceptionCode;
@@ -69,7 +71,7 @@ namespace YimMenu
 				LOG(FATAL) << "Cannot resume execution, crashing";
 				return EXCEPTION_CONTINUE_SEARCH;
 			}
-			
+
 			if (opcode.opcode == 0xFF && opcode.modrm_reg == 4) // JMP (FF /4)
 			{
 				auto return_address_ptr = (uint64_t*)exception_info->ContextRecord->Rsp;
@@ -87,6 +89,30 @@ namespace YimMenu
 			else
 			{
 				exception_info->ContextRecord->Rip += opcode.len;
+
+				if (opcode.opcode == 0x8B && opcode.modrm_mod != 3)
+				{
+					uint8_t regId = opcode.rex_r | opcode.modrm_reg;
+					switch (regId)
+					{
+					case 0: exception_info->ContextRecord->Rax = 0; break;
+					case 1: exception_info->ContextRecord->Rcx = 0; break;
+					case 2: exception_info->ContextRecord->Rdx = 0; break;
+					case 3: exception_info->ContextRecord->Rbx = 0; break;
+					case 4: exception_info->ContextRecord->Rsp = 0; break;
+					case 5: exception_info->ContextRecord->Rbp = 0; break;
+					case 6: exception_info->ContextRecord->Rsi = 0; break;
+					case 7: exception_info->ContextRecord->Rdi = 0; break;
+					case 8: exception_info->ContextRecord->R8 = 0; break;
+					case 9: exception_info->ContextRecord->R9 = 0; break;
+					case 10: exception_info->ContextRecord->R10 = 0; break;
+					case 11: exception_info->ContextRecord->R11 = 0; break;
+					case 12: exception_info->ContextRecord->R12 = 0; break;
+					case 13: exception_info->ContextRecord->R13 = 0; break;
+					case 14: exception_info->ContextRecord->R14 = 0; break;
+					case 15: exception_info->ContextRecord->R15 = 0; break;
+					}
+				}
 			}
 		}
 

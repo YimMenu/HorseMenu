@@ -16,7 +16,8 @@ namespace YimMenu::Data
 	    {0x487B2BE7, "Winter Train"},
 	    {0x0E62D710, "Ghost Train"},
 	    {0x005E03AD, "Standard Train 1"},
-	    {0x0392C83A, "Standard Train 2"},
-	    {0x0660E567, "Standard Train 3"},
+	    {0x0392C83A, "Standard Train 2"}, 
+		{0x0660E567, "Standard Train 3"},
+		{0x29C81ACB, "Crash Train"},
 	};
 }

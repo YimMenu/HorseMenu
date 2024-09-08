@@ -41,16 +41,41 @@ namespace YimMenu::Submenus
 		auto syncGroup         = std::make_shared<Group>("Sync");
 		auto networkEventGroup = std::make_shared<Group>("Network Events");
 		auto scriptEventGroup  = std::make_shared<Group>("Script Events");
-		auto esp               = std::make_shared<Group>("ESP");
+		auto playerEsp         = std::make_shared<Group>("Player ESP", 10);
+		auto pedEsp            = std::make_shared<Group>("Ped ESP", 10);
 		auto context           = std::make_shared<Group>("Context Menu");
 		auto misc              = std::make_shared<Group>("Misc");
 
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
 
-		esp->AddItem(std::make_shared<BoolCommandItem>("esp"_J));
-		esp->AddItem(std::make_shared<ConditionalItem>("esp"_J, std::make_shared<BoolCommandItem>("espname"_J, "Name")));
-		esp->AddItem(std::make_shared<ConditionalItem>("esp"_J, std::make_shared<BoolCommandItem>("espdistance"_J, "Distance")));
-		esp->AddItem(std::make_shared<ConditionalItem>("esp"_J, std::make_shared<BoolCommandItem>("espskeleton"_J, "Skeleton")));
+		// Players
+		playerEsp->AddItem(std::make_shared<BoolCommandItem>("espdrawplayers"_J));
+		playerEsp->AddItem(std::make_shared<ConditionalItem>("espdrawplayers"_J, std::make_shared<BoolCommandItem>("espdrawdeadplayers"_J)));
+
+		playerEsp->AddItem(std::make_shared<ConditionalItem>("espdrawplayers"_J, std::make_shared<BoolCommandItem>("espnameplayers"_J, "Player Name")));
+		playerEsp->AddItem(std::make_shared<ConditionalItem>("espdrawplayers"_J, std::make_shared<ColorCommandItem>("namecolorplayers"_J)));
+
+		playerEsp->AddItem(std::make_shared<ConditionalItem>("espdrawplayers"_J, std::make_shared<BoolCommandItem>("espdistanceplayers"_J, "Player Distance")));
+		//playerEsp->AddItem(std::make_shared<ConditionalItem>("espdrawplayers"_J, std::make_shared<ColorCommandItem>("distancecolorplayers"_J))); // TO DO
+
+		playerEsp->AddItem(std::make_shared<ConditionalItem>("espdrawplayers"_J, std::make_shared<BoolCommandItem>("espskeletonplayers"_J, "Player Skeleton")));
+		playerEsp->AddItem(std::make_shared<ConditionalItem>("espdrawplayers"_J, std::make_shared<ColorCommandItem>("skeletoncolorplayers"_J)));
+
+		// Peds
+		pedEsp->AddItem(std::make_shared<BoolCommandItem>("espdrawpeds"_J));
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espdrawdeadpeds"_J)));
+
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espmodelspeds"_J, "Ped Hashes")));
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<ColorCommandItem>("hashcolorpeds"_J)));
+
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espdistancepeds"_J, "Ped Distance")));
+		//pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<ColorCommandItem>("distancecolorpeds"_J))); // TO DO
+
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espskeletonpeds"_J, "Ped Skeleton")));
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<ColorCommandItem>("skeletoncolorpeds"_J)));
+
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espskeletonhorse"_J, "Horse Skeleton")));
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<ColorCommandItem>("skeletoncolorhorse"_J)));
 
 		context->AddItem(std::make_shared<BoolCommandItem>("ctxmenu"_J));
 		context->AddItem(std::make_shared<ConditionalItem>("ctxmenu"_J, std::make_shared<BoolCommandItem>("ctxmenuplayers"_J, "Players")));
@@ -58,15 +83,16 @@ namespace YimMenu::Submenus
 		context->AddItem(std::make_shared<ConditionalItem>("ctxmenu"_J, std::make_shared<BoolCommandItem>("ctxmenuvehicles"_J, "Vehicles")));
 		context->AddItem(std::make_shared<ConditionalItem>("ctxmenu"_J, std::make_shared<BoolCommandItem>("ctxmenuobjects"_J, "Objects")));
 
-		misc->AddItem(std::make_shared<BoolCommandItem>("popplayerlist"_J));
-
 		syncGroup->AddItem(std::make_shared<BoolCommandItem>("blockspectate"_J));
 		syncGroup->AddItem(std::make_shared<BoolCommandItem>("blockspectatesession"_J));
+		syncGroup->AddItem(std::make_shared<BoolCommandItem>("blockattach"_J));
+		syncGroup->AddItem(std::make_shared<BoolCommandItem>("blockvehflood"_J));
 
 		networkEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockexplosions"_J));
 		networkEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockptfx"_J));
 		networkEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockclearpedtasks"_J));
 		networkEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockscriptcommand"_J));
+		networkEventGroup->AddItem(std::make_shared<BoolCommandItem>("userelaycxns"_J));
 
 		scriptEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockhonormanipulation"_J));
 		scriptEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockdefensive"_J));
@@ -76,8 +102,10 @@ namespace YimMenu::Submenus
 		scriptEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockendparlay"_J));
 		scriptEventGroup->AddItem(std::make_shared<BoolCommandItem>("blocktickerspam"_J));
 		scriptEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockstableevents"_J));
+		scriptEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockkickfrommissionlobby"_J));
 
-		gui->AddItem(esp);
+		gui->AddItem(playerEsp);
+		gui->AddItem(pedEsp);
 		gui->AddItem(context);
 		gui->AddItem(misc);
 

@@ -1,7 +1,9 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "core/misc/RateLimiter.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/PlayerData.hpp"
+#include "game/backend/Players.hpp"
 #include "game/backend/Protections.hpp"
 #include "game/backend/Self.hpp"
 #include "game/hooks/Hooks.hpp"
@@ -13,10 +15,13 @@
 #include "game/rdr/data/PedModels.hpp"
 
 #include <network/CNetGamePlayer.hpp>
+#include <network/CNetworkScSession.hpp>
 #include <network/netObject.hpp>
 #include <network/rlGamerInfo.hpp>
 #include <network/sync/CProjectBaseSyncDataNode.hpp>
 #include <network/sync/animal/CAnimalCreationData.hpp>
+#include <network/sync/animscene/CAnimSceneCreationData.hpp>
+#include <network/sync/animscene/CAnimSceneInfrequentData.hpp>
 #include <network/sync/object/CObjectCreationData.hpp>
 #include <network/sync/ped/CPedAttachData.hpp>
 #include <network/sync/ped/CPedCreationData.hpp>
@@ -34,138 +39,24 @@
 #include <ped/CPed.hpp>
 #include <rage/vector.hpp>
 #include <unordered_set>
+#include <network/CNetworkScSession.hpp>
+#include <train/CTrainConfig.hpp>
 
-
-#define LOG_FIELD_H(type, field) LOG(INFO) << "\t" << #field << ": " << HEX((node->GetData<type>().field));
-#define LOG_FIELD(type, field) LOG(INFO) << "\t" << #field << ": " << ((node->GetData<type>().field));
-#define LOG_FIELD_C(type, field) LOG(INFO) << "\t" << #field << ": " << (int)((node->GetData<type>().field));
-#define LOG_FIELD_B(type, field) LOG(INFO) << "\t" << #field << ": " << ((node->GetData<type>().field) ? "YES" : "NO");
-#define LOG_FIELD_V3(type, field)                                               \
-	LOG(INFO) << "\t" << #field << ": X: " << ((node->GetData<type>().field)).x \
-	          << " Y: " << ((node->GetData<type>().field)).y << " Z: " << ((node->GetData<type>().field)).z;
-#define LOG_FIELD_V4(type, field)                                                                           \
-	LOG(INFO) << "\t" << #field << ": X: " << ((node->GetData<type>().field)).x                             \
-	          << " Y: " << ((node->GetData<type>().field)).y << " Z: " << ((node->GetData<type>().field)).z \
-	          << " W: " << ((node->GetData<type>().field)).w;
-#define LOG_FIELD_APPLY(type, field, func) LOG(INFO) << "\t" << #field << ": " << func((node->GetData<type>().field));
-#define LOG_FIELD_UNDOCUM(num, type) \
-	LOG(INFO) << "\tFIELD_" << #num << ": " << *(type*)((&node->GetData<char>()) + num);
 
 namespace YimMenu::Features
 {
-	BoolCommand _LogClones("logclones", "Log Clones", "Log clone creates and clone syncs");
+	BoolCommand _LogClones("logclones", "Log Incoming Clones", "Log clone creates and clone syncs");
 	BoolCommand _AllowRemoteTPs("allowremotetp", "Allow Remote Teleports", "Allow trusted players to remote teleport you!");
 
 	BoolCommand _BlockSpectate("blockspectate", "Block Spectate", "Attempts to prevent modders from spectating you", true);
 	BoolCommand _BlockSpectateSession("blockspectatesession", "Block Spectate for Session", "Attempts to prevent modders from spectating anyone", false);
+	BoolCommand _BlockAttachments("blockattach", "Block Attachments", "Prevents modders from attaching objects and peds to you", true);
+	BoolCommand _BlockVehicleFlooding("blockvehflood", "Block Vehicle Flooding", "Prevents modders from creating too many vehicles", true);
 }
 
 namespace
 {
 	using namespace YimMenu;
-
-	void LogNode(CProjectBaseSyncDataNode* node, SyncNodeId id, NetObjType type, rage::netObject* object)
-	{
-		if (!object)
-			return; // TODO: log creation queue syncs
-
-		if (Protections::GetSyncingPlayer().IsValid())
-			LOG(INFO) << Protections::GetSyncingPlayer().GetName() << ": " << id.name << ", " << object->m_ObjectId;
-		else
-			LOG(INFO) << "UNKNOWN: " << id.name << object->m_ObjectId;
-
-		switch (id)
-		{
-		case "CPedCreationNode"_J:
-			LOG_FIELD(CPedCreationData, m_PopulationType);
-			LOG_FIELD_H(CPedCreationData, m_ModelHash);
-			LOG_FIELD_B(CPedCreationData, m_BannedPed);
-			break;
-		case "CAnimalCreationNode"_J:
-			LOG_FIELD(CAnimalCreationData, m_PopulationType);
-			LOG_FIELD_H(CAnimalCreationData, m_ModelHash);
-			LOG_FIELD_B(CAnimalCreationData, m_BannedPed);
-			break;
-		case "CObjectCreationNode"_J:
-			LOG_FIELD(CObjectCreationData, m_ObjectType);
-			LOG_FIELD_H(CObjectCreationData, m_ModelHash);
-			break;
-		case "CPlayerAppearanceNode"_J:
-			LOG_FIELD_H(CPlayerAppearanceData, m_ModelHash);
-			LOG_FIELD_B(CPlayerAppearanceData, m_BannedPlayerModel);
-			break;
-		case "CVehicleCreationNode"_J:
-			LOG_FIELD(CVehicleCreationData, m_PopulationType);
-			LOG_FIELD_H(CVehicleCreationData, m_ModelHash);
-			break;
-		case "CPickupCreationNode"_J:
-			LOG_FIELD_H(CPickupCreationData, m_PickupHash);
-			LOG_FIELD_H(CPickupCreationData, m_ModelHash);
-			break;
-		case "CPhysicalAttachNode"_J:
-			LOG_FIELD_B(CPhysicalAttachData, m_IsAttached);
-			LOG_FIELD(CPhysicalAttachData, m_AttachObjectId);
-			LOG_FIELD_V3(CPhysicalAttachData, m_Offset);
-			LOG_FIELD_V4(CPhysicalAttachData, m_Orientation);
-			LOG_FIELD_V3(CPhysicalAttachData, m_ParentOffset);
-			LOG_FIELD(CPhysicalAttachData, m_OtherAttachBone);
-			LOG_FIELD(CPhysicalAttachData, m_AttachBone);
-			LOG_FIELD(CPhysicalAttachData, m_AttachFlags);
-			break;
-		case "CVehicleProximityMigrationNode"_J:
-			LOG_FIELD(CVehicleProximityMigrationData, m_NumPassengers);
-			LOG_FIELD_B(CVehicleProximityMigrationData, m_OverridePopulationType);
-			LOG_FIELD(CVehicleProximityMigrationData, m_PopulationType);
-			LOG_FIELD(CVehicleProximityMigrationData, m_Flags);
-			LOG_FIELD(CVehicleProximityMigrationData, m_Timestamp);
-			LOG_FIELD_B(CVehicleProximityMigrationData, m_HasPositionData);
-			LOG_FIELD_V3(CVehicleProximityMigrationData, m_Position);
-			LOG_FIELD(CVehicleProximityMigrationData, m_UnkAmount);
-			break;
-		case "CPedTaskTreeNode"_J:
-			LOG_FIELD(CPedTaskTreeData, m_Trees[0].m_TreeType);
-			for (int i = 0; i < node->GetData<CPedTaskTreeData>().GetNumTaskTrees(); i++)
-			{
-				LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_NumTasks);
-				LOG_FIELD_B(CPedTaskTreeData, m_Trees[i].m_SequenceTree);
-				for (int j = 0; j < node->GetData<CPedTaskTreeData>().m_Trees[i].m_NumTasks; j++)
-				{
-					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskType);
-					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskUnk1);
-					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskTreeType);
-					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskSequenceId);
-					LOG_FIELD(CPedTaskTreeData, m_Trees[i].m_Tasks[j].m_TaskTreeDepth);
-				}
-			}
-			LOG_FIELD_H(CPedTaskTreeData, m_ScriptCommand);
-			LOG_FIELD(CPedTaskTreeData, m_ScriptTaskStage);
-			break;
-		case "CPedAttachNode"_J:
-			LOG_FIELD_B(CPedAttachData, m_IsAttached);
-			LOG_FIELD(CPedAttachData, m_AttachObjectId);
-			break;
-		case "CVehicleGadgetNode"_J:
-			LOG_FIELD_B(CVehicleGadgetData, m_HasPosition);
-			LOG_FIELD(CVehicleGadgetData, m_Position[0]);
-			LOG_FIELD(CVehicleGadgetData, m_Position[1]);
-			LOG_FIELD(CVehicleGadgetData, m_Position[2]);
-			LOG_FIELD(CVehicleGadgetData, m_Position[3]);
-			LOG_FIELD(CVehicleGadgetData, m_NumGadgets);
-			if (node->GetData<CVehicleGadgetData>().m_NumGadgets <= 2)
-			{
-				for (int i = 0; i < node->GetData<CVehicleGadgetData>().m_NumGadgets; i++)
-				{
-					LOG_FIELD(CVehicleGadgetData, m_Gadgets[i].m_Type);
-				}
-			}
-			break;
-		case "CProjectileCreationNode"_J:
-			LOG_FIELD_UNDOCUM(4, int);
-			LOG_FIELD_UNDOCUM(8, int);
-			LOG_FIELD_UNDOCUM(0x2C, int);
-			break;
-		}
-	}
 
 	static const std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60, 0x6927D266};
 	static const std::unordered_set<uint32_t> g_FishModels   = {
@@ -247,6 +138,8 @@ namespace
 
 	static const std::unordered_set<uint32_t> g_CageModels        = {0x99C0CFCF, 0xF3D580D3, 0xEE8254F6, 0xC2D200FE};
 	static const std::unordered_set<uint32_t> g_ValidPlayerModels = {"mp_male"_J, "mp_female"_J};
+	
+	static const std::unordered_set<uint32_t> g_BlacklistedAnimScenes = {"script@beat@town@peepingtom@spankscene"_J, "script@story@sal1@ig@sal1_18_lenny_on_lenny@sal1_18_lenny_on_lenny"_J, "script@vignette@dutch_33@player_karen@dance"_J, "script@vignette@beecher@abigail_6@action_enter"_J};
 
 	inline bool IsValidPlayerModel(rage::joaat_t model)
 	{
@@ -262,11 +155,27 @@ namespace
 			player.AddDetection(Detection::INVALID_PLAYER_MODEL);
 	}
 
-	inline void SyncCrashBlocked(std::string crash)
+	inline YimMenu::Player GetObjectCreator(rage::netObject* object)
 	{
-		LOGF(WARNING, "Blocked {} from {}", crash, Protections::GetSyncingPlayer().GetName());
-		auto name = Protections::GetSyncingPlayer().GetName();
-		Notifications::Show("Protections", std::format("Blocked {} from {}", crash, name), NotificationType::Warning);
+		for (auto& [idx, player] : Players::GetPlayers())
+		{
+			if ((*Pointers.ScSession)->m_SessionMultiplayer->GetPlayerByIndex(idx)->m_SessionPeer->m_Identifier.m_AccountId == object->m_Guid.GetAccountId())
+			{
+				return player;
+			}
+		}
+
+		return nullptr;
+	}
+
+	inline void SyncBlocked(std::string crash, YimMenu::Player source = Protections::GetSyncingPlayer())
+	{
+		if (source)
+		{
+			LOGF(WARNING, "Blocked {} from {}", crash, source.GetName());
+			auto name = source.GetName();
+			Notifications::Show("Protections", std::format("Blocked {} from {}", crash, name), NotificationType::Warning);
+		}
 	}
 
 	inline void DeleteSyncObject(std::uint16_t object)
@@ -277,6 +186,16 @@ namespace
 		Network::ForceRemoveNetworkEntity(object, -1, false);
 	}
 
+	inline void DeleteSyncObjectLater(std::uint16_t object)
+	{
+		FiberPool::Push([object] {
+			if (object == -1)
+				return;
+
+			Network::ForceRemoveNetworkEntity(object, -1, true);
+		});
+	}
+
 	// note that object can be nullptr here if it hasn't been created yet (i.e. in the creation queue)
 	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, NetObjType type, rage::netObject* object)
 	{
@@ -284,17 +203,12 @@ namespace
 		{
 		case "CPedCreationNode"_J:
 		{
-			// this is a really bad protection, but it works
 			auto& data = node->GetData<CPedCreationData>();
-			if (data.m_ModelHash == "CS_MP_BOUNTYHUNTER"_J)
-			{
-				SyncCrashBlocked("unknown ped crash");
-				return true;
-			}
-
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
 			{
-				SyncCrashBlocked("mismatched ped model crash");
+				LOGF(SYNC, WARNING, "Blocking invalid ped creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("mismatched ped model crash");
+				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				return true;
 			}
 			break;
@@ -304,20 +218,25 @@ namespace
 			auto& data = node->GetData<CObjectCreationData>();
 			if (g_CrashObjects.count(data.m_ModelHash))
 			{
-				SyncCrashBlocked("invalid object crash");
+				LOGF(SYNC, WARNING, "Blocking crash object creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("invalid object crash");
+				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				return true;
 			}
 			if (data.m_ModelHash && !STREAMING::_IS_MODEL_AN_OBJECT(data.m_ModelHash))
 			{
-				SyncCrashBlocked("mismatched object model crash");
+				LOGF(SYNC, WARNING, "Blocking invalid object creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("mismatched object model crash");
+				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				return true;
 			}
 			if (g_CageModels.count(data.m_ModelHash))
 			{
 				DeleteSyncObject(object->m_ObjectId);
-				SyncCrashBlocked("cage spawn");
+				SyncBlocked("cage spawn", GetObjectCreator(object));
 				return true;
 			}
+
 			break;
 		}
 		case "CPlayerAppearanceNode"_J:
@@ -325,15 +244,17 @@ namespace
 			auto& data = node->GetData<CPlayerAppearanceData>();
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
 			{
-				SyncCrashBlocked("mismatched player model crash");
+				LOGF(SYNC, WARNING, "Blocking invalid player appearance model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("mismatched player model crash");
 				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER); // false positives very unlikely
-				return true;
+				data.m_ModelHash = "MP_MALE"_J;
 			}
 
 			if (data.m_ModelHash && (g_FishModels.count(data.m_ModelHash) || g_BirdModels.count(data.m_ModelHash)))
 			{
 				// TODO
-				return true;
+				LOGF(SYNC, WARNING, "Prevented {} from using animal model 0x{:X} to prevent potential task crashes", Protections::GetSyncingPlayer().GetName(), data.m_ModelHash);
+				data.m_ModelHash = "MP_MALE"_J;
 			}
 
 			CheckPlayerModel(Protections::GetSyncingPlayer().GetHandle(), data.m_ModelHash);
@@ -345,14 +266,24 @@ namespace
 			auto& data = node->GetData<CVehicleCreationData>();
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_VEHICLE(data.m_ModelHash))
 			{
-				SyncCrashBlocked("mismatched vehicle model crash");
+				LOGF(SYNC, WARNING, "Blocking invalid vehicle creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("mismatched vehicle model crash");
+				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				return true;
 			}
-			if (data.m_PopulationType == 8 && data.m_ModelHash == "SHIP_GUAMA02"_J)
+
+			if (data.m_PopulationType == 8 && data.m_ModelHash == "SHIP_GUAMA02"_J && Protections::GetSyncingPlayer().GetData().m_LargeVehicleFloodLimit.Process() && Features::_BlockVehicleFlooding.GetState())
 			{
-				SyncCrashBlocked("vehicle flood");
+				SyncBlocked("large vehicle flood");
 				return true;
 			}
+
+			if (data.m_PopulationType == 8 && Protections::GetSyncingPlayer().GetData().m_VehicleFloodLimit.Process() && Features::_BlockVehicleFlooding.GetState())
+			{
+				SyncBlocked("vehicle flood");
+				return true;
+			}
+
 			break;
 		}
 		case "CPhysicalAttachNode"_J:
@@ -360,17 +291,18 @@ namespace
 			auto& data = node->GetData<CPhysicalAttachData>();
 			if (auto local = Pointers.GetLocalPed(); local && local->m_NetObject)
 			{
-				if (data.m_IsAttached && data.m_AttachObjectId == local->m_NetObject->m_ObjectId)
+				if (data.m_IsAttached && data.m_AttachObjectId == local->m_NetObject->m_ObjectId && Features::_BlockAttachments.GetState())
 				{
-					SyncCrashBlocked("attachment");
+					SyncBlocked("attachment", GetObjectCreator(object));
 					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_ATTACH);
-					DeleteSyncObject(local->m_NetObject->m_ObjectId);
+					DeleteSyncObject(object->m_ObjectId);
 					return true;
 				}
 
 				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)NetObjType::Trailer)
 				{
-					SyncCrashBlocked("physical trailer attachment crash");
+					SyncBlocked("physical trailer attachment crash");
+					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 					return true;
 				}
 			}
@@ -381,17 +313,15 @@ namespace
 			auto& data = node->GetData<CVehicleProximityMigrationData>();
 			if (auto local = Pointers.GetLocalPed(); local && local->m_NetObject)
 			{
-				bool allowRemoteTp = Features::_AllowRemoteTPs.GetState(); // TODO...
+				bool allowRemoteTp = Features::_AllowRemoteTPs.GetState();
 				for (int i = 0; i < 17; i++)
 				{
 					if (data.m_PassengersActive[i] && data.m_PassengerObjectIds[i] == local->m_NetObject->m_ObjectId && !allowRemoteTp)
 					{
-						// TODO: add more checks
-						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
-						Notifications::Show("Protections",
-						    std::string("Blocked remote teleport from ").append(Protections::GetSyncingPlayer().GetName()),
-						    NotificationType::Warning);
+						LOGF(SYNC, WARNING, "Blocking vehicle migration that's spuriously added us to the passenger list (seat={}) by {}", i, Protections::GetSyncingPlayer().GetName());
+						SyncBlocked("remote teleport");
 						Protections::GetSyncingPlayer().AddDetection(Detection::REMOTE_TELEPORT);
+						DeleteSyncObject(object->m_ObjectId);
 						return true;
 					}
 				}
@@ -402,56 +332,25 @@ namespace
 		{
 			auto& data = node->GetData<CPedTaskTreeData>();
 
-			if (type == NetObjType::Player && data.m_ScriptCommand == 0x811E343C && data.m_ScriptTaskStage == 3)
-			{
-				if (data.GetNumTaskTrees() == 1 && data.m_Trees[0].m_NumTasks == 2 && data.m_Trees[0].m_Tasks[0].m_TaskType == 320
-				    && data.m_Trees[0].m_Tasks[0].m_TaskUnk1 == 255 && data.m_Trees[0].m_Tasks[0].m_TaskTreeType == 0
-				    && data.m_Trees[0].m_Tasks[1].m_TaskType == 609 && data.m_Trees[0].m_Tasks[1].m_TaskUnk1 == 1
-				    && data.m_Trees[0].m_Tasks[1].m_TaskTreeType == 1)
-				{
-					SyncCrashBlocked("Invalid player task crash");
-					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
-					return true;
-				}
-			}
-
-			if (type == NetObjType::Animal && data.m_ScriptCommand == 0xD5CBE228 && data.m_ScriptTaskStage == 1)
-			{
-				if (data.GetNumTaskTrees() == 1 && data.m_Trees[0].m_NumTasks == 1 && data.m_Trees[0].m_Tasks[0].m_TaskType == 322
-				    && data.m_Trees[0].m_Tasks[0].m_TaskUnk1 == 255 && data.m_Trees[0].m_Tasks[0].m_TaskTreeType == 0)
-				{
-					SyncCrashBlocked("Invalid animal task crash");
-					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
-					return true;
-				}
-
-				if (data.GetNumTaskTrees() == 1 && data.m_Trees[0].m_NumTasks == 2 && data.m_Trees[0].m_Tasks[0].m_TaskType == 322
-				    && data.m_Trees[0].m_Tasks[0].m_TaskUnk1 == 255 && data.m_Trees[0].m_Tasks[0].m_TaskTreeType == 0
-				    && data.m_Trees[0].m_Tasks[1].m_TaskType == 368 && data.m_Trees[0].m_Tasks[1].m_TaskUnk1 == 1
-				    && data.m_Trees[0].m_Tasks[1].m_TaskTreeType == 1)
-				{
-					SyncCrashBlocked("Invalid animal task crash");
-					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
-					return true;
-				}
-			}
-
 			for (int i = 0; i < data.GetNumTaskTrees(); i++)
 			{
 				for (int j = 0; j < data.m_Trees[i].m_NumTasks; j++)
 				{
 					if (data.m_Trees[i].m_Tasks[j].m_TaskType == -1)
 					{
-						SyncCrashBlocked("task fuzzer crash");
-						Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER); // no false positives possible
+						LOGF(SYNC, WARNING, "Blocking null task type (tree={}, task={}) from {}", i, j, Protections::GetSyncingPlayer().GetName());
+						SyncBlocked("task fuzzer crash");
+						// TODO fix node corruption bug
+						// Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER); // no false positives possible
 						return true;
 					}
 
 					// TODO: better heuristics
 					if (data.m_Trees[i].m_Tasks[j].m_TaskTreeType == 31)
 					{
-						SyncCrashBlocked("task fuzzer crash");
-						Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER); // no false positives possible
+						LOGF(SYNC, WARNING, "Blocking invalid task tree type (tree={}, task={}) from {}", i, j, Protections::GetSyncingPlayer().GetName());
+						SyncBlocked("task fuzzer crash");
+						// Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER); // no false positives possible
 						return true;
 					}
 				}
@@ -463,25 +362,30 @@ namespace
 			auto& data = node->GetData<CPedAttachData>();
 			if (auto local = Pointers.GetLocalPed(); local && local->m_NetObject)
 			{
-				if (data.m_IsAttached && data.m_AttachObjectId == local->m_NetObject->m_ObjectId)
+				if (data.m_IsAttached && data.m_AttachObjectId == local->m_NetObject->m_ObjectId && Features::_BlockAttachments.GetState())
 				{
-					SyncCrashBlocked("ped attachment");
+					SyncBlocked("ped attachment");
 					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_ATTACH);
 					if (object->m_ObjectType != (int)NetObjType::Player)
 					{
+						LOGF(SYNC, WARNING, "Deleting ped object {} attached to our ped", object->m_ObjectId);
 						DeleteSyncObject(object->m_ObjectId);
+						return true;
 					}
 					else
 					{
+						LOGF(SYNC, WARNING, "Player {} has attached themselves to us. Pretending to delete our ped to force detach ourselves on their end", Protections::GetSyncingPlayer().GetName());
 						// delete us on their end
 						Network::ForceRemoveNetworkEntity(Self::GetPed().GetNetworkObjectId(), -1, false, Protections::GetSyncingPlayer());
+						data.m_IsAttached = false;
 					}
-					return true;
 				}
 
+				// TODO: the check looks off
 				if (data.m_IsAttached && object && object->m_ObjectType == (uint16_t)NetObjType::Trailer)
 				{
-					SyncCrashBlocked("ped trailer attachment crash");
+					SyncBlocked("ped trailer attachment crash");
+					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 					return true;
 				}
 			}
@@ -490,9 +394,11 @@ namespace
 		case "CPropSetCreationNode"_J:
 		{
 			auto& data = node->GetData<CPropSetCreationData>();
-			if (data.m_Hash == 0x97D540A4 || data.m_Hash == 0x3701844F || data.m_Type == 0xFFFFFFFFFFFFFFFF)
+			if (data.m_Hash == "pg_veh_privatedining01x_med"_J || data.m_Hash == 0x3701844F || data.m_Type == -1 || STREAMING::IS_MODEL_A_PED(data.m_Hash))
 			{
-				SyncCrashBlocked("invalid propset crash");
+				LOGF(SYNC, WARNING, "Blocking invalid propset model 0x{:X} from {}", data.m_Hash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("invalid propset crash");
+				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				return true;
 			}
 			break;
@@ -502,7 +408,8 @@ namespace
 			auto& data = node->GetData<CPlayerCreationData>();
 			if (!STREAMING::IS_MODEL_A_PED(data.m_Hash))
 			{
-				SyncCrashBlocked("invalid player creation crash");
+				LOGF(SYNC, WARNING, "Blocking invalid player creation model 0x{:X} from {}", data.m_Hash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("invalid player creation crash");
 				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				// fix the crash instead of rejecting sync
 				data.m_Hash = "MP_MALE"_J;
@@ -514,7 +421,16 @@ namespace
 			auto& data = node->GetData<CProjectileCreationData>();
 			if (!WEAPON::IS_WEAPON_VALID(data.m_WeaponHash))
 			{
-				SyncCrashBlocked("invalid projectile weapon crash");
+				LOGF(SYNC, WARNING, "Blocking projectile with invalid weapon hash 0x{:X} from {}", data.m_WeaponHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("invalid projectile weapon crash");
+				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
+				return true;
+			}
+			if (!WEAPON::_IS_AMMO_VALID(data.m_AmmoHash))
+			{
+				LOGF(SYNC, WARNING, "Blocking projectile with invalid ammo hash 0x{:X} from {}", data.m_AmmoHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("invalid projectile ammo crash");
+				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				return true;
 			}
 			break;
@@ -570,6 +486,56 @@ namespace
 			}
 			break;
 		}
+		case "CPickupCreationNode"_J:
+		{
+			auto& data = node->GetData<CPickupCreationData>();
+			if (!OBJECT::_IS_PICKUP_TYPE_VALID(data.m_PickupHash) && !(data.m_PickupHash == 0xFFFFFFFF && data.m_ModelHash == 0))
+			{
+				LOGF(SYNC, WARNING, "Blocking pickup with invalid hashes (m_PickupHash = 0x{}, m_ModelHash = 0x{}) from {}", data.m_PickupHash, data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("invalid pickup type crash");
+				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
+				return true;
+			}
+			break;
+		}
+		case "Node_14359d660"_J:
+		{
+			auto data = (std::uint64_t)&node->GetData<char>();
+			for (int i = 0; i < *(int*)(data + 36); i++)
+			{
+				if (*(int*)(data + 36ULL * i + 72ULL) < *(int*)(data + 36ULL * i + 64ULL))
+				{
+					LOGF(SYNC, WARNING, "Blocking wanted data array out of bounds range ({} < {}) from ", *(int*)(data + 36ULL * i + 72ULL), *(int*)(data + 36ULL * i + 64ULL), Protections::GetSyncingPlayer().GetName());
+					Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
+					return true;
+				}
+			}
+			break;
+		}
+		case "CTrainGameStateUncommonNode"_J:
+		{
+			auto data = (std::uint64_t)&node->GetData<char>();
+			if (*(unsigned char*)(data + 12) >= Pointers.TrainConfigs->m_TrainConfigs.size())
+			{
+				LOGF(SYNC, WARNING, "Blocking CTrainGameStateUncommonNode out of bounds train config ({} >= {}) from {}", *(unsigned char*)(data + 12), Pointers.TrainConfigs->m_TrainConfigs.size(), Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("out of bounds train config index crash");
+				DeleteSyncObjectLater(object->m_ObjectId); // delete bad train just in case
+				return true;
+			}
+			break;
+		}
+		case "CAnimSceneCreationNode"_J:
+		{
+			auto& data = node->GetData<CAnimSceneCreationData>();
+			if (g_BlacklistedAnimScenes.contains(data.m_AnimDict))
+			{
+				LOGF(SYNC, WARNING, "Blocking animscene 0x{:X} from {} since it's in the blacklist", data.m_AnimDict, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("bad anim scene", GetObjectCreator(object));
+				DeleteSyncObject(object->m_ObjectId);
+				return true;
+			}
+			break;
+		}
 		}
 
 		return false;
@@ -591,8 +557,8 @@ namespace
 				return false;
 
 			if (YimMenu::Features::_LogClones.GetState())
-				LogNode(node, Nodes::Find(type, (uint64_t)node), type, object);
-			return ShouldBlockNode(node, Nodes::Find(type, (uint64_t)node), type, object);
+				YimMenu::Hooks::Protections::LogSyncNode(node, Nodes::Find((uint64_t)node), type, object, Protections::GetSyncingPlayer());
+			return ShouldBlockNode(node, Nodes::Find((uint64_t)node), type, object);
 		}
 
 		return false;

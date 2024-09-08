@@ -2,8 +2,7 @@
 
 namespace YimMenu::Data
 {
-	const inline std::unordered_map<int, std::string> g_MessageTypes = 
-	{
+	const inline std::unordered_map<int, std::string> g_MessageTypes = {
 	    {0x61, "JOIN_RESPONSE"},
 	    {0x70, "PACKED_EVENTS"},
 	    {0x71, "PACKED_EVENT_RELIABLES_MSGS"},
@@ -73,6 +72,7 @@ namespace YimMenu::Data
 	    {0x50, "NET_ICE_SESSION_PONG"},
 	    {0x51, "NET_ICE_SESSION_PORT_OPENER"},
 	    {0x52, "NET_ICE_SESSION_DEBUG_INFO"},
+	    {0x96, "ICE_SESSION_RELAY_ROUTE_CHECK"},
 	    {0x1A, "PEER_PHYSICAL_INDEX"},
 	    {0x1B, "REQUEST_PEER_PHYSICAL_INDEX"},
 	    {0x1C, "JOIN_RESPONSE2"},
@@ -102,8 +102,13 @@ namespace YimMenu::Data
 	    {0x44, "NET_ROUTE_REQUEST"},
 	    {0x45, "NET_ROUTE_REPLY"},
 	    {0x46, "NET_ROUTE_ERROR"},
+	    {0x93, "NET_ROUTE_CHANGE_REQUEST"},
+	    {0x94, "NET_ROUTE_CHANGE_REPLY"},
 	    {0x57, "PARTY_ENTER_GAME"},
 	    {0x58, "PARTY_LEAVE_GAME"},
 	    {0x59, "UNK_0x59"},
+	    {0x42, "CXN_RELAY_ADDR_CHANGES"},
+	    {0x47, "NET_KEY_EXCHANGE_SESSION_OFFER"},
+	    {0x48, "NET_KEY_EXCHANGE_SESSION_ANSWER"},
 	};
 }

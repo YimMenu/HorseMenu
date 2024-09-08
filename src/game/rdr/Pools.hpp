@@ -1,7 +1,8 @@
 #pragma once
 #include "Entity.hpp"
 #include "Ped.hpp"
-#include <rage/fwBasePool.hpp> 
+
+#include <rage/fwBasePool.hpp>
 
 
 namespace YimMenu
@@ -10,13 +11,14 @@ namespace YimMenu
 	rage::fwBasePool* GetObjectPool();
 	rage::fwBasePool* GetVehiclePool();
 	rage::fwBasePool* GetPickupPool();
+	rage::fwBasePool* GetScriptHandlePool();
 
 	template<typename Wrapper>
 	class PoolIterator
 	{
 	public:
 		rage::fwBasePool* m_Pool = nullptr;
-		uint32_t m_Index = 0;
+		uint32_t m_Index         = 0;
 
 		explicit PoolIterator(rage::fwBasePool* pool, int32_t index = 0)
 		{
@@ -55,9 +57,10 @@ namespace YimMenu
 	class PoolUtils
 	{
 		rage::fwBasePool* m_Pool;
+
 	public:
 		PoolUtils(rage::fwBasePool* pool) :
-			m_Pool(pool)
+		    m_Pool(pool)
 		{
 		}
 

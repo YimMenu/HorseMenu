@@ -12,6 +12,7 @@ namespace YimMenu
 	class FloatCommand;
 	class Vector3Command;
 	class Command;
+	class ColorCommand;
 
 	class Button : public UIItem
 	{
@@ -169,5 +170,16 @@ namespace YimMenu
 		int m_Flags;
 		std::function<void()> m_Callback;
 		ImGuiInputTextCallback m_ImGuiInputTextCallback;
+	};
+
+	class ColorCommandItem : public UIItem
+	{
+	public:
+		explicit ColorCommandItem(joaat_t id, std::optional<std::string> label_override = std::nullopt);
+		void Draw() override;
+
+	private:
+		ColorCommand* m_Command;
+		std::optional<std::string> m_LabelOverride;
 	};
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include "Detections.hpp"
+#include "core/misc/RateLimiter.hpp"
 #include "game/rdr/Player.hpp"
 #include <unordered_set>
+#include <chrono>
 
 namespace YimMenu
 {
@@ -14,5 +16,10 @@ namespace YimMenu
 		bool m_BlockExplosions{};
 		bool m_BlockParticles{};
 		bool m_GhostMode{};
+
+		RateLimiter m_VehicleFloodLimit{10s, 10};
+		RateLimiter m_LargeVehicleFloodLimit{15s, 5};
+
+		std::optional<std::uint64_t> m_PeerIdToSpoofTo{};
 	};
 }
