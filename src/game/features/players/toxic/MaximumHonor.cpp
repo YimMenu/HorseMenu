@@ -55,5 +55,5 @@ namespace YimMenu::Features
 	};
 
 	static MaximumHonor _MaximumHonor{"maxhonor", "Max Honor", "Sets the player's honor to the maximum value", 0, false};
-	static MaximumHonorAll _MaximumHonorAll{"maxhonorall", "All Max Honor", "Sets all player's honor to the maximum value"};
+	static MaximumHonorAll _MaximumHonorAll{"maxhonorall", "Give All Max Honor", "Sets all player's honor to the maximum value"};
 }

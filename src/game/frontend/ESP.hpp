@@ -8,5 +8,6 @@ namespace YimMenu
 	public:
 		static void Draw();
 		static void DrawPlayer(Player& plyr, ImDrawList* const draw_list);
+		static void DrawPeds(Ped plyr, ImDrawList* drawList);
 	};
 }

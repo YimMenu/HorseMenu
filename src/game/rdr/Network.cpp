@@ -74,8 +74,22 @@ namespace YimMenu::Network
 				(*Pointers.NetworkObjectMgr)->UnregisterNetworkObject(object, 8, true, true);
 	}
 
-	void Network::ForceRemoveNetworkEntity(rage::netObject* object, bool delete_locally, Player for_player)
+	void ForceRemoveNetworkEntity(rage::netObject* object, bool delete_locally, Player for_player)
 	{
 		ForceRemoveNetworkEntity(object->m_ObjectId, object->m_OwnershipToken, delete_locally, for_player);
+	}
+
+	void ForceRemoveAnimScene(int handle)
+	{
+		CAnimScene* scene = nullptr;
+		Pointers.GetAnimSceneFromHandle(&scene, handle);
+		if (scene)
+		{
+			auto net = *(rage::netObject**)((__int64)scene + 0x30);
+			if (net)
+			{
+				ForceRemoveNetworkEntity(net);
+			}
+		}
 	}
 }

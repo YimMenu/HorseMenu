@@ -1,15 +1,16 @@
 #include "Entity.hpp"
 
 #include "Natives.hpp"
+#include "Network.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "util/Joaat.hpp"
-#include "Network.hpp"
 
-#include <entity/fwEntity.hpp>
 #include <entity/CDynamicEntity.hpp>
+#include <entity/fwEntity.hpp>
 #include <network/CNetObjectMgr.hpp>
 #include <network/CNetworkPlayerMgr.hpp>
 #include <network/netObject.hpp>
+
 
 
 namespace YimMenu
@@ -229,7 +230,9 @@ namespace YimMenu
 		auto net = GetNetworkObject();
 		for (int i = 0; i < 32; i++)
 		{
-			if (Pointers.NetworkPlayerMgr->m_PlayerList[i] && Pointers.NetworkPlayerMgr->m_PlayerList[i] != Pointers.NetworkPlayerMgr->m_LocalPlayer && (!for_player || !for_player->IsValid() || for_player->GetId() == i))
+			if (Pointers.NetworkPlayerMgr->m_PlayerList[i]
+			    && Pointers.NetworkPlayerMgr->m_PlayerList[i] != Pointers.NetworkPlayerMgr->m_LocalPlayer
+			    && (!for_player || !for_player->IsValid() || for_player->GetId() == i))
 			{
 				rage::datBitBuffer buffer(data, sizeof(data));
 				(*Pointers.NetworkObjectMgr)->PackCloneCreate(net, Pointers.NetworkPlayerMgr->m_PlayerList[i], &buffer);
@@ -309,6 +312,12 @@ namespace YimMenu
 		ENTITY_ASSERT_VALID();
 		ENTITY_ASSERT_CONTROL();
 		ENTITY::SET_ENTITY_VISIBLE(GetHandle(), status);
+	}
+
+	bool Entity::HasInterior()
+	{
+		ENTITY_ASSERT_VALID();
+		return INTERIOR::GET_INTERIOR_FROM_ENTITY(GetHandle()) != 0;
 	}
 
 	// TODO: find a better way to compare entities

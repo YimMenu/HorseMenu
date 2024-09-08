@@ -170,6 +170,7 @@ namespace YimMenu
 		ENTITY_ASSERT_VALID();
 		ENTITY_ASSERT_CONTROL();
 		PED::_SET_PED_SCALE(GetHandle(), scale);
+		PED::_UPDATE_PED_VARIATION(GetHandle(), 0, 1, 1, 1, 0);
 	}
 
 	int Ped::GetAccuracy()

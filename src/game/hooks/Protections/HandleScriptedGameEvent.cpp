@@ -1,13 +1,13 @@
 #include "core/commands/BoolCommand.hpp"
-#include "core/hooking/DetourHook.hpp"
 #include "core/frontend/Notifications.hpp"
+#include "core/hooking/DetourHook.hpp"
 #include "core/misc/RateLimiter.hpp"
-#include "game/backend/Protections.hpp"
-#include "game/hooks/Hooks.hpp"
-#include "game/rdr/data/TickerEvents.hpp"
-#include "game/rdr/data/StableEvents.hpp"
 #include "game/backend/Players.hpp"
+#include "game/backend/Protections.hpp"
 #include "game/backend/Self.hpp"
+#include "game/hooks/Hooks.hpp"
+#include "game/rdr/data/StableEvents.hpp"
+#include "game/rdr/data/TickerEvents.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/CScriptedGameEvent.hpp>
@@ -22,7 +22,8 @@ namespace YimMenu::Features
 	BoolCommand _BlockStartParlay("blockstartparlay", "Block Start Parlay", "Blocks all start parlay events", true);
 	BoolCommand _BlockEndParlay("blockendparlay", "Block End Parlay", "Blocks all end parlay events", true);
 	BoolCommand _BlockTickerSpam("blocktickerspam", "Block Ticker Spam", "Blocks all ticker message spam events", true);
-	BoolCommand _BlockStableEvents("blockstableevents", "Block Stable Events", "Blocks all parlay events", true);
+	BoolCommand _BlockStableEvents("blockstableevents", "Block Stable Events", "Blocks all stable events", true);
+	BoolCommand _BlockKickFromMissionLobby("blockkickfrommissionlobby", "Block Kick From Mission Lobby", "Blocks players from kicking you from mission lobbies", true);
 }
 
 namespace YimMenu::Hooks
@@ -45,8 +46,7 @@ namespace YimMenu::Hooks
 
 			LOG(VERBOSE) << "Script Event:\n"
 			             << "\nPlayer: " << src->GetName() << "\n"
-			             << "\n\tArgs: " << script_args
-				<< "\n\tScript: " << HEX(event->m_ScriptId.m_ScriptHash)
+			             << "\n\tArgs: " << script_args << "\n\tScript: " << HEX(event->m_ScriptId.m_ScriptHash)
 			             << "\n\tHas Metadata Index: " << (event->m_HasScriptMetadataIdx ? "YES" : "NO")
 			             << "\n\tID Overriden: " << (event->m_ScriptIdOverridden ? "YES" : "NO");
 		}
@@ -135,7 +135,6 @@ namespace YimMenu::Hooks
 		}
 		}
 
-		return BaseHook::Get<Protections::HandleScriptedGameEvent, DetourHook<decltype(&Protections::HandleScriptedGameEvent)>>()
-		    ->Original()(event, src, dst);
+		return BaseHook::Get<Protections::HandleScriptedGameEvent, DetourHook<decltype(&Protections::HandleScriptedGameEvent)>>()->Original()(event, src, dst);
 	}
 }

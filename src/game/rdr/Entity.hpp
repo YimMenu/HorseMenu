@@ -131,6 +131,7 @@ namespace YimMenu
 		// visibility
 		bool IsVisible();
 		void SetVisible(bool status);
+		bool HasInterior();
 
 		bool operator==(const Entity& other);
 		bool operator!=(const Entity& other)

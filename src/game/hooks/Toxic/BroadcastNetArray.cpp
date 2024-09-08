@@ -1,9 +1,15 @@
+#include "core/commands/BoolCommand.hpp"
+#include "core/commands/IntCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
-#include "game/hooks/Hooks.hpp"
-#include "game/rdr/ScriptGlobal.hpp"
 #include "game/backend/Players.hpp"
+#include "game/backend/Self.hpp"
+#include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
+#include "game/rdr/ScriptGlobal.hpp"
+
+#include <random>
 #include <script/globals/ACEHostData.hpp>
+#include <script/globals/PlayerPersonaData.hpp>
 
 namespace YimMenu::Hooks
 {
@@ -15,7 +21,8 @@ namespace YimMenu::Hooks
 		bool needToUseSessionSplitKick = ScriptGlobal(1207480).As<void*>() == data && Player(target).GetData().m_UseSessionSplitKick;
 		if (needToUseSessionSplitKick)
 		{
-			oldHostStateVal = ScriptGlobal(1207480).As<ACE_HOST_DATA*>()->RuntimeData.RuntimeMissionDatas[0].Locations[0].State;
+			oldHostStateVal =
+			    ScriptGlobal(1207480).As<ACE_HOST_DATA*>()->RuntimeData.RuntimeMissionDatas[0].Locations[0].State;
 			ScriptGlobal(1207480).As<ACE_HOST_DATA*>()->RuntimeData.RuntimeMissionDatas[0].Locations[0].State = ACEHostRuntimeState::ACTIVE;
 			*Pointers.NetArrayPatch = 0xEB;
 		}

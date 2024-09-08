@@ -11,7 +11,7 @@ namespace YimMenu::Hooks
 {
 	int Protections::HandleCloneRemove(void* mgr, CNetGamePlayer* sender, CNetGamePlayer* target, uint16_t objectId, int ownershipToken, bool unk)
 	{
-		if (Self::GetPed().GetNetworkObjectId() == objectId)
+		if (Self::GetPed() && Self::GetPed().GetNetworkObjectId() == objectId)
 		{
 			Notifications::Show("Protections", std::format("Blocked player ped removal crash from {}", sender->GetName()), NotificationType::Warning);
 			return 0;

@@ -18,5 +18,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static LightningStrike _LightningStrike{"lightning", "Lightning", "Strikes the player with lightning"};
+	static LightningStrike _LightningStrike{"lightning", "Lightning Strike", "Strikes the player with lightning"};
 }

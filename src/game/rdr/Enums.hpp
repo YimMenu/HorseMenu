@@ -1395,6 +1395,7 @@ enum class ScriptEvent
 	SCRIPT_EVENT_NOTORIETY_FORCE_NOT_PASSIVE_HORSE = 37,
 	SCRIPT_EVENT_NET_STABLE                        = 46,
 	SCRIPT_EVENT_NET_STABLE_MOUNT                  = 47,
+	SCRIPT_EVENT_NET_VS_MISSION_INTRO			   = 49,
 	SCRIPT_EVENT_FETCH_MANAGER                     = 178,
 	SCRIPT_EVENT_NET_HUD                           = 186,
 	SCRIPT_EVENT_PERSONA_HONOR                     = 188,
@@ -1473,6 +1474,7 @@ enum class NetMessageType : uint32_t
 	NET_ICE_SESSION_PONG                              = 0x50,
 	NET_ICE_SESSION_PORT_OPENER                       = 0x51,
 	NET_ICE_SESSION_DEBUG_INFO                        = 0x52,
+	NET_ICE_SESSION_RELAY_ROUTE_CHECK			      = 0x96,
 	PEER_PHYSICAL_INDEX                               = 0x1A, // obsolete
 	REQUEST_PEER_PHYSICAL_INDEX                       = 0x1B, // obsolete
 	JOIN_RESPONSE2                                    = 0x1C, // obsolete
@@ -1502,9 +1504,14 @@ enum class NetMessageType : uint32_t
 	NET_ROUTE_REQUEST                                 = 0x44,
 	NET_ROUTE_REPLY                                   = 0x45,
 	NET_ROUTE_ERROR                                   = 0x46,
+	NET_ROUTE_CHANGE_REQUEST                          = 0x93,
+	NET_ROUTE_CHANGE_REPLY                            = 0x94,
 	PARTY_ENTER_GAME                                  = 0x57,
 	PARTY_LEAVE_GAME                                  = 0x58,
 	UNK_0x59                                          = 0x59,
+	CXN_RELAY_ADDR_CHANGED                            = 0x42,
+	NET_KEY_EXCHANGE_SESSION_OFFER                    = 0x47,
+	NET_KEY_EXCHANGE_SESSION_ANSWER                   = 0x48,
 };
 
 enum class WeaponHash : uint32_t

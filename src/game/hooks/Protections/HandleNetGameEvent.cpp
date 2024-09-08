@@ -95,7 +95,7 @@ namespace YimMenu::Hooks
 	{
 		rage::datBitBuffer new_buffer = *buffer;
 
-		if (Features::_LogEvents.GetState() && (int)type < 164)
+		if (Features::_LogEvents.GetState() && (int)type < g_NetEventsToString.size())
 		{
 			LOG(INFO) << "NETWORK_EVENT: " << g_NetEventsToString[(int)type] << " from " << sourcePlayer->GetName();
 		}

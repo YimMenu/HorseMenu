@@ -19,7 +19,7 @@ namespace YimMenu::Hooks
 			return 0;
 		}
 
-		if (Self::GetMount() && Self::GetMount().GetNetworkObjectId() == objectId)
+		if (Self::GetMount() && Self::GetMount().GetNetworkObjectId() == objectId && Self::GetMount().HasControl())
 		{
 			Notifications::Show("Protections", std::format("Blocked kick from mount from {}", src->GetName()), NotificationType::Warning);
 			return 0;

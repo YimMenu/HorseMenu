@@ -16,7 +16,7 @@ namespace YimMenu
 		Hooking();
 
 		MinHook m_MinHook;
-		
+
 	public:
 		virtual ~Hooking();
 		Hooking(const Hooking&) = delete;

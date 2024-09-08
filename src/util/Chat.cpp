@@ -1,4 +1,5 @@
 #include "Chat.hpp"
+#include "core/frontend/widgets/imgui_colors.h"
 #include "game/rdr/Packet.hpp"
 #include "game/frontend/ChatDisplay.hpp"
 #include "game/backend/Players.hpp"
@@ -35,11 +36,11 @@ namespace YimMenu
 			}
 		}
 
-		RenderChatMessage(message, self.GetName());
+		RenderChatMessage(message, self.GetName(), ImGui::Colors::Green);
 	}
 
-	void RenderChatMessage(const std::string& message, const std::string& sender)
+	void RenderChatMessage(const std::string& message, const std::string& sender, ImColor color)
 	{
-		ChatDisplay::Show(sender, message);
+		ChatDisplay::Show(sender, message, color);
 	}
 }

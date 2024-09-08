@@ -13,11 +13,6 @@
 #include "game/rdr/Natives.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu::Features
-{
-	BoolCommand _IsFirstLoadComplete{"firstloadcomplete", "Is First Load Complete", "Used to detect if the first load has been completed or not."};
-}
-
 namespace YimMenu
 {
 	void SpectateTick()
@@ -63,20 +58,9 @@ namespace YimMenu
 		}
 	}
 
-	void TryFirstLoad()
-	{
-		if (!Features::_IsFirstLoadComplete.GetState())
-		{
-			Commands::GetCommand<BoolCommand>("detectspoofednames"_J)->SetState(true);
-			Commands::GetCommand<BoolCommand>("chathelper"_J)->SetState(true);
-			Features::_IsFirstLoadComplete.SetState(true);
-		}
-	}
-
 	void FeatureLoop()
 	{
-		TryFirstLoad();
-		Commands::EnableLoopedCommands();
+		Commands::EnableBoolCommands();
 		while (true)
 		{
 			SpectateTick();

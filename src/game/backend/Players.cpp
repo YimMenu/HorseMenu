@@ -71,7 +71,7 @@ namespace YimMenu
 	{
 		for (auto& [idx, player] : Players::GetPlayers())
 		{
-			if (player.GetGamerInfo()->m_GamerHandle.m_RockstarId == rid)
+			if (player.GetGamerInfo()->m_GamerHandle2.m_RockstarId == rid)
 			{
 				return player;
 			}

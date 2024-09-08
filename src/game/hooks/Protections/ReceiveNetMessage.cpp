@@ -2,6 +2,7 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/DetourHook.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/backend/PlayerDatabase.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/Self.hpp"
@@ -13,6 +14,7 @@
 #include "game/rdr/data/MessageTypes.hpp"
 #include "util/Chat.hpp"
 #include "util/Helpers.hpp"
+#include "core/frontend/widgets/imgui_colors.h"
 
 #include <array>
 #include <network/CNetGamePlayer.hpp>
@@ -23,10 +25,10 @@
 #include <rage/datBitBuffer.hpp>
 
 
-
 namespace YimMenu::Features
 {
 	BoolCommand _LogPackets("logpackets", "Log Packets", "Log Packets");
+	BoolCommand _LockLobby("locklobby", "Lock Lobby", "Allows no one to enter your session");
 }
 
 namespace YimMenu::Hooks
@@ -63,7 +65,7 @@ namespace YimMenu::Hooks
 				msg_name = it->second;
 
 			auto session = (*Pointers.ScSession)->m_SessionMultiplayer;
-			if (session)
+			if (session && frame->m_MsgId != -1)
 			{
 				for (int i = 0; i < 32; i++)
 				{
@@ -81,18 +83,16 @@ namespace YimMenu::Hooks
 		}
 	}
 
-	bool Protections::ReceiveNetMessage(void* a1, void* ncm, rage::netConnection::InFrame* frame)
+	bool Protections::ReceiveNetMessage(void* a1, rage::netConnectionManager* ncm, rage::netConnection::InFrame* frame)
 	{
 		if (frame->GetEventType() != rage::netConnection::InFrame::EventType::FrameReceived)
 		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
-			    ->Original()(a1, ncm, frame);
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
 		}
 
 		if (frame->m_Data == nullptr || frame->m_Length == 0)
 		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
-			    ->Original()(a1, ncm, frame);
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
 		}
 
 		rage::datBitBuffer buffer(frame->m_Data, frame->m_Length);
@@ -100,31 +100,76 @@ namespace YimMenu::Hooks
 
 		NetMessageType msg_type;
 
-		if (!GetMessageType(msg_type, buffer))
-		{
-			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()
-			    ->Original()(a1, ncm, frame);
-		}
-
-		if (Features::_LogPackets.GetState())
-		{
-			LogFrame(frame);
-		}
-
 		CNetworkScSessionPlayer* player = nullptr;
 
 		auto session = (*Pointers.ScSession)->m_SessionMultiplayer;
 		if (session)
 		{
-			for (int i = 0; i < 32; i++)
+			if (frame->m_MsgId != -1)
 			{
-				if (session->GetPlayerByIndex(i) && session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection
-				    && session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection->m_MessageId == frame->m_MsgId)
+				for (int i = 0; i < 32; i++)
 				{
-					player = session->GetPlayerByIndex(i);
-					break;
+					if (session->GetPlayerByIndex(i) && session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection
+					    && session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection->m_MessageId == frame->m_MsgId)
+					{
+						player = session->GetPlayerByIndex(i);
+						break;
+					}
 				}
 			}
+			else
+			{
+				if (frame->m_Address.m_connection_type == 1)
+				{
+					for (int i = 0; i < 32; i++)
+					{
+						if (session->GetPlayerByIndex(i) && session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection)
+						{
+							if (auto addr = Pointers.GetPeerAddressByMessageId(ncm, session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection->m_MessageId); addr && addr->m_external_ip.m_packed == frame->m_Address.m_external_ip.m_packed)
+							{
+								player = session->GetPlayerByIndex(i);
+								break;
+							}
+						}
+					}
+				}
+				else if (frame->m_Address.m_connection_type == 2)
+				{
+					for (int i = 0; i < 32; i++)
+					{
+						if (session->GetPlayerByIndex(i))
+						{
+							if (auto addr = Pointers.GetPeerAddressByMessageId(ncm, session->GetPlayerByIndex(i)->m_SessionPeer->m_Connection->m_MessageId); addr && addr->m_relay_address.m_packed == frame->m_Address.m_relay_address.m_packed)
+							{
+								player = session->GetPlayerByIndex(i);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (frame->m_ConnectionId == 2 && frame->m_Length >= 12 && player)
+		{
+			if (*(uint64_t*)(((uint64_t)frame->m_Data) + 4) != player->m_GamerInfo.m_GamerHandle2.m_RockstarId)
+			{
+				*(uint64_t*)(((uint64_t)frame->m_Data) + 4) = player->m_GamerInfo.m_GamerHandle2.m_RockstarId;
+				if (auto p = Players::GetByMessageId(frame->m_MsgId))
+					p.AddDetection(Detection::SPOOFING_VC);
+			}
+
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
+		}
+
+		if (!GetMessageType(msg_type, buffer))
+		{
+			return BaseHook::Get<Protections::ReceiveNetMessage, DetourHook<decltype(&Protections::ReceiveNetMessage)>>()->Original()(a1, ncm, frame);
+		}
+
+		if (Features::_LogPackets.GetState())
+		{
+			LogFrame(frame);
 		}
 
 		switch (msg_type)
@@ -139,7 +184,12 @@ namespace YimMenu::Hooks
 
 			if (player && player->m_HasGamerInfo)
 			{
-				RenderChatMessage(message, player->m_GamerInfo.m_Name);
+				auto color = ImGui::Colors::Blue;
+
+				if (auto p = Players::GetByMessageId(frame->m_MsgId); p && !p.IsFriend())
+					color = ImGui::Colors::Red;
+
+				RenderChatMessage(message, player->m_GamerInfo.m_Name, color);
 			}
 			break;
 		}
@@ -152,9 +202,7 @@ namespace YimMenu::Hooks
 					if (auto p = Players::GetByMessageId(frame->m_MsgId))
 						p.AddDetection(Detection::TRIED_KICK_PLAYER);
 
-					Notifications::Show("Protections",
-					    std::string("Blocked Reset Population Kick from ").append(player->m_GamerInfo.m_Name),
-					    NotificationType::Warning);
+					Notifications::Show("Protections", std::string("Blocked Reset Population Kick from ").append(player->m_GamerInfo.m_Name), NotificationType::Warning);
 				}
 
 				return true;
@@ -164,6 +212,59 @@ namespace YimMenu::Hooks
 		case NetMessageType::TEXT_CHAT_STATUS:
 		{
 			return true;
+		}
+		case NetMessageType::CONNECT_REQUEST:
+		{
+			if (*Pointers.IsSessionStarted && Features::_LockLobby.GetState())
+			{
+				LOG(WARNING) << "Denying a player from joining";
+				return true;
+			}
+			break;
+		}
+		case NetMessageType::NET_ICE_SESSION_OFFER:
+		{
+			if (player)
+			{
+				if (!player->m_Initialized)
+					break;
+
+				// this should ideally *never* happen, but let's check for the peer ID mismatch just in case
+
+				auto version = buffer.Read<uint8_t>(8);
+				auto v1 = buffer.Read<uint32_t>(32);
+				auto v2 = buffer.Read<uint32_t>(32);
+				auto peer_id = buffer.Read<uint64_t>(64);
+
+				if (peer_id != player->m_GamerInfo.m_PeerId)
+				{
+					if (auto p = Players::GetByMessageId(frame->m_MsgId))
+						p.AddDetection(Detection::TRIED_KICK_PLAYER);
+
+					Notifications::Show("Protections", std::format("Blocked ICE kick from {}", player->m_GamerInfo.m_Name), NotificationType::Warning);
+					return true;
+				}
+			}
+			else
+			{
+				// now this is a... weirder case. if we let this go, then this peer could overwrite those who've already joined us
+
+				auto version = buffer.Read<uint8_t>(8);
+				auto v1      = buffer.Read<uint32_t>(32);
+				auto v2      = buffer.Read<uint32_t>(32);
+				auto peer_id = buffer.Read<uint64_t>(64);
+
+				for (auto& [id, plyr] : Players::GetPlayers())
+				{
+					if (plyr.GetGamerInfo()->m_PeerId == peer_id)
+					{
+						// this will cause a takeover
+						Notifications::Show("Protections", "Blocked ICE kick from unknown player", NotificationType::Warning);
+						return true;
+					}
+				}
+			}
+			break;
 		}
 		}
 
