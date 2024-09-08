@@ -6,8 +6,8 @@ namespace YimMenu
 	class BoolCommand : public Command
 	{
 	protected:
-		virtual void OnEnable(){};
-		virtual void OnDisable(){};
+		virtual void OnEnable() {};
+		virtual void OnDisable() {};
 		virtual void OnCall() override;
 		virtual void SaveState(nlohmann::json& value) override;
 		virtual void LoadState(nlohmann::json& value) override;

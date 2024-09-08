@@ -10,6 +10,7 @@ namespace YimMenu
 	{
 		std::string m_Sender;
 		std::string m_Message;
+		ImColor m_Color;
 	};
 
 	class ChatDisplay
@@ -18,7 +19,7 @@ namespace YimMenu
 		std::vector<Message> m_Messages = {};
 		std::mutex m_Mutex;
 
-		void ShowImpl(std::string sender, std::string message);
+		void ShowImpl(std::string sender, std::string message, ImColor color);
 		void DrawImpl();
 		void ClearImpl();
 
@@ -29,9 +30,9 @@ namespace YimMenu
 		}
 
 	public:
-		static void Show(std::string sender, std::string message)
+		static void Show(std::string sender, std::string message, ImColor color)
 		{
-			return GetInstance().ShowImpl(sender, message);
+			return GetInstance().ShowImpl(sender, message, color);
 		}
 
 		static void Draw()

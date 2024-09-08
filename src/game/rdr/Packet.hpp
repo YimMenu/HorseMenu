@@ -13,8 +13,8 @@ namespace YimMenu
 	public:
 
 		Packet();
-		void Send(uint32_t msg_id, int connection_id, bool reliable = true, bool immediate = false);
-		void Send(Player player, int connection_id, bool reliable = true, bool immediate = false);
+		void Send(uint32_t msg_id, int connection_id, bool reliable = true, bool immediate = false, bool out_of_frame = false);
+		void Send(Player player, int connection_id, bool reliable = true, bool immediate = false, bool out_of_frame = false);
 
 		inline operator rage::datBitBuffer&()
 		{

@@ -205,7 +205,7 @@ namespace YimMenu
 		//Vulkan
 		VkPhysicalDevice m_VkPhysicalDevice;
 		VkInstance m_VkInstance;
-		VkAllocationCallbacks* m_VkAllocator;
+		VkAllocationCallbacks* m_VkAllocator = nullptr;
 		std::vector<VkQueueFamilyProperties> m_VKQueueFamilies;
 		uint32_t m_VkQueueFamily = (uint32_t)-1;
 		VkDevice m_VkFakeDevice;

@@ -36,6 +36,10 @@ namespace rage
 	class scrThreadContext;
 	class rlScSessionId;
 	class rlScSessionMultiplayer;
+	class rlGamerInfoBase;
+	class rlTaskStatus;
+	class rlQueryPresenceAttributesContext;
+	class rlScTaskStatus;
 }
 
 class CAnimScene;
@@ -43,6 +47,7 @@ class CEventInventoryItemPickedUp;
 class CEventGroup;
 class CNetworkScSession;
 class CNetworkScSessionMultiplayerImpl;
+class CTrainConfigs;
 
 namespace YimMenu
 {
@@ -75,7 +80,8 @@ namespace YimMenu
 		using RequestSessionSeamless = void (*)(CNetworkScSession* session, rage::rlScSessionId* req_id, int flags, rage::fvector3* position, int type);
 		using GetConnectPlayerData = void (*)(CNetworkScSessionMultiplayerImpl* mp, void* data);
 		using SendConnectResponse = void (*)(rage::rlScSessionMultiplayer* sess, int message_id, void* data, int flags);
-		using GetPeerAddressByMessageId = rage::netPeerAddress*(*)(rage::netConnectionManager* cxn_mgr, int msg_id);
+		using GetPeerAddressByMessageId = rage::netPeerAddress* (*)(rage::netConnectionManager* cxn_mgr, int msg_id);
+		using OpenIceTunnel = bool (*)(rage::rlGamerInfoBase* peer_addr, rage::netPeerAddress* direct_addr, rage::netPeerAddress* relay_addr, bool a4, std::uint64_t session_token, std::uint64_t session_id, rage::rlTaskStatus* status);
 	};
 
 	struct PointerData
@@ -83,7 +89,6 @@ namespace YimMenu
 		// RDR
 		bool* IsSessionStarted;
 		std::int64_t** ScriptGlobals;
-		void* NativeRegistrationTable;
 		Functions::GetNativeHandler GetNativeHandler;
 		Functions::FixVectors FixVectors;
 		rage::atArray<rage::scrThread*>* ScriptThreads;
@@ -113,11 +118,27 @@ namespace YimMenu
 		Functions::GetPeerAddressByMessageId GetPeerAddressByMessageId;
 		PVOID WriteVoiceInfoData;
 		CFriend** FriendRegistry;
+		PVOID WriteSyncTree;
+		PVOID ShouldUseNodeCache;
+		PVOID IsNodeInScope;
+		PVOID SetTreeErrored;
+		PVOID SetTreeTargetObject;
+		PVOID PhysicsHandleLassoAttachment;
+		PVOID DecideConnectionMethod;
+		char* DecideConnectionMethodJmp;
+		char* DecideConnectionMethodDefVal;
+		PVOID HandlePeerRelayPacket;
+		PVOID UnpackPacket;
+		PVOID UpdateEndpointAddress;
+		CTrainConfigs* TrainConfigs;
+		Functions::OpenIceTunnel OpenIceTunnel;
+		PVOID SerializeIceSessionOfferRequest;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;
 		PoolEncryption* VehiclePool;
 		PoolEncryption* PickupPool;
+		PoolEncryption* ScriptHandlePool;
 		uint32_t (*FwScriptGuidCreateGuid)(void*);
 		CNetworkObjectMgr** NetworkObjectMgr;
 		PVOID HandleCloneRemove;
@@ -134,6 +155,7 @@ namespace YimMenu
 		Functions::SendEventAck SendEventAck;
 		PVOID HandleCloneCreate;
 		PVOID HandleCloneSync;
+		PVOID GetCloneCreateResponse;
 		PVOID CanApplyData;
 		PVOID PackCloneCreate;
 		Functions::GetSyncTreeForType GetSyncTreeForType;
@@ -144,7 +166,6 @@ namespace YimMenu
 		PVOID ReceiveServerMessage;
 		PVOID SerializeServerRPC;
 		PVOID ReceiveArrayUpdate;
-
 		PVOID CreatePoolItem;
 
 
@@ -187,7 +208,7 @@ namespace YimMenu
 		ID3D12CommandQueue** CommandQueue;
 
 		// Misc Renderer Related
-		HWND Hwnd;
+		HWND* Hwnd;
 
 		Functions::GetRendererInfo GetRendererInfo;
 		GraphicsOptions GameGraphicsOptions;

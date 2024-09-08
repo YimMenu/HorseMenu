@@ -17,5 +17,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static Circus _Circus{"circus", "Circus", "Cages the player using a circus wagon"};
+	static Circus _Circus{"cageplayercircus", "Cage Player(Circus)", "Cages the player using a circus wagon"};
 }

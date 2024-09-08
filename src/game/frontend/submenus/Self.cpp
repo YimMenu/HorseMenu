@@ -136,7 +136,13 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antiafk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepbarsfilled"_J));
+		globalsGroup->AddItem(std::make_shared<ConditionalItem>("keepbarsfilled"_J, std::make_shared<BoolCommandItem>("keepdeadeyefilled"_J)));
+		globalsGroup->AddItem(std::make_shared<ConditionalItem>("keepbarsfilled"_J, std::make_shared<BoolCommandItem>("keepstaminafilled"_J)));
+		globalsGroup->AddItem(std::make_shared<ConditionalItem>("keepbarsfilled"_J, std::make_shared<BoolCommandItem>("keephealthfilled"_J)));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepcoresfilled"_J));
+		globalsGroup->AddItem(std::make_shared<ConditionalItem>("keepcoresfilled"_J, std::make_shared<BoolCommandItem>("keepdeadeyecorefilled"_J)));
+		globalsGroup->AddItem(std::make_shared<ConditionalItem>("keepcoresfilled"_J, std::make_shared<BoolCommandItem>("keepstaminacorefilled"_J)));
+		globalsGroup->AddItem(std::make_shared<ConditionalItem>("keepcoresfilled"_J, std::make_shared<BoolCommandItem>("keephealthcorefilled"_J)));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
@@ -155,6 +161,16 @@ namespace YimMenu::Submenus
 		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistlepitch"_J, "Pitch")));
 		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistleclarity"_J, "Clarity")));
 		toolsGroup->AddItem(std::make_shared<ConditionalItem>("overridewhistle"_J, std::make_shared<FloatCommandItem>("whistleshape"_J, "Shape")));
+
+		static float playerScale = 1;
+		toolsGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			ImGui::Text("Horse Scale");
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::InputFloat(" ", &playerScale))
+				FiberPool::Push([] {
+					YimMenu::Self::GetPed().SetScale(playerScale);
+				});
+		}));
 
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("climbsteepslopes"_J));
 		movementGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
@@ -193,12 +209,13 @@ namespace YimMenu::Submenus
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keephorseagitationlow"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("flaminghooves"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<CommandItem>("tpmounttoself"_J));
-		static int horseScale = 1;
+		static float horseScale = 1;
 		horseGlobalsGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			ImGui::Text("Horse Scale");
-			if (ImGui::InputInt(" ", &horseScale))
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::InputFloat(" ", &horseScale))
 				FiberPool::Push([] {
-					PED::_SET_PED_SCALE(YimMenu::Self::GetMount().GetHandle(), (float)horseScale);
+					YimMenu::Self::GetMount().SetScale(horseScale);
 				});
 		}));
 		horse->AddItem(horseGlobalsGroup);

@@ -44,8 +44,9 @@ namespace YimMenu
 	{
 		static constexpr size_t sm_SyncTreeCount = size_t(NetObjType::Max);
 
-		std::array<SyncNodeVftToIds, sm_SyncTreeCount> m_SyncTressSyncNodeAddrToIds;
+		SyncNodeVftToIds m_SyncNodeMap;
 		std::array<SyncTreeNodeArrayIndexToNodeId, sm_SyncTreeCount> m_SyncTreeNodeIdsMap;
+		std::vector<SyncNodeId> m_GlobalNodeIds;
 
 		SyncNodeFinder();
 	};
@@ -57,8 +58,7 @@ namespace YimMenu
 		bool m_Initialized = false;
 		std::mutex m_InitMutex;
 
-		SyncNodeId& FindImpl(NetObjType obj_type, uintptr_t addr);
-		SyncNodeVftToIds& GetNodesForTypeImpl(NetObjType obj_type);
+		SyncNodeId& FindImpl(uintptr_t addr);
 		void InitImpl();
 
 		static Nodes& GetInstance()
@@ -78,18 +78,36 @@ namespace YimMenu
 		static void Reset()
 		{
 			std::lock_guard guard(GetInstance().m_InitMutex);
-			GetInstance().m_Finder.m_SyncTressSyncNodeAddrToIds = {};
+			GetInstance().m_Finder.m_SyncNodeMap                = {};
+			GetInstance().m_Finder.m_GlobalNodeIds = {};
 			GetInstance().m_Initialized                         = false;
 		}
 
-		static SyncNodeId& Find(NetObjType obj_type, uintptr_t addr)
+		static bool IsInitialized()
 		{
-			return GetInstance().FindImpl(obj_type, addr);
+			return GetInstance().m_Initialized;
 		}
 
-		static SyncNodeVftToIds& GetNodesForType(NetObjType obj_type)
+		static SyncNodeId& Find(uintptr_t addr)
 		{
-			return GetInstance().GetNodesForTypeImpl(obj_type);
+			return GetInstance().FindImpl(addr);
+		}
+
+		static std::vector<SyncNodeId>& GetAllNodeIds()
+		{
+			return GetInstance().m_Finder.m_GlobalNodeIds;
+		}
+	};
+}
+
+namespace std
+{
+	template<>
+	struct hash<YimMenu::SyncNodeId>
+	{
+		size_t operator()(const YimMenu::SyncNodeId& x) const
+		{
+			return x.id;
 		}
 	};
 }

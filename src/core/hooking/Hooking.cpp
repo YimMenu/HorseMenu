@@ -4,15 +4,42 @@
 #include "CallHook.hpp"
 #include "DetourHook.hpp"
 #include "VMTHook.hpp"
+#include "VtableHook.hpp"
 #include "core/memory/ModuleMgr.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 
+#include "game/backend/Self.hpp"
 
 namespace YimMenu
 {
+	void UnregObj(void* mgr, rage::netObject* object, int reason, bool a4, bool a5)
+	{
+		if (object == Self::GetPed().GetNetworkObject())
+		{
+			LOG(INFO) << "CNetworkObjectMgr::UnregisterNetworkObject called with reason " << reason << " on your player ped. Crashing game to get stack trace";
+			*(volatile int*)0 = 0;
+		}
+
+		BaseHook::Get<UnregObj, DetourHook<decltype(&UnregObj)>>()->Original()(mgr, object, reason, a4, a5);
+	}
+
+	void DelObj(void* obj)
+	{
+		if (Ped(obj) == Self::GetPed())
+		{
+			LOG(INFO) << "CPhysical::Delete called on your player ped. Crashing game to get stack trace";
+			*(volatile int*)0 = 0;
+		}
+
+		BaseHook::Get<DelObj, DetourHook<decltype(&DelObj)>>()->Original()(obj);
+	}
+
 	Hooking::Hooking()
 	{
+		// BaseHook::Add<UnregObj>(new DetourHook("WndProc", (void*)((__int64)GetModuleHandleA(0) + 0x24a03d0), UnregObj));
+		// BaseHook::Add<DelObj>(new DetourHook("DelObj", (void*)((__int64)GetModuleHandleA(0) + 0x322b6b0), DelObj));
+
 		BaseHook::Add<Hooks::Window::WndProc>(new DetourHook("WndProc", Pointers.WndProc, Hooks::Window::WndProc));
 		BaseHook::Add<Hooks::Window::SetCursorPos>(new DetourHook("SetCursorPos", ModuleMgr.Get("user32.dll")->GetExport<void*>("SetCursorPos"), Hooks::Window::SetCursorPos));
 
@@ -41,6 +68,7 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::HandleNetGameEvent>(new DetourHook("HandleNetGameEvent", Pointers.HandleNetGameEvent, Hooks::Protections::HandleNetGameEvent));
 		BaseHook::Add<Hooks::Protections::HandleCloneCreate>(new DetourHook("HandleCloneCreate", Pointers.HandleCloneCreate, Hooks::Protections::HandleCloneCreate));
 		BaseHook::Add<Hooks::Protections::HandleCloneSync>(new DetourHook("HandleCloneSync", Pointers.HandleCloneSync, Hooks::Protections::HandleCloneSync));
+		BaseHook::Add<Hooks::Protections::GetCloneCreateResponse>(new DetourHook("GetCloneCreateResponse", Pointers.GetCloneCreateResponse, Hooks::Protections::GetCloneCreateResponse));
 		BaseHook::Add<Hooks::Protections::CanApplyData>(new DetourHook("CanApplyData", Pointers.CanApplyData, Hooks::Protections::CanApplyData));
 		BaseHook::Add<Hooks::Protections::ResetSyncNodes>(new DetourHook("ResetSyncNodes", Pointers.ResetSyncNodes, Hooks::Protections::ResetSyncNodes));
 		BaseHook::Add<Hooks::Protections::HandleScriptedGameEvent>(new DetourHook("HandleScriptedGameEvent", Pointers.HandleScriptedGameEvent, Hooks::Protections::HandleScriptedGameEvent));
@@ -50,11 +78,18 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Protections::PPostMessage>(new DetourHook("PostMessage", Pointers.PostPresenceMessage, Hooks::Protections::PPostMessage));
 		BaseHook::Add<Hooks::Protections::SerializeServerRPC>(new DetourHook("SerializeServerRPC", Pointers.SerializeServerRPC, Hooks::Protections::SerializeServerRPC));
 		BaseHook::Add<Hooks::Protections::ReceiveServerMessage>(new DetourHook("ReceiveServerMessage", Pointers.ReceiveServerMessage, Hooks::Protections::ReceiveServerMessage));
+		BaseHook::Add<Hooks::Protections::DeserializeServerMessage>(new DetourHook("DeserializeServerMessage", (void*)((__int64)GetModuleHandleA(0) + 0x2609f78), Hooks::Protections::DeserializeServerMessage));
 		BaseHook::Add<Hooks::Protections::ReceiveArrayUpdate>(new DetourHook("ReceiveArrayUpdate", Pointers.ReceiveArrayUpdate, Hooks::Protections::ReceiveArrayUpdate));
 		BaseHook::Add<Hooks::Protections::CreatePoolItem>(new DetourHook("CreatePoolItem", Pointers.CreatePoolItem, Hooks::Protections::CreatePoolItem));
 		BaseHook::Add<Hooks::Protections::HandleCloneRemove>(new DetourHook("HandleCloneRemove", Pointers.HandleCloneRemove, Hooks::Protections::HandleCloneRemove));
 		BaseHook::Add<Hooks::Protections::PackCloneCreate>(new DetourHook("PackCloneCreate", Pointers.PackCloneCreate, Hooks::Protections::PackCloneCreate));
-		
+		BaseHook::Add<Hooks::Protections::SetTreeErrored>(new DetourHook("SetTreeErrored", Pointers.SetTreeErrored, Hooks::Protections::SetTreeErrored));
+		BaseHook::Add<Hooks::Protections::PhysicsHandleLassoAttachment>(new DetourHook("PhysicsHandleLassoAttachment", Pointers.PhysicsHandleLassoAttachment, Hooks::Protections::PhysicsHandleLassoAttachment));
+		BaseHook::Add<Hooks::Protections::DecideConnectionMethod>(new DetourHook("DecideConnectionMethod", Pointers.DecideConnectionMethod, Hooks::Protections::DecideConnectionMethod));
+		BaseHook::Add<Hooks::Protections::HandlePeerRelayPacket>(new DetourHook("HandlePeerRelayPacket", Pointers.HandlePeerRelayPacket, Hooks::Protections::HandlePeerRelayPacket));
+		BaseHook::Add<Hooks::Protections::UnpackPacket>(new DetourHook("UnpackPacket", Pointers.UnpackPacket, Hooks::Protections::UnpackPacket));
+		BaseHook::Add<Hooks::Protections::UpdateEndpointAddress>(new DetourHook("UpdateEndpointAddress", Pointers.UpdateEndpointAddress, Hooks::Protections::UpdateEndpointAddress));
+
 		BaseHook::Add<Hooks::Voice::EnumerateAudioDevices>(new DetourHook("EnumerateAudioDevices", Pointers.EnumerateAudioDevices, Hooks::Voice::EnumerateAudioDevices));
 		BaseHook::Add<Hooks::Voice::DirectSoundCaptureCreate>(new DetourHook("DirectSoundCaptureCreate", Pointers.DirectSoundCaptureCreate, Hooks::Voice::DirectSoundCaptureCreate));
 		BaseHook::Add<Hooks::Voice::SendVoicePacket>(new CallHook("SendVoicePacket", Pointers.SendVoicePacket, Hooks::Voice::SendVoicePacket));
@@ -70,13 +105,19 @@ namespace YimMenu
 
 		BaseHook::Add<Hooks::Info::HandleSessionEvent>(new DetourHook("HandleSessionEvent", Pointers.HandleSessionEvent, Hooks::Info::HandleSessionEvent));
 
-	//	BaseHook::Add<Hooks::Spoofing::WritePlayerHealthData>(new DetourHook("WritePlayerHealthData", Pointers.WritePlayerHealthData, Hooks::Spoofing::WritePlayerHealthData));
 		BaseHook::Add<Hooks::Spoofing::SendNetInfoToLobby>(new DetourHook("SendNetInfoToLobby", Pointers.SendNetInfoToLobby, Hooks::Spoofing::SendNetInfoToLobby));
 		BaseHook::Add<Hooks::Spoofing::WriteVPMData>(new DetourHook("WriteVehicleProximityMigrationData", Pointers.WriteVPMData, Hooks::Spoofing::WriteVPMData));
 		BaseHook::Add<Hooks::Spoofing::GetDiscriminator>(new DetourHook("GetDiscriminator", Pointers.GetDiscriminator, Hooks::Spoofing::GetDiscriminator));
 		BaseHook::Add<Hooks::Spoofing::WriteNodeData>(new DetourHook("WriteNodeData", Pointers.WriteNodeData, Hooks::Spoofing::WriteNodeData));
 
 		BaseHook::Add<Hooks::Toxic::BroadcastNetArray>(new DetourHook("BroadcastNetArray", Pointers.BroadcastNetArray, Hooks::Toxic::BroadcastNetArray));
+		BaseHook::Add<Hooks::Toxic::WriteSyncTree>(new DetourHook("WriteSyncTree", Pointers.WriteSyncTree, Hooks::Toxic::WriteSyncTree));
+		BaseHook::Add<Hooks::Toxic::ShouldUseNodeCache>(new DetourHook("ShouldUseNodeCache", Pointers.ShouldUseNodeCache, Hooks::Toxic::ShouldUseNodeCache));
+		BaseHook::Add<Hooks::Toxic::IsNodeInScope>(new DetourHook("IsNodeInScope", Pointers.IsNodeInScope, Hooks::Toxic::IsNodeInScope));
+		BaseHook::Add<Hooks::Toxic::SetTreeTargetObject>(new DetourHook("SetTreeTargetObject", Pointers.SetTreeTargetObject, Hooks::Toxic::SetTreeTargetObject));
+
+
+		BaseHook::Add<Hooks::Toxic::SerializeIceSessionOfferRequest>(new DetourHook("SerializeIceSessionOfferRequest", Pointers.SerializeIceSessionOfferRequest, Hooks::Toxic::SerializeIceSessionOfferRequest));
 	}
 
 	Hooking::~Hooking()

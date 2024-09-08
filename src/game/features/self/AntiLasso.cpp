@@ -26,5 +26,5 @@ namespace YimMenu::Features
 		}
 	};
 
-	static AntiLasso _AntiLasso{"antilasso", "Anti Lasso", "Avoid getting lasso'd by other players"};
+	static AntiLasso _AntiLasso{"antilasso", "Anti Lasso", "Disable getting lasso'd by other players"};
 }

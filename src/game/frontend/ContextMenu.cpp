@@ -91,8 +91,7 @@ namespace YimMenu
 
 			if (m_Enabled)
 			{
-				auto handle = GetEntityHandleClosestToMiddleOfScreen(
-					Features::_ContextPlayers.GetState(),
+				auto handle = GetEntityHandleClosestToMiddleOfScreen(Features::_ContextPlayers.GetState(),
 				    Features::_ContextPeds.GetState(),
 				    Features::_ContextVehicles.GetState(),
 				    Features::_ContextObjects.GetState());
@@ -117,11 +116,11 @@ namespace YimMenu
 					}
 					else if (m_Entity.IsVehicle())
 					{
-						switchToMenu(ContextMenuVehicles); // TODO: Create Vehicle menu
+						switchToMenu(ContextMenuVehicles); // TODO: Improve Vehicle menu
 					}
 					else if (m_Entity.IsObject())
 					{
-						switchToMenu(ContextMenuObjects); // TODO: Create Object menu
+						switchToMenu(ContextMenuObjects); // TODO: Improve Objects Menu
 					}
 
 					if (m_CurrentOperationsMenu.m_SelectedOperation.m_Name.empty())

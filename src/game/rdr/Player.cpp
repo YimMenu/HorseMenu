@@ -8,6 +8,7 @@
 
 #include <network/CFriend.hpp>
 #include <network/CNetGamePlayer.hpp>
+#include <network/CNetworkPlayerMgr.hpp>
 #include <network/netPeerAddress.hpp>
 #include <network/rlScPeerConnection.hpp>
 #include <network/CNetworkScSession.hpp>
@@ -153,10 +154,10 @@ namespace YimMenu
 		return {};
 	}
 
-	uint32_t Player::GetRelayState()
+	uint32_t Player::GetConnectionType()
 	{
-		if (auto addr = GetConnectPeerAddress())
-			return addr->m_RelayState;
+		if (auto addr = Pointers.GetPeerAddressByMessageId(Pointers.NetworkPlayerMgr->m_NetConnectionManager, GetMessageId()))
+			return addr->m_connection_type;
 
 		return {};
 	}
@@ -245,6 +246,14 @@ namespace YimMenu
 		return &peer->m_SessionPeer->m_Connection->m_PeerAddress;
 	}
 
+	rage::netPeerAddress* Player::GetAddress()
+	{
+		if (auto addr = Pointers.GetPeerAddressByMessageId(Pointers.NetworkPlayerMgr->m_NetConnectionManager, GetMessageId()))
+			return addr;
+
+		return nullptr;
+	}
+
 	PlayerData& Player::GetData()
 	{
 		return Players::GetPlayerData(GetId());
@@ -261,7 +270,6 @@ namespace YimMenu
 		{
 			GetData().m_Detections.insert(det);
 			g_PlayerDatabase->AddDetection(g_PlayerDatabase->GetOrCreatePlayer(GetRID(), GetName()), det);
-
 		}
 	}
 

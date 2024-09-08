@@ -39,24 +39,3 @@ void ChangeTime(int H = 12, int M = 0, int S = 0, int transition = 0, bool freez
 {
 	NETWORK::_NETWORK_CLOCK_TIME_OVERRIDE_2(H, M, S, transition, freeze, true);
 }
-
-// TODO: Move this
-namespace YimMenu
-{
-	namespace Features
-	{
-		class ForceLightning : public Command
-		{
-		public:
-			using Command::Command;
-
-			virtual void OnCall() override
-			{
-				MISC::FORCE_LIGHTNING_FLASH();
-			}
-		};
-
-
-		static ForceLightning _forcelighting{"forcelighting", "Force Lightning", "Forces Lightning to Strike You!"};
-	}
-}
