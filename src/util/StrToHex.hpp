@@ -14,7 +14,7 @@ namespace YimMenu
 		return ch - 'a' + 10;
 	}
 
-	inline std::string hexStr(unsigned char* data, int len)
+	inline std::string BytesToHexStr(unsigned char* data, int len)
 	{
 		std::stringstream ss;
 		ss << std::hex;

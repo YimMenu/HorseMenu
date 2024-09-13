@@ -1,5 +1,6 @@
 #include "BoolCommand.hpp"
 #include "game/backend/FiberPool.hpp" // TODO: game import in core
+#include "Commands.hpp"
 
 namespace YimMenu
 {
@@ -7,6 +8,7 @@ namespace YimMenu
 	    Command(name, label, description, 0),
 	    m_State(def_value)
 	{
+		Commands::AddBoolCommand(this);
 	}
 
 	void BoolCommand::OnCall()

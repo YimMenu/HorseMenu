@@ -89,7 +89,7 @@ namespace YimMenu
 
 	void Settings::SaveComponentImpl(IStateSerializer* serializer)
 	{
-		LOG(VERBOSE) << "Saving component: " << serializer->GetSerializerComponentName();
+		//LOG(VERBOSE) << "Saving component: " << serializer->GetSerializerComponentName();
 		serializer->SaveState(m_Json[serializer->GetSerializerComponentName()]);
 	}
 

@@ -4,6 +4,7 @@
 #include "game/backend/Players.hpp"
 #include "core/commands/BoolCommand.hpp"
 #include "game/backend/Voice.hpp"
+#include "util/Storage/Spoofing.hpp"
 
 #include <network/rlGamerInfo.hpp>
 #include <network/CNetworkPlayerMgr.hpp>

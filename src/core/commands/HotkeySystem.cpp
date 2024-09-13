@@ -106,7 +106,7 @@ namespace YimMenu
 				}
 			}
 	
-			if (AllKeysPressed && GetForegroundWindow() == Pointers.Hwnd && std::chrono::system_clock::now() - m_LastHotkeyTriggerTime > 100ms)
+			if (AllKeysPressed && GetForegroundWindow() == *Pointers.Hwnd && std::chrono::system_clock::now() - m_LastHotkeyTriggerTime > 100ms)
 			{
 				auto Command = Commands::GetCommand(Hash);
 				if (Command)

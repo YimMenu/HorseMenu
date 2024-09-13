@@ -5,7 +5,6 @@
 
 namespace YimMenu::Features
 {
-
 	class TpToNazar : public Command
 	{
 		using Command::Command;

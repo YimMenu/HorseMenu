@@ -14,6 +14,7 @@ namespace YimMenu
 		SPOOFING_ROCKSTAR_ID = "SPOOFING_ROCKSTAR_ID"_J,
 		SPOOFING_IP          = "SPOOFING_IP"_J,
 		SPOOFING_NAME        = "SPOOFING_NAME"_J,
+		SPOOFING_VC          = "SPOOFING_VC"_J,
 		USED_SPECTATE        = "USED_SPECTATE"_J,
 	};
 
@@ -27,6 +28,7 @@ namespace YimMenu
 	    {Detection::SPOOFING_ROCKSTAR_ID, "Has spoofed their Rockstar ID"},
 	    {Detection::SPOOFING_IP, "Has spoofed their IP"},
 	    {Detection::SPOOFING_NAME, "Has spoofed their name"},
+	    {Detection::SPOOFING_VC, "Has spoofed voice chat"},
 	    {Detection::USED_SPECTATE, "Used spectate"},
 	};
 }

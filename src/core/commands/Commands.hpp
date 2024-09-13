@@ -6,6 +6,7 @@ namespace YimMenu
 {
 	class Command;
 	class LoopedCommand;
+	class BoolCommand;
 
 	class Commands : 
 		private IStateSerializer
@@ -13,12 +14,18 @@ namespace YimMenu
 	private:
 		std::unordered_map<joaat_t, Command*> m_Commands;
 		std::vector<LoopedCommand*> m_LoopedCommands;
+		std::vector<BoolCommand*> m_BoolCommands;
 		Commands();
 
 	public:
 		static void AddCommand(Command* command)
 		{
 			GetInstance().AddCommandImpl(command);
+		}
+
+		static void AddBoolCommand(BoolCommand* command)
+		{
+			GetInstance().AddBoolCommandImpl(command);
 		}
 
 		static void AddLoopedCommand(LoopedCommand* command)
@@ -31,10 +38,9 @@ namespace YimMenu
 			GetInstance().RunLoopedCommandsImpl();
 		}
 
-		// TODO: what about bool commands?
-		static void EnableLoopedCommands()
+		static void EnableBoolCommands()
 		{
-			GetInstance().EnableLoopedCommandsImpl();
+			GetInstance().EnableBoolCommandsImpl();
 		}
 
 		template<typename T = Command>
@@ -65,8 +71,9 @@ namespace YimMenu
 
 	private:
 		void AddCommandImpl(Command* command);
+		void AddBoolCommandImpl(BoolCommand* command);
 		void AddLoopedCommandImpl(LoopedCommand* command);
-		void EnableLoopedCommandsImpl();
+		void EnableBoolCommandsImpl();
 		void RunLoopedCommandsImpl();
 		Command* GetCommandImpl(joaat_t hash);
 		virtual void SaveStateImpl(nlohmann::json& state) override;

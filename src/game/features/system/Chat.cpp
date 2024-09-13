@@ -21,25 +21,15 @@ namespace YimMenu::Features
 			if (*Pointers.IsSessionStarted && !SCRIPTS::IS_LOADING_SCREEN_VISIBLE() && MISC::UPDATE_ONSCREEN_KEYBOARD() != 0 && !GUI::IsOpen())
 			{
 				ScriptMgr::Yield(100ms); // Delay so hotkey key doesn't get mistaken as input
-				bool isChatCancelled = false;
 				MISC::DISPLAY_ONSCREEN_KEYBOARD(0, "Chat Message", "", "", "", "", "", 256);
 				while (MISC::UPDATE_ONSCREEN_KEYBOARD() == 0)
 				{
-					if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
-					{
-						MISC::CANCEL_ONSCREEN_KEYBOARD();
-						isChatCancelled = true;
-					}
-
 					ScriptMgr::Yield();
 				}
 
-				if (!isChatCancelled)
-					SendChatMessage(MISC::GET_ONSCREEN_KEYBOARD_RESULT());
-			}
-			else
-			{
-				Notifications::Show("Chat", "Please wait until you are in a game to open the chat!", NotificationType::Error);
+				if (MISC::UPDATE_ONSCREEN_KEYBOARD() == 1)
+					if (auto res = MISC::GET_ONSCREEN_KEYBOARD_RESULT())
+						SendChatMessage(res);
 			}
 		}
 	};
@@ -54,6 +44,6 @@ namespace YimMenu::Features
 		}
 	};
 
-	static Chat _Chat{"chathelper", "Chat", "Use this to open the chat!"};
-	static ClearChat _ClearChat{"clearchat", "Clear Chat", "Use this to clear the chat!"};
+	static Chat _Chat{"chathelper", "Chat", "Use this to open the chat"};
+	static ClearChat _ClearChat{"clearchat", "Clear Chat", "Use this to clear the chat"};
 }

@@ -88,8 +88,21 @@ namespace YimMenu::Features
 		}
 	};
 
+	class CancelAttachment : public Command
+	{
+		using Command::Command;
+
+		virtual void OnCall() override
+		{
+			if (ENTITY::IS_ENTITY_ATTACHED_TO_ANY_PED(Self::GetPed().GetHandle()))
+				ENTITY::DETACH_ENTITY(Self::GetPed().GetHandle(), true, true);
+			ClearPedTasks(Self::GetPed().GetHandle());
+		}
+	};
+
 	static Spank _Spank{"spank", "Spank", "Spanks the target player"};
 	static RideOnShoulders _RideOnShoulders{"rideonshoulders", "Ride on Shoulders", "Ride on a players shoulders"};
 	static TouchPlayer _TouchPlayer{"touchplayer", "Touch Player", "Touches the other player..."};
 	static Slap _Slap{"slap", "Slap", "Slaps the player"};
+	static CancelAttachment _CancelAttachment{"cancelattachment", "Cancel Attachment", "Cancels current attachment"};
 }

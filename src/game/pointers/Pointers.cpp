@@ -16,7 +16,6 @@ namespace YimMenu
 		if (!rdr2)
 		{
 			LOG(FATAL) << "Could not find RDR2.exe, is this RDR2?";
-
 			return false;
 		}
 
@@ -43,7 +42,7 @@ namespace YimMenu
 
 			if (gfx->m_hdr)
 			{
-				LOG(WARNING) << "Turn HDR off if your using DX12!";
+				LOG(WARNING) << "Turn HDR off if you're using DX12!";
 			}
 
 			//LOG(INFO) << GetGraphicsValue(gfx->m_gfx_lightingQuality); example
@@ -147,8 +146,7 @@ namespace YimMenu
 
 		constexpr auto hwnd = Pattern<"4C 8B 05 ? ? ? ? 4C 8D 0D ? ? ? ? 48 89 54 24">("Hwnd");
 		scanner.Add(hwnd, [this](PointerCalculator ptr) {
-			Hwnd = *ptr.Add(3).Rip().As<HWND*>();
-			LOG(INFO) << "HWND: " << Hwnd;
+			Hwnd = ptr.Add(3).Rip().As<HWND*>();
 		});
 
 		constexpr auto handleToPtrPtrn = Pattern<"E8 ? ? ? ? 45 8D 47 04">("HandleToPtr");
@@ -174,6 +172,11 @@ namespace YimMenu
 		constexpr auto handleCloneSyncPtrn = Pattern<"48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 40 4C 8B F2">("HandleCloneSync");
 		scanner.Add(handleCloneSyncPtrn, [this](PointerCalculator ptr) {
 			HandleCloneSync = ptr.As<PVOID>();
+		});
+
+		constexpr auto getCloneCreateResponsePtrn = Pattern<"8D 45 F8 1B F6 66 44 3B F0">("GetCloneCreateResponse");
+		scanner.Add(getCloneCreateResponsePtrn, [this](PointerCalculator ptr) {
+			GetCloneCreateResponse = ptr.Sub(0x5F).As<PVOID>();
 		});
 
 		constexpr auto canApplyDataPtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 4C 89 70 20 41 57 48 83 EC 30 4C 8B FA">("CanApplyData");
@@ -337,6 +340,11 @@ namespace YimMenu
 			PickupPool = ptr.Add(8).Rip().As<PoolEncryption*>();
 		});
 
+		constexpr auto scriptHandlePoolPtrn = Pattern<"8A 05 ?? ?? ?? ?? 33 FF 48 89 3D">("ScriptHandlePool");
+		scanner.Add(scriptHandlePoolPtrn, [this](PointerCalculator ptr) {
+			ScriptHandlePool = ptr.Add(2).Rip().As<PoolEncryption*>();
+		});
+
 		constexpr auto fwScriptGuidCreateGuidPtrn = Pattern<"E8 ? ? ? ? B3 01 8B 15">("FwScriptGuidCreateGuid");
 		scanner.Add(fwScriptGuidCreateGuidPtrn, [this](PointerCalculator ptr) {
 			FwScriptGuidCreateGuid = ptr.Sub(141).As<uint32_t (*)(void*)>();
@@ -397,9 +405,9 @@ namespace YimMenu
 			TriggerGiveControlEvent = ptr.As<Functions::TriggerGiveControlEvent>();
 		});
 
-		constexpr auto createPoolItemPtrn = Pattern<"E8 ? ? ? ? 48 85 C0 74 ? 44 8A 4C 24 ? 48 8B C8 44 0F B7 44 24 ? 0F B7 54 24">("CreatePoolItem");
+		constexpr auto createPoolItemPtrn = Pattern<"BA EF 4F 91 02">("CreatePoolItem");
 		scanner.Add(createPoolItemPtrn, [this](PointerCalculator ptr) {
-			CreatePoolItem = ptr.Add(1).Rip().As<PVOID>();
+			CreatePoolItem = ptr.Sub(0x19).As<PVOID>();
 		});
 
 		constexpr auto handleCloneRemovePtrn = Pattern<"48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 54 41 56 41 57 48 81 EC ? ? ? ? 4D 8B E0 4C 8B FA">("HandleCloneRemove");
@@ -439,7 +447,7 @@ namespace YimMenu
 
 		constexpr auto sendVoicePacketPtrn = Pattern<"4C 8D 8C 24 B0 00 00 00 45 8B C4">("SendVoicePacket");
 		scanner.Add(sendVoicePacketPtrn, [this](PointerCalculator ptr) {
-			SendVoicePacket = ptr.Add(0x15).As<PVOID>();
+			SendVoicePacket           = ptr.Add(0x15).As<PVOID>();
 			GetPeerAddressByMessageId = ptr.Sub(0x18).Rip().As<Functions::GetPeerAddressByMessageId>();
 		});
 
@@ -458,37 +466,85 @@ namespace YimMenu
 			PackCloneCreate = ptr.Sub(0x34).As<PVOID>();
 		});
 
+    
 		constexpr auto physicCrashPtrn = Pattern<"E8 ?? ?? ?? ?? EB 67 48 8B 41 20">("PhysicCrash");
 		scanner.Add(physicCrashPtrn, [this](PointerCalculator ptr) {
 			PhysicCrash = ptr.Add(1).Rip().As<PVOID>();
 		});
 
+
+		constexpr auto writeSyncTreePtrn = Pattern<"0F 84 A4 00 00 00 48 8B 07 45 8B C4">("WriteSyncTree");
+		scanner.Add(writeSyncTreePtrn, [this](PointerCalculator ptr) {
+			WriteSyncTree = ptr.Sub(0x79).As<PVOID>();
+		});
+
+
+		constexpr auto shouldUseNodeCachePtrn = Pattern<"83 FA 20 75 03">("ShouldUseNodeCache");
+		scanner.Add(shouldUseNodeCachePtrn, [this](PointerCalculator ptr) {
+			ShouldUseNodeCache = ptr.As<PVOID>();
+		});
+
+		constexpr auto isNodeInScopePtrn = Pattern<"41 83 F9 02 74 25">("IsNodeInScope");
+		scanner.Add(isNodeInScopePtrn, [this](PointerCalculator ptr) {
+			IsNodeInScope = ptr.Sub(0x1F).As<PVOID>();
+		});
+
+		constexpr auto setTreeErroredPtrn = Pattern<"80 BB 9C 01 00 00 00 74 0B">("SetTreeErrored");
+		scanner.Add(setTreeErroredPtrn, [this](PointerCalculator ptr) {
+			SetTreeErrored = ptr.Add(0x10).Rip().As<PVOID>();
+		});
+
+		constexpr auto setTreeTargetObjectPtrn = Pattern<"48 89 7C CE 08 48 8B 74 24 38">("SetTreeTargetObject");
+		scanner.Add(setTreeTargetObjectPtrn, [this](PointerCalculator ptr) {
+			SetTreeTargetObject = ptr.Sub(0x5D).As<PVOID>();
+		});
+
+		constexpr auto physicsHandleLassoAttachmentPtrn = Pattern<"EB 3B 40 84 ED 74 36">("PhysicsHandleLassoAttachment");
+		scanner.Add(physicsHandleLassoAttachmentPtrn, [this](PointerCalculator ptr) {
+			PhysicsHandleLassoAttachment = ptr.Sub(4).Rip().As<PVOID>();
+		});
+
+		constexpr auto decideConnectionMethodPtrn = Pattern<"81 7D 30 98 3A 00 00 76 06">("DecideConnectionMethod");
+		scanner.Add(decideConnectionMethodPtrn, [this](PointerCalculator ptr) {
+			DecideConnectionMethod = ptr.Sub(0x90).As<PVOID>();
+			DecideConnectionMethodJmp = ptr.Sub(0x6).As<char*>();
+			DecideConnectionMethodDefVal = ptr.Add(0x83).As<char*>();
+		});
+
+		constexpr auto handlePeerRelayPacketPtrn = Pattern<"48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 57 48 83 EC ? F6 81 ? ? ? ? ? 41 8B F9">("HandlePeerRelayPacket");
+		scanner.Add(handlePeerRelayPacketPtrn, [this](PointerCalculator ptr) {
+			HandlePeerRelayPacket = ptr.As<PVOID>();
+		});
+
+		constexpr auto unpackPacketPtrn = Pattern<"48 89 5C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 41 8D 41">("UnpackPacket");
+		scanner.Add(unpackPacketPtrn, [this](PointerCalculator ptr) {
+			UnpackPacket = ptr.As<PVOID>();
+		});
+		
+		constexpr auto updateEndpointAddressPtrn = Pattern<"48 89 5C 24 ? 48 89 74 24 ? 48 89 7C 24 ? 55 41 56 41 57 48 8B EC 48 81 EC ? ? ? ? 4C 8D B9">("UpdateEndpointAddress");
+		scanner.Add(updateEndpointAddressPtrn, [this](PointerCalculator ptr) {
+			UpdateEndpointAddress = ptr.As<PVOID>();
+		});
+
+		constexpr auto trainConfigsPtrn = Pattern<"41 39 09 74 11">("TrainConfigs");
+		scanner.Add(trainConfigsPtrn, [this](PointerCalculator ptr) {
+			TrainConfigs = ptr.Sub(0xA).Rip().As<CTrainConfigs*>();
+		});
+
+		constexpr auto serializeIceSessionOfferRequestPtrn = Pattern<"80 3F 03 0F 85 9C 01 00 00">("SerializeIceSessionOfferRequest");
+		scanner.Add(serializeIceSessionOfferRequestPtrn, [this](PointerCalculator ptr) {
+			SerializeIceSessionOfferRequest = ptr.Sub(0x2F).As<void**>();
+		});
+
+		constexpr auto openIceTunnelPtrn = Pattern<"66 44 39 6D 58 0F 84 1D 01 00 00">("OpenIceTunnel");
+		scanner.Add(openIceTunnelPtrn, [this](PointerCalculator ptr) {
+			OpenIceTunnel = ptr.Sub(0x5F).As<Functions::OpenIceTunnel>();
+		});
+
 		if (!scanner.Scan())
 		{
-			LOG(FATAL) << "Some patterns could not be found, unloading.";
+			LOG(FATAL) << "Some game patterns could not be found, unloading.";
 
-			return false;
-		}
-
-		if (const auto& RendererInfo = GetRendererInfo(); RendererInfo)
-		{
-			if (RendererInfo->is_rendering_type(eRenderingType::DX12))
-			{
-				IsVulkan = false;
-			}
-			else if (RendererInfo->is_rendering_type(eRenderingType::Vulkan))
-			{
-				IsVulkan = true;
-			}
-			else
-			{
-				LOG(INFO) << "Unknown renderer type!";
-				return false;
-			}
-		}
-		else
-		{
-			LOG(INFO) << "Invalid renderer info!";
 			return false;
 		}
 

@@ -18,7 +18,7 @@ namespace YimMenu
 	    {
 	        ContextMenuOperation{"Set Selected",
 	            [&](Entity entity) {
-		            YimMenu::Players::SetSelected(entity.As<Ped>().GetPlayer());
+		            YimMenu::Players::SetSelected(Ped(entity.GetHandle()).GetPlayer());
 	            }},
 	        {"Teleport to",
 	            [&](Entity entity) {
@@ -31,15 +31,15 @@ namespace YimMenu
 	            }},
 	        {"Explode",
 	            [&](Entity entity) {
-		            Commands::GetCommand<PlayerCommand>("explode"_J)->Call(entity.As<Ped>().GetPlayer());
+		            Commands::GetCommand<PlayerCommand>("explode"_J)->Call(Ped(entity.GetHandle()).GetPlayer());
 	            }},
 	        {"Set Defensive",
 	            [&](Entity entity) {
-		            Commands::GetCommand<PlayerCommand>("defensive"_J)->Call(entity.As<Ped>().GetPlayer());
+		            Commands::GetCommand<PlayerCommand>("defensive"_J)->Call(Ped(entity.GetHandle()).GetPlayer());
 	            }},
 	        {"Set Offensive",
 	            [&](Entity entity) {
-		            Commands::GetCommand<PlayerCommand>("offensive"_J)->Call(entity.As<Ped>().GetPlayer());
+		            Commands::GetCommand<PlayerCommand>("offensive"_J)->Call(Ped(entity.GetHandle()).GetPlayer());
 	            }},
 	    });
 
@@ -47,7 +47,7 @@ namespace YimMenu
 	    {
 	        ContextMenuOperation{"Explode",
 	            [&](Entity entity) {
-		            auto pedCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            auto pedCoords = entity.GetPosition();
 		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
 	            }},
 	        {"Kill",
@@ -56,7 +56,7 @@ namespace YimMenu
 	            }},
 	        {"Apply Force",
 	            [&](Entity entity) {
-		            auto currentCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            auto currentCoords = entity.GetPosition();
 		            ENTITY::APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(entity.GetHandle(),
 		                1,
 		                currentCoords.x - 3,
@@ -81,12 +81,12 @@ namespace YimMenu
 	    {
 	        ContextMenuOperation{"Explode",
 	            [&](Entity entity) {
-		            auto pedCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            auto pedCoords = entity.GetPosition();
 		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
 	            }},
 	        {"Apply Force",
 	            [&](Entity entity) {
-		            auto currentCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            auto currentCoords = entity.GetPosition();
 		            ENTITY::APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(entity.GetHandle(),
 		                1,
 		                currentCoords.x - 3,
@@ -111,12 +111,12 @@ namespace YimMenu
 	    {
 	        ContextMenuOperation{"Explode",
 	            [&](Entity entity) {
-		            auto pedCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            auto pedCoords = entity.GetPosition();
 		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
 	            }},
 	        {"Apply Force",
 	            [&](Entity entity) {
-		            auto currentCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            auto currentCoords = entity.GetPosition();
 		            ENTITY::APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(entity.GetHandle(),
 		                1,
 		                currentCoords.x - 3,
