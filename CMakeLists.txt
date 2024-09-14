@@ -18,6 +18,8 @@ file(GLOB_RECURSE SRC_FILES
     "${SRC_DIR}/**.cpp"
 )
 set(DEPS_DIR "${PROJECT_SOURCE_DIR}/deps")
+#compile faster
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
 add_library(${PROJECT_NAME} MODULE ${SRC_FILES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
