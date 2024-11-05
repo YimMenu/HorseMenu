@@ -41,7 +41,7 @@ namespace YimMenu
 			ImGui::Text("Click on a location to select it. Add more at Teleport > Saved");
 			InputTextWithHint("##filter", "Search", &m_CurrentFilter).Draw();
 
-			const float max_length = Pointers.ScreenResY / 3.2;
+			const float max_length = *Pointers.ScreenResY / 3.2;
 
 			// TODO: duplicated code
 			ImGui::BeginGroup();

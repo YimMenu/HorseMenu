@@ -7,7 +7,12 @@
 #include "game/backend/Self.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Pools.hpp"
+#include "game/rdr/Scripts.hpp"
 #include "util/Math.hpp"
+
+#include "game/rdr/data/PedModels.hpp"
+
+#include "game/rdr/invoker/Invoker.hpp"
 
 namespace
 {
@@ -85,7 +90,9 @@ namespace YimMenu::Features
 	BoolCommand _ESPDrawPeds("espdrawpeds", "Draw Peds", "Should the ESP draw peds?");
 	BoolCommand _ESPDrawDeadPeds("espdrawdeadpeds", "Draw Dead Peds", "Should the ESP draw dead peds?");
 
-	BoolCommand _ESPModelPeds("espmodelspeds", "Show Ped Model", "Should the ESP draw ped model hashes?");
+	BoolCommand _ESPModelPeds("espmodelspeds", "Show Ped Model", "Should the ESP draw ped models?");
+	BoolCommand _ESPNetworkInfoPeds("espnetinfopeds", "Show Ped Network Info", "Should the ESP draw network info?");
+	BoolCommand _ESPScriptInfoPeds("espscriptinfopeds", "Show Ped Script Info", "Should the ESP draw script info?");
 	BoolCommand _ESPDistancePeds("espdistancepeds", "Show Ped Distance", "Should the ESP draw distance?");
 	BoolCommand _ESPSkeletonPeds("espskeletonpeds", "Show Ped Skeleton", "Should the ESP draw the skeleton?");
 	BoolCommand _ESPSkeletonHorse("espskeletonhorse", "Show Horse Skeleton", "Should the ESP draw horse skeletons?");
@@ -119,7 +126,7 @@ namespace YimMenu
 
 		Pointers.WorldToScreen(boneCoords, &screen_x, &screen_y);
 
-		return ImVec2(screen_x * Pointers.ScreenResX, screen_y * Pointers.ScreenResY);
+		return ImVec2(screen_x * (*Pointers.ScreenResX), screen_y * (*Pointers.ScreenResY));
 	};
 
 	void DrawSkeleton(Ped ped, ImDrawList* drawList, ImColor color)
@@ -237,11 +244,14 @@ namespace YimMenu
 
 	void ESP::DrawPeds(Ped ped, ImDrawList* drawList)
 	{
-		if (!ped.IsValid() || ped.IsPlayer() || ped == Self::GetPlayer().GetPed()
-		    || boneToScreen(ped.GetBonePosition(torsoBone)).x == 0 || (ped.IsDead() && !Features::_ESPDrawDeadPeds.GetState()))
+		if (!ped.IsValid() || ped.IsPlayer() || ped == Self::GetPlayer().GetPed() || boneToScreen(ped.GetBonePosition(torsoBone)).x == 0 || (ped.IsDead() && !Features::_ESPDrawDeadPeds.GetState()))
 			return;
 
-		float distanceToPed          = Self::GetPed().GetPosition().GetDistance(ped.GetBonePosition(torsoBone));
+		float distanceToPed = 0.0f;
+		
+		if (auto local = Self::GetPed())
+			distanceToPed = local.GetPosition().GetDistance(ped.GetBonePosition(torsoBone));
+		
 		int alphaBasedOnDistance     = 255;
 		ImColor colorBasedOnDistance = Red;
 
@@ -257,16 +267,43 @@ namespace YimMenu
 		currentFont->Scale *= 1.2;
 		ImGui::PushFont(ImGui::GetFont());
 
+		std::string info = "";
+
 		if (Features::_ESPModelPeds.GetState())
 		{
-			std::string model = std::format("0x{:08X}", (joaat_t)ped.GetModel());
-			drawList->AddText(boneToScreen(ped.GetBonePosition(headBone)), ImGui::ColorConvertFloat4ToU32(Features::_HashColorPeds.GetState()),
-			    model.c_str());
+			if (auto it = Data::g_PedModels.find(ped.GetModel()); it != Data::g_PedModels.end())
+				info += std::format("{} ", it->second);
+			else
+				info += std::format("0x{:08X} ", (joaat_t)ped.GetModel());
 		}
+
+		if (Features::_ESPNetworkInfoPeds.GetState() && ped.IsNetworked())
+		{
+			auto owner = Player(ped.GetOwner());
+			auto id = ped.GetNetworkObjectId();
+
+			info += std::format("{} {} ", id, owner.GetName());
+		}
+
+		if (Features::_ESPScriptInfoPeds.GetState())
+		{
+			if (auto script = ENTITY::_GET_ENTITY_SCRIPT(ped.GetHandle(), nullptr))
+			{
+				if (auto name = Scripts::GetScriptName(script))
+				{
+					info += std::format("{} ", name);
+				}
+			}
+		}
+
+		if (!info.empty())
+			drawList->AddText(boneToScreen(ped.GetBonePosition(headBone)),
+				ImGui::ColorConvertFloat4ToU32(Features::_HashColorPeds.GetState()),
+				info.c_str());
 
 		if (Features::_ESPDistancePeds.GetState())
 		{
-			std::string distanceStr = std::to_string((int)Self::GetPed().GetPosition().GetDistance(ped.GetBonePosition(torsoBone))) + "m";
+			std::string distanceStr = std::to_string((int)distanceToPed) + "m";
 			drawList->AddText(
 			    {boneToScreen(ped.GetBonePosition(headBone)).x, boneToScreen(ped.GetBonePosition(headBone)).y + 20},
 			    colorBasedOnDistance,
@@ -297,6 +334,9 @@ namespace YimMenu
 
 	void ESP::Draw()
 	{
+		if (!NativeInvoker::AreHandlersCached() || CAM::IS_SCREEN_FADED_OUT())
+			return;
+
 		if (const auto drawList = ImGui::GetBackgroundDrawList())
 		{
 			if (Features::_ESPDrawPlayers.GetState())
@@ -306,7 +346,7 @@ namespace YimMenu
 					DrawPlayer(player, drawList);
 				}
 			}
-			if (Features::_ESPDrawPeds.GetState())
+			if (Features::_ESPDrawPeds.GetState() && GetPedPool())
 			{
 				for (Ped ped : Pools::GetPeds())
 				{

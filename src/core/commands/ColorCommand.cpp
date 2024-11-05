@@ -9,38 +9,52 @@ namespace YimMenu
 
 	void ColorCommand::SaveState(nlohmann::json& value)
 	{
-		value = {m_ColorState.x, m_ColorState.y, m_ColorState.z, m_ColorState.w};
+		value      = nlohmann::json::object();
+		value["r"] = m_State.x;
+		value["g"] = m_State.y;
+		value["b"] = m_State.z;
+		value["a"] = m_State.w;
 	}
 
 	void ColorCommand::LoadState(nlohmann::json& value)
 	{
-		if (value.is_array() && value.size() == 4)
+		if (value.is_object())
 		{
-			m_ColorState = ImVec4(value[0], value[1], value[2], value[3]);
+			m_State.x = value["r"];
+			m_State.y = value["g"];
+			m_State.z = value["b"];
+			m_State.w = value["a"];
 		}
-		else
+		else if (value.is_array())
 		{
-			m_ColorState = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+			auto arr = value.get<std::array<float, 4>>();
+			m_State.x = arr[0];
+			m_State.y = arr[1];
+			m_State.z = arr[2];
+			m_State.w = arr[3];
 		}
 	}
 
 	ColorCommand::ColorCommand(std::string name, std::string label, std::string description, ImVec4 color) :
 	    Command(name, label, description, 0),
-	    m_ColorState(color)
+	    m_State(color)
 	{
 	}
 
 	ImVec4 ColorCommand::GetState()
 	{
-		return m_ColorState;
+		return m_State;
 	}
 
-	void ColorCommand::SetColorState(ImVec4 state)
+	void ColorCommand::SetState(ImVec4 state)
 	{
-		FiberPool::Push([this] {
-			OnChange();
-		});
-		m_ColorState = state;
-		MarkDirty();
+		if (m_State != state)
+		{
+			FiberPool::Push([this] {
+				OnChange();
+			});
+			m_State = state;
+			MarkDirty();
+		}
 	}
 }

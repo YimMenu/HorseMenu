@@ -95,8 +95,21 @@ namespace YimMenu::Submenus
 				}
 
 				auto ip        = Players::GetSelected().GetExternalAddress();
+				auto ip2        = Players::GetSelected().GetAddress()->m_external_ip;
 				auto ip1       = Players::GetSelected().GetGamerInfo()->m_ExternalAddress;
 				bool spoofedIp = (ip.m_packed != ip1.m_packed);
+
+				auto addr2 = std::string(std::to_string(ip2.m_field1))
+				                        .append("." + std::to_string(ip2.m_field2))
+				                        .append("." + std::to_string(ip2.m_field3))
+				                        .append("." + std::to_string(ip2.m_field4));
+
+				ImGui::Text("Endpoint IP Address:");
+				ImGui::SameLine();
+				if (ImGui::Button(addr2.c_str()))
+				{
+					ImGui::SetClipboardText(addr2.c_str());
+				}
 
 				if (!spoofedIp)
 				{

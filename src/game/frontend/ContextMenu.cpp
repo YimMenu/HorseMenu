@@ -129,8 +129,8 @@ namespace YimMenu
 					auto entPos           = m_Entity.GetPosition();
 					float worldCoords_[3] = {entPos.x, entPos.y, entPos.z};
 					Pointers.WorldToScreen(worldCoords_, &m_ScreenPos.x, &m_ScreenPos.y);
-					m_ScreenPos.x *= Pointers.ScreenResX;
-					m_ScreenPos.y *= Pointers.ScreenResY;
+					m_ScreenPos.x *= *Pointers.ScreenResX;
+					m_ScreenPos.y *= *Pointers.ScreenResY;
 
 					PAD::DISABLE_CONTROL_ACTION(0, (int)NativeInputs::INPUT_NEXT_WEAPON, true);
 					PAD::DISABLE_CONTROL_ACTION(0, (int)NativeInputs::INPUT_PREV_WEAPON, true);

@@ -42,6 +42,7 @@
 #include <network/CNetworkScSession.hpp>
 #include <train/CTrainConfig.hpp>
 
+#define BLOCK_CRASHES 1
 
 namespace YimMenu::Features
 {
@@ -52,6 +53,8 @@ namespace YimMenu::Features
 	BoolCommand _BlockSpectateSession("blockspectatesession", "Block Spectate for Session", "Attempts to prevent modders from spectating anyone", false);
 	BoolCommand _BlockAttachments("blockattach", "Block Attachments", "Prevents modders from attaching objects and peds to you", true);
 	BoolCommand _BlockVehicleFlooding("blockvehflood", "Block Vehicle Flooding", "Prevents modders from creating too many vehicles", true);
+
+	BoolCommand _BlockGhostPeds("blockghostpeds", "Block Ghost Peds", "Blocks creation of ghost peds that are seemingly created due to a game bug", true);
 }
 
 namespace
@@ -157,6 +160,9 @@ namespace
 
 	inline YimMenu::Player GetObjectCreator(rage::netObject* object)
 	{
+		if (!object)
+			return nullptr;
+
 		for (auto& [idx, player] : Players::GetPlayers())
 		{
 			if ((*Pointers.ScSession)->m_SessionMultiplayer->GetPlayerByIndex(idx)->m_SessionPeer->m_Identifier.m_AccountId == object->m_Guid.GetAccountId())
@@ -208,7 +214,28 @@ namespace
 			{
 				LOGF(SYNC, WARNING, "Blocking invalid ped creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
 				SyncBlocked("mismatched ped model crash");
-				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
+				data.m_ModelHash = "MP_MALE"_J;
+				data.m_BannedPed = true; // blocking this seems difficult
+				return true;
+			}
+			break;
+		}
+		case "CAnimalCreationNode"_J:
+		{
+			auto& data = node->GetData<CAnimalCreationData>();
+			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
+			{
+				LOGF(SYNC, WARNING, "Blocking invalid animal creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
+				SyncBlocked("mismatched animal model crash");
+				data.m_ModelHash = "MP_MALE"_J;
+				data.m_BannedPed = true; // blocking this seems difficult
+				return true;
+			}
+			if (data.m_PopulationType == 10 && Features::_BlockGhostPeds.GetState())
+			{
+				// block ghost peds
+				if (object)
+					DeleteSyncObject(object->m_ObjectId);
 				return true;
 			}
 			break;
@@ -220,19 +247,18 @@ namespace
 			{
 				LOGF(SYNC, WARNING, "Blocking crash object creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
 				SyncBlocked("invalid object crash");
-				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				return true;
 			}
 			if (data.m_ModelHash && !STREAMING::_IS_MODEL_AN_OBJECT(data.m_ModelHash))
 			{
 				LOGF(SYNC, WARNING, "Blocking invalid object creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
 				SyncBlocked("mismatched object model crash");
-				Protections::GetSyncingPlayer().AddDetection(Detection::TRIED_CRASH_PLAYER);
 				return true;
 			}
 			if (g_CageModels.count(data.m_ModelHash))
 			{
-				DeleteSyncObject(object->m_ObjectId);
+				if (object)
+					DeleteSyncObject(object->m_ObjectId);
 				SyncBlocked("cage spawn", GetObjectCreator(object));
 				return true;
 			}
@@ -254,7 +280,7 @@ namespace
 			{
 				// TODO
 				LOGF(SYNC, WARNING, "Prevented {} from using animal model 0x{:X} to prevent potential task crashes", Protections::GetSyncingPlayer().GetName(), data.m_ModelHash);
-				data.m_ModelHash = "MP_MALE"_J;
+				// data.m_ModelHash = "MP_MALE"_J;
 			}
 
 			CheckPlayerModel(Protections::GetSyncingPlayer().GetHandle(), data.m_ModelHash);
@@ -489,7 +515,7 @@ namespace
 		case "CPickupCreationNode"_J:
 		{
 			auto& data = node->GetData<CPickupCreationData>();
-			if (!OBJECT::_IS_PICKUP_TYPE_VALID(data.m_PickupHash) && !(data.m_PickupHash == 0xFFFFFFFF && data.m_ModelHash == 0))
+			if (!OBJECT::_IS_PICKUP_TYPE_VALID(data.m_PickupHash) && !(data.m_PickupHash == 0xFFFFFFFF && data.m_ModelHash == 0) && (data.m_ModelHash != 0 && STREAMING::_IS_MODEL_AN_OBJECT(data.m_ModelHash)))
 			{
 				LOGF(SYNC, WARNING, "Blocking pickup with invalid hashes (m_PickupHash = 0x{}, m_ModelHash = 0x{}) from {}", data.m_PickupHash, data.m_ModelHash, Protections::GetSyncingPlayer().GetName());
 				SyncBlocked("invalid pickup type crash");
@@ -571,7 +597,7 @@ namespace YimMenu::Hooks::Protections
 	{
 		Nodes::Init();
 
-		if (g_Running /*something getting nulled before last iteration*/ && tree->m_NodeCount && tree->m_NextSyncNode && SyncNodeVisitor(reinterpret_cast<CProjectBaseSyncDataNode*>(tree->m_NextSyncNode), type, object))
+		if (g_Running && SyncNodeVisitor(reinterpret_cast<CProjectBaseSyncDataNode*>(tree->m_NextSyncNode), type, object))
 		{
 			return true;
 		}

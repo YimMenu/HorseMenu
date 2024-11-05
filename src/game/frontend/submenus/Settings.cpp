@@ -43,6 +43,7 @@ namespace YimMenu::Submenus
 		auto scriptEventGroup  = std::make_shared<Group>("Script Events");
 		auto playerEsp         = std::make_shared<Group>("Player ESP", 10);
 		auto pedEsp            = std::make_shared<Group>("Ped ESP", 10);
+		auto overlay            = std::make_shared<Group>("Overlay");
 		auto context           = std::make_shared<Group>("Context Menu");
 		auto misc              = std::make_shared<Group>("Misc");
 
@@ -68,6 +69,9 @@ namespace YimMenu::Submenus
 		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espmodelspeds"_J, "Ped Hashes")));
 		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<ColorCommandItem>("hashcolorpeds"_J)));
 
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espnetinfopeds"_J, "Ped Net Info")));
+		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espscriptinfopeds"_J, "Ped Script Info")));
+
 		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espdistancepeds"_J, "Ped Distance")));
 		//pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<ColorCommandItem>("distancecolorpeds"_J))); // TO DO
 
@@ -76,6 +80,9 @@ namespace YimMenu::Submenus
 
 		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<BoolCommandItem>("espskeletonhorse"_J, "Horse Skeleton")));
 		pedEsp->AddItem(std::make_shared<ConditionalItem>("espdrawpeds"_J, std::make_shared<ColorCommandItem>("skeletoncolorhorse"_J)));
+
+		overlay->AddItem(std::make_shared<BoolCommandItem>("overlay"_J));
+		overlay->AddItem(std::make_shared<ConditionalItem>("overlay"_J, std::make_shared<BoolCommandItem>("overlayfps"_J)));
 
 		context->AddItem(std::make_shared<BoolCommandItem>("ctxmenu"_J));
 		context->AddItem(std::make_shared<ConditionalItem>("ctxmenu"_J, std::make_shared<BoolCommandItem>("ctxmenuplayers"_J, "Players")));
@@ -106,6 +113,7 @@ namespace YimMenu::Submenus
 
 		gui->AddItem(playerEsp);
 		gui->AddItem(pedEsp);
+		gui->AddItem(overlay);
 		gui->AddItem(context);
 		gui->AddItem(misc);
 
