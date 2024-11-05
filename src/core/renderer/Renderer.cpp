@@ -646,8 +646,8 @@ namespace YimMenu
 				info.framebuffer           = fd->Framebuffer;
 				if (m_VkImageExtent.width == 0 || m_VkImageExtent.height == 0)
 				{
-					info.renderArea.extent.width  = Pointers.ScreenResX;
-					info.renderArea.extent.height = Pointers.ScreenResY;
+					info.renderArea.extent.width  = *Pointers.ScreenResX;
+					info.renderArea.extent.height = *Pointers.ScreenResY;
 				}
 				else
 				{
@@ -759,7 +759,7 @@ namespace YimMenu
 
 	bool Renderer::InitImpl()
 	{
-		while (!*Pointers.Hwnd)
+		while (!*Pointers.Hwnd || !*Pointers.ScreenResX)
 		{
 			std::this_thread::sleep_for(1s);
 		}

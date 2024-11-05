@@ -134,7 +134,7 @@ namespace YimMenu::Submenus
 			ImGui::InputText("Player Name", search, sizeof(search));
 			ImGui::PopID();
 
-			if (ImGui::BeginListBox("###players", {180, static_cast<float>(Pointers.ScreenResY - 400 - 38 * 4)}))
+			if (ImGui::BeginListBox("###players", {180, static_cast<float>(*Pointers.ScreenResY - 400 - 38 * 4)}))
 			{
 				auto& item_arr = g_PlayerDatabase->GetAllPlayers();
 				if (item_arr.size() > 0)
@@ -158,7 +158,7 @@ namespace YimMenu::Submenus
 			{
 				ImGui::PushID(1);
 				ImGui::SameLine();
-				if (ImGui::BeginChild("###selected_player", {500, static_cast<float>(Pointers.ScreenResY - 388 - 38 * 4)}, false, ImGuiWindowFlags_NoBackground))
+				if (ImGui::BeginChild("###selected_player", {500, static_cast<float>(*Pointers.ScreenResY - 388 - 38 * 4)}, false, ImGuiWindowFlags_NoBackground))
 				{
 					if (ImGui::InputText("Name", name_buf, sizeof(name_buf)))
 					{

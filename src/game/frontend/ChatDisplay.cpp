@@ -19,7 +19,7 @@ namespace YimMenu
 		notification.m_Message = message;
 		notification.m_Color = color;
 
-		static const bool isBigScreen = Pointers.ScreenResX > 1600 && Pointers.ScreenResY > 900;
+		static const bool isBigScreen = *Pointers.ScreenResX > 1600 && *Pointers.ScreenResY > 900;
 		static const int maxMessages  = isBigScreen ? 17 : 7;
 
 		std::lock_guard<std::mutex> lock(m_Mutex);
@@ -38,14 +38,14 @@ namespace YimMenu
 		int position = 0;
 
 		static const float y_pos = position * 100 + 200;
-		static const float x_pos = Pointers.ScreenResX - 470;
+		static const float x_pos = *Pointers.ScreenResX - 470;
 
-		ImGui::SetNextWindowSize(ImVec2(Pointers.ScreenResX - x_pos - 10, Pointers.ScreenResY - y_pos), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(*Pointers.ScreenResX - x_pos - 10, *Pointers.ScreenResY - y_pos), ImGuiCond_Always);
 		ImGui::SetNextWindowPos(ImVec2(x_pos, y_pos), ImGuiCond_Always);
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushFont(Menu::Font::g_ChatFont);
 
-		ImGui::Begin("##chatwin", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBackground);
+		ImGui::Begin("##chatwin", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
 
 		for (auto& message : m_Messages)
 		{

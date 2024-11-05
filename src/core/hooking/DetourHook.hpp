@@ -56,7 +56,7 @@ namespace YimMenu
 	inline bool DetourHook<T>::Enable()
 	{
 		if (m_Enabled)
-			return false;
+			return true;
 
 		if (const auto result = MH_QueueEnableHook(m_TargetFunc); result != MH_OK)
 		{
@@ -71,7 +71,7 @@ namespace YimMenu
 	inline bool DetourHook<T>::Disable()
 	{
 		if (!m_Enabled)
-			return false;
+			return true;
 
 		if (const auto result = MH_QueueDisableHook(m_TargetFunc); result != MH_OK)
 		{
@@ -86,7 +86,7 @@ namespace YimMenu
 	inline bool DetourHook<T>::EnableNow()
 	{
 		if (m_Enabled)
-			return false;
+			return true;
 
 		if (const auto result = MH_EnableHook(m_TargetFunc); result != MH_OK)
 		{
@@ -101,7 +101,7 @@ namespace YimMenu
 	inline bool DetourHook<T>::DisableNow()
 	{
 		if (!m_Enabled)
-			return false;
+			return true;
 
 		if (const auto result = MH_DisableHook(m_TargetFunc); result != MH_OK)
 		{

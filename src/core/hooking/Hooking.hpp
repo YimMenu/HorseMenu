@@ -25,10 +25,12 @@ namespace YimMenu
 		Hooking& operator=(Hooking&&) noexcept  = delete;
 		
 		static bool Init();
+		static bool LateInit();
 		static void Destroy();
 
 	private:
 		bool InitImpl();
+		bool LateInitImpl();
 		void DestroyImpl();
 
 	private:

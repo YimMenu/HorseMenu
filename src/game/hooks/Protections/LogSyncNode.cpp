@@ -56,13 +56,15 @@ namespace YimMenu::Hooks
 {
 	void Protections::LogSyncNode(CProjectBaseSyncDataNode* node, SyncNodeId& id, NetObjType type, rage::netObject* object, Player& player)
 	{
-		if (!object)
-			return; // TODO: log creation queue syncs
+		int object_id = -1;
+
+		if (object)
+			object_id = object->m_ObjectId;
 
 		if (player.IsValid())
-			LOG(INFO) << player.GetName() << ": " << id.name << ", " << object->m_ObjectId;
+			LOG(INFO) << player.GetName() << ": " << id.name << ", " << object_id;
 		else
-			LOG(INFO) << "UNKNOWN: " << id.name << object->m_ObjectId;
+			LOG(INFO) << "UNKNOWN: " << id.name << " " << object_id;
 
 		switch (id)
 		{

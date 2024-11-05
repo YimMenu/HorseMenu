@@ -1,5 +1,6 @@
 #include "Pointers.hpp"
 
+#include "core/backend/PatternCache.hpp"
 #include "core/memory/BytePatch.hpp"
 #include "core/memory/ModuleMgr.hpp"
 #include "core/memory/PatternScanner.hpp"
@@ -12,6 +13,8 @@ namespace YimMenu
 {
 	bool Pointers::Init()
 	{
+		PatternCache::Init();
+
 		const auto rdr2 = ModuleMgr.Get("RDR2.exe"_J);
 		if (!rdr2)
 		{
@@ -38,26 +41,22 @@ namespace YimMenu
 
 		constexpr auto gfxInformationPtrn = Pattern<"48 8D 0D ? ? ? ? 48 8B F8 E8 ? ? ? ? 45 33 ED 45 84 FF">("GFXInformation");
 		scanner.Add(gfxInformationPtrn, [this](PointerCalculator ptr) {
-			auto gfx = ptr.Add(3).Rip().As<GraphicsOptions*>();
+			GraphicsOptions_ = ptr.Add(3).Rip().As<GraphicsOptions*>();
 
-			if (gfx->m_hdr)
+			if (GraphicsOptions_->m_hdr)
 			{
 				LOG(WARNING) << "Turn HDR off if you're using DX12!";
 			}
 
-			//LOG(INFO) << GetGraphicsValue(gfx->m_gfx_lightingQuality); example
-
-			if (gfx->m_unk)
-			{
-				ScreenResX = gfx->m_screen_resolution_x;
-				ScreenResY = gfx->m_screen_resolution_y;
-				LOG(INFO) << "Screen Resolution: " << ScreenResX << "x" << ScreenResY;
-			}
+			ScreenResX = &GraphicsOptions_->m_screen_resolution_x;
+			ScreenResY = &GraphicsOptions_->m_screen_resolution_y;
 		});
 
-		constexpr auto keyboardHookPtrn = Pattern<"41 83 E9 5B 44 3B C8 76 15">("KeyboardHook");
+		constexpr auto keyboardHookPtrn = Pattern<"41 8D 49 0D">("KeyboardHook");
 		scanner.Add(keyboardHookPtrn, [this](PointerCalculator ptr) {
-			UnhookWindowsHookEx(*ptr.Add(0xC).Rip().As<HHOOK*>()); // weird hook that gets set by an encrypted function
+			UnhookWindowsHookEx(*ptr.Add(0x14).Rip().As<HHOOK*>()); // remove hook if it already exists
+			memset(ptr.Add(4).As<PVOID>(), 0x90, 6); // prevent it from being created if we load early
+			memset(ptr.Sub(0x1B).As<PVOID>(), 0x90, 6); // ...and prevent the game from destroying our console window
 		});
 
 		constexpr auto wndProcPtrn = Pattern<"48 89 5C 24 ? 4C 89 4C 24 ? 48 89 4C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 60">("WndProc");
@@ -230,9 +229,9 @@ namespace YimMenu
 			HandleScriptedGameEvent = ptr.As<PVOID>();
 		});
 
-		constexpr auto addObjectToCreationQueuePtrn = Pattern<"48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 55 41 54 41 55 41 56 41 57 48 8D 68 98 48 81 EC 50">("AddObjectToCreationQueue");
+		constexpr auto addObjectToCreationQueuePtrn = Pattern<"0F 83 00 01 00 00 4D 8B C8">("AddObjectToCreationQueue");
 		scanner.Add(addObjectToCreationQueuePtrn, [this](PointerCalculator ptr) {
-			AddObjectToCreationQueue = ptr.As<PVOID>();
+			AddObjectToCreationQueue = ptr.Sub(0x2C).As<PVOID>();
 		});
 
 		constexpr auto playerHasJoinedPtrn = Pattern<"E8 ? ? ? ? 8A 4B 19 48 8B 45 38">("PlayerHasJoined");
@@ -305,9 +304,9 @@ namespace YimMenu
 			ReceiveNetMessage = ptr.Add(1).Rip().As<PVOID>();
 		});
 
-		constexpr auto handlePresenceEventPtrn = Pattern<"E8 ?? ?? ?? ?? 4C 8D 9C 24 B0 10 00 00 49 8B 5B 10">("HandlePresenceEvent");
+		constexpr auto handlePresenceEventPtrn = Pattern<"0F 84 00 03 00 00 85 C9">("HandlePresenceEvent");
 		scanner.Add(handlePresenceEventPtrn, [this](PointerCalculator ptr) {
-			HandlePresenceEvent = ptr.Add(1).Rip().As<PVOID>();
+			HandlePresenceEvent = ptr.Sub(0x34).As<PVOID>();
 		});
 
 		constexpr auto postMessagePtrn = Pattern<"E8 ?? ?? ?? ?? EB 35 C7 44 24 20 D9 7A 70 E1">("PostPresenceMessage");
@@ -525,12 +524,31 @@ namespace YimMenu
 
 		constexpr auto serializeIceSessionOfferRequestPtrn = Pattern<"80 3F 03 0F 85 9C 01 00 00">("SerializeIceSessionOfferRequest");
 		scanner.Add(serializeIceSessionOfferRequestPtrn, [this](PointerCalculator ptr) {
-			SerializeIceSessionOfferRequest = ptr.Sub(0x2F).As<void**>();
+			SerializeIceSessionOfferRequest = ptr.Sub(0x2F).As<PVOID>();
 		});
 
 		constexpr auto openIceTunnelPtrn = Pattern<"66 44 39 6D 58 0F 84 1D 01 00 00">("OpenIceTunnel");
 		scanner.Add(openIceTunnelPtrn, [this](PointerCalculator ptr) {
 			OpenIceTunnel = ptr.Sub(0x5F).As<Functions::OpenIceTunnel>();
+		});
+
+		constexpr auto canCreateNetworkObjectPtrn = Pattern<"B8 81 00 20 00 85 FF">("CanCreateNetworkObject");
+		scanner.Add(canCreateNetworkObjectPtrn, [this](PointerCalculator ptr) {
+			CanCreateNetworkObject = ptr.Sub(0x26).As<PVOID>();
+			MaxNetworkPeds = ptr.Add(0x60).As<int*>();
+		});
+
+		// fixes crash at CNetObjPed::SetPedWeaponComponentData
+		constexpr auto weaponComponentPatchPtrn = Pattern<"0F 85 9E 00 00 00 45 39 19">("WeaponComponentPatch");
+		scanner.Add(weaponComponentPatchPtrn, [this](PointerCalculator ptr) {
+			// TODO: disable on unload
+			*ptr.Add(9).As<uint16_t*>() = 0x377C;
+			*ptr.Add(0x15).As<uint16_t*>() = 0x2B7D;
+		});
+
+		constexpr auto getPoolSizePtrn = Pattern<"BA F7 01 22 5F">("GetPoolSize");
+		scanner.Add(getPoolSizePtrn, [this](PointerCalculator ptr) {
+			GetPoolSize = ptr.Add(0xC).Rip().As<PVOID>();
 		});
 
 		if (!scanner.Scan())
@@ -539,6 +557,17 @@ namespace YimMenu
 
 			return false;
 		}
+		else
+		{
+			LOG(INFO) << "Initial pointer scan complete";
+		}
+
+		return true;
+	}
+
+	bool Pointers::LateInit() 
+	{
+		PatternCache::Update(); // update late to store all patterns
 
 		return true;
 	}

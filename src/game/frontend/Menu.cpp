@@ -39,7 +39,7 @@ namespace YimMenu
 			    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImU32(ImColor(15, 15, 15)));
 
 			    // Think this add HTML&PHP with no CSS. Lol just for testing.
-			    ImGui::SetNextWindowSize(ImVec2((Pointers.ScreenResX / 2.5), (Pointers.ScreenResY / 2.5)), ImGuiCond_Once);
+			    ImGui::SetNextWindowSize(ImVec2((*Pointers.ScreenResX / 2.5), (*Pointers.ScreenResY / 2.5)), ImGuiCond_Once);
 			    if (ImGui::Begin("HorseMenu", nullptr, ImGuiWindowFlags_NoDecoration))
 			    {
 				    //ImGui::BeginDisabled(*Pointers.IsSessionStarted);
@@ -134,6 +134,7 @@ namespace YimMenu
 		Menu::Font::g_OptionsFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::g_OptionsFontSize, &FontCfg);
 		Menu::Font::g_ChildTitleFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::g_ChildTitleFontSize, &FontCfg);
 		Menu::Font::g_ChatFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::g_ChatFontSize, &FontCfg);
+		Menu::Font::g_OverlayFont = IO.Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(Fonts::MainFont), sizeof(Fonts::MainFont), Menu::Font::g_OverlayFontSize, &FontCfg);
 		UIManager::SetOptionsFont(Menu::Font::g_OptionsFont);
 	}
 }

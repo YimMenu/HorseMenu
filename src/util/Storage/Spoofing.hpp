@@ -25,6 +25,9 @@ namespace YimMenu
 		};
 
 		std::unordered_map<uint16_t, RemotePlayerTeleport> m_RemotePlayerTeleports;
+
+		std::optional<uint64_t> another = std::nullopt;
+		std::optional<int> another2 = std::nullopt;
 	};
 	inline YimMenu::Spoofing g_SpoofingStorage;
 }

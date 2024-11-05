@@ -96,6 +96,12 @@ namespace YimMenu
 		return ENTITY::GET_IS_ANIMAL(GetHandle());
 	}
 
+	bool Entity::IsMissionEntity()
+	{ 
+		ENTITY_ASSERT_VALID();
+		return ENTITY::IS_ENTITY_A_MISSION_ENTITY(GetHandle()); // TODO: detect more mission states
+	}
+
 	int Entity::GetModel()
 	{
 		ENTITY_ASSERT_VALID();
@@ -170,6 +176,7 @@ namespace YimMenu
 		}
 		else
 		{
+			// TODO: call delete functions directly
 			if (!ENTITY::IS_ENTITY_A_MISSION_ENTITY(GetHandle()))
 				ENTITY::SET_ENTITY_AS_MISSION_ENTITY(GetHandle(), true, true);
 			auto hnd = GetHandle();
@@ -196,6 +203,14 @@ namespace YimMenu
 			return true;
 
 		return !GetNetworkObject()->m_IsRemotelyControlled;
+	}
+
+	int Entity::GetOwner() 
+	{ 
+		if (!IsNetworked())
+			return -1;
+
+		return GetNetworkObject()->m_OwnerId;
 	}
 
 	std::uint16_t Entity::GetNetworkObjectId()

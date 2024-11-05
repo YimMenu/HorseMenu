@@ -2,6 +2,7 @@
 #include "Menu.hpp"
 #include "ESP.hpp"
 #include "ContextMenu.hpp"
+#include "Overlay.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/frontend/ChatDisplay.hpp"
@@ -40,6 +41,11 @@ namespace YimMenu
 			    ChatDisplay::Draw();
 		    },
 		    -5);
+		Renderer::AddRendererCallBack(
+		    [&] {
+			    Overlay::Draw();
+		    },
+		    -6);
 	}
 
 	GUI::~GUI()

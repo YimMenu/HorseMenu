@@ -88,6 +88,7 @@ namespace YimMenu
 		bool IsObject();
 		bool IsPlayer();
 		bool IsAnimal();
+		bool IsMissionEntity();
 
 		// info
 		int GetModel();
@@ -109,6 +110,7 @@ namespace YimMenu
 		bool IsNetworked();
 		rage::netObject* GetNetworkObject();
 		bool HasControl();
+		int GetOwner(); // index because we want to avoid cyclic imports
 		std::uint16_t GetNetworkObjectId();
 		/// <summary>
 		/// WARNING: This function is potentially unstable when used on vehicles and horses. Use RequestControl instead
