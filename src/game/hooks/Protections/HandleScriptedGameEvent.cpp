@@ -5,6 +5,7 @@
 #include "game/backend/Players.hpp"
 #include "game/backend/Protections.hpp"
 #include "game/backend/Self.hpp"
+#include "game/backend/PlayerData.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/data/StableEvents.hpp"
 #include "game/rdr/data/TickerEvents.hpp"
@@ -28,8 +29,6 @@ namespace YimMenu::Features
 
 namespace YimMenu::Hooks
 {
-	RateLimiter m_TickerMessageRateLimit{5s, 3};
-
 	bool Protections::HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst)
 	{
 		if (Features::_LogScriptEvents.GetState())
@@ -106,15 +105,11 @@ namespace YimMenu::Hooks
 		}
 		case ScriptEvent::SCRIPT_EVENT_TICKER_MESSAGE:
 		{
-			if (m_TickerMessageRateLimit.Process() && Features::_BlockTickerSpam.GetState())
+			if (Player(src).GetData().m_TickerMessageRateLimit.Process() && Features::_BlockTickerSpam.GetState())
 			{
-				if (m_TickerMessageRateLimit.ExceededLastProcess())
+				if (Player(src).GetData().m_TickerMessageRateLimit.ExceededLastProcess())
 				{
-					Notifications::Show("Protections",
-					    std::format("Blocked ticker spam from {} ({})",
-					        src->GetName(),
-					        Data::g_TickerEvents[event->m_Data[4]].second),
-					    NotificationType::Warning);
+					LOGF(NET_EVENT, WARNING, "Blocked ticker spam ({}) from {}", event->m_Data[4], src->GetName());
 				}
 				return true;
 			}

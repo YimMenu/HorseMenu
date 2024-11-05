@@ -17,11 +17,18 @@ namespace YimMenu::Features
 
 namespace YimMenu::Hooks
 {
-	bool Protections::HandlePresenceEvent(uint64_t a1, rage::rlGamerInfo* gamerInfo, unsigned int sender, const char** payload, const char* channel)
+	void Protections::HandlePresenceEvent(int localGamerIndex, __int64 data, __int64 source)
 	{
-		bool ret =
-		    BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()->Original()(a1, gamerInfo, sender, payload, channel);
+		const auto payload = *(char**)(data + 8);
 
+		if (Features::_LogPresenceEvents.GetState())
+		{
+			LOG(VERBOSE) << "HandlePresenceEvent :: " << payload;
+		}
+
+		BaseHook::Get<Protections::HandlePresenceEvent, DetourHook<decltype(&Protections::HandlePresenceEvent)>>()->Original()(localGamerIndex, data, source);
+
+		#if 0
 		const char* key = "gm.evt";
 		std::string p(*payload);
 
@@ -82,5 +89,6 @@ namespace YimMenu::Hooks
 		}
 
 		return ret;
+		#endif
 	}
 }

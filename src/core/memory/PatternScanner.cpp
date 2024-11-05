@@ -1,6 +1,7 @@
 #include "PatternScanner.hpp"
-
 #include "Module.hpp"
+
+#include "core/backend/PatternCache.hpp"
 
 #include <future>
 
@@ -42,6 +43,17 @@ namespace YimMenu
 	{
 		const auto signature = pattern->Signature();
 
+		if (PatternCache::IsInitialized())
+		{
+			auto offset = PatternCache::GetCachedOffset(pattern->Hash().Update(m_Module->Size()));
+			if (offset.has_value())
+			{
+				LOG(INFO) << "Using cached pattern [" << pattern->Name() << "] : [" << HEX(m_Module->Base() + offset.value()) << "]";
+				std::invoke(func, m_Module->Base() + offset.value());
+				return true;
+			}
+		}
+
 		for (auto i = m_Module->Base(); i < m_Module->End(); ++i)
 		{
 			if (signature.size() + i > m_Module->End())
@@ -62,6 +74,11 @@ namespace YimMenu
 				LOG(INFO) << "Found pattern [" << pattern->Name() << "] : [" << HEX(i) << "]";
 
 				std::invoke(func, i);
+
+				if (PatternCache::IsInitialized())
+				{
+					PatternCache::UpdateCachedOffset(pattern->Hash().Update(m_Module->Size()), i - m_Module->Base());
+				}
 
 				return true;
 			}

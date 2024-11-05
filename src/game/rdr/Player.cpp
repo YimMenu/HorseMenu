@@ -44,7 +44,7 @@ namespace YimMenu
 	{
 		if (!IsValid())
 		{
-			return "Null Player!";
+			return "Invalid";
 		}
 
 		return m_Handle->GetName();

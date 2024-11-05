@@ -18,7 +18,7 @@
 
 namespace YimMenu
 {
-	DWORD Main(void*)
+	static DWORD Main(void*)
 	{
 		const auto documents = std::filesystem::path(std::getenv("appdata")) / "HorseMenu";
 		FileMgr::Init(documents);
@@ -35,10 +35,15 @@ namespace YimMenu
 			goto unload;
 		if (!Pointers.Init())
 			goto unload;
+
+		Hooking::Init();
+
 		if (!Renderer::Init())
 			goto unload;
 
-		Hooking::Init();
+		if (!Pointers.LateInit())
+			LOG(WARNING) << "Failed to find some pointers";
+		Hooking::LateInit();
 
 		ScriptMgr::Init();
 		LOG(INFO) << "ScriptMgr initialized";

@@ -185,7 +185,7 @@ namespace YimMenu
 			{
 			case EXCEPTION_READ_FAULT: m_Dump << '\n' << "Attempted to read from " << HEX(addr) << '\n'; break;
 			case EXCEPTION_WRITE_FAULT: m_Dump << '\n' << "Attempted to write to " << HEX(addr) << '\n'; break;
-			case EXCEPTION_EXECUTE_FAULT: m_Dump << '\n' << "DEP at " << HEX(addr) << '\n'; break;
+			case EXCEPTION_EXECUTE_FAULT: m_Dump << '\n' << "Attempted to execute at " << HEX(addr) << '\n'; break;
 			default: m_Dump << '\n' << "Inaccessible data at " << HEX(addr) << '\n';
 			}
 

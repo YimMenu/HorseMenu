@@ -1,5 +1,6 @@
 #pragma once
 #include "util/StrToHex.hpp"
+#include "PatternHash.hpp"
 
 #include <string_view>
 #include <vector>
@@ -11,6 +12,7 @@ namespace YimMenu
 	{
 		char m_Signature[N]{};
 		std::size_t m_SignatureByteLength;
+		PatternHash m_Hash;
 
 		constexpr Signature(char const (&signature)[N]) :
 		    m_SignatureByteLength(0)
@@ -19,9 +21,12 @@ namespace YimMenu
 
 			for (std::size_t i = 0; i < N; i++)
 			{
+				m_Hash = m_Hash.Update(m_Signature[i]);
 				if (m_Signature[i] == ' ' || m_Signature[i] == '\0')
 					m_SignatureByteLength++;
 			}
+
+			m_Hash = m_Hash.Update(m_SignatureByteLength);
 		}
 
 		/**
@@ -51,6 +56,11 @@ namespace YimMenu
 		{
 			return m_SignatureByteLength;
 		}
+
+		constexpr PatternHash Hash() const
+		{
+			return m_Hash;
+		}
 	};
 
 	class IPattern
@@ -61,6 +71,7 @@ namespace YimMenu
 
 		virtual const std::string_view Name() const                                      = 0;
 		virtual constexpr std::span<const std::optional<std::uint8_t>> Signature() const = 0;
+		virtual const PatternHash Hash() const                                           = 0;
 	};
 
 	template<Signature S>
@@ -69,6 +80,7 @@ namespace YimMenu
 	private:
 		const std::string_view m_Name;
 		std::array<std::optional<std::uint8_t>, S.ByteLength()> m_Signature;
+		PatternHash m_Hash;
 
 	public:
 		constexpr Pattern(const std::string_view name);
@@ -81,6 +93,10 @@ namespace YimMenu
 		{
 			return m_Signature;
 		}
+		inline virtual const PatternHash Hash() const override
+		{
+			return m_Hash;
+		}
 
 		friend std::ostream& operator<< <>(std::ostream& os, const Pattern<S>& signature);
 	};
@@ -90,6 +106,8 @@ namespace YimMenu
 	    IPattern(),
 	    m_Name(name)
 	{
+		m_Hash = S.Hash();
+
 		for (size_t i = 0, pos = 0; i < S.Length(); i++)
 		{
 			const auto c = S.Get()[i];

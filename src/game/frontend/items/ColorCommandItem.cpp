@@ -35,7 +35,7 @@ namespace YimMenu
 		{
 			if (ImGui::ColorPicker4("##picker", (float*)&color))
 			{
-				m_Command->SetColorState(color);
+				m_Command->SetState(color);
 			}
 			ImGui::EndPopup();
 		}

@@ -41,6 +41,8 @@ namespace YimMenu
 			return nullptr;
 		}
 
+		ped.SetPosition(coords);
+		ped.SetVelocity({});
 		PED::_SET_RANDOM_OUTFIT_VARIATION(ped.GetHandle(), true);
 		ENTITY::PLACE_ENTITY_ON_GROUND_PROPERLY(ped.GetHandle(), true);
 		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);

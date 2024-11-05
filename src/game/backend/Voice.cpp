@@ -14,12 +14,22 @@ namespace YimMenu
 		std::lock_guard lock(m_BufferModifyMutex);
 		m_Running = false;
 		if (m_AudioBuffer)
+		{
 			delete[] m_AudioBuffer;
+			m_AudioBuffer = nullptr;
+		}
 	}
 
 	void Voice::LoadFileImpl()
 	{
 		std::lock_guard lock(m_BufferModifyMutex);
+
+		if (m_AudioBuffer)
+		{
+			delete[] m_AudioBuffer;
+			m_AudioBuffer = nullptr;
+		}
+
 		if (std::filesystem::exists(m_AudioDirectory.Path() / m_AudioFile))
 		{
 			std::ifstream waveStream(m_AudioDirectory.Path() / m_AudioFile, std::ios::in | std::ios::binary);
@@ -41,6 +51,8 @@ namespace YimMenu
 			m_AudioSize = dataSize;
 			waveStream.read(m_AudioBuffer, m_AudioSize);
 			waveStream.close();
+
+			LOGF(VERBOSE, __FUNCTION__ ": audio file loaded");
 		}
 
 		m_AudioPage    = 0;

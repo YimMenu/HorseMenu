@@ -41,8 +41,8 @@ namespace YimMenu
 
 		static std::vector<BaseHook*>& Hooks();
 
-		static void EnableAll();
-		static void DisableAll();
+		static bool EnableAll();
+		static bool DisableAll();
 
 	private:
 		inline static std::vector<BaseHook*> m_Hooks;
