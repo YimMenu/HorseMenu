@@ -10,7 +10,7 @@
 #include <vulkan/vulkan.h>
 #include <windows.h>
 
-
+class GraphicsOptions;
 class CNetGamePlayer;
 class CVehicle;
 class CPed;
@@ -87,6 +87,7 @@ namespace YimMenu
 	struct PointerData
 	{
 		// RDR
+		GraphicsOptions* GraphicsOptions_;
 		bool* IsSessionStarted;
 		std::int64_t** ScriptGlobals;
 		Functions::GetNativeHandler GetNativeHandler;
@@ -133,6 +134,9 @@ namespace YimMenu
 		CTrainConfigs* TrainConfigs;
 		Functions::OpenIceTunnel OpenIceTunnel;
 		PVOID SerializeIceSessionOfferRequest;
+		PVOID CanCreateNetworkObject;
+		int* MaxNetworkPeds;
+		PVOID GetPoolSize;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;
@@ -217,8 +221,8 @@ namespace YimMenu
 		PVOID WndProc;
 		BOOL IsVulkan;
 
-		uint32_t ScreenResX;
-		uint32_t ScreenResY;
+		uint32_t* ScreenResX;
+		uint32_t* ScreenResY;
 
 		PVOID NetworkRequest;
 
@@ -234,6 +238,7 @@ namespace YimMenu
 	struct Pointers : PointerData
 	{
 		bool Init();
+		bool LateInit();
 		void Restore();
 	};
 

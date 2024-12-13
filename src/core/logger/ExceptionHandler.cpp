@@ -48,16 +48,17 @@ namespace YimMenu
 			logged_exceptions.insert(trace_hash);
 		}
 
-		if (IsBadReadPtr(reinterpret_cast<void*>(exception_info->ContextRecord->Rip), 8))
+		if (exception_info->ExceptionRecord->ExceptionInformation[0] == EXCEPTION_EXECUTE_FAULT)
 		{
 			auto return_address_ptr = (uint64_t*)exception_info->ContextRecord->Rsp;
 			if (IsBadReadPtr(reinterpret_cast<void*>(return_address_ptr), 8))
 			{
-				LOG(FATAL) << "Cannot resume execution, crashing";
+				LOG(FATAL) << "Cannot resume execution, crashing (failed to find valid return address)";
 				return EXCEPTION_CONTINUE_SEARCH;
 			}
 			else
 			{
+				LOG(FATAL) << "Force returning from function";
 				exception_info->ContextRecord->Rip = *return_address_ptr;
 				exception_info->ContextRecord->Rsp += 8;
 			}
@@ -68,7 +69,7 @@ namespace YimMenu
 			hde64_disasm(reinterpret_cast<void*>(exception_info->ContextRecord->Rip), &opcode);
 			if (opcode.flags & F_ERROR)
 			{
-				LOG(FATAL) << "Cannot resume execution, crashing";
+				LOG(FATAL) << "Cannot resume execution, crashing (failed to decode insn)";
 				return EXCEPTION_CONTINUE_SEARCH;
 			}
 

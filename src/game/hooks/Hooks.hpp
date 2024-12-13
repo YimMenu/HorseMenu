@@ -25,6 +25,7 @@ namespace rage
 	class netRpcBuilder;
 	class netRpcReaderContext;
 	class netRpcReader;
+	class rlGamerHandle;
 }
 
 class CNetGamePlayer;
@@ -70,6 +71,7 @@ namespace YimMenu::Hooks
 	{
 		extern LRESULT WndProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 		extern BOOL SetCursorPos(int x, int y);
+		extern BOOL ShowWindow(HWND hWnd, int nCmdShow);
 	}
 
 	namespace Script
@@ -99,10 +101,10 @@ namespace YimMenu::Hooks
 		extern bool CanApplyData(rage::netSyncTree* tree, rage::netObject* object);
 		extern void ResetSyncNodes();
 		extern bool HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst);
-		extern int AddObjectToCreationQueue(void* mgr, NetObjType objectType, CNetGamePlayer* src, CNetGamePlayer* dst);
+		extern int AddObjectToCreationQueue(void* mgr, CNetGamePlayer* src, CNetGamePlayer* dst, NetObjType type, std::uint16_t net_id, int flags, void* a7, void* guid, int a9);
 		extern bool ReceiveNetMessage(void* a1, rage::netConnectionManager* ncm, rage::netConnection::InFrame* frame);
-		extern bool HandlePresenceEvent(uint64_t a1, rage::rlGamerInfo* gamerInfo, unsigned int sender, const char** payload, const char* channel);
-		extern bool PPostMessage(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
+		extern void HandlePresenceEvent(int localGamerIndex, __int64 data, __int64 source);
+		extern bool PPostMessage(int localGamerIndex, rage::rlGamerHandle* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
 		extern bool SerializeServerRPC(rage::netRpcBuilder* builder, void* a2, const char* message, void* def, void* structure, const char* RPCGuid, void* a7);
 		extern void DeserializeServerMessage(rage::netRpcReaderContext* ctx, void* def, void* structure);
 		extern bool ReceiveServerMessage(void* a1, rage::netRpcReader* message); // doesn't receive all messages
@@ -118,7 +120,7 @@ namespace YimMenu::Hooks
 		extern bool HandlePeerRelayPacket(__int64 _this, __int64 netSockFrom, void* buffer, unsigned int sizeOfBuffer);
 		extern void UnpackPacket(__int64 _this, netAddress* sender, void* buffer, unsigned int sizeOfBuffer, bool allowRelayOverride);
 		extern void UpdateEndpointAddress(__int64 _this, void* peerID, netAddress* addrOrig, netAddress* relayAddrOrig);
-
+		extern bool CanCreateNetworkObject(NetObjType type, int count, bool mission, bool a4, bool a5);
 	}
 
 	namespace Voice
@@ -136,6 +138,7 @@ namespace YimMenu::Hooks
 	{
 		extern void ThrowFatalError(int code, int fileHash, int fileLine);
 		extern bool IsAnimSceneInScope(rage::netObject* scene, CNetGamePlayer* player, int* reason);
+		extern int GetPoolSize(void* config, std::uint32_t hash, int def);
 	}
 
 	namespace Info

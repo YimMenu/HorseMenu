@@ -31,15 +31,9 @@ namespace YimMenu::Submenus
 		ctx->SetReturnValue<int>(4);
 	}
 
-	static bool IsPedModelInList(std::string model)
+	static bool IsPedModelInList(const std::string& model)
 	{
-		for (const auto& pedModel : Data::g_PedModels)
-		{
-			if (pedModel.model == model)
-				return true;
-		}
-
-		return false;
+		return Data::g_PedModels.contains(Joaat(model));
 	}
 
 	static int PedSpawnerInputCallback(ImGuiInputTextCallbackData* data)
@@ -49,13 +43,13 @@ namespace YimMenu::Submenus
 			std::string newText{};
 			std::string inputLower = data->Buf;
 			std::transform(inputLower.begin(), inputLower.end(), inputLower.begin(), ::tolower);
-			for (const auto& pedModel : Data::g_PedModels)
+			for (const auto& [key, model] : Data::g_PedModels)
 			{
-				std::string modelLower = pedModel.model;
+				std::string modelLower = model;
 				std::transform(modelLower.begin(), modelLower.end(), modelLower.begin(), ::tolower);
 				if (modelLower.find(inputLower) != std::string::npos)
 				{
-					newText = pedModel.model;
+					newText = model;
 				}
 			}
 
@@ -85,8 +79,7 @@ namespace YimMenu::Submenus
 		static bool dead, invis, godmode, freeze, companion, sedated;
 		static int formation;
 		static std::vector<YimMenu::Ped> spawnedPeds;
-		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback)
-		    .Draw();
+		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback).Draw();
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Press Tab to auto fill");
 		if (!pedModelBuffer.empty() && !IsPedModelInList(pedModelBuffer))
@@ -95,13 +88,13 @@ namespace YimMenu::Submenus
 
 			std::string bufferLower = pedModelBuffer;
 			std::transform(bufferLower.begin(), bufferLower.end(), bufferLower.begin(), ::tolower);
-			for (const auto& pedModel : Data::g_PedModels)
+			for (const auto& [hash, model] : Data::g_PedModels)
 			{
-				std::string pedModelLower = pedModel.model;
+				std::string pedModelLower = model;
 				std::transform(pedModelLower.begin(), pedModelLower.end(), pedModelLower.begin(), ::tolower);
-				if (pedModelLower.find(bufferLower) != std::string::npos && ImGui::Selectable(pedModel.model.data()))
+				if (pedModelLower.find(bufferLower) != std::string::npos && ImGui::Selectable(model))
 				{
-					pedModelBuffer = pedModel.model;
+					pedModelBuffer = model;
 				}
 			}
 

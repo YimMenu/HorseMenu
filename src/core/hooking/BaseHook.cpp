@@ -16,19 +16,23 @@ namespace YimMenu
 		return m_Hooks;
 	}
 
-	void BaseHook::EnableAll()
+	bool BaseHook::EnableAll()
 	{
+		bool status = true;
 		for (auto hook : m_Hooks)
 		{
-			hook->Enable();
+			status = hook->Enable() && status;
 		}
+		return status;
 	}
 
-	void BaseHook::DisableAll()
+	bool BaseHook::DisableAll()
 	{
+		bool status = true;
 		for (auto hook : m_Hooks)
 		{
-			hook->Disable();
+			status = hook->Disable() && status;
 		}
+		return status;
 	}
 }

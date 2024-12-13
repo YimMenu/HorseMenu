@@ -12,17 +12,11 @@ namespace YimMenu::Features
 
 namespace YimMenu::Hooks
 {
-	bool Protections::PPostMessage(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds)
+	bool Protections::PPostMessage(int localGamerIndex, rage::rlGamerHandle* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds)
 	{
 		if (Features::_LogPostMessage.GetState())
 		{
-			LOG(VERBOSE) << "Local Gamer Index: " << localGamerIndex;
-			LOG(VERBOSE) << "Recipients name and rid: " << std::string(recipients->m_Name).c_str() << " "
-			             << recipients->m_GamerHandle.m_RockstarId;
-
-			LOG(VERBOSE) << "Num recipients: " << numRecipients;
-			LOG(VERBOSE) << "Message: " << msg;
-			LOG(VERBOSE) << "TTL: " << ttlSeconds;
+			LOG(VERBOSE) << "PostMessage :: " << msg;
 		}
 
 		return BaseHook::Get<Protections::PPostMessage, DetourHook<decltype(&Protections::PPostMessage)>>()->Original()(localGamerIndex, recipients, numRecipients, msg, ttlSeconds);

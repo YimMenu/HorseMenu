@@ -83,7 +83,7 @@ namespace YimMenu
 	inline bool CallHook<T>::Enable()
 	{
 		if (m_Enabled)
-			return false;
+			return true;
 
 		memcpy(m_TargetFunc, m_PatchedBytes, 5);
 		m_Enabled = true;
@@ -94,7 +94,7 @@ namespace YimMenu
 	inline bool CallHook<T>::Disable()
 	{
 		if (!m_Enabled)
-			return false;
+			return true;
 
 		memcpy(m_TargetFunc, m_OriginalBytes, 5);
 		m_Enabled = false;

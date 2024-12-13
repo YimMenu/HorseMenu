@@ -85,6 +85,11 @@ namespace YimMenu
 			return m_Handlers[(int)index];
 		}
 
+		static constexpr bool AreHandlersCached()
+		{
+			return m_AreHandlersCached;
+		}
+
 		CustomCallContext m_CallContext{};
 	};
 }

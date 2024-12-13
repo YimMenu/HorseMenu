@@ -22,4 +22,16 @@ namespace YimMenu::Hooks
 		
 		return BaseHook::Get<Window::SetCursorPos, DetourHook<decltype(&SetCursorPos)>>()->Original()(x, y);
 	}
+
+	BOOL Window::ShowWindow(HWND hWnd, int nCmdShow)
+	{
+		LOG(INFO) << hWnd << " " << nCmdShow;
+		// prevent game from hiding console window
+		if (hWnd == GetConsoleWindow() && nCmdShow == 0)
+		{
+			return false;
+		}
+
+		return BaseHook::Get<Window::ShowWindow, DetourHook<decltype(&ShowWindow)>>()->Original()(hWnd, nCmdShow);
+	}
 }
