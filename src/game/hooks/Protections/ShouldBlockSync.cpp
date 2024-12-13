@@ -61,7 +61,8 @@ namespace
 {
 	using namespace YimMenu;
 
-	static const std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60, 0x6927D266};
+	static const std::unordered_set<uint32_t> g_CrashObjects = {"s_chuckwagonawning01b"_J};
+
 	static const std::unordered_set<uint32_t> g_FishModels   = {
         "A_C_Crawfish_01"_J,
         "A_C_FishBluegil_01_ms"_J,
@@ -210,6 +211,7 @@ namespace
 		case "CPedCreationNode"_J:
 		{
 			auto& data = node->GetData<CPedCreationData>();
+
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_PED(data.m_ModelHash))
 			{
 				LOGF(SYNC, WARNING, "Blocking invalid ped creation model 0x{:X} from {}", data.m_ModelHash, Protections::GetSyncingPlayer().GetName());

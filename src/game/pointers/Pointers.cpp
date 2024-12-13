@@ -465,10 +465,18 @@ namespace YimMenu
 			PackCloneCreate = ptr.Sub(0x34).As<PVOID>();
 		});
 
+    
+		constexpr auto physicCrashPtrn = Pattern<"E8 ?? ?? ?? ?? EB 67 48 8B 41 20">("PhysicCrash");
+		scanner.Add(physicCrashPtrn, [this](PointerCalculator ptr) {
+			PhysicCrash = ptr.Add(1).Rip().As<PVOID>();
+		});
+
+
 		constexpr auto writeSyncTreePtrn = Pattern<"0F 84 A4 00 00 00 48 8B 07 45 8B C4">("WriteSyncTree");
 		scanner.Add(writeSyncTreePtrn, [this](PointerCalculator ptr) {
 			WriteSyncTree = ptr.Sub(0x79).As<PVOID>();
 		});
+
 
 		constexpr auto shouldUseNodeCachePtrn = Pattern<"83 FA 20 75 03">("ShouldUseNodeCache");
 		scanner.Add(shouldUseNodeCachePtrn, [this](PointerCalculator ptr) {

@@ -227,7 +227,13 @@ namespace YimMenu::Submenus
 		static const char* iconBuf = "";
 		infoSpoofingGroup->AddItem(std::make_shared<ImGuiItem>([=] {
 			static std::map<std::string, std::string> colors = {{"", "None"}, {"~e~", "Red"}, {"~f~", "Off White"}, {"~p~", "White"}, {"~o~", "Yellow"}, {"~q~", "Pure White"}, {"~d~", "Orange"}, {"~m~", "Light Grey"}, {"~t~", "Grey"}, {"~v~", "Black"}, {"~pa~", "Blue"}, {"~t1~", "Purple"}, {"~t2~", "Orange"}, {"~t3~", "Teal"}, {"~t4~", "Light Yellow"}, {"~t5~", "Pink"}, {"~t6~", "Green"}, {"~t7~", "Dark Blue"}};
-			static std::map<const char*, std::string> icons = {{"", "None"}, {"\u2211", "Rockstar Icon"}};
+
+			#pragma warning(push)
+			#pragma warning(disable : 4566)
+			static std::map<const char*, std::string> icons = {{"", "None"}, {"∑", "Rockstar Icon"}};
+			#pragma warning(pop)
+
+
 			ImGui::Text("Spoofed data will not appear locally, and will only be visible when joining a new session,\n or when a player joins you");
 
 			ImGui::Text("Name");
