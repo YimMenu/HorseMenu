@@ -1,9 +1,10 @@
-#include "game/commands/PlayerCommand.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/Self.hpp"
+#include "game/commands/PlayerCommand.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 #include "util/Teleport.hpp"
+
 
 namespace YimMenu::Features
 {
@@ -14,7 +15,7 @@ namespace YimMenu::Features
 		static constexpr auto NazarLocation = ScriptGlobal(1051832).At(4681);
 
 		virtual void OnCall(Player player) override
-		{	
+		{
 			if (NazarLocation.CanAccess(true))
 				Teleport::TeleportPlayerToCoords(player, *NazarLocation.As<Vector3*>());
 		}
