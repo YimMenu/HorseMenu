@@ -33,7 +33,7 @@ namespace YimMenu::Hooks
 		if (Features::_LogServerMessages.GetState())
 		{
 			LOG(INFO) << __FUNCTION__ << ": " << message << ":";
-			PrintProtoBuffer(builder->GetData(), builder->GetSize(), def);
+			PrintProtoBuffer(builder->GetData(), builder->GetSize(), def); // TODO this seems broken
 		}
 
 		if (Joaat(message) == "UseItems"_J && Features::_UnlimitedItems.GetState())

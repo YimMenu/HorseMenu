@@ -1,6 +1,5 @@
 #include "ScriptPatches.hpp"
 #include "game/pointers/Pointers.hpp"
-#include "game/rdr/Scripts.hpp"
 #include <script/scrProgram.hpp>
 
 namespace YimMenu
@@ -64,7 +63,7 @@ namespace YimMenu
 		if (m_Pc.has_value())
 			return m_Pc;
 
-		auto data = GetInstance().GetDataImpl(m_ScriptHash);
+		auto data = GetInstance().GetDataImpl(m_Identifier.m_Hash);
 
 		if (!data)
 			return std::nullopt;
@@ -73,7 +72,7 @@ namespace YimMenu
 
 		if (!location.has_value())
 		{
-			LOG(FATAL) << "Failed to find pattern for script " << HEX(m_ScriptHash);
+			LOG(FATAL) << "Failed to find pattern for script " << HEX(m_Identifier.m_Hash);
 		}
 		else
 		{
@@ -86,7 +85,7 @@ namespace YimMenu
 	void ScriptPatches::Patch::Apply()
 	{
 		auto pc = GetPC();
-		auto data = GetInstance().GetDataImpl(m_ScriptHash);
+		auto data = GetInstance().GetDataImpl(m_Identifier.m_Hash);
 
 		if (!pc || !data)
 			return;
@@ -107,7 +106,7 @@ namespace YimMenu
 			return; // nothing to restore
 
 		auto pc   = GetPC();
-		auto data = GetInstance().GetDataImpl(m_ScriptHash);
+		auto data = GetInstance().GetDataImpl(m_Identifier.m_Hash);
 
 		if (!pc || !data)
 			return;
@@ -117,14 +116,13 @@ namespace YimMenu
 	}
 
 	ScriptPatches::Patch::Patch(joaat_t script, bool is_mp, SimplePattern pattern, int32_t offset, std::vector<uint8_t> patch) :
-	    m_ScriptHash(script),
 	    m_Pattern(pattern),
 	    m_Offset(offset),
 	    m_PatchedBytes(patch),
 	    m_Enabled(false),
 	    m_Pc(std::nullopt),
 	    m_OriginalBytes({}),
-	    m_IsMP(is_mp)
+	    m_Identifier(script, is_mp)
 	{
 	}
 
@@ -160,7 +158,7 @@ namespace YimMenu
 
 	bool ScriptPatches::Patch::InScope(joaat_t hash)
 	{
-		return m_ScriptHash == hash && m_IsMP == Scripts::UsingMPScripts();
+		return m_Identifier.m_Hash == hash && m_Identifier.m_IsMp == Scripts::UsingMPScripts();
 	}
 
 	std::shared_ptr<ScriptPatches::Patch> ScriptPatches::AddPatchImpl(joaat_t script, bool is_mp, const std::string& pattern, int32_t offset, std::vector<uint8_t> patch)

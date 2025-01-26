@@ -3,8 +3,10 @@
 
 namespace ImGui
 {
+	// https://easyrgb.com/en/convert.php
 	struct Colors
 	{
+		// CSS colors
 		inline static ImColor AliceBlue{0.94f, 0.97f, 1.0f, 1.0f};             // ARGB: #FFF0F8FF
 		inline static ImColor AntiqueWhite{0.98f, 0.92f, 0.84f, 1.0f};         // ARGB: #FFFAEBD7
 		inline static ImColor Aqua{0.0f, 1.0f, 1.0f, 1.0f};                    // ARGB: #FF00FFFF
@@ -146,5 +148,10 @@ namespace ImGui
 		inline static ImColor WhiteSmoke{0.96f, 0.96f, 0.96f, 1.0f};           // ARGB: #FFF5F5F5
 		inline static ImColor Yellow{1.0f, 1.0f, 0.0f, 1.0f};                  // ARGB: #FFFFFF00
 		inline static ImColor YellowGreen{0.60f, 0.80f, 0.20f, 1.0f};          // ARGB: #FF9ACD32
+
+		// others
+		inline static ImColor Freemode{0.17647f, 0.43137f, 0.72549, 1.0f};     // ARGB: #FF2D6EB9
+		inline static ImColor IngameBg{0.0f, 0.0f, 0.0f, 0.54901f};            // ARGB: #8C000000
+		inline static ImColor DisabledText{0.0f, 0.0f, 0.0f, 0.8f};            // ARGB: #CC000000
 	};
 }

@@ -14,7 +14,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			if (MoonshineShack.CanAccess())
+			if (MoonshineShack.CanAccess(true))
 			{
 				Vector3 ShackCoords;
 				switch (*MoonshineShack.As<int*>())

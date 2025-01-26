@@ -8,6 +8,7 @@
 #include "core/renderer/Renderer.hpp"
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
+#include "game/backend/MapEditor/MapEditor.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/backend/NativeHooks.hpp"
 #include "game/backend/SavedLocations.hpp"
@@ -23,7 +24,7 @@ namespace YimMenu
 		const auto documents = std::filesystem::path(std::getenv("appdata")) / "HorseMenu";
 		FileMgr::Init(documents);
 
-		LogHelper::Init("HorseMenu", FileMgr::GetProjectFile("./cout.log"));
+		LogHelper::Init("Terminus", FileMgr::GetProjectFile("./cout.log"));
 
 		g_HotkeySystem.RegisterCommands();
 		SavedLocations::FetchSavedLocations();
@@ -56,8 +57,9 @@ namespace YimMenu
 		ScriptMgr::AddScript(std::make_unique<Script>(&FeatureLoop));
 		ScriptMgr::AddScript(std::make_unique<Script>(&BlockControlsForUI));
 		ScriptMgr::AddScript(std::make_unique<Script>(&ContextMenuTick));
+		ScriptMgr::AddScript(std::make_unique<Script>(&MapEditor::Update));
 
-		Notifications::Show("HorseMenu", "Loaded succesfully", NotificationType::Success);
+		Notifications::Show("Terminus", "Loaded succesfully", NotificationType::Success);
 
 #ifndef NDEBUG
 		LOG(WARNING) << "Debug Build. Switch to RelWithDebInfo or Release build configurations to have a more stable experience.";

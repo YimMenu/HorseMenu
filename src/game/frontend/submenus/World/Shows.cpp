@@ -1,5 +1,7 @@
 #include "Shows.hpp"
 
+#include "core/frontend/Notifications.hpp"
+
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/NativeHooks.hpp"
 #include "game/backend/Players.hpp"
@@ -10,7 +12,6 @@
 #include "game/rdr/Scripts.hpp"
 
 #include <network/CNetObjectMgr.hpp>
-
 
 namespace YimMenu::Submenus
 {
@@ -92,6 +93,38 @@ namespace YimMenu::Submenus
 	    "Band (Saint Denis)",
 	});
 
+	constexpr auto g_SceneTypeInts = std::to_array({
+	    "new_theater_cancan",
+	    "new_theater_cancan",
+	    "new_theater_fireperformer",
+	    "new_theater_fireperformer",
+	    "new_theater_fireperformer",
+	    "new_theater_snakedancer",
+	    "new_theater_snakedancer",
+	    "new_theater_snakedancer",
+	    "new_theater_theOddFellows",
+	    "new_theater_magician",
+	    "",
+	    "",
+	    "",
+	});
+
+	constexpr auto g_ScriptSceneIds = std::to_array({
+		5,
+		6,
+		12,
+		13,
+		14,
+		16,
+		17,
+		19,
+		20,
+		10,
+		15,
+		7,
+		8
+	});
+
 	// dances
 	static ActorDefinition g_CanCanDancerOverrides[4];
 	static ActorDefinition g_CanCanDanceConductorOverride;
@@ -116,14 +149,17 @@ namespace YimMenu::Submenus
 
 	// data
 	static SceneType g_SelectedSceneType = SceneType::CAN_CAN_01;
+	static SceneType g_RunningSceneType = SceneType::CAN_CAN_01;
 	static int g_RunningSceneScriptID = -1;
 	static int g_RunningSceneAnimscene = -1;
 	static bool g_AutoCleanup = true;
 	static bool g_SpawnAudience = true;
+	static bool g_SetReady = false;
 	static std::vector<Entity> g_ShowEntities;
 	static std::vector<Ped> g_AudienceMembers;
 	constexpr int NUM_AUDIENCE_MEMBERS = 56;
 
+	// lighting control code
 
 	// audience creation code from SP
 
@@ -265,8 +301,11 @@ namespace YimMenu::Submenus
 			return nullptr;
 
 		auto ped = Ped::Create(model, position, heading);
-		ped.SetInvincible(true);
-		PED::SET_PED_KEEP_TASK(ped.GetHandle(), true);
+		if (ped)
+		{
+			ped.SetInvincible(true);
+			PED::SET_PED_KEEP_TASK(ped.GetHandle(), true);
+		}
 
 		return ped;
 	}
@@ -287,6 +326,32 @@ namespace YimMenu::Submenus
 			auto ped = CreateAudienceMemberForSlot(i);
 			StartAudienceMemberTask(ped, i);
 			g_AudienceMembers[i] = ped;
+		}
+	}
+
+	static bool TryLoadSet(SceneType type)
+	{
+		// TODO: this is not networked
+		auto set = g_SceneTypeInts[(int)g_SelectedSceneType];
+		auto stage = INTERIOR::GET_INTERIOR_AT_COORDS(2546.453f, -1303.998f, 46.793f);
+
+		if (INTERIOR::IS_INTERIOR_READY(stage) && INTERIOR::_IS_INTERIOR_ENTITY_SET_VALID(stage, set))
+		{
+			INTERIOR::ACTIVATE_INTERIOR_ENTITY_SET(stage, set, 1);
+			return true;
+		}
+
+		return false;
+	}
+
+	static void UnloadSet(SceneType type)
+	{
+		auto set   = g_SceneTypeInts[(int)g_SelectedSceneType];
+		auto stage = INTERIOR::GET_INTERIOR_AT_COORDS(2546.453f, -1303.998f, 46.793f);
+
+		if (INTERIOR::IS_INTERIOR_READY(stage))
+		{
+			INTERIOR::DEACTIVATE_INTERIOR_ENTITY_SET(stage, set, 1);
 		}
 	}
 
@@ -406,6 +471,8 @@ namespace YimMenu::Submenus
 		}
 
 		auto ped = PED::CREATE_PED(ctx->GetArg<Hash>(0), ctx->GetArg<float>(1), ctx->GetArg<float>(2), ctx->GetArg<float>(3), ctx->GetArg<float>(4), ctx->GetArg<int>(5), ctx->GetArg<int>(6), ctx->GetArg<int>(7), ctx->GetArg<int>(8));
+		if (!ped)
+			Notifications::Show("Shows", "Failed to create actor, the show will not run! Use World > Clear All Peds if this issue persists or try changing sessions");
 		g_ShowEntities.push_back(ped);
 		Ped(ped).SetInvincible(true);
 		ctx->SetReturnValue(std::move(ped));
@@ -488,6 +555,7 @@ namespace YimMenu::Submenus
 
 	static void ShutdownShow()
 	{
+		UnloadSet(g_RunningSceneType);
 		SCRIPTS::TERMINATE_THREAD(g_RunningSceneScriptID);
 		MISC::CLEAR_AREA(2546.5646f, -1301.4119f, 48.3564f, 500.0f, -1); // clear stage area
 		for (auto& entity : g_ShowEntities)
@@ -513,6 +581,11 @@ namespace YimMenu::Submenus
 		{
 			if (g_RunningSceneScriptID != -1 && g_RunningSceneAnimscene != -1)
 			{
+				if (!g_SetReady)
+				{
+					g_SetReady = TryLoadSet(g_RunningSceneType);
+				}
+
 				if (ANIMSCENE::_IS_ANIM_SCENE_PAUSED(g_RunningSceneAnimscene) || ANIMSCENE::IS_ANIM_SCENE_FINISHED(g_RunningSceneAnimscene, false))
 				{
 					ShutdownShow();
@@ -604,7 +677,7 @@ namespace YimMenu::Submenus
 		else if (g_SelectedSceneType == SceneType::ODD_FELLOWS)
 		{
 			RenderActorDef(g_OddFellowsMarjorieOverride, "Miss Marjorie");
-			RenderActorDef(g_OddFellowsBruteOverride, "Brute");
+			RenderActorDef(g_OddFellowsBruteOverride, "Bertram");
 			RenderActorDef(g_OddFellowsMagnificoOverride, "Magnifico the Magnificent");
 			RenderActorDef(g_OddFellowsAudienceMemberOverride, "Audience Member");
 		}
@@ -653,9 +726,32 @@ namespace YimMenu::Submenus
 					ScriptMgr::Yield();
 				}
 
-				if (Scripts::UsingMPScripts())
+				if (Scripts::UsingMPScripts() && g_SpawnAudience)
 					CreateAudienceMembers();
-				g_RunningSceneScriptID = SCRIPTS::START_NEW_SCRIPT_WITH_NAME_HASH(hash, 7000);
+
+				if (Scripts::UsingMPScripts())
+				{
+					struct
+					{
+						SCR_INT InstanceId;
+						SCR_INT ShowIndex;
+						SCR_BOOL DisableLightingControls;
+						SCR_INT PAD_0003; // unused
+					} start_parameters{};
+
+					start_parameters.InstanceId = -1;
+					start_parameters.ShowIndex = g_ScriptSceneIds[static_cast<int>(g_SelectedSceneType)];
+					start_parameters.DisableLightingControls = FALSE;
+
+					g_RunningSceneScriptID = SCRIPTS::START_NEW_SCRIPT_WITH_NAME_HASH_AND_ARGS(hash, &start_parameters, sizeof(start_parameters) / sizeof(uint64_t), 7000);
+				}
+				else
+				{
+					g_RunningSceneScriptID = SCRIPTS::START_NEW_SCRIPT_WITH_NAME_HASH(hash, 7000);
+				}
+
+				g_RunningSceneType = g_SelectedSceneType;
+				g_SetReady = false;
 				SCRIPTS::SET_SCRIPT_WITH_NAME_HASH_AS_NO_LONGER_NEEDED(hash);
 			});
 		}

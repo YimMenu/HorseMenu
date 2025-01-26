@@ -38,10 +38,6 @@ namespace YimMenu
 				if (!vistedNodeIds.contains(node_id))
 				{
 					m_Finder.m_GlobalNodeIds.push_back(node_id);
-
-					LOG(VERBOSE) << node_id.name << " nodeAddr " << HEX(*(__int64*)addr - (__int64)GetModuleHandleA(0)) << " readerAddr "
-					             << HEX(*(__int64*)node->m_CommonDataOpsVFT - (__int64)GetModuleHandleA(0));
-
 					vistedNodeIds.insert(node_id);
 				}
 			}

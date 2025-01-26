@@ -1,6 +1,6 @@
 #include "HotkeySystem.hpp"
-
-#include "game/rdr/Natives.hpp" // TODO: game import in core
+#include "game/backend/FiberPool.hpp" // TODO: yet another game import in core
+                                      // we should migrate the FiberPool to core eventually
 #include "game/backend/ScriptMgr.hpp"
 #include "Commands.hpp"
 #include "LoopedCommand.hpp"
@@ -16,12 +16,12 @@ namespace YimMenu
 
 	void HotkeySystem::RegisterCommands()
 	{
-		auto Commands        = Commands::GetCommands();
+		auto& cmds = Commands::GetCommands();
 		
-		for (auto [Hash, Command] : Commands)
+		for (auto& [hash, cmd] : cmds)
 		{
 			CommandLink link;
-			m_CommandHotkeys.insert(std::make_pair(Command->GetHash(), link));
+			m_CommandHotkeys.insert(std::make_pair(hash, link));
 		}
 		
 		LOG(INFO) << "Registered " << m_CommandHotkeys.size() << " commands";
@@ -64,9 +64,9 @@ namespace YimMenu
 	}
 
 	// Meant to be called in a loop
-	void HotkeySystem::CreateHotkey(std::vector<int>& Hotkey)
+	void HotkeySystem::CreateHotkey(std::vector<int>& chain)
 	{
-		static auto IsKeyUnique = [this](int Key, std::vector<int> List) -> bool {
+		static auto is_key_unique = [this](int Key, std::vector<int> List) -> bool {
 			for (auto& Key_ : List)
 				if (GetHotkeyLabel(Key_) == GetHotkeyLabel(Key))
 					return false;
@@ -74,44 +74,51 @@ namespace YimMenu
 			return true;
 		};
 
-		int PressedKey = 0;
-		ListenAndApply(PressedKey, Hotkey);
+		int pressed_key = 0;
+		ListenAndApply(pressed_key, chain);
 
-
-		if (PressedKey > 1)
+		if (pressed_key > 1)
 		{
-			if (IsKeyUnique(PressedKey, Hotkey))
+			if (is_key_unique(pressed_key, chain))
 			{
-				Hotkey.push_back(PressedKey);
+				chain.push_back(pressed_key);
 			}
 		}
 
 		MarkStateDirty();
 	}
 
-	void HotkeySystem::FeatureCommandsHotkeyLoop()
+	void HotkeySystem::Update()
 	{
-		for (auto& [Hash, Link] : m_CommandHotkeys)
+		for (auto& [hash, link] : m_CommandHotkeys)
 		{
-			if (Link.Hotkey.empty() || Link.Listening)
+			if (link.m_Chain.empty() || link.m_BeingModified)
 				continue;
 	
-			bool AllKeysPressed = true;
+			bool all_keys_pressed = true;
 	
-			for (auto HotkeyModifier : Link.Hotkey)
+			for (auto modifier : link.m_Chain)
 			{
-				if (!(GetAsyncKeyState(HotkeyModifier) & 0x8000))
+				if (!(GetAsyncKeyState(modifier) & 0x8000))
 				{
-					AllKeysPressed = false;
+					all_keys_pressed = false;
 				}
 			}
 	
-			if (AllKeysPressed && GetForegroundWindow() == *Pointers.Hwnd && std::chrono::system_clock::now() - m_LastHotkeyTriggerTime > 100ms)
+			if (all_keys_pressed && std::chrono::system_clock::now() - m_LastHotkeyTriggerTime > 100ms)
 			{
-				auto Command = Commands::GetCommand(Hash);
-				if (Command)
+				auto command = Commands::GetCommand(hash);
+				if (command)
 				{
-					Command->Call();
+					// TODO: this is the only way I can prevent chat from blocking the main loop while keeping everything else fast
+					if (hash != "chathelper"_J)
+						command->Call();
+					else
+					{
+						FiberPool::Push([command] {
+							command->Call();
+						});
+					}
 				}
 				m_LastHotkeyTriggerTime = std::chrono::system_clock::now();
 			}
@@ -122,9 +129,9 @@ namespace YimMenu
 	{
 		for (auto& hotkey : m_CommandHotkeys)
 		{
-			if (!hotkey.second.Hotkey.empty())
+			if (!hotkey.second.m_Chain.empty())
 			{
-				state[std::to_string(hotkey.first).data()] = hotkey.second.Hotkey;
+				state[std::to_string(hotkey.first).data()] = hotkey.second.m_Chain;
 			}
 		}
 	}
@@ -134,7 +141,7 @@ namespace YimMenu
 		for (auto& [key, value] : state.items())
 		{
 			if (m_CommandHotkeys.contains(std::atoi(key.data())))
-				m_CommandHotkeys[std::atoi(key.data())].Hotkey = value.get<std::vector<int>>(); 
+				m_CommandHotkeys[std::atoi(key.data())].m_Chain = value.get<std::vector<int>>(); 
 		}
 	}
 }

@@ -34,7 +34,7 @@ namespace YimMenu::Hooks
 				if (devices[i].m_DeviceType != eDeviceType::OUTPUT)
 				{
 					memset(&devices[i], 0, sizeof(CFoundDevice));
-					lstrcpyW((LPWSTR)devices[i].m_Name, L"HorseMenu Virtual Input Device");
+					lstrcpyW((LPWSTR)devices[i].m_Name, L"Terminus Virtual Input Device");
 					memcpy(&devices[i].m_Guid, &g_YimDevice, sizeof(GUID));
 					devices[i].m_DeviceType         = eDeviceType::INPUT;
 					devices[i].m_DefaultDeviceType  = eDeviceType::INPUT;

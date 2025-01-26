@@ -30,9 +30,13 @@ class NativeFunc:
         current_idx += 1
         hash_list.append(hash)
 
+        self.fix_vectors = "false"
+
         for arg in args:
             if (arg["name"] == "..."):
                 self.variadic = True
+            if arg["type"] == "Vector3*":
+                self.fix_vectors = "true"
             self.args.append(Arg(arg["name"], arg["type"]))
     
     def get_native_def_str(self) -> str:
@@ -54,7 +58,7 @@ class NativeFunc:
         if self.variadic:
             var_template = "template <typename... Args> "
 
-        return f"{var_template}FORCEINLINE constexpr {self.return_type} {self.name}({param_decl}) {{ return YimMenu::NativeInvoker::Invoke<{self.native_index}, {self.return_type}>({param_pass}); }}"
+        return f"{var_template}FORCEINLINE constexpr {self.return_type} {self.name}({param_decl}) {{ return YimMenu::NativeInvoker::Invoke<{self.native_index}, {self.return_type}, {self.fix_vectors}>({param_pass}); }}"
     
 def load_natives_data():
     global natives

@@ -32,9 +32,9 @@ namespace YimMenu
 
 	public:
 		// debug
-		void AssertValid(const std::string& function_name);
-		void AssertControl(const std::string& function_name);
-		static void AssertScriptContext(const std::string& function_name);
+		void AssertValid(std::string_view function_name);
+		void AssertControl(std::string_view function_name);
+		static void AssertScriptContext(std::string_view function_name);
 
 		constexpr Entity(void* pointer) :
 		    m_Pointer(pointer),
@@ -73,7 +73,7 @@ namespace YimMenu
 		template<typename T>
 		constexpr T As()
 		{
-			return T(this);
+			return T(this->m_Pointer, this->m_Handle);
 		}
 
 		bool IsValid();
@@ -116,6 +116,7 @@ namespace YimMenu
 		/// WARNING: This function is potentially unstable when used on vehicles and horses. Use RequestControl instead
 		/// </summary>
 		void ForceControl();
+		void PreventMigration();
 		/// <summary>
 		/// Forces creation of a networked entity for a specified player or the entire session
 		/// </summary>
@@ -133,6 +134,10 @@ namespace YimMenu
 		// visibility
 		bool IsVisible();
 		void SetVisible(bool status);
+		int GetAlpha();
+		void SetAlpha(int alpha);
+		void ResetAlpha();
+
 		bool HasInterior();
 
 		bool operator==(const Entity& other);

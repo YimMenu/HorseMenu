@@ -9,6 +9,8 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Natives.hpp"
 
+#include "game/backend/MapEditor/Menu/NativeDrawing.hpp"
+
 
 namespace YimMenu::Features
 {
@@ -16,20 +18,20 @@ namespace YimMenu::Features
 	{
 		using Command::Command;
 
+		std::mutex m_ChatMutex;
+
 		virtual void OnCall() override
 		{
-			if (*Pointers.IsSessionStarted && !SCRIPTS::IS_LOADING_SCREEN_VISIBLE() && MISC::UPDATE_ONSCREEN_KEYBOARD() != 0 && !GUI::IsOpen())
+			if (*Pointers.IsSessionStarted && MISC::UPDATE_ONSCREEN_KEYBOARD() != 0)
 			{
-				ScriptMgr::Yield(100ms); // Delay so hotkey key doesn't get mistaken as input
-				MISC::DISPLAY_ONSCREEN_KEYBOARD(0, "Chat Message", "", "", "", "", "", 256);
-				while (MISC::UPDATE_ONSCREEN_KEYBOARD() == 0)
-				{
-					ScriptMgr::Yield();
-				}
+				if (!m_ChatMutex.try_lock())
+					return;
 
-				if (MISC::UPDATE_ONSCREEN_KEYBOARD() == 1)
-					if (auto res = MISC::GET_ONSCREEN_KEYBOARD_RESULT())
-						SendChatMessage(res);
+				char buffer[256]{};
+				if (NativeUI::ShowTextBox("Enter Message", buffer, sizeof(buffer)))
+					SendChatMessage(buffer);
+
+				m_ChatMutex.unlock();
 			}
 		}
 	};

@@ -6,8 +6,8 @@ namespace YimMenu
 	struct CommandLink
 	{
 	public:
-		std::vector<int> Hotkey{};
-		bool Listening = false;
+		std::vector<int> m_Chain{};
+		bool m_BeingModified = false;
 
 		CommandLink(){};
 	};
@@ -26,7 +26,7 @@ namespace YimMenu
 		std::string GetHotkeyLabel(int hotkey_modifiers);
 		void CreateHotkey(std::vector<int>& Hotkey);
 
-		void FeatureCommandsHotkeyLoop();
+		void Update();
 
 		virtual void SaveStateImpl(nlohmann::json& state) override;
 		virtual void LoadStateImpl(nlohmann::json& state) override;

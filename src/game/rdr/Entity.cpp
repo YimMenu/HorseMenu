@@ -26,7 +26,7 @@ namespace YimMenu
 			m_Handle = Pointers.PtrToHandle(m_Pointer);
 	}
 
-	void Entity::AssertValid(const std::string& function_name)
+	void Entity::AssertValid(std::string_view function_name)
 	{
 		if (!IsValid())
 		{
@@ -34,7 +34,7 @@ namespace YimMenu
 		}
 	}
 
-	void Entity::AssertControl(const std::string& function_name)
+	void Entity::AssertControl(std::string_view function_name)
 	{
 		if (!IsValid())
 			return;
@@ -45,7 +45,7 @@ namespace YimMenu
 		}
 	}
 
-	void Entity::AssertScriptContext(const std::string& function_name)
+	void Entity::AssertScriptContext(std::string_view function_name)
 	{
 		if (!*Pointers.CurrentScriptThread)
 		{
@@ -56,15 +56,23 @@ namespace YimMenu
 	bool Entity::IsValid()
 	{
 		if (m_Handle)
+		{
+			// TODO: does this work? is this UB?
+			[[assume((IsValid(), IsValid() && m_Handle != 0))]]; // https://en.cppreference.com/w/cpp/language/attributes/assume
 			return ENTITY::DOES_ENTITY_EXIST(m_Handle);
+		}
 		else if (m_Pointer)
+		{
+			[[assume((IsValid(), IsValid() && m_Pointer != nullptr))]];
 			return true; // TODO: potential use after free
+		}
 
 		return false;
 	}
 
 	bool Entity::IsPed()
 	{
+		ENTITY_ASSERT_VALID();
 		if (auto ptr = GetPointer<rage::fwEntity*>())
 			return ptr->m_EntityType == 4;
 		return false;
@@ -72,6 +80,7 @@ namespace YimMenu
 
 	bool Entity::IsVehicle()
 	{
+		ENTITY_ASSERT_VALID();
 		if (auto ptr = GetPointer<rage::fwEntity*>())
 			return ptr->m_EntityType == 3;
 		return false;
@@ -79,6 +88,7 @@ namespace YimMenu
 
 	bool Entity::IsObject()
 	{
+		ENTITY_ASSERT_VALID();
 		if (auto ptr = GetPointer<rage::fwEntity*>())
 			return ptr->m_EntityType == 5;
 		return false;
@@ -232,6 +242,26 @@ namespace YimMenu
 		(*Pointers.NetworkObjectMgr)->ChangeOwner(GetNetworkObject(), Pointers.NetworkPlayerMgr->m_LocalPlayer, 5, true);
 	}
 
+	void Entity::PreventMigration()
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+
+		if (!*Pointers.IsSessionStarted)
+			return;
+
+		if (!IsNetworked() || !NETWORK::NETWORK_HAS_ENTITY_BEEN_REGISTERED_WITH_THIS_THREAD(GetHandle()))
+		{
+#ifdef ENTITY_DEBUG
+			LOGF(WARNING, "PreventMigration(): entity is not networked!");
+#endif
+			return;
+		}
+
+		NETWORK::PREVENT_NETWORK_ID_MIGRATION(NETWORK::PED_TO_NET(GetHandle()));
+		NETWORK::NETWORK_DISABLE_PROXIMITY_MIGRATION(NETWORK::PED_TO_NET(GetHandle()));
+	}
+
 	void Entity::ForceSync(Player* for_player)
 	{
 		ENTITY_ASSERT_VALID();
@@ -329,13 +359,32 @@ namespace YimMenu
 		ENTITY::SET_ENTITY_VISIBLE(GetHandle(), status);
 	}
 
+	int Entity::GetAlpha()
+	{
+		ENTITY_ASSERT_VALID();
+		return ENTITY::GET_ENTITY_ALPHA(GetHandle());
+	}
+
+	void Entity::SetAlpha(int alpha)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL(); // doesn't matter anyway because alpha changes are not networked
+		ENTITY::SET_ENTITY_ALPHA(GetHandle(), alpha, false);
+	}
+
+	void Entity::ResetAlpha()
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL(); // doesn't matter anyway because alpha changes are not networked
+		ENTITY::RESET_ENTITY_ALPHA(GetHandle());
+	}
+
 	bool Entity::HasInterior()
 	{
 		ENTITY_ASSERT_VALID();
 		return INTERIOR::GET_INTERIOR_FROM_ENTITY(GetHandle()) != 0;
 	}
 
-	// TODO: find a better way to compare entities
 	bool Entity::operator==(const Entity& other)
 	{
 		if (m_Handle != 0 && other.m_Handle != 0)

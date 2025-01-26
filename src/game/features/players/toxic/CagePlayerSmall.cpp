@@ -1,7 +1,6 @@
 #include "game/commands/PlayerCommand.hpp"
 #include "game/backend/Self.hpp"
-#include "game/rdr/Natives.hpp"
-#include "util/SpawnObject.hpp"
+#include "game/rdr/Object.hpp"
 
 
 namespace YimMenu::Features
@@ -14,7 +13,7 @@ namespace YimMenu::Features
 		{
 			auto coords = player.GetPed().GetPosition();
 			coords.z -= 1.0f;
-			SpawnObject(0xF3D580D3, coords);
+			Object::Create(0xF3D580D3, coords);
 		}
 	};
 

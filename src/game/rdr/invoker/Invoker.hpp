@@ -24,7 +24,12 @@ namespace YimMenu
 
 	class NativeInvoker
 	{
-		static inline std::array<rage::scrNativeHandler, g_Crossmap.size()> m_Handlers;
+		static void DefaultHandler(rage::scrNativeCallContext* ctx);
+		static inline auto m_Handlers = std::apply(
+		    [&](auto... dummy) {
+			    return std::array{(dummy, &DefaultHandler)...};
+		    },
+		    std::array<rage::scrNativeCallContext, g_Crossmap.size()>{});
 		static inline bool m_AreHandlersCached{false};
 
 	public:
@@ -38,10 +43,6 @@ namespace YimMenu
 		template<int index, bool fix_vectors>
 		constexpr void EndCall()
 		{
-			// TODO: try to get rid of this
-			if (!m_AreHandlersCached) [[unlikely]]
-				CacheHandlers();
-
 			m_Handlers[index](&m_CallContext);
 			if constexpr (fix_vectors)
 				Pointers.FixVectors(&m_CallContext);
@@ -62,14 +63,14 @@ namespace YimMenu
 	public:
 		static void CacheHandlers();
 
-		template<int index, typename Ret, typename... Args>
+		template<int index, typename Ret, bool fix_vectors, typename... Args>
 		static constexpr FORCEINLINE Ret Invoke(Args&&... args)
 		{
 			NativeInvoker invoker{};
 
 			invoker.BeginCall();
 			(invoker.PushArg(std::forward<Args>(args)), ...);
-			invoker.EndCall<index, std::is_same_v<Ret, Vector3>>();
+			invoker.EndCall<index, fix_vectors>();
 
 			if constexpr (!std::is_same_v<Ret, void>)
 			{

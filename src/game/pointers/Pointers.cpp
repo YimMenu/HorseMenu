@@ -5,6 +5,7 @@
 #include "core/memory/ModuleMgr.hpp"
 #include "core/memory/PatternScanner.hpp"
 #include "core/renderer/Renderer.hpp"
+#include "game/rdr/invoker/Invoker.hpp"
 #include "util/GraphicsValue.hpp"
 #include "util/Joaat.hpp"
 
@@ -538,6 +539,11 @@ namespace YimMenu
 			MaxNetworkPeds = ptr.Add(0x60).As<int*>();
 		});
 
+		constexpr auto getTextLabelPtrn = Pattern<"BB 1A 00 00 00 48 8D 0D">("GetTextLabel");
+		scanner.Add(getTextLabelPtrn, [this](PointerCalculator ptr) {
+			GetTextLabel = ptr.Add(0x12).Rip().As<PVOID>();
+		});
+
 		// fixes crash at CNetObjPed::SetPedWeaponComponentData
 		constexpr auto weaponComponentPatchPtrn = Pattern<"0F 85 9E 00 00 00 45 39 19">("WeaponComponentPatch");
 		scanner.Add(weaponComponentPatchPtrn, [this](PointerCalculator ptr) {
@@ -551,6 +557,26 @@ namespace YimMenu
 			GetPoolSize = ptr.Add(0xC).Rip().As<PVOID>();
 		});
 
+		constexpr auto checkConditionIsMalePtrn = Pattern<"C0 E8 03 24 01 EB 26">("CheckConditionIsMale");
+		scanner.Add(checkConditionIsMalePtrn, [this](PointerCalculator ptr) {
+			CheckConditionIsMale = ptr.Sub(0x5B).As<PVOID>();
+		});
+
+		constexpr auto checkConditionIsFemalePtrn = Pattern<"74 27 48 8B 82 00 01 00 00 48 85 C0 74 10">("CheckConditionIsFemale");
+		scanner.Add(checkConditionIsFemalePtrn, [this](PointerCalculator ptr) {
+			CheckConditionIsFemale = ptr.Sub(0xF).As<PVOID>();
+		});
+
+		constexpr auto scriptUiDrawFlagsPtrn = Pattern<"41 8D 51 0E EB 05 BA">("ScriptUIDrawFlags");
+		scanner.Add(scriptUiDrawFlagsPtrn, [this](PointerCalculator ptr) {
+			ScriptUIDrawFlags = ptr.Add(0x16).Rip().As<int*>();
+		});
+
+		constexpr auto registerCompappNativesPtrn = Pattern<"A1 26 01 0C">("RegisterCompappNatives");
+		scanner.Add(registerCompappNativesPtrn, [this](PointerCalculator ptr) {
+			RegisterCompappNatives = ptr.Sub(0x27).As<int*>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some game patterns could not be found, unloading.";
@@ -561,6 +587,9 @@ namespace YimMenu
 		{
 			LOG(INFO) << "Initial pointer scan complete";
 		}
+
+		if (GetNativeHandler(0xCCB4635A071FB62DuLL)) // the last native registered
+			NativeInvoker::CacheHandlers();
 
 		return true;
 	}

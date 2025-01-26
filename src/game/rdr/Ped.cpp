@@ -31,7 +31,7 @@ namespace YimMenu
 			}
 		}
 
-		auto ped = Ped(PED::CREATE_PED(model, coords.x, coords.y, coords.z, heading, 1, 0, 0, 0));
+		auto ped = Ped(PED::CREATE_PED(model, coords.x, coords.y, coords.z, heading, true, 0, 0, 0));
 
 		if (!ped)
 		{
@@ -175,6 +175,13 @@ namespace YimMenu
 		PED::_UPDATE_PED_VARIATION(GetHandle(), 0, 1, 1, 1, 0);
 	}
 
+	void Ped::SetQuality(int quality)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		PED::_SET_PED_DAMAGE_CLEANLINESS(GetHandle(), quality);
+	}
+
 	int Ped::GetAccuracy()
 	{
 		ENTITY_ASSERT_VALID();
@@ -198,5 +205,12 @@ namespace YimMenu
 		}
 #endif
 		return NETWORK::NETWORK_GET_PLAYER_INDEX_FROM_PED(GetHandle());
+	}
+
+	void Ped::SetVariation(int variation)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		PED::_EQUIP_META_PED_OUTFIT_PRESET(GetHandle(), variation, false);
 	}
 }

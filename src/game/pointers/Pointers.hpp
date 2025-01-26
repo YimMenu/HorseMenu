@@ -229,6 +229,14 @@ namespace YimMenu
 
 		PVOID WritePlayerHealthData;
 		PVOID WriteVPMData;
+		
+		PVOID GetTextLabel;
+
+		PVOID CheckConditionIsMale;
+		PVOID CheckConditionIsFemale;
+		int* ScriptUIDrawFlags;
+
+		PVOID RegisterCompappNatives;
 
 		//Patches
 		bool* ExplosionBypass;

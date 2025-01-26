@@ -162,8 +162,13 @@ namespace YimMenu::Submenus
 		minigames->AddItem(std::make_shared<BoolCommandItem>("undeadnightmare"_J));
 		minigames->AddItem(std::make_shared<ConditionalItem>("undeadnightmare"_J, std::make_shared<BoolCommandItem>("zombieslogging"_J)));
 		minigames->AddItem(std::make_shared<ConditionalItem>("undeadnightmare"_J, std::make_shared<BoolCommandItem>("hardmode"_J)));
-		auto misc = std::make_shared<Group>("Misc", 1);
+		auto misc = std::make_shared<Group>("Misc");
 		misc->AddItem(std::make_shared<BoolCommandItem>("disableguardzones"_J));
+		auto eventOverride = std::make_shared<Group>("", 1);
+		eventOverride->AddItem(std::make_shared<BoolCommandItem>("eventoverrideenabled"_J));
+		eventOverride->AddItem(std::make_shared<ConditionalItem>("eventoverrideenabled"_J, std::make_shared<ListCommandItem>("eventoverride"_J)));
+		misc->AddItem(std::move(eventOverride));
+		misc->AddItem(std::make_shared<CommandItem>("mapeditor"_J));
 
 		main->AddItem(std::move(poolCounter));
 		main->AddItem(std::move(killPeds));
