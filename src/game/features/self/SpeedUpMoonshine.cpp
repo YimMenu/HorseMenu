@@ -1,3 +1,5 @@
+#include "core/commands/LoopedCommand.hpp"
+#include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptFunction.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
