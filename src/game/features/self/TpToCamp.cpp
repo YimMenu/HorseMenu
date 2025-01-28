@@ -14,7 +14,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			if (!PlayerList.CanAccess())
+			if (!PlayerList.CanAccess(true))
 				return;
 
 			for (int i = 0; i < 32; i++)
@@ -23,7 +23,7 @@ namespace YimMenu::Features
 				{
 					auto Camp = ScriptGlobal(1141332).At(i, 27).At(20);
 
-					if (!Camp.CanAccess())
+					if (!Camp.CanAccess(true))
 						return;
 
 					Vector3 CampCoords = *Camp.As<Vector3*>();
