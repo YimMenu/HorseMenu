@@ -14,7 +14,7 @@ namespace YimMenu::Features
 			static int LastCheck = 0;
 			auto MoonshineGlobal = ScriptGlobal(1297600).At(Self::GetPlayer().GetId(), 87).At(19);
 
-			if (!MoonshineGlobal.CanAccess() || MISC::GET_SYSTEM_TIME() - LastCheck < 1000)
+			if (!MoonshineGlobal.CanAccess(true) || MISC::GET_SYSTEM_TIME() - LastCheck < 1000)
 				return;
 
 			LastCheck = MISC::GET_SYSTEM_TIME();
