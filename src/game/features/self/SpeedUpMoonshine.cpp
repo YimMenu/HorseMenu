@@ -1,8 +1,9 @@
 #include "core/commands/LoopedCommand.hpp"
 #include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
-#include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/ScriptFunction.hpp"
+#include "game/rdr/ScriptGlobal.hpp"
+
 
 namespace YimMenu::Features
 {
@@ -12,10 +13,10 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			static int LastCheck     = 0;
+			static int LastCheck = 0;
 			auto MoonshineGlobal = ScriptGlobal(1297600).At(Self::GetPlayer().GetId(), 87).At(19);
 
-			if (!MoonshineGlobal.CanAccess() || MISC::GET_SYSTEM_TIME() - LastCheck < 1000)
+			if (!MoonshineGlobal.CanAccess(true) || MISC::GET_SYSTEM_TIME() - LastCheck < 1000)
 				return;
 
 			LastCheck = MISC::GET_SYSTEM_TIME();

@@ -18,6 +18,7 @@ namespace YimMenu::Features
 		std::shared_ptr<ScriptPatches::Patch> m_Patch2{};
 		std::shared_ptr<ScriptPatches::Patch> m_Patch3{};
 		std::shared_ptr<ScriptPatches::Patch> m_Patch4{};
+		std::shared_ptr<ScriptPatches::Patch> m_Patch5{};
 
 		virtual void OnEnable() override
 		{
@@ -44,6 +45,12 @@ namespace YimMenu::Features
 				m_Patch4 = ScriptPatches::AddPatch("serendipity"_J, true, "22 01 03 00 00 66 00 67 00 6D", 5, {0x2F, 0x50, 0x01, 0x01}); // disable grand korrigan warp
 			}
 			m_Patch4->Enable();
+
+			if (!m_Patch5)
+			{
+				m_Patch5 = ScriptPatches::AddPatch("medium_update"_J, false, "22 00 10 00 00", 5, {0x50, 0x00, 0x00}); // disable invisible sniper
+			}
+			m_Patch5->Enable();
 		}
 
 		virtual void OnTick() override
@@ -64,6 +71,7 @@ namespace YimMenu::Features
 			m_Patch2->Disable();
 			m_Patch3->Disable();
 			m_Patch4->Disable();
+			m_Patch5->Disable();
 		}
 	};
 

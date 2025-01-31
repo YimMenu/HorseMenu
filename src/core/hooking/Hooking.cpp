@@ -52,6 +52,7 @@ namespace YimMenu
 		BaseHook::Add<Hooks::Script::RunScriptThreads>(new DetourHook("RunScriptThreads", Pointers.RunScriptThreads, Hooks::Script::RunScriptThreads));
 		BaseHook::Add<Hooks::Script::InitNativeTables>(new DetourHook("InitNativeTables", Pointers.InitNativeTables, Hooks::Script::InitNativeTables));
 		BaseHook::Add<Hooks::Script::ScriptVM>(new DetourHook("ScriptVM", Pointers.ScriptVM, Hooks::Script::ScriptVM));
+		BaseHook::Add<Hooks::Script::RegisterCompappNatives>(new DetourHook("RegisterCompappNatives", Pointers.RegisterCompappNatives, Hooks::Script::RegisterCompappNatives));
 
 		BaseHook::Add<Hooks::Protections::HandleNetGameEvent>(new DetourHook("HandleNetGameEvent", Pointers.HandleNetGameEvent, Hooks::Protections::HandleNetGameEvent));
 		BaseHook::Add<Hooks::Protections::HandleCloneCreate>(new DetourHook("HandleCloneCreate", Pointers.HandleCloneCreate, Hooks::Protections::HandleCloneCreate));
@@ -86,6 +87,9 @@ namespace YimMenu
 
 		BaseHook::Add<Hooks::Misc::ThrowFatalError>(new DetourHook("ThrowFatalError", Pointers.ThrowFatalError, Hooks::Misc::ThrowFatalError));
 		BaseHook::Add<Hooks::Misc::IsAnimSceneInScope>(new DetourHook("IsAnimSceneInScope", Pointers.IsAnimSceneInScope, Hooks::Misc::IsAnimSceneInScope));
+		BaseHook::Add<Hooks::Misc::GetTextLabel>(new DetourHook("GetTextLabel", Pointers.GetTextLabel, Hooks::Misc::GetTextLabel));
+		BaseHook::Add<Hooks::Misc::CheckConditionIsMale>(new DetourHook("CheckConditionIsMale", Pointers.CheckConditionIsMale, Hooks::Misc::CheckConditionIsMale));
+		BaseHook::Add<Hooks::Misc::CheckConditionIsFemale>(new DetourHook("CheckConditionIsFemale", Pointers.CheckConditionIsFemale, Hooks::Misc::CheckConditionIsFemale));
 
 		BaseHook::Add<Hooks::Info::NetworkRequest>(new DetourHook("NetworkReqeust", Pointers.NetworkRequest, Hooks::Info::NetworkRequest));
 

@@ -13,6 +13,7 @@ namespace YimMenu
 	class Vector3Command;
 	class Command;
 	class ColorCommand;
+	class StringCommand;
 
 	class Button : public UIItem
 	{
@@ -181,5 +182,17 @@ namespace YimMenu
 	private:
 		ColorCommand* m_Command;
 		std::optional<std::string> m_LabelOverride;
+	};
+
+	class StringCommandItem : public UIItem
+	{
+	public:
+		explicit StringCommandItem(joaat_t id, std::optional<std::string> label_override = std::nullopt);
+		void Draw() override;
+
+	private:
+		StringCommand* m_Command;
+		std::optional<std::string> m_LabelOverride;
+		std::optional<std::string> m_CurrentInput = std::nullopt;
 	};
 }

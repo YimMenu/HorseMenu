@@ -91,6 +91,11 @@ namespace YimMenu::Scripts
 		return Pointers.ScriptGlobals[14] != nullptr; // TODO
 	}
 
+	ScriptIdentifier GetScriptIdentifier(rage::scrThread* thread)
+	{
+		return ScriptIdentifier(thread ? thread->m_Context.m_ScriptHash : 0, UsingMPScripts());
+	}
+
 	bool RequestScript(joaat_t script)
 	{
 		if (!SCRIPTS::HAS_SCRIPT_WITH_NAME_HASH_LOADED(script))

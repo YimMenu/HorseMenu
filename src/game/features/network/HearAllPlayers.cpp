@@ -27,7 +27,7 @@ namespace YimMenu::Features
 		{
 			VOICE::_0x58125B691F6827D5(999999.0f);
 			VOICE::_0x08797A8C03868CB8(999999.0f);
-			if (HudGlobal.CanAccess())
+			if (HudGlobal.CanAccess(true))
 			{
 				*HudGlobal.At(Self::GetPlayer().GetId(), 8).At(7).As<int*>() |= 262144;
 				*HudGlobal.At(Self::GetPlayer().GetId(), 8).At(7).As<int*>() |= 524288;
@@ -36,7 +36,7 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
-			if (HudGlobal.CanAccess())
+			if (HudGlobal.CanAccess(true))
 			{
 				*HudGlobal.At(Self::GetPlayer().GetId(), 8).At(7).As<int*>() &= ~262144;
 				*HudGlobal.At(Self::GetPlayer().GetId(), 8).At(7).As<int*>() &= ~524288;

@@ -36,7 +36,7 @@ namespace YimMenu
 			return *static_cast<std::add_pointer_t<std::remove_reference_t<T>>>(Get());
 		}
 
-		bool CanAccess() const;
+		bool CanAccess(bool is_mp) const; // SP otherwise
 
     private:
         void* Get() const;

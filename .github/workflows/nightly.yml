@@ -53,15 +53,15 @@ jobs:
         run: cmake -D CMAKE_BUILD_TYPE=RelWithDebInfo -D OPTIMIZE=YES -S. -Bbuild -G Ninja
 
       - name: Build 64bit release DLL
-        run: cmake --build ./build --config RelWithDebInfo --target HorseMenu --
+        run: cmake --build ./build --config RelWithDebInfo --target Terminus --
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: binary
           path: |
-            build/HorseMenu.dll
-            build/HorseMenu.pdb
+            build/Terminus.dll
+            build/Terminus.pdb
 
       - name: Generate Build Info
         id: var
@@ -126,7 +126,7 @@ jobs:
       - name: Echo build sha256
         id: build_sha
         run: |
-          sha256sum HorseMenu.dll > sha256.checksum
+          sha256sum Terminus.dll > sha256.checksum
           echo "build_sha=$(cat sha256.checksum)" >> $GITHUB_OUTPUT
           cat sha256.checksum
 
@@ -148,8 +148,8 @@ jobs:
             You can download the build artifacts, generate a SHA256 checksum and compare it with the below binary.
             Build artifacts ARE NOT automatically the same as release assets since release assets can be modified afterwards.
 
-            These are nightly builds of HorseMenu, they are provided for testing purposes only:
-            - Test if your build environment produces a broken HorseMenu.dll
+            These are nightly builds of Terminus, they are provided for testing purposes only:
+            - Test if your build environment produces a broken Terminus.dll
             - Test if source code is out of date and no longer compatible with the current version of Red Dead Redemption 2
 
             If you wish to use this menu as-is you are on your own, no warranty is provided.
@@ -159,4 +159,4 @@ jobs:
             ${{ needs.build_nightly.outputs.full_sha }}
             ```
           files: |
-            HorseMenu.dll
+            Terminus.dll

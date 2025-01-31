@@ -176,9 +176,6 @@ namespace YimMenu::Features
 
 				if (Features::_ZombiesLogging.GetState())
 					LOG(INFO) << "Zombies minigame reset!";
-
-				ScriptMgr::Yield(750ms);
-
 				return;
 			}
 
@@ -225,8 +222,6 @@ namespace YimMenu::Features
 
 			if (Features::_ZombiesLogging.GetState())
 				LOG(INFO) << "Zombies minigame reset!";
-
-			ScriptMgr::Yield(750ms);
 		}
 	};
 

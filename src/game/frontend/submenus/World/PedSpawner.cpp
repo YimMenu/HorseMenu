@@ -22,7 +22,7 @@ namespace YimMenu::Submenus
 		}
 		else
 		{
-			ctx->SetReturnValue<int>(NETWORK::NETWORK_AWARD_HAS_REACHED_MAXCLAIM(ctx->GetArg<int>(0)));
+			ctx->SetReturnValue<int>(SCRIPTS::GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH(ctx->GetArg<int>(0)));
 		}
 	}
 
@@ -79,7 +79,8 @@ namespace YimMenu::Submenus
 		static bool dead, invis, godmode, freeze, companion, sedated;
 		static int formation;
 		static std::vector<YimMenu::Ped> spawnedPeds;
-		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback).Draw();
+		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback)
+		    .Draw();
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Press Tab to auto fill");
 		if (!pedModelBuffer.empty() && !IsPedModelInList(pedModelBuffer))
@@ -141,7 +142,11 @@ namespace YimMenu::Submenus
 				ped.SetFrozen(freeze);
 
 				if (dead)
+				{
 					ped.Kill();
+					if (ped.IsAnimal())
+						ped.SetQuality(2);
+				}
 
 				ped.SetInvincible(godmode);
 
@@ -166,8 +171,8 @@ namespace YimMenu::Submenus
 					ENTITY::SET_ENTITY_AS_MISSION_ENTITY(ped.GetHandle(), false, false);
 					PED::SET_PED_AS_GROUP_MEMBER(ped.GetHandle(), group);
 					PED::SET_PED_CAN_BE_TARGETTED_BY_PLAYER(ped.GetHandle(), YimMenu::Self::GetPlayer().GetId(), false);
-					PED::SET_PED_RELATIONSHIP_GROUP_HASH(ped.GetHandle(),
-					PED::GET_PED_RELATIONSHIP_GROUP_HASH(YimMenu::Self::GetPed().GetHandle()));
+					PED::SET_PED_RELATIONSHIP_GROUP_HASH(
+					    ped.GetHandle(), PED::GET_PED_RELATIONSHIP_GROUP_HASH(YimMenu::Self::GetPed().GetHandle()));
 
 					PED::SET_GROUP_FORMATION(PED::GET_PED_GROUP_INDEX(ped.GetHandle()), formation);
 

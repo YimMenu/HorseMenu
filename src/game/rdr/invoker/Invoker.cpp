@@ -5,6 +5,12 @@
 
 namespace YimMenu
 {
+	void NativeInvoker::DefaultHandler(rage::scrNativeCallContext* ctx)
+	{
+		LOG(FATAL) << "Native handler not registered";
+		ctx->SetReturnValue(0);
+	}
+
 	void NativeInvoker::CacheHandlers()
 	{
 		if (m_AreHandlersCached)

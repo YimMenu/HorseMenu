@@ -15,7 +15,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{	
-			if (NazarLocation.CanAccess())
+			if (NazarLocation.CanAccess(true))
 				Teleport::TeleportPlayerToCoords(player, *NazarLocation.As<Vector3*>());
 		}
 	};

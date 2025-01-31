@@ -399,12 +399,9 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (*Pointers.IsSessionStarted)
+			if (blipSprite.CanAccess(true))
 			{
-				if (blipSprite.CanAccess())
-				{
-					*blipSprite.As<int*>() = _BlipSprite.GetState();
-				}
+				*blipSprite.As<int*>() = _BlipSprite.GetState();
 			}
 		}
 	};
@@ -416,12 +413,9 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (*Pointers.IsSessionStarted)
+			if (primaryStatusIcon.CanAccess(true))
 			{
-				if (primaryStatusIcon.CanAccess())
-				{
-					*primaryStatusIcon.As<int*>() = _PrimaryStatusIcon.GetState();
-				}
+				*primaryStatusIcon.As<int*>() = _PrimaryStatusIcon.GetState();
 			}
 		}
 	};
@@ -433,12 +427,9 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			if (*Pointers.IsSessionStarted)
+			if (secondaryStatusIcon.CanAccess(true))
 			{
-				if (secondaryStatusIcon.CanAccess())
-				{
-					*secondaryStatusIcon.As<int*>() = _SecondaryStatusIcon.GetState();
-				}
+				*secondaryStatusIcon.As<int*>() = _SecondaryStatusIcon.GetState();
 			}
 		}
 	};

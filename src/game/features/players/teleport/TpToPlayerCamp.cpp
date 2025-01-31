@@ -29,7 +29,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall(Player player) override
 		{
-			if (!netCampHostData.CanAccess())
+			if (!netCampHostData.CanAccess(true))
 				return;
 
 			for (int i = 0; i < 32; i++)

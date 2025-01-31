@@ -1,5 +1,6 @@
 #pragma once
 #include "core/memory/Pattern.hpp"
+#include "game/rdr/Scripts.hpp"
 #include "util/Joaat.hpp"
 
 namespace rage
@@ -40,9 +41,8 @@ namespace YimMenu
 			std::optional<int32_t> m_Pc;
 			SimplePattern m_Pattern;
 			int32_t m_Offset;
-			joaat_t m_ScriptHash;
 			bool m_Enabled;
-			bool m_IsMP;
+			ScriptIdentifier m_Identifier;
 
 			std::optional<int32_t> GetPC();
 			void Apply();

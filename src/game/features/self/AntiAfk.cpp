@@ -17,7 +17,7 @@ namespace YimMenu::Features
 		{
 			if (*Pointers.IsSessionStarted)
 			{
-				if (timer.CanAccess() && afkSwitch.CanAccess())
+				if (timer.CanAccess(true) && afkSwitch.CanAccess(true))
 				{
 					*timer.As<int*>() = INT_MAX;
 					*afkSwitch.As<bool*>() = false;

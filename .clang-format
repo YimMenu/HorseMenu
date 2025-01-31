@@ -1,7 +1,7 @@
 BasedOnStyle: Microsoft
 AccessModifierOffset: '-4'
 AlignAfterOpenBracket: DontAlign
-AlignConsecutiveAssignments: 'true'
+AlignConsecutiveAssignments: 'false'
 AlignEscapedNewlines: Left
 AlignOperands: 'false'
 AlignTrailingComments: 'true'

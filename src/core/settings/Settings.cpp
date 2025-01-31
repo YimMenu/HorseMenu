@@ -99,6 +99,7 @@ namespace YimMenu
 		file << "{}" << std::endl;
 		file.close();
 		m_Json = "{}";
+		m_InitialLoadDone = true;
 	}
 
 	bool Settings::ShouldSave()

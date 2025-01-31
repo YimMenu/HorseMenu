@@ -27,19 +27,19 @@ namespace YimMenu
 			else
 			{
 				ImGui::Button(Command->GetLabel().data());
-				CommandHotkeyLink->Listening = ImGui::IsItemActive();
+				CommandHotkeyLink->m_BeingModified = ImGui::IsItemActive();
 
-				if (CommandHotkeyLink->Listening)
+				if (CommandHotkeyLink->m_BeingModified)
 				{
-					g_HotkeySystem.CreateHotkey(CommandHotkeyLink->Hotkey);
+					g_HotkeySystem.CreateHotkey(CommandHotkeyLink->m_Chain);
 				}
 
 				ImGui::SameLine(200);
 				ImGui::BeginGroup();
 
-				if (CommandHotkeyLink->Hotkey.empty())
+				if (CommandHotkeyLink->m_Chain.empty())
 				{
-					if (CommandHotkeyLink->Listening)
+					if (CommandHotkeyLink->m_BeingModified)
 						ImGui::Text("Press any button...");
 					else
 						ImGui::Text("No Hotkey Assigned");
@@ -47,13 +47,13 @@ namespace YimMenu
 				else
 				{
 					ImGui::PushItemWidth(35);
-					for (auto HotkeyModifier : CommandHotkeyLink->Hotkey)
+					for (auto HotkeyModifier : CommandHotkeyLink->m_Chain)
 					{
 						char KeyLabel[32];
 						strcpy(KeyLabel, g_HotkeySystem.GetHotkeyLabel(HotkeyModifier).data());
 						ImGui::InputText("##keylabel", KeyLabel, 32, ImGuiInputTextFlags_ReadOnly);
 						if (ImGui::IsItemClicked())
-							std::erase_if(CommandHotkeyLink->Hotkey, [HotkeyModifier](int i) {
+							std::erase_if(CommandHotkeyLink->m_Chain, [HotkeyModifier](int i) {
 								return i == HotkeyModifier;
 							});
 
@@ -64,7 +64,7 @@ namespace YimMenu
 					ImGui::SameLine();
 					if (ImGui::Button("Clear"))
 					{
-						CommandHotkeyLink->Hotkey.clear();
+						CommandHotkeyLink->m_Chain.clear();
 					}
 				}
 

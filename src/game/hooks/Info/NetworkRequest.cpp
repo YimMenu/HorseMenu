@@ -47,9 +47,7 @@ namespace YimMenu::Hooks
 
 	uint8_t* Info::NetworkRequest(HttpRequest* Request, uint8_t* a2, uint32_t a3)
 	{
-#if 0
-		LOG(INFO) << "URL: " << Request->GetFull();
-#endif
+		// LOG(INFO) << "URL: " << Request->GetFull();
 		return BaseHook::Get<Info::NetworkRequest, DetourHook<decltype(&Info::NetworkRequest)>>()->Original()(Request, a2, a3);
 	}
 

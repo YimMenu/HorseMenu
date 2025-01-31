@@ -67,9 +67,10 @@ namespace YimMenu
 			*Pointers.RageSecurityInitialized = false;
 			if (g_Running)
 			{
-				*Pointers.ExplosionBypass         = true;
+				*Pointers.ExplosionBypass = true;
 				Commands::RunLoopedCommands();
-				g_HotkeySystem.FeatureCommandsHotkeyLoop();
+				if (GetForegroundWindow() == *Pointers.Hwnd && !HUD::IS_PAUSE_MENU_ACTIVE() && !GUI::IsOpen())
+					g_HotkeySystem.Update();
 				Self::Update();
 			}
 			ScriptMgr::Yield();

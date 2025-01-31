@@ -12,6 +12,13 @@
 
 namespace YimMenu::Submenus
 {
+	std::string BuildIPStr(int field1, int field2, int field3, int field4)
+	{
+		std::ostringstream oss;
+		oss << field1 << '.' << field2 << '.' << field3 << '.' << field4;
+		return oss.str();
+	}
+
 	std::shared_ptr<Category> BuildInfoMenu()
 	{
 		auto menu = std::make_shared<Category>("Info");
@@ -99,10 +106,7 @@ namespace YimMenu::Submenus
 				auto ip1       = Players::GetSelected().GetGamerInfo()->m_ExternalAddress;
 				bool spoofedIp = (ip.m_packed != ip1.m_packed);
 
-				auto addr2 = std::string(std::to_string(ip2.m_field1))
-				                        .append("." + std::to_string(ip2.m_field2))
-				                        .append("." + std::to_string(ip2.m_field3))
-				                        .append("." + std::to_string(ip2.m_field4));
+				auto addr2 = BuildIPStr(ip2.m_field1, ip2.m_field2, ip2.m_field3, ip2.m_field4);
 
 				ImGui::Text("Endpoint IP Address:");
 				ImGui::SameLine();
@@ -113,10 +117,7 @@ namespace YimMenu::Submenus
 
 				if (!spoofedIp)
 				{
-					auto ipStr = std::string(std::to_string(ip.m_field1))
-					                 .append("." + std::to_string(ip.m_field2))
-					                 .append("." + std::to_string(ip.m_field3))
-					                 .append("." + std::to_string(ip.m_field4));
+					auto ipStr = BuildIPStr(ip.m_field1, ip.m_field2, ip.m_field3, ip.m_field4);
 
 					ImGui::Text("IP Address:");
 					ImGui::SameLine();
@@ -127,15 +128,8 @@ namespace YimMenu::Submenus
 				}
 				else
 				{
-					auto spoofedIpStr = std::string(std::to_string(ip1.m_field1))
-					                        .append("." + std::to_string(ip1.m_field2))
-					                        .append("." + std::to_string(ip1.m_field3))
-					                        .append("." + std::to_string(ip1.m_field4));
-
-					auto realIpStr = std::string(std::to_string(ip.m_field1))
-					                     .append("." + std::to_string(ip.m_field2))
-					                     .append("." + std::to_string(ip.m_field3))
-					                     .append("." + std::to_string(ip.m_field4));
+					auto spoofedIpStr = BuildIPStr(ip1.m_field1, ip1.m_field2, ip1.m_field3, ip1.m_field4);
+					auto realIpStr    = BuildIPStr(ip.m_field1, ip.m_field2, ip.m_field3, ip.m_field4);
 
 					ImGui::Text("Spoofed IP Address:");
 					ImGui::SameLine();

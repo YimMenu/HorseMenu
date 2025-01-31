@@ -12,7 +12,7 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			if (NazarLocation.CanAccess())
+			if (NazarLocation.CanAccess(true))
 				YimMenu::Teleport::TeleportEntity(Self::GetPed().GetHandle(), *NazarLocation.As<Vector3*>(), true);
 		}
 	};

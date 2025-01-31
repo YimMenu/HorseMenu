@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20.x)
 
-project(HorseMenu VERSION 0.0.1 DESCRIPTION "HorseMenu, a beta-stage mod menu for Red Dead Redemption 2 and Red Dead Online, inspired by YimMenu, that protects against crashes and enhances your experience.")
+project(Terminus VERSION 0.0.1 DESCRIPTION "Terminus, a beta-stage mod menu for Red Dead Redemption 2 and Red Dead Online, inspired by YimMenu, that protects against crashes and enhances your experience.")
 
 # libs
 include(cmake/vulkan.cmake)
@@ -37,7 +37,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 message(STATUS "Setting up linked libraries")
 target_link_libraries(${PROJECT_NAME} PRIVATE AsyncLogger imgui minhook nlohmann_json::nlohmann_json dbghelp RDR-Classes "${DEPS_DIR}/vulkan-1.lib")
 
-add_compile_definitions(${PROJECT_NAME} "_CRT_SECURE_NO_WARNINGS" "NOMINMAX" "WIN32_LEAN_AND_MEAN")
+add_compile_definitions("_CRT_SECURE_NO_WARNINGS" "NOMINMAX" "WIN32_LEAN_AND_MEAN")
 
 if(MSVC)
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /LTCG /OPT:REF,ICF /GUARD:NO")

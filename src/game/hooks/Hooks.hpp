@@ -79,6 +79,7 @@ namespace YimMenu::Hooks
 		extern bool RunScriptThreads(void* threads, int unk);
 		extern bool InitNativeTables(rage::scrProgram* program);
 		extern int ScriptVM(void* stack, void** globals, bool* globals_enabled, rage::scrProgram* program, rage::scrThreadContext* ctx);
+		extern void RegisterCompappNatives();
 	}
 
 	namespace Anticheat
@@ -136,6 +137,9 @@ namespace YimMenu::Hooks
 		extern void ThrowFatalError(int code, int fileHash, int fileLine);
 		extern bool IsAnimSceneInScope(rage::netObject* scene, CNetGamePlayer* player, int* reason);
 		extern int GetPoolSize(void* config, std::uint32_t hash, int def);
+		extern const char* GetTextLabel(void* _this, const char* label);
+		extern bool CheckConditionIsMale(__int64 a1, __int64 a2);
+		extern bool CheckConditionIsFemale(__int64 a1, __int64 a2);
 	}
 
 	namespace Info

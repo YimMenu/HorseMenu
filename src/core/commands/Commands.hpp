@@ -49,7 +49,7 @@ namespace YimMenu
 			return reinterpret_cast<T*>(GetInstance().GetCommandImpl(hash));
 		}
 
-		static std::unordered_map<joaat_t, Command*> GetCommands()
+		static std::unordered_map<joaat_t, Command*>& GetCommands()
 		{
 			return GetInstance().m_Commands;
 		};

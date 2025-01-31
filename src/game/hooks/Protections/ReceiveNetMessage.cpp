@@ -184,7 +184,7 @@ namespace YimMenu::Hooks
 
 			if (player && player->m_HasGamerInfo)
 			{
-				auto color = ImGui::Colors::Blue;
+				auto color = ImGui::Colors::LightBlue;
 
 				if (auto p = Players::GetByMessageId(frame->m_MsgId); p && !p.IsFriend())
 					color = ImGui::Colors::Red;

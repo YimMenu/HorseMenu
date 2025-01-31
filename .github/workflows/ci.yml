@@ -21,19 +21,19 @@ jobs:
         run: cmake -D CMAKE_BUILD_TYPE=Release -S. -Bbuild -G Ninja
 
       - name: Build 64bit release DLL
-        run: cmake --build ./build --config Release --target HorseMenu --
+        run: cmake --build ./build --config Release --target Terminus --
 
       - name: Check if DLL got built
-        run: if (-Not (Test-Path -path "build/HorseMenu.dll")) {throw 1}
+        run: if (-Not (Test-Path -path "build/Terminus.dll")) {throw 1}
 
-      - name: Rename DLL to HorseMenu-dev-{GITHUB_SHA}.dll
+      - name: Rename DLL to Terminus-dev-{GITHUB_SHA}.dll
         run: |
-          del HorseMenu-dev-*.dll
-          ren HorseMenu.dll HorseMenu-dev-${{github.sha}}.dll
+          del Terminus-dev-*.dll
+          ren Terminus.dll Terminus-dev-${{github.sha}}.dll
         working-directory: build/
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: binary
-          path: build/HorseMenu-dev-*.dll
+          path: build/Terminus-dev-*.dll

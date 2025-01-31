@@ -40,7 +40,7 @@ namespace YimMenu
 
 			    // Think this add HTML&PHP with no CSS. Lol just for testing.
 			    ImGui::SetNextWindowSize(ImVec2((*Pointers.ScreenResX / 2.5), (*Pointers.ScreenResY / 2.5)), ImGuiCond_Once);
-			    if (ImGui::Begin("HorseMenu", nullptr, ImGuiWindowFlags_NoDecoration))
+			    if (ImGui::Begin("Terminus", nullptr, ImGuiWindowFlags_NoDecoration))
 			    {
 				    //ImGui::BeginDisabled(*Pointers.IsSessionStarted);
 				    if (ImGui::Button("Unload", ImVec2(120, 0)))

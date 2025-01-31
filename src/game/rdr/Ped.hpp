@@ -47,6 +47,9 @@ namespace YimMenu
 		// scale
 		void SetScale(float scale);
 
+		//quality
+		void SetQuality(int quality);
+
 		// accuracy
 		int GetAccuracy();
 		void SetAccuracy(int accuracy);
@@ -54,5 +57,8 @@ namespace YimMenu
 		// player
 		// We're returning a handle here and not a Player because we don't want to create a cyclic import dependency
 		int GetPlayer();
+
+		// outfits
+		void SetVariation(int variation);
 	};
 }
