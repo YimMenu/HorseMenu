@@ -15,6 +15,6 @@ Use a popular injector (Xenos/Extreme Injector/Etc.) and inject into rdr2.exe
 
 ## Screenshots / UI Design
 
-![image](https://github.com/YimMenu/HorseMenu/assets/24372625/e1395e75-7feb-4c4a-9286-bd774e2aaeca)
+![image](https://i.ibb.co/WvTJrLcM/Screenshot-190.png)
 
 

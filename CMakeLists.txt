@@ -10,7 +10,6 @@ include(cmake/json.cmake)
 include(cmake/minhook.cmake)
 include(cmake/rdr-classes.cmake)
 
-
 # source
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
 file(GLOB_RECURSE SRC_FILES
