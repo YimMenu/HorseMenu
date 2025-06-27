@@ -6,6 +6,7 @@
 #include "game/backend/Self.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
+#include "game/frontend/ColorCustomization.hpp"
 
 namespace YimMenu::Submenus
 {
@@ -38,14 +39,16 @@ namespace YimMenu::Submenus
 		auto hotkeys           = std::make_shared<Category>("Hotkeys");
 		auto gui               = std::make_shared<Category>("GUI");
 		auto protections       = std::make_shared<Category>("Protection");
+		auto menuCustomization = std::make_shared<Category>("Menu Customization");
 		auto syncGroup         = std::make_shared<Group>("Sync");
 		auto networkEventGroup = std::make_shared<Group>("Network Events");
 		auto scriptEventGroup  = std::make_shared<Group>("Script Events");
 		auto playerEsp         = std::make_shared<Group>("Player ESP", 10);
 		auto pedEsp            = std::make_shared<Group>("Ped ESP", 10);
-		auto overlay            = std::make_shared<Group>("Overlay");
+		auto overlay           = std::make_shared<Group>("Overlay");
 		auto context           = std::make_shared<Group>("Context Menu");
 		auto misc              = std::make_shared<Group>("Misc");
+		auto colorSettings     = std::make_shared<Group>("Color Settings");
 
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
 
@@ -120,8 +123,14 @@ namespace YimMenu::Submenus
 		protections->AddItem(syncGroup);
 		protections->AddItem(networkEventGroup);
 		protections->AddItem(scriptEventGroup);
+
+		colorSettings->AddItem(std::make_shared<ImGuiItem>(YimMenu::ColorCustomization::DrawColorSettings));
+
+		menuCustomization->AddItem(colorSettings);
+
 		AddCategory(std::move(hotkeys));
 		AddCategory(std::move(gui));
 		AddCategory(std::move(protections));
+		AddCategory(std::move(menuCustomization));
 	}
 }

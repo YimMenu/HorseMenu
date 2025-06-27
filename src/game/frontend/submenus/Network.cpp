@@ -1,6 +1,8 @@
-﻿#include "Network.hpp"
+﻿#include <imgui.h>
+#include "Network.hpp"
 
 #include "Network/Voice.hpp"
+#include "Self.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
 #include "core/commands/LoopedCommand.hpp"
@@ -14,19 +16,18 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/Packet.hpp"
 #include "util/Chat.hpp"
 #include "util/Storage/Spoofing.hpp"
 #include "util/teleport.hpp"
-#include "Self.hpp"
-#include "game/rdr/Packet.hpp"
 
 #include <map>
-#include <network/rlGamerHandle.hpp>
+#include <network/CNetworkPlayerMgr.hpp>
 #include <network/CNetworkScSession.hpp>
+#include <network/netEncryption.hpp>
+#include <network/rlGamerHandle.hpp>
 #include <network/snConnectToPeerTask.hpp>
 #include <rage/rlTaskStatus.hpp>
-#include <network/CNetworkPlayerMgr.hpp>
-#include <network/netEncryption.hpp>
 #include <ranges>
 #include <string>
 
@@ -42,14 +43,14 @@ namespace rage
 		};
 		uint32_t m_presence_attibute_type; //0x0140
 		char pad_0144[4];                  //0x0144
-	};                                     //Size: 0x0148
+	}; //Size: 0x0148
 	static_assert(sizeof(rlQueryPresenceAttributesContext) == 0x148);
 
 	struct rlScTaskStatus
 	{
-		void* pad  = 0;
+		void* pad = 0;
 		int status = 0;
-		int unk    = 0;
+		int unk = 0;
 	};
 }
 
@@ -58,10 +59,11 @@ namespace YimMenu::Submenus
 	std::shared_ptr<persistent_player> current_player;
 	static char search[64];
 	static char name_buf[32];
+	static char notes_buf[1024];
 	static char new_player_name_buf[32];
 	static uint64_t new_player_rid;
 	static bool show_player_editor = false;
-	static bool show_new_player    = true;
+	static bool show_new_player = true;
 
 	void draw_player_db_entry(std::shared_ptr<persistent_player> player, const std::string& lower_search)
 	{
@@ -77,7 +79,8 @@ namespace YimMenu::Submenus
 				g_PlayerDatabase->SetSelected(player);
 				current_player = player;
 				strncpy(name_buf, current_player->name.data(), sizeof(name_buf));
-				show_new_player    = false;
+				strncpy(notes_buf, current_player->notes.data(), sizeof(notes_buf));
+				show_new_player = false;
 				show_player_editor = true;
 			}
 
@@ -89,15 +92,15 @@ namespace YimMenu::Submenus
 	    Submenu::Submenu("Network")
 	{
 		// TODO: this needs a rework
-		auto session              = std::make_shared<Category>("Session");
-		auto spoofing             = std::make_shared<Category>("Spoofing");
-		auto database             = std::make_shared<Category>("Player Database");
+		auto session = std::make_shared<Category>("Session");
+		auto spoofing = std::make_shared<Category>("Spoofing");
+		auto database = std::make_shared<Category>("Player Database");
 		auto sessionSwitcherGroup = std::make_shared<Group>("Session Switcher");
-		auto teleportGroup        = std::make_shared<Group>("Teleport");
-		auto toxicGroup           = std::make_shared<Group>("Toxic");
-		auto miscGroup            = std::make_shared<Group>("Misc");
-		auto infoSpoofingGroup    = std::make_shared<Group>("Info Spoofing");
-		auto blipSpoofingGroup    = std::make_shared<Group>("Blip Spoofing");
+		auto teleportGroup = std::make_shared<Group>("Teleport");
+		auto toxicGroup = std::make_shared<Group>("Toxic");
+		auto miscGroup = std::make_shared<Group>("Misc");
+		auto infoSpoofingGroup = std::make_shared<Group>("Info Spoofing");
+		auto blipSpoofingGroup = std::make_shared<Group>("Blip Spoofing");
 		auto sessionSpoofingGroup = std::make_shared<Group>("Session Spoofing");
 
 		sessionSwitcherGroup->AddItem(std::make_shared<Vector3CommandItem>("newsessionpos"_J));
@@ -174,6 +177,12 @@ namespace YimMenu::Submenus
 						g_PlayerDatabase->Save();
 					}
 
+					if (ImGui::InputTextMultiline("Notes", notes_buf, sizeof(notes_buf), ImVec2(0, 80)))
+					{
+						current_player->notes = notes_buf;
+						g_PlayerDatabase->Save();
+					}
+
 					if (!current_player->infractions.empty())
 					{
 						ImGui::Text("Infractions");
@@ -189,10 +198,10 @@ namespace YimMenu::Submenus
 						{
 							// TODO: find a better way to do this
 							ImGui::BulletText(std::string(g_PlayerDatabase->ConvertDetectionToDescription(Detection(pair.first)))
-							                      .append(" - ")
-							                      .append("x")
-							                      .append(std::to_string(pair.second))
-							                      .c_str());
+							        .append(" - ")
+							        .append("x")
+							        .append(std::to_string(pair.second))
+							        .c_str());
 						}
 					}
 
@@ -204,7 +213,7 @@ namespace YimMenu::Submenus
 					if (ImGui::Button("Hide Editor"))
 					{
 						show_player_editor = false;
-						show_new_player    = true;
+						show_new_player = true;
 					}
 					ImGui::PopID();
 				}
@@ -219,6 +228,7 @@ namespace YimMenu::Submenus
 				{
 					current_player = g_PlayerDatabase->GetOrCreatePlayer(new_player_rid, new_player_name_buf);
 					memset(new_player_name_buf, 0, sizeof(new_player_name_buf));
+					memset(notes_buf, 0, sizeof(notes_buf));
 				}
 				ImGui::PopID();
 			}
@@ -262,7 +272,7 @@ namespace YimMenu::Submenus
 			InputTextWithHint("Spoofed Name", "Enter spoofed name", &nameBuf).Draw();
 			if (ImGui::Button("Set Spoofed Name"))
 			{
-				std::string concatName        = std::string(colorBuf) + std::string(iconBuf) + nameBuf;
+				std::string concatName = std::string(colorBuf) + std::string(iconBuf) + nameBuf;
 				g_SpoofingStorage.spoofedName = concatName;
 			}
 			if (ImGui::IsItemHovered())

@@ -6,6 +6,7 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/ScriptMgr.hpp"
 #include "game/frontend/fonts/Fonts.hpp"
+#include "game/frontend/ColorCustomization.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "submenus/Debug.hpp"
 #include "submenus/Network.hpp"
@@ -38,7 +39,9 @@ namespace YimMenu
 			    ImGui::PushFont(Menu::Font::g_DefaultFont);
 			    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImU32(ImColor(15, 15, 15)));
 
-			    // Think this add HTML&PHP with no CSS. Lol just for testing.
+			    // Apply custom menu colors each frame
+			    YimMenu::ColorCustomization::ApplyMenuColors();
+
 			    ImGui::SetNextWindowSize(ImVec2((*Pointers.ScreenResX / 2.5), (*Pointers.ScreenResY / 2.5)), ImGuiCond_Once);
 			    if (ImGui::Begin("Terminus", nullptr, ImGuiWindowFlags_NoDecoration))
 			    {
@@ -122,6 +125,8 @@ namespace YimMenu
 		style.Colors[ImGuiCol_NavWindowingDimBg]     = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 		style.Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 		style.GrabRounding = style.FrameRounding = style.ChildRounding = style.WindowRounding = 2.3f;
+
+		YimMenu::ColorCustomization::ApplyMenuColors();
 	}
 
 	void Menu::SetupFonts()

@@ -1,4 +1,4 @@
-# Terminus (formerly HorseMenu)
+# Terminus
 
 A mod menu for Red Dead Redemption 2 and Red Dead Online published by Rockstar Games. Strictly for educational purposes.
 
@@ -15,6 +15,6 @@ Use a popular injector (Xenos/Extreme Injector/Etc.) and inject into rdr2.exe
 
 ## Screenshots / UI Design
 
-![image](https://github.com/YimMenu/HorseMenu/assets/24372625/e1395e75-7feb-4c4a-9286-bd774e2aaeca)
+![image](https://github.com/user-attachments/assets/789fc002-b258-40b1-a482-f188e557e2d8)
 
 

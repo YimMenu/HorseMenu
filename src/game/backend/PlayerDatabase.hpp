@@ -66,9 +66,10 @@ namespace YimMenu
 		bool is_admin   = false;
 		bool block_join = false;
 		bool trust      = false;
+		std::string notes = "";
 		std::unordered_set<uint32_t> infractions;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(persistent_player, rid, name, is_modder, is_admin, block_join, trust, infractions);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(persistent_player, rid, name, is_modder, is_admin, block_join, trust, notes, infractions);
 	};
 
 
