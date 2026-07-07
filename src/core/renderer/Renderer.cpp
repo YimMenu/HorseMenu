@@ -41,6 +41,13 @@ namespace YimMenu
 		}
 
 		ImGui::DestroyContext();
+
+		if (!Pointers.IsVulkan)
+		{
+			for (size_t i = 1; i < m_SwapChainDesc.BufferCount; ++i)
+				if (m_FrameContext[i].CommandAllocator)
+					m_FrameContext[i].CommandAllocator->Release();
+		}
 	}
 
 	bool Renderer::InitDX12()
@@ -121,14 +128,22 @@ namespace YimMenu
 		        (void**)m_CommandAllocator.GetAddressOf());
 		    result < 0)
 		{
-			LOG(WARNING) << "Failed to create Command Allocator with result: [" << result << "]";
+			LOG(WARNING) << "Failed to create primary Command Allocator with result: [" << result << "]";
 
 			return false;
 		}
 
-		for (size_t i{}; i < m_SwapChainDesc.BufferCount; ++i)
+		m_FrameContext[0].CommandAllocator = m_CommandAllocator.Get(); // set initial command allocator
+
+		// create the rest of the allocators
+		for (size_t i = 1; i < m_SwapChainDesc.BufferCount; ++i)
 		{
-			m_FrameContext[i].CommandAllocator = m_CommandAllocator.Get();
+			if (const auto result = m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(ID3D12CommandAllocator),  (void**)&m_FrameContext[i].CommandAllocator); result < 0)
+			{
+				LOG(WARNING) << "Failed to create secondary Command Allocator with result: [" << result << "]";
+
+				return false;
+			}
 		}
 
 		if (const auto result = m_Device->CreateCommandList(0,
@@ -174,15 +189,37 @@ namespace YimMenu
 			RTVHandle.ptr += RTVDescriptorSize;
 		}
 
+		m_HeapAllocator.Create(m_Device.Get(), m_DescriptorHeap.Get());
+
 		// never returns false, useless to check return
 		ImGui::CreateContext(&GetInstance().m_FontAtlas);
 		ImGui_ImplWin32_Init(*Pointers.Hwnd);
+
+		ImGui_ImplDX12_InitInfo init_info = {};
+		init_info.Device = m_Device.Get();
+		init_info.CommandQueue = m_CommandQueue.Get();
+		init_info.NumFramesInFlight = m_SwapChainDesc.BufferCount;
+		init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		init_info.DSVFormat = DXGI_FORMAT_UNKNOWN;
+		// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
+		// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
+		init_info.SrvDescriptorHeap = m_DescriptorHeap.Get();
+		init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) {
+			return GetInstance().m_HeapAllocator.Alloc(out_cpu_handle, out_gpu_handle);
+		};
+		init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle) {
+			return GetInstance().m_HeapAllocator.Free(cpu_handle, gpu_handle);
+		};
+		ImGui_ImplDX12_Init(&init_info);
+
+		#if 0
 		ImGui_ImplDX12_Init(m_Device.Get(),
 		    m_SwapChainDesc.BufferCount,
 		    DXGI_FORMAT_R8G8B8A8_UNORM,
 		    m_DescriptorHeap.Get(),
 		    m_DescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 		    m_DescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+		#endif
 
 		ImGui::StyleColorsDark();
 
@@ -457,6 +494,8 @@ namespace YimMenu
 			info.attachmentCount         = 1;
 			info.pAttachments            = attachment;
 			info.layers                  = 1;
+			info.width                   = (m_VkImageExtent.width != 0) ? m_VkImageExtent.width : *Pointers.ScreenResX;
+      		info.height                  = (m_VkImageExtent.height != 0) ? m_VkImageExtent.height : *Pointers.ScreenResY;
 
 			for (uint32_t i = 0; i < uImageCount; ++i)
 			{
@@ -599,6 +638,9 @@ namespace YimMenu
 		VkQueue GraphicQueue            = VK_NULL_HANDLE;
 		const bool QueueSupportsGraphic = DoesQueueSupportGraphic(queue, &GraphicQueue);
 
+		static thread_local std::vector<VkSemaphore> s_presentWaitSemaphores;
+		s_presentWaitSemaphores.clear();
+
 		for (uint32_t i = 0; i < pPresentInfo->swapchainCount; ++i)
 		{
 			VkSwapchainKHR swapchain = pPresentInfo->pSwapchains[i];
@@ -668,14 +710,13 @@ namespace YimMenu
 				init_info.PipelineCache             = m_VkPipelineCache;
 				init_info.DescriptorPool            = m_VkDescriptorPool;
 				init_info.Subpass                   = 0;
+				init_info.RenderPass				= m_VkRenderPass;
 				init_info.MinImageCount             = m_VkMinImageCount;
 				init_info.ImageCount                = m_VkMinImageCount;
 				init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
 				init_info.Allocator                 = m_VkAllocator;
 
 				ImGui_ImplVulkan_Init(&init_info);
-
-				ImGui_ImplVulkan_CreateFontsTexture();
 			}
 
 			ImGui_ImplVulkan_NewFrame();
@@ -752,6 +793,13 @@ namespace YimMenu
 					LOG(WARNING) << "vkQueueSubmit 3 failed with result: [" << result << "]";
 					return;
 				}
+			}
+
+			s_presentWaitSemaphores.push_back(fsd->ImageAcquiredSemaphore);
+			{
+				auto* mutablePresentInfo               = const_cast<VkPresentInfoKHR*>(pPresentInfo);
+				mutablePresentInfo->waitSemaphoreCount = static_cast<uint32_t>(s_presentWaitSemaphores.size());
+				mutablePresentInfo->pWaitSemaphores    = s_presentWaitSemaphores.data();
 			}
 		}
 	}

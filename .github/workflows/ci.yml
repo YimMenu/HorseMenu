@@ -7,7 +7,7 @@ jobs:
     runs-on: [ self-hosted, Windows ]
     name: CI
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Check CMake version
         run: cmake --version
@@ -33,7 +33,7 @@ jobs:
         working-directory: build/
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: binary
           path: build/Terminus-dev-*.dll

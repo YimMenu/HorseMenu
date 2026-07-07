@@ -25,11 +25,7 @@ namespace YimMenu
 	class NativeInvoker
 	{
 		static void DefaultHandler(rage::scrNativeCallContext* ctx);
-		static inline auto m_Handlers = std::apply(
-		    [&](auto... dummy) {
-			    return std::array{(dummy, &DefaultHandler)...};
-		    },
-		    std::array<rage::scrNativeCallContext, g_Crossmap.size()>{});
+		static inline std::array<rage::scrNativeHandler, g_Crossmap.size()> m_Handlers;
 		static inline bool m_AreHandlersCached{false};
 
 	public:
@@ -66,6 +62,9 @@ namespace YimMenu
 		template<int index, typename Ret, bool fix_vectors, typename... Args>
 		static constexpr FORCEINLINE Ret Invoke(Args&&... args)
 		{
+			if (!m_AreHandlersCached) [[unlikely]]
+				CacheHandlers();
+
 			NativeInvoker invoker{};
 
 			invoker.BeginCall();
