@@ -4,7 +4,7 @@
 #include "game/rdr/Natives.hpp"
 #include "util/Rewards.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	// TODO: Choose a reward, Delete individual chests, else we will have full pools.
 	class SpawnGoldChest : public PlayerCommand

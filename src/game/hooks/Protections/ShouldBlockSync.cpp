@@ -44,7 +44,7 @@
 
 #define BLOCK_CRASHES 1
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _LogClones("logclones", "Log Incoming Clones", "Log clone creates and clone syncs");
 	BoolCommand _AllowRemoteTPs("allowremotetp", "Allow Remote Teleports", "Allow trusted players to remote teleport you!");
@@ -59,7 +59,7 @@ namespace YimMenu::Features
 
 namespace
 {
-	using namespace YimMenu;
+	using namespace Terminus;
 
 	static const std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60, 0x6927D266};
 	static const std::unordered_set<uint32_t> g_FishModels   = {
@@ -149,7 +149,7 @@ namespace
 		return g_ValidPlayerModels.contains(model);
 	}
 
-	inline void CheckPlayerModel(YimMenu::Player player, uint32_t model)
+	inline void CheckPlayerModel(Terminus::Player player, uint32_t model)
 	{
 		if (!player)
 			return;
@@ -158,7 +158,7 @@ namespace
 			player.AddDetection(Detection::INVALID_PLAYER_MODEL);
 	}
 
-	inline YimMenu::Player GetObjectCreator(rage::netObject* object)
+	inline Terminus::Player GetObjectCreator(rage::netObject* object)
 	{
 		if (!object)
 			return nullptr;
@@ -174,7 +174,7 @@ namespace
 		return nullptr;
 	}
 
-	inline void SyncBlocked(std::string crash, YimMenu::Player source = Protections::GetSyncingPlayer())
+	inline void SyncBlocked(std::string crash, Terminus::Player source = Protections::GetSyncingPlayer())
 	{
 		if (source)
 		{
@@ -582,8 +582,8 @@ namespace
 			if (!node->IsActive())
 				return false;
 
-			if (YimMenu::Features::_LogClones.GetState())
-				YimMenu::Hooks::Protections::LogSyncNode(node, Nodes::Find((uint64_t)node), type, object, Protections::GetSyncingPlayer());
+			if (Terminus::Features::_LogClones.GetState())
+				Terminus::Hooks::Protections::LogSyncNode(node, Nodes::Find((uint64_t)node), type, object, Protections::GetSyncingPlayer());
 			return ShouldBlockNode(node, Nodes::Find((uint64_t)node), type, object);
 		}
 
@@ -591,7 +591,7 @@ namespace
 	}
 }
 
-namespace YimMenu::Hooks::Protections
+namespace Terminus::Hooks::Protections
 {
 	bool ShouldBlockSync(rage::netSyncTree* tree, NetObjType type, rage::netObject* object)
 	{

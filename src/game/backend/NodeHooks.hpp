@@ -10,7 +10,7 @@ namespace rage
 	class scrProgram;
 }
 
-namespace YimMenu
+namespace Terminus
 {
 	class NodeHooks
 	{

@@ -30,7 +30,7 @@ namespace
 	}
 }
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _LogEvents("logevents", "Log Network Events", "Log network events");
 	BoolCommand _BlockExplosions("blockexplosions", "Block Explosions", "Blocks all explosion events", false);
@@ -39,7 +39,7 @@ namespace YimMenu::Features
 	BoolCommand _BlockScriptCommand("blockscriptcommand", "Block Remote Native Calls", "Blocks all remote native call events", true);
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	static void LogScriptCommandEvent(Player sender, rage::datBitBuffer& buffer)
 	{
@@ -158,7 +158,7 @@ namespace YimMenu::Hooks
 
 		if (type == NetEventType::GIVE_CONTROL_EVENT && sourcePlayer)
 		{
-			YimMenu::Protections::SetSyncingPlayer(sourcePlayer);
+			Terminus::Protections::SetSyncingPlayer(sourcePlayer);
 		}
 
 		BaseHook::Get<Protections::HandleNetGameEvent, DetourHook<decltype(&Protections::HandleNetGameEvent)>>()->Original()(eventMgr, sourcePlayer, targetPlayer, type, index, handledBits, unk, buffer);

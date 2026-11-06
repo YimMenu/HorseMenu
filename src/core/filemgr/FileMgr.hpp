@@ -3,7 +3,7 @@
 #include "File.hpp"
 #include "Folder.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
     class FileMgr final
     {
@@ -24,6 +24,8 @@ namespace YimMenu
         { return GetInstance().GetProjectFileImpl(file); }
         [[nodiscard]] static Folder GetProjectFolder(const std::filesystem::path& folder)
         { return GetInstance().GetProjectFolderImpl(folder); }
+        [[nodiscard]] static std::optional<std::filesystem::path> MakeAbsPath(const fs::path& root, const fs::path& other)
+		{ return GetInstance().MakeAbsPathImpl(root, other); }
 
         static const std::filesystem::path& CreateFolderIfNotExists(const std::filesystem::path& folder);
         static const std::filesystem::path& EnsureFileCanBeCreated(const std::filesystem::path& file);
@@ -33,6 +35,8 @@ namespace YimMenu
 
         File GetProjectFileImpl(const std::filesystem::path& file) const;
         Folder GetProjectFolderImpl(const std::filesystem::path& folder) const;
+
+        std::optional<std::filesystem::path> MakeAbsPathImpl(const fs::path& root, const fs::path& other);
 
         static FileMgr& GetInstance()
         {

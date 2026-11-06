@@ -7,7 +7,7 @@
 #include <network/sync/vehicle/CVehicleProximityMigrationData.hpp>
 
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	void Spoofing::WriteVPMData(void* veh, CVehicleProximityMigrationData* data)
 	{

@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseObj.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
     class File final : public BaseObj
     {

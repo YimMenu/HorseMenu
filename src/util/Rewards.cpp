@@ -4,8 +4,9 @@
 #include "game/rdr/Scripts.hpp"
 #include <event/CEventGroup.hpp>
 #include <event/CEventInventoryItemPickedUp.hpp>
+#include "game/backend/Self.hpp"
 
-namespace YimMenu::Rewards
+namespace Terminus::Rewards
 {
 	void GiveReward(const RewardInfo& info)
 	{

@@ -1,6 +1,6 @@
 #include "common.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	std::atomic<bool> g_Running{true};
 	HINSTANCE g_DllInstance{nullptr};

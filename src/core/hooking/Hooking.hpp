@@ -1,7 +1,7 @@
 #pragma once
 #include "MinHook.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	template <typename T>
 	inline void* GetVF(T ptr, uint64_t index)

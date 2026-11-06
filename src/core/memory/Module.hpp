@@ -4,7 +4,7 @@
 
 #include <winternl.h>
 
-namespace YimMenu
+namespace Terminus
 {
 	class Module
 	{

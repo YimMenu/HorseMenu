@@ -2,7 +2,7 @@
 #include "core/commands/Command.hpp"
 #include "game/rdr/Player.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class PlayerCommand;
 	class PlayerAllCommand : public Command

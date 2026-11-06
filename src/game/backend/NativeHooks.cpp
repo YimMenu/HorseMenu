@@ -6,7 +6,7 @@
 #include <script/scrThread.hpp>
 
 
-namespace YimMenu
+namespace Terminus
 {
 	NativeHooks::Program::Program(rage::scrProgram* program) :
 	    m_Program(program),

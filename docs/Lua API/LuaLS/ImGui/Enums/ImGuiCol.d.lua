@@ -1,0 +1,63 @@
+---@meta
+
+---@class ImGuiCol : integer
+---@field Text integer 
+---@field TextDisabled integer 
+---@field WindowBg integer Background of normal windows
+---@field ChildBg integer Background of child windows
+---@field PopupBg integer Background of popups, menus, tooltips windows
+---@field Border integer 
+---@field BorderShadow integer 
+---@field FrameBg integer Background of checkbox, radio button, plot, slider, text input
+---@field FrameBgHovered integer 
+---@field FrameBgActive integer 
+---@field TitleBg integer Title bar
+---@field TitleBgActive integer Title bar when focused
+---@field TitleBgCollapsed integer Title bar when collapsed
+---@field MenuBarBg integer 
+---@field ScrollbarBg integer 
+---@field ScrollbarGrab integer 
+---@field ScrollbarGrabHovered integer 
+---@field ScrollbarGrabActive integer 
+---@field CheckMark integer Checkbox tick and RadioButton circle
+---@field SliderGrab integer 
+---@field SliderGrabActive integer 
+---@field Button integer 
+---@field ButtonHovered integer 
+---@field ButtonActive integer 
+---@field Header integer Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
+---@field HeaderHovered integer 
+---@field HeaderActive integer 
+---@field Separator integer 
+---@field SeparatorHovered integer 
+---@field SeparatorActive integer 
+---@field ResizeGrip integer Resize grip in lower-right and lower-left corners of windows.
+---@field ResizeGripHovered integer 
+---@field ResizeGripActive integer 
+---@field InputTextCursor integer InputText cursor/caret
+---@field TabHovered integer Tab background, when hovered
+---@field Tab integer Tab background, when tab-bar is focused & tab is unselected
+---@field TabSelected integer Tab background, when tab-bar is focused & tab is selected
+---@field TabSelectedOverline integer Tab horizontal overline, when tab-bar is focused & tab is selected
+---@field TabDimmed integer Tab background, when tab-bar is unfocused & tab is unselected
+---@field TabDimmedSelected integer Tab background, when tab-bar is unfocused & tab is selected
+---@field TabDimmedSelectedOverline integer horizontal overline, when tab-bar is unfocused & tab is selected
+---@field PlotLines integer 
+---@field PlotLinesHovered integer 
+---@field PlotHistogram integer 
+---@field PlotHistogramHovered integer 
+---@field TableHeaderBg integer Table header background
+---@field TableBorderStrong integer Table outer and header borders (prefer using Alpha=1.0 here)
+---@field TableBorderLight integer Table inner borders (prefer using Alpha=1.0 here)
+---@field TableRowBg integer Table row background (even rows)
+---@field TableRowBgAlt integer Table row background (odd rows)
+---@field TextLink integer Hyperlink color
+---@field TextSelectedBg integer Selected text inside an InputText
+---@field TreeLines integer Tree node hierarchy outlines when using ImGuiTreeNodeFlags_DrawLines
+---@field DragDropTarget integer Rectangle highlighting a drop target
+---@field UnsavedMarker integer Unsaved Document marker (in window title and tabs)
+---@field NavCursor integer Color of keyboard/gamepad navigation cursor/rectangle, when visible
+---@field NavWindowingHighlight integer Highlight window when using CTRL+TAB
+---@field NavWindowingDimBg integer Darken/colorize entire screen behind the CTRL+TAB window list, when active
+---@field ModalWindowDimBg integer Darken/colorize entire screen behind a modal window, when one is active
+ImGuiCol = {}

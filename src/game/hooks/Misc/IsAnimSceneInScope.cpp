@@ -1,7 +1,7 @@
 #include "core/hooking/DetourHook.hpp"
 #include "game/hooks/Hooks.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Misc::IsAnimSceneInScope(rage::netObject* scene, CNetGamePlayer* player, int* reason)
 	{

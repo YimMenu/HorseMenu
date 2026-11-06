@@ -1,6 +1,6 @@
 #include "ScriptLocal.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	void* ScriptLocal::Get() const
 	{

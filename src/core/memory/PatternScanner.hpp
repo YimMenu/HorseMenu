@@ -5,7 +5,7 @@
 #include <functional>
 #include <vector>
 
-namespace YimMenu
+namespace Terminus
 {
 	class Module;
 	using PatternFunc = std::function<void(PointerCalculator)>;
@@ -21,6 +21,7 @@ namespace YimMenu
 
 		template<Signature S>
 		void Add(const Pattern<S>& pattern, const PatternFunc& func);
+		void Add(const IPattern& pattern, const PatternFunc& func);
 		bool Scan();
 
 	private:
@@ -31,5 +32,10 @@ namespace YimMenu
 	inline void PatternScanner::Add(const Pattern<S>& pattern, const PatternFunc& func)
 	{
 		m_Patterns.push_back(std::move(std::make_pair(&pattern, func)));
+	}
+
+	inline void PatternScanner::Add(const IPattern& pattern, const PatternFunc& func)
+	{
+		m_Patterns.push_back(std::make_pair(&pattern, func));
 	}
 }

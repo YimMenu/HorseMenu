@@ -2,7 +2,7 @@
 #include "game/hooks/Hooks.hpp"
 #include "game/backend/ScriptPatches.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	int Script::ScriptVM(void* stack, void** globals, bool* globals_enabled, rage::scrProgram* program, rage::scrThreadContext* ctx)
 	{

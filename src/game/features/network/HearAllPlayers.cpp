@@ -1,10 +1,10 @@
-﻿#include "core/commands/LoopedCommand.hpp"
+#include "core/commands/LoopedCommand.hpp"
 #include "game/backend/NativeHooks.hpp"
 #include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	void _0x58125B691F6827D5(rage::scrNativeCallContext* ctx);
 	void _0x08797A8C03868CB8(rage::scrNativeCallContext* ctx);

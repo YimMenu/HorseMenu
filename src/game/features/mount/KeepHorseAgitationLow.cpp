@@ -1,7 +1,7 @@
 #include "core/commands/LoopedCommand.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	//Horse still kicks player off on max agitation on online
 	class KeepHorseAgitationLow : public LoopedCommand

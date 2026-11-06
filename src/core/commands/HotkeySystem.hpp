@@ -1,7 +1,7 @@
 #pragma once
 #include "core/settings/IStateSerializer.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	struct CommandLink
 	{

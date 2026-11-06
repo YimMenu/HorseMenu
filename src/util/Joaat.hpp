@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <string_view>
 
-namespace YimMenu
+namespace Terminus
 {
 	using joaat_t = std::uint32_t;
 

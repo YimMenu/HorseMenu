@@ -1,6 +1,6 @@
 #pragma once
 
-namespace YimMenu
+namespace Terminus
 {
 	struct MapInfo
 	{

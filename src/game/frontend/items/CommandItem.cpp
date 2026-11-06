@@ -3,7 +3,7 @@
 #include "core/commands/Command.hpp"
 #include "game/backend/FiberPool.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	CommandItem::CommandItem(joaat_t id, std::optional<std::string> label_override) :
 	    m_Command(Commands::GetCommand<Command>(id)),

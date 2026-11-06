@@ -9,7 +9,7 @@
 #include "util/teleport.hpp"
 
 
-namespace YimMenu
+namespace Terminus
 {
 	inline ContextOperationsMenu ContextMenuDefault = ContextOperationsMenu("Default", {ContextMenuOperation{"Error", [&](Entity) {
 	                                                                                                         }}});
@@ -18,7 +18,7 @@ namespace YimMenu
 	    {
 	        ContextMenuOperation{"Set Selected",
 	            [&](Entity entity) {
-		            YimMenu::Players::SetSelected(Ped(entity.GetHandle()).GetPlayer());
+		            Terminus::Players::SetSelected(Ped(entity.GetHandle()).GetPlayer());
 	            }},
 	        {"Teleport to",
 	            [&](Entity entity) {
@@ -48,7 +48,7 @@ namespace YimMenu
 	        ContextMenuOperation{"Explode",
 	            [&](Entity entity) {
 		            auto pedCoords = entity.GetPosition();
-		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
+		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::EXP_TAG_GRENADE, 10.0f, true, false, 1.0f);
 	            }},
 	        {"Kill",
 	            [&](Entity entity) {
@@ -82,7 +82,7 @@ namespace YimMenu
 	        ContextMenuOperation{"Explode",
 	            [&](Entity entity) {
 		            auto pedCoords = entity.GetPosition();
-		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
+		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::EXP_TAG_GRENADE, 10.0f, true, false, 1.0f);
 	            }},
 	        {"Apply Force",
 	            [&](Entity entity) {
@@ -112,7 +112,7 @@ namespace YimMenu
 	        ContextMenuOperation{"Explode",
 	            [&](Entity entity) {
 		            auto pedCoords = entity.GetPosition();
-		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
+		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::EXP_TAG_GRENADE, 10.0f, true, false, 1.0f);
 	            }},
 	        {"Apply Force",
 	            [&](Entity entity) {

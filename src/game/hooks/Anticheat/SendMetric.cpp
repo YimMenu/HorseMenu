@@ -8,13 +8,13 @@
 #include <rage/rlMetric.hpp>
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _LogMetrics("logmetrics", "Log Metrics", "Log game telemetry");
 	BoolCommand _BlockAllTelemetry("blockalltelemetry", "Block All Telemetry", "Block all game telemetry");
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Anticheat::SendMetric(void* manager, rage::rlMetric* metric)
 	{

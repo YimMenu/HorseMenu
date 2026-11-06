@@ -1,7 +1,7 @@
 #include "ScriptMgr.hpp"
 #include "game/rdr/Scripts.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	Script::Script(std::function<void()> callback) :
 	    m_Callback(callback),

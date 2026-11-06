@@ -9,7 +9,7 @@
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Pools.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _ContextMenu("ctxmenu", "Context Menu", "Enables a context menu that allows you to perform actions on nearby entities and players");
 	BoolCommand _ContextPlayers("ctxmenuplayers", "Show Players", "Should the context menu show players?");
@@ -18,7 +18,7 @@ namespace YimMenu::Features
 	BoolCommand _ContextObjects("ctxmenuobjects", "Show Objects", "Should the context menu show objects?");
 }
 
-namespace YimMenu
+namespace Terminus
 {
 	inline double CumulativeDistanceToMiddleOfScreen(rage::fvector2 screenPos)
 	{
@@ -44,7 +44,7 @@ namespace YimMenu
 
 		if (includePlayers && *Pointers.IsSessionStarted)
 		{
-			for (auto& [id, plyr] : YimMenu::Players::GetPlayers())
+			for (auto& [id, plyr] : Terminus::Players::GetPlayers())
 			{
 				if (plyr.IsValid() || plyr.GetPed().GetPointer<void*>())
 					updateClosestEntity(PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(id));

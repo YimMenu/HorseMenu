@@ -6,7 +6,7 @@
 
 #include <mutex>
 
-namespace YimMenu
+namespace Terminus
 {
 
 	Notification Notifications::ShowImpl(std::string title, std::string message, NotificationType type, int duration, std::function<void()> context_function, std::string context_function_name)

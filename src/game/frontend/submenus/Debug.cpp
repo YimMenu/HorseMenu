@@ -12,12 +12,12 @@
 #include "game/rdr/Object.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _LogScriptLaunches("logscriptlaunches", "Log Script Launches", "Log script launches");
 }
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	Debug::Debug() :
 	    Submenu::Submenu("Debug")

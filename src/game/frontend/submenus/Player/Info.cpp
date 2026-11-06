@@ -10,7 +10,7 @@
 
 #include <network/rlGamerInfo.hpp>
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	std::string BuildIPStr(int field1, int field2, int field3, int field4)
 	{
@@ -30,7 +30,7 @@ namespace YimMenu::Submenus
 			if (Players::GetSelected().IsValid())
 			{
 				ImGui::Text(Players::GetSelected().GetName());
-				ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+				ImGui::Checkbox("Spectate", &Terminus::g_Spectating);
 				ImGui::Checkbox("Block Explosions", &Players::GetSelected().GetData().m_BlockExplosions);
 				ImGui::Checkbox("Block Particles", &Players::GetSelected().GetData().m_BlockParticles);
 				if (ImGui::Checkbox("Ghost Mode", &Players::GetSelected().GetData().m_GhostMode))

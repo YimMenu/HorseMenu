@@ -3,7 +3,7 @@
 #include "game/rdr/Natives.hpp"
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class Drunk : public LoopedCommand
 	{

@@ -7,7 +7,7 @@
 #include "game/backend/PlayerData.hpp"
 #include "game/backend/Players.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Toxic::SerializeIceSessionOfferRequest(rage::datBitBuffer* buffer, __int64 request)
 	{

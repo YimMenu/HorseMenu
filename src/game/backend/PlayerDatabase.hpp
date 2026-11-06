@@ -28,7 +28,7 @@ namespace nlohmann
 	};
 }
 
-namespace YimMenu
+namespace Terminus
 {
 	enum class Detection : uint32_t;
 	struct persistent_player;

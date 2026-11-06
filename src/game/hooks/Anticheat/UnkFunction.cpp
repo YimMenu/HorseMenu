@@ -4,7 +4,7 @@
 #include <rage/rlJson.hpp>
 #include <rage/rlMetric.hpp>
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Anticheat::UnkFunction(__int64 cb)
 	{

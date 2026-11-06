@@ -5,7 +5,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class AntiAfk : public LoopedCommand
 	{

@@ -1,7 +1,7 @@
 #pragma once
 #include "game/backend/SavedVariables.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	static void DrawSavedVariableEdit(const SavedVariableBase& var, void* value)
 	{

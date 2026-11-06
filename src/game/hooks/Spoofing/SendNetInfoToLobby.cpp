@@ -6,7 +6,7 @@
 #include <network/rlGamerInfo.hpp>
 
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Spoofing::SendNetInfoToLobby(rage::rlGamerInfo* local_player, int64_t a2, int64_t a3, DWORD* a4)
 	{

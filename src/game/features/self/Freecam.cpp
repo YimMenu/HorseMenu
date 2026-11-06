@@ -8,7 +8,7 @@
 #include "util/teleport.hpp"
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static FloatCommand _FreecamSpeed{"freecamspeed", "Freecam Speed", "How fast the freecam will move positions", 0.01f, 10.0f, 0.10f};
 

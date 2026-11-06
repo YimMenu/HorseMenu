@@ -8,7 +8,7 @@
 
 #include <network/CNetGamePlayer.hpp>
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	int Protections::HandleCloneSync(void* mgr, CNetGamePlayer* src, CNetGamePlayer* dst, uint16_t objectType, uint16_t objectId, rage::datBitBuffer* buffer, int a7, int a8, void* a9)
 	{
@@ -25,9 +25,9 @@ namespace YimMenu::Hooks
 			return 0;
 		}
 
-		YimMenu::Protections::SetSyncingPlayer(src);
+		Terminus::Protections::SetSyncingPlayer(src);
 		auto result = BaseHook::Get<Protections::HandleCloneSync, DetourHook<decltype(&Protections::HandleCloneSync)>>()->Original()(mgr, src, dst, objectType, objectId, buffer, a7, a8, a9);
-		YimMenu::Protections::SetSyncingPlayer(nullptr);
+		Terminus::Protections::SetSyncingPlayer(nullptr);
 		return result;
 	}
 }

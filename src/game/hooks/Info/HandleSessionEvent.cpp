@@ -6,7 +6,7 @@
 #include <network/rlScSessionEvent.hpp>
 
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	void Info::HandleSessionEvent(rage::rlScSessionMultiplayer* mp, CNetworkScServerConnection* cxn, rage::rlScSessionEvent* evt)
 	{

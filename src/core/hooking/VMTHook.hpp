@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <string_view>
 
-namespace YimMenu
+namespace Terminus
 {
 	class VMTHook
 	{

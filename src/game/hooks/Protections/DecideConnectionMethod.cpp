@@ -3,12 +3,12 @@
 #include "game/pointers/Pointers.hpp"
 #include "core/commands/BoolCommand.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _UseRelayConnections("userelaycxns", "Use Relay Connections", "Blocks certain kick types. Note that this may cause connection problems and does not hide your IP address");
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	constexpr uint8_t g_JmpPatch[] = {0xE9, 0x83, 0x00, 0x00, 0x00, 0x90};
 	constexpr uint8_t g_JmpRestore[] = {0x0F, 0x84, 0x82, 0x00, 0x00, 0x00};

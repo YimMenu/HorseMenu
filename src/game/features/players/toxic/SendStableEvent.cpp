@@ -8,7 +8,7 @@
 #include "game/rdr/Scripts.hpp"
 #include "game/rdr/data/StableEvents.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static ListCommand _MountInstance{"mountinstance", "Mount Instance", "Which type of vehicle/mount to target", Data::g_MountInstance, 0};
 	static ListCommand _StableMountEvent{"stablemountevent", "Stable Mount Event", "The event to send", Data::g_StableMountEvent, 0};

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace YimMenu
+namespace Terminus
 {
 	static inline float m_CardSizeX          = 350.f;
 	static inline float m_CardSizeY          = 100.f;

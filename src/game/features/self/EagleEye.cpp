@@ -4,7 +4,7 @@
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class EagleEye : public LoopedCommand
 	{
@@ -12,7 +12,7 @@ namespace YimMenu::Features
 
 		virtual void OnTick() override
 		{
-			auto id = YimMenu::Self::GetPlayer().GetId();
+			auto id = Terminus::Self::GetPlayer().GetId();
 			if (!PLAYER::_IS_SECONDARY_SPECIAL_ABILITY_ACTIVE(id)) // Checks if Eagle Eye is active before toggling it on
 			{
 				PLAYER::_SECONDARY_SPECIAL_ABILITY_SET_ACTIVE(id);                   // Toggles Eagle Eye on
@@ -23,7 +23,7 @@ namespace YimMenu::Features
 
 		virtual void OnDisable() override
 		{
-			auto id = YimMenu::Self::GetPlayer().GetId();
+			auto id = Terminus::Self::GetPlayer().GetId();
 			PLAYER::_SECONDARY_SPECIAL_ABILITY_SET_DISABLED(id, 1);             // Disables Eagle Eye
 			PLAYER::_MODIFY_INFINITE_TRAIL_VISION(id, 0);                       // Turns off Infinite Eagle Eye
 			PLAYER::_EAGLE_EYE_SET_PLUS_FLAG_DISABLED(id, false); // Setting to truee breaks it, leave it at false

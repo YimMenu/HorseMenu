@@ -4,7 +4,7 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include <script/scrThread.hpp>
 
-namespace YimMenu
+namespace Terminus
 {
 	std::uint32_t SavedVariableBase::CalculateOffset()
 	{

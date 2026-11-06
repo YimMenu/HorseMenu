@@ -3,7 +3,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/data/WeaponTypes.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class GiveAllWeapons : public Command
 	{
@@ -11,9 +11,11 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			// Sort of works
-			for (const auto& weapon : Data::g_WeaponTypes)
-				WEAPON::GIVE_WEAPON_TO_PED(Self::GetPed().GetHandle(), Joaat(weapon), 9999, true, false, 0, true, 0.5f, 1.0f, 0x2CD419DC, true, 0.0f, false);
+			for (int i = 0; i < Data::g_WeaponTypesCount; i++)
+			{
+				auto selfPlayer = Self::GetPed();
+				WEAPON::GIVE_WEAPON_TO_PED(selfPlayer.GetHandle(), Joaat(Data::g_WeaponTypes[i]), 9999, false, true, 0, true, 0.5f, 1.0f, 0x2CD419DC, false, 0.0f, false);
+			}
 		}
 	};
 

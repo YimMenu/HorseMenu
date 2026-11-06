@@ -2,7 +2,7 @@
 #include "game/rdr/Enums.hpp"
 
 // TODO: way too much code duplication in this component
-namespace YimMenu
+namespace Terminus
 {
 	class MapControl
 	{

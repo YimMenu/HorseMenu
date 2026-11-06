@@ -2,7 +2,7 @@
 #include "CategoryUtils.hpp"
 #include "util/Joaat.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	struct PedExpressionDefinition : public ModelDefinition
 	{

@@ -9,14 +9,14 @@
 #include <network/rlGamerInfo.hpp>
 #include <network/CNetworkPlayerMgr.hpp>
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static BoolCommand _VoiceChatOverride{"voicechatoverride", "VC Override", "Plays the audio.wav file in the project folder through voice chat. The wave file must be encoded with a mono 16 bit 16kHz PCM format. You have to reset voice chat settings whenever you load the menu for the sound to play"};
 	static BoolCommand _HideVoiceChatSender{"hidevcsender", "Hide VC Sender", "Prevents your name from appearing for other players when you are talking through voice chat. This only takes effect if sender spoofing is disabled"};
 	static BoolCommand _ForceSendVoiceChat{"forcesendvc", "Force Send VC", "Attempts to bypass mutes and other local restrictions on remote peers"};
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	static Player GetPlayerFromPeerAddress(rage::netPeerAddress* address)
 	{
@@ -36,7 +36,7 @@ namespace YimMenu::Hooks
 	{
 		uint64_t* sender = reinterpret_cast<std::uint64_t*>(reinterpret_cast<std::uint64_t>(packet) + 4);
 		auto target      = GetPlayerFromPeerAddress(address);
-		auto fake_sender = YimMenu::Voice::GetSpoofingPlayer();
+		auto fake_sender = Terminus::Voice::GetSpoofingPlayer();
 
 		if (Features::_ForceSendVoiceChat.GetState())
 		{

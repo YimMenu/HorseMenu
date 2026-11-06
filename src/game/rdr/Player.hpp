@@ -15,7 +15,7 @@ namespace rage
 	class netPeerAddress;
 }
 
-namespace YimMenu
+namespace Terminus
 {
 	class PlayerData;
 
@@ -58,6 +58,7 @@ namespace YimMenu
 		uint32_t GetConnectionType();
 		int GetRank();
 		int GetHonor();
+		int GetTeam();
 		Language GetLanguage();
 		District GetDistrict();
 		Region GetRegion();

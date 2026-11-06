@@ -1,7 +1,7 @@
 #pragma once
 
 // TODO: use an actual hash function
-namespace YimMenu
+namespace Terminus
 {
 	class PatternHash
 	{

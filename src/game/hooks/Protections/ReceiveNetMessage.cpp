@@ -15,6 +15,9 @@
 #include "util/Chat.hpp"
 #include "util/Helpers.hpp"
 #include "core/frontend/widgets/imgui_colors.h"
+#include "Lua/LuaMgr.hpp"
+#include "Lua/LuaMenuEvent.hpp"
+
 
 #include <array>
 #include <network/CNetGamePlayer.hpp>
@@ -25,13 +28,13 @@
 #include <rage/datBitBuffer.hpp>
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _LogPackets("logpackets", "Log Packets", "Log Packets");
 	BoolCommand _LockLobby("locklobby", "Lock Lobby", "Allows no one to enter your session");
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	static bool GetMessageType(NetMessageType& type, rage::datBitBuffer& buffer)
 	{
@@ -190,6 +193,7 @@ namespace YimMenu::Hooks
 					color = ImGui::Colors::Red;
 
 				RenderChatMessage(message, player->m_GamerInfo.m_Name, color);
+				LuaJIT::LuaManager::DispatchMenuEvent<eMenuEvent::ChatMessageReceived>(static_cast<int>(player->m_PlayerIndex), std::string(message));
 			}
 			break;
 		}

@@ -4,7 +4,7 @@
 
 #include <unordered_set>
 
-namespace YimMenu
+namespace Terminus
 {
 	struct PedScenarioDefinition : public ModelDefinition
 	{

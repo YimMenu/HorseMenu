@@ -1,0 +1,43 @@
+---@meta
+
+---@class ImGuiStyleVar : integer
+---@field Alpha integer float     Alpha
+---@field DisabledAlpha integer float     DisabledAlpha
+---@field WindowPadding integer ImVec2    WindowPadding
+---@field WindowRounding integer float     WindowRounding
+---@field WindowBorderSize integer float     WindowBorderSize
+---@field WindowMinSize integer ImVec2    WindowMinSize
+---@field WindowTitleAlign integer ImVec2    WindowTitleAlign
+---@field ChildRounding integer float     ChildRounding
+---@field ChildBorderSize integer float     ChildBorderSize
+---@field PopupRounding integer float     PopupRounding
+---@field PopupBorderSize integer float     PopupBorderSize
+---@field FramePadding integer ImVec2    FramePadding
+---@field FrameRounding integer float     FrameRounding
+---@field FrameBorderSize integer float     FrameBorderSize
+---@field ItemSpacing integer ImVec2    ItemSpacing
+---@field ItemInnerSpacing integer ImVec2    ItemInnerSpacing
+---@field IndentSpacing integer float     IndentSpacing
+---@field CellPadding integer ImVec2    CellPadding
+---@field ScrollbarSize integer float     ScrollbarSize
+---@field ScrollbarRounding integer float     ScrollbarRounding
+---@field ScrollbarPadding integer float     ScrollbarPadding
+---@field GrabMinSize integer float     GrabMinSize
+---@field GrabRounding integer float     GrabRounding
+---@field ImageBorderSize integer float     ImageBorderSize
+---@field TabRounding integer float     TabRounding
+---@field TabBorderSize integer float     TabBorderSize
+---@field TabMinWidthBase integer float     TabMinWidthBase
+---@field TabMinWidthShrink integer float     TabMinWidthShrink
+---@field TabBarBorderSize integer float     TabBarBorderSize
+---@field TabBarOverlineSize integer float     TabBarOverlineSize
+---@field TableAngledHeadersAngle integer float     TableAngledHeadersAngle
+---@field TableAngledHeadersTextAlign integer ImVec2  TableAngledHeadersTextAlign
+---@field TreeLinesSize integer float     TreeLinesSize
+---@field TreeLinesRounding integer float     TreeLinesRounding
+---@field ButtonTextAlign integer ImVec2    ButtonTextAlign
+---@field SelectableTextAlign integer ImVec2    SelectableTextAlign
+---@field SeparatorTextBorderSize integer float     SeparatorTextBorderSize
+---@field SeparatorTextAlign integer ImVec2    SeparatorTextAlign
+---@field SeparatorTextPadding integer ImVec2    SeparatorTextPadding
+ImGuiStyleVar = {}

@@ -4,7 +4,7 @@
 #include <string>
 
 
-namespace YimMenu
+namespace Terminus
 {
 	using namespace al;
 	enum class LogColor;

@@ -2,7 +2,7 @@
 #include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	// This is *not* noreturn
 	void Misc::ThrowFatalError(int code, int fileHash, int fileLine)

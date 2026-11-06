@@ -15,7 +15,7 @@
 #include <player/CPlayerInfo.hpp>
 
 
-namespace YimMenu
+namespace Terminus
 {
 	Player::Player(uint8_t id)
 	{
@@ -178,6 +178,14 @@ namespace YimMenu
 
 		auto data = ScriptGlobal(1155150).As<PLAYER_PERSONA_DATA*>();
 		return data->Entries[GetId()].HonorInfo.HonorLevel;
+	}
+
+	int Player::GetTeam()
+	{
+		if (!IsValid())
+			return 0;
+
+		return PLAYER::GET_PLAYER_TEAM(GetId());
 	}
 
 	Language Player::GetLanguage()

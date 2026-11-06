@@ -4,7 +4,7 @@
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	PlayerCommandItem::PlayerCommandItem(joaat_t id, std::optional<std::string> label_override) :
 	    m_Command(Commands::GetCommand<PlayerCommand>(id)),

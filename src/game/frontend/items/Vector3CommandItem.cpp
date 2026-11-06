@@ -5,7 +5,7 @@
 #include "game/backend/SavedLocations.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	Vector3CommandItem::Vector3CommandItem(joaat_t id, std::optional<std::string> label_override) :
 	    m_Command(Commands::GetCommand<Vector3Command>(id)),

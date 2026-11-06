@@ -4,7 +4,7 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/rdr/Natives.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	void SpawnObject(uint32_t hash, Vector3 coords);
 }

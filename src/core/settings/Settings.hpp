@@ -1,7 +1,7 @@
 #pragma once
 #include "core/filemgr/File.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class IStateSerializer;
 

@@ -1,7 +1,7 @@
 #include "MapControls.hpp"
 #include "game/rdr/Natives.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	MapControl::MapControl(NativeInputs control) :
 	    m_ControlIndex(control)

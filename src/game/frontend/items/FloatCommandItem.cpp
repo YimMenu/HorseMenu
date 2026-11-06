@@ -4,7 +4,7 @@
 #include "core/commands/FloatCommand.hpp"
 #include "core/frontend/widgets/toggle/imgui_toggle.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	FloatCommandItem::FloatCommandItem(joaat_t id, std::optional<std::string> label_override) :
 	    m_Command(Commands::GetCommand<FloatCommand>(id)),

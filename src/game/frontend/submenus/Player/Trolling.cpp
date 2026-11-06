@@ -1,6 +1,6 @@
 #include "Trolling.hpp"
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	std::shared_ptr<Category> BuildTrollingMenu()
 	{

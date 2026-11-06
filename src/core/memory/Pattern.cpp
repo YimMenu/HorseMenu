@@ -1,6 +1,6 @@
 #include "Pattern.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	static inline constexpr std::optional<uint8_t> ToHex(char const c)
 	{

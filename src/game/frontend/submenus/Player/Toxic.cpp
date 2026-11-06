@@ -1,6 +1,6 @@
 #include "Toxic.hpp"
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	std::shared_ptr<Category> BuildToxicMenu()
 	{
@@ -9,7 +9,13 @@ namespace YimMenu::Submenus
 		auto general = std::make_shared<Group>("General");
 		general->AddItem(std::make_shared<PlayerCommandItem>("kill"_J));
 		general->AddItem(std::make_shared<PlayerCommandItem>("explode"_J));
+		general->AddItem(std::make_shared<BoolCommandItem>("explodeactive"_J));
+		general->AddItem(std::make_shared<PlayerCommandItem>("explodeloop"_J));
 		general->AddItem(std::make_shared<PlayerCommandItem>("lightning"_J));
+		general->AddItem(std::make_shared<BoolCommandItem>("lightningactive"_J));
+		general->AddItem(std::make_shared<PlayerCommandItem>("lightningloop"_J));
+		general->AddItem(std::make_shared<BoolCommandItem>("rainbowactive"_J));
+		general->AddItem(std::make_shared<PlayerCommandItem>("rainbowloop"_J));
 		general->AddItem(std::make_shared<PlayerCommandItem>("defensive"_J));
 		general->AddItem(std::make_shared<PlayerCommandItem>("offensive"_J));
 		general->AddItem(std::make_shared<PlayerCommandItem>("remotebolas"_J));

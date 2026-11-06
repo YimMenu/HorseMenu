@@ -2,7 +2,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class ClimbSteepSlopes : public LoopedCommand
 	{

@@ -8,7 +8,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/data/TickerEvents.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static ListCommand _TickerMessage{"tickermessage", "Ticker Message", "The ticker message to send", Data::g_TickerEvents, 2};
 

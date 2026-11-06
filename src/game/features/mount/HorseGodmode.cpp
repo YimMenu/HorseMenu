@@ -1,7 +1,7 @@
 #include "core/commands/LoopedCommand.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class HorseGodmode : public LoopedCommand
 	{

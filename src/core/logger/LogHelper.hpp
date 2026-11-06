@@ -5,7 +5,7 @@
 
 #include "core/filemgr/File.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 #define ADD_COLOR_TO_STREAM(color) "\x1b[" << int(color) << "m"
 #define RESET_STREAM_COLOR "\x1b[0m"
@@ -48,9 +48,9 @@ namespace YimMenu
 		bool m_AttachConsole;
 		bool m_DidConsoleExist;
 
-		std::string_view m_ConsoleTitle;
-		DWORD m_OriginalConsoleMode;
-		HANDLE m_ConsoleHandle;
+		std::string_view m_ConsoleTitle{};
+		DWORD m_OriginalConsoleMode{};
+		HANDLE m_ConsoleHandle{};
 
 		std::ofstream m_ConsoleOut;
 		File m_File = std::filesystem::path();

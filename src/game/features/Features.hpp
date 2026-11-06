@@ -1,7 +1,7 @@
 #pragma once
 #include <script/types.hpp>
 
-namespace YimMenu
+namespace Terminus
 {
 	// TODO: move these out
 	inline bool g_Spectating    = false;

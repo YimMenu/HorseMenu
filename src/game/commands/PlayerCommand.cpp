@@ -1,7 +1,7 @@
 #include "PlayerCommand.hpp"
 #include "game/backend/Players.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	PlayerAllCommand::PlayerAllCommand(std::string name, std::string label, std::string description, int num_args, PlayerCommand* parent) :
 	    Command(name + "all", label, description, num_args),

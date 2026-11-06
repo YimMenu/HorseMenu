@@ -2,7 +2,7 @@
 #include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static BoolCommand _Deadeye{"keepdeadeyefilled", "Deadeye", "Keep Deadeye Bar Filled", true};
 	static BoolCommand _Stamina{"keepstaminafilled", "Stamina", "Keep Stamina Bar Filled", true};

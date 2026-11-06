@@ -1,7 +1,7 @@
 #pragma once
 #include "game/rdr/Entity.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class MapEntity
 	{

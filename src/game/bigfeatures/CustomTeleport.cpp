@@ -2,7 +2,7 @@
 #include "core/filemgr/FileMgr.hpp"
 #include "core/frontend/Notifications.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	std::filesystem::path CustomTeleport::GetTelelocationsFile()
 	{

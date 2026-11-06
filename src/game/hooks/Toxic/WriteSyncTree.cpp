@@ -4,7 +4,7 @@
 #include "util/Joaat.hpp"
 #include "game/backend/NodeHooks.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Hooks::Toxic::WriteSyncTree(void* tree, int type, int flags, rage::netObject* object, rage::datBitBuffer* buffer, void* a6, std::uint8_t player_id, void* a8)
 	{

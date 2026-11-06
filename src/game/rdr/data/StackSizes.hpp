@@ -1,6 +1,6 @@
 #pragma once
 
-namespace YimMenu::Data
+namespace Terminus::Data
 {
 	const inline std::unordered_map<const char*, int> g_StackSizes = {
 	    {"MICRO", 128},

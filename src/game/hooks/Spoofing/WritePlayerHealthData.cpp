@@ -5,7 +5,7 @@
 #include <network/sync/player/CPlayerHealthData.hpp>
 
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	void Spoofing::WritePlayerHealthData(void* iface, CPlayerHealthData* data)
 	{

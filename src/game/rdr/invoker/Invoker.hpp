@@ -6,7 +6,7 @@
 #include <script/types.hpp>
 
 enum class NativeIndex;
-namespace YimMenu
+namespace Terminus
 {
 	class CustomCallContext : public rage::scrNativeCallContext
 	{

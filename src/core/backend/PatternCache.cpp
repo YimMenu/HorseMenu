@@ -1,7 +1,7 @@
 #include "PatternCache.hpp"
 #include "core/filemgr/FileMgr.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	std::optional<int> PatternCache::GetCachedOffsetImpl(PatternHash hash)
 	{ 

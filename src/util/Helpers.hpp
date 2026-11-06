@@ -1,9 +1,14 @@
 #pragma once
+
 #include "game/pointers/Pointers.hpp"
+#include "game/rdr/Natives.hpp"
+#include "game/rdr/Ped.hpp"
+#include "game/rdr/Vehicle.hpp"
 #include <rage/datBitBuffer.hpp>
 
+
 // TODO: remove this file
-namespace YimMenu::Helpers
+namespace Terminus::Helpers
 {
 	inline bool WriteArray(void* array, int size, rage::datBitBuffer* buffer)
 	{

@@ -9,7 +9,7 @@
 
 #include <script/globals/ACEHostData.hpp>
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Protections::ReceiveArrayUpdate(void* array, CNetGamePlayer* sender, rage::datBitBuffer* buffer, int size, int16_t cycle)
 	{

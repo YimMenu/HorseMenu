@@ -3,7 +3,7 @@
 #include "Enums.hpp"
 #include "Vehicle.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class Ped : public Entity
 	{
@@ -43,9 +43,13 @@ namespace YimMenu
 
 		// relationships
 		bool IsEnemy();
+		bool IsFriendly();
 
 		// scale
 		void SetScale(float scale);
+
+		// money
+		void SetPedMoney(int amount);
 
 		//quality
 		void SetQuality(int quality);

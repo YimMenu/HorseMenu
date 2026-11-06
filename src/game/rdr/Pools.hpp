@@ -5,7 +5,7 @@
 #include <rage/fwBasePool.hpp>
 
 
-namespace YimMenu
+namespace Terminus
 {
 	rage::fwBasePool* GetPedPool();
 	rage::fwBasePool* GetObjectPool();

@@ -3,7 +3,7 @@
 #include "game/backend/ScriptPatches.hpp"
 #include "game/hooks/Hooks.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Script::InitNativeTables(rage::scrProgram* program)
 	{

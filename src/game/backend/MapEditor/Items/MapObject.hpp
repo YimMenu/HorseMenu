@@ -2,7 +2,7 @@
 #include "MapEntity.hpp"
 #include "util/Joaat.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class MapObject final : public MapEntity
 	{

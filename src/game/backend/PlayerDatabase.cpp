@@ -1,7 +1,7 @@
 #include "PlayerDatabase.hpp"
 #include "Detections.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	using json = nlohmann::json;
 

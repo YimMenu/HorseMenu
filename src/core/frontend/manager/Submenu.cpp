@@ -1,9 +1,12 @@
 #include "Submenu.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	void Submenu::SetActiveCategory(const std::shared_ptr<Category> category)
 	{
+		if (m_ActiveCategory == category)
+			return;
+
 		m_ActiveCategory = category;
 	}
 
@@ -17,6 +20,12 @@ namespace YimMenu
 
 	void Submenu::DrawCategorySelectors()
 	{
+		if (m_Categories.size() == 1)
+		{
+			SetActiveCategory(m_Categories.back());
+			return;
+		}
+
 		for (auto& category : m_Categories)
 		{
 			if (category)

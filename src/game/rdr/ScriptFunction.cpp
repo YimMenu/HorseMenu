@@ -5,7 +5,7 @@
 #include <script/scrThread.hpp>
 #include <rage/tlsContext.hpp>
 
-namespace YimMenu
+namespace Terminus
 {
 	// TODO: code duplication
 	static std::optional<int32_t> GetCodeLocationByPattern(rage::scrProgram* program, const SimplePattern& pattern)

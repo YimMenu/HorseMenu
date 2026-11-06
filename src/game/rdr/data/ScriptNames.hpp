@@ -1,7 +1,7 @@
 #pragma once
 #include "util/Joaat.hpp"
 
-namespace YimMenu::Data
+namespace Terminus::Data
 {
 	const std::vector<std::pair<std::uint32_t, const char*>> g_SpScriptNames = {
 	    {"aberdeenpigfarm"_J, "aberdeenpigfarm"},

@@ -4,13 +4,13 @@
 
 #include <network/rlGamerInfo.hpp>
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _LogPostMessage{"logpostmessage", "Log Post Message", "Log messages sent via Post Message"};
 }
 
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Protections::PPostMessage(int localGamerIndex, rage::rlGamerHandle* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds)
 	{

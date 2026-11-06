@@ -1,6 +1,6 @@
 #pragma once
 
-namespace YimMenu::Data
+namespace Terminus::Data
 {
     const inline std::unordered_map<std::string, rage::fvector3> g_JailCells = {
             {"SD1", rage::fvector3{2503.8, -1311.4, 49.0}},

@@ -3,7 +3,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/data/AmmoTypes.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class GiveAllAmmo : public Command
 	{

@@ -1,6 +1,6 @@
 #include "MapInfo.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	void MapInfo::Setup()
 	{

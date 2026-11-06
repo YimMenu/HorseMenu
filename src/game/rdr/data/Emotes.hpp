@@ -1,7 +1,7 @@
 #include <array>
 #include "game/rdr/Enums.hpp"
 
-namespace YimMenu::Emote
+namespace Terminus::Emote
 {
     constexpr int numCategories = 5;
     constexpr int maxEmotesPerCategory = 37;

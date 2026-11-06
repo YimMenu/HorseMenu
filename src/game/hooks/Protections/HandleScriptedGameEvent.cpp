@@ -9,11 +9,13 @@
 #include "game/hooks/Hooks.hpp"
 #include "game/rdr/data/StableEvents.hpp"
 #include "game/rdr/data/TickerEvents.hpp"
+#include "Lua/LuaMgr.hpp"
+#include "Lua/LuaMenuEvent.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/CScriptedGameEvent.hpp>
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _LogScriptEvents("logtses", "Log Script Events", "Log script events");
 	BoolCommand _BlockHonorEvent("blockhonormanipulation", "Block Honor Event", "Blocks all honor manipulation events", true);
@@ -27,14 +29,16 @@ namespace YimMenu::Features
 	BoolCommand _BlockKickFromMissionLobby("blockkickfrommissionlobby", "Block Kick From Mission Lobby", "Blocks players from kicking you from mission lobbies", true);
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Protections::HandleScriptedGameEvent(CScriptedGameEvent* event, CNetGamePlayer* src, CNetGamePlayer* dst)
 	{
+		const auto argCount = event->m_DataSize / 8;
+
 		if (Features::_LogScriptEvents.GetState())
 		{
 			std::string script_args = "{ ";
-			for (std::size_t i = 0; i < event->m_DataSize / 8; i++)
+			for (std::size_t i = 0; i < argCount; i++)
 			{
 				if (i)
 					script_args += ", ";
@@ -48,6 +52,19 @@ namespace YimMenu::Hooks
 			             << "\n\tArgs: " << script_args << "\n\tScript: " << HEX(event->m_ScriptId.m_ScriptHash)
 			             << "\n\tHas Metadata Index: " << (event->m_HasScriptMetadataIdx ? "YES" : "NO")
 			             << "\n\tID Overriden: " << (event->m_ScriptIdOverridden ? "YES" : "NO");
+		}
+
+		if (LuaJIT::LuaManager::GetModules().size() > 0)
+		{
+			std::vector<int32_t> eventArgs{};
+			eventArgs.reserve(argCount);
+			for (int i = 0; i < argCount; i++)
+				eventArgs.push_back(event->m_Data[i]);
+
+			int pid = static_cast<int>(src->m_PlayerIndex);
+			auto result = LuaJIT::LuaManager::DispatchMenuEvent<eMenuEvent::ScriptedGameEventReceived, bool>(pid, eventArgs);
+			if (result.has_value())
+				return true;
 		}
 
 		auto evnt_id = static_cast<ScriptEvent>((int)event->m_Data[0]);

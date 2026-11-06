@@ -4,7 +4,7 @@
 #include "Settings.hpp"
 
 
-namespace YimMenu
+namespace Terminus
 {
 	Settings::Settings() :
 	    m_SettingsFile(),
@@ -50,9 +50,7 @@ namespace YimMenu
 		while (!m_LateLoaders.empty())
 		{
 			if (auto component = std::move(m_LateLoaders.front()))
-			{
 				LoadComponent(component);
-			}
 
 			m_LateLoaders.pop();
 		}
@@ -90,6 +88,12 @@ namespace YimMenu
 	void Settings::SaveComponentImpl(IStateSerializer* serializer)
 	{
 		//LOG(VERBOSE) << "Saving component: " << serializer->GetSerializerComponentName();
+		if (!m_Json.is_object())
+		{
+			LOG(FATAL) << "Json object is corrupted. Unable to save settings.";
+			return;
+		}
+
 		serializer->SaveState(m_Json[serializer->GetSerializerComponentName()]);
 	}
 
@@ -98,7 +102,7 @@ namespace YimMenu
 		std::ofstream file(m_SettingsFile, std::ios::out | std::ios::trunc);
 		file << "{}" << std::endl;
 		file.close();
-		m_Json = "{}";
+		m_Json            = nlohmann::json::object();
 		m_InitialLoadDone = true;
 	}
 

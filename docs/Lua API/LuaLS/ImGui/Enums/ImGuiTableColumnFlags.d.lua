@@ -1,0 +1,32 @@
+---@meta
+
+---@class ImGuiTableColumnFlags : integer
+---@field None integer 
+---@field Disabled integer Overriding/master disable flag: hide column, won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)
+---@field DefaultHide integer Default as a hidden/disabled column.
+---@field DefaultSort integer Default as a sorting column.
+---@field WidthStretch integer Column will stretch. Preferable with horizontal scrolling disabled (default if table sizing policy is _SizingStretchSame or _SizingStretchProp).
+---@field WidthFixed integer Column will not stretch. Preferable with horizontal scrolling enabled (default if table sizing policy is _SizingFixedFit and table is resizable).
+---@field NoResize integer Disable manual resizing.
+---@field NoReorder integer Disable manual reordering this column, this will also prevent other columns from crossing over this column.
+---@field NoHide integer Disable ability to hide/disable this column.
+---@field NoClip integer Disable clipping for this column (all NoClip columns will render in a same draw command).
+---@field NoSort integer Disable ability to sort on this field (even if ImGuiTableFlags_Sortable is set on the table).
+---@field NoSortAscending integer Disable ability to sort in the ascending direction.
+---@field NoSortDescending integer Disable ability to sort in the descending direction.
+---@field NoHeaderLabel integer TableHeadersRow() will submit an empty label for this column. Convenient for some small columns. Name will still appear in context menu or in angled headers. You may append into this cell by calling TableSetColumnIndex() right after the TableHeadersRow() call.
+---@field NoHeaderWidth integer Disable header text width contribution to automatic column width.
+---@field PreferSortAscending integer Make the initial sort direction Ascending when first sorting on this column (default).
+---@field PreferSortDescending integer Make the initial sort direction Descending when first sorting on this column.
+---@field IndentEnable integer Use current Indent value when entering cell (default for column 0).
+---@field IndentDisable integer Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.
+---@field AngledHeader integer TableHeadersRow() will submit an angled header row for this column. Note this will add an extra row.
+---@field IsEnabled integer Status: is enabled == not hidden by user/api (referred to as "Hide" in _DefaultHide and _NoHide) flags.
+---@field IsVisible integer Status: is visible == is enabled AND not clipped by scrolling.
+---@field IsSorted integer Status: is currently part of the sort specs
+---@field IsHovered integer Status: is hovered by mouse
+---@field WidthMask_ integer 
+---@field IndentMask_ integer 
+---@field StatusMask_ integer 
+---@field NoDirectResize_ integer [Internal] Disable user resizing this column directly (it may however we resized indirectly from its left edge)
+ImGuiTableColumnFlags = {}

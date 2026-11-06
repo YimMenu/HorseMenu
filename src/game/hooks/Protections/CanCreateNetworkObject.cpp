@@ -9,12 +9,12 @@
 #include <entity/fwEntity.hpp>
 #include <network/netObject.hpp>
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _BetterEntityCheck("betterentitycheck", "Better Entity Check (BETA)", "Attempts to fix several entity spawning bugs. This is still experimental, use with caution", true);
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	static void DeleteAmbientObjects(rage::fwBasePool* pool, int to_delete)
 	{ 

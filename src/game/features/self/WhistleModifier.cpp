@@ -3,7 +3,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static FloatCommand _WhistlePitch{"whistlepitch", "Whistle Pitch", "The pitch of your whistle", 0.0f, 1.0f, 0.0f};
 	static FloatCommand _WhistleClarity{"whistleclarity", "Whistle Clarity", "The clarity of your whistle", 0.0f, 1.0f, 0.0f};

@@ -2,7 +2,7 @@
 #include <string>
 #include "util/Joaat.hpp"
 
-namespace YimMenu::Data
+namespace Terminus::Data
 {
 	const std::unordered_map<std::uint32_t, const char*> g_PedModels = 
 	{

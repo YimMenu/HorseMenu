@@ -4,7 +4,7 @@
 #include "game/backend/Self.hpp"
 #include "game/backend/NativeHooks.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	void DECOR_SET_INT(rage::scrNativeCallContext* ctx);
 

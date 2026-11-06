@@ -72,7 +72,7 @@ namespace
 	constexpr int horseRearRightToeBone1  = 41274;
 }
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	// Players
 	BoolCommand _ESPDrawPlayers("espdrawplayers", "Draw Players", "Should the ESP draw players?");
@@ -104,7 +104,7 @@ namespace YimMenu::Features
 
 }
 
-namespace YimMenu
+namespace Terminus
 {
 	static ImVec4 death_bg         = ImVec4(0.117f, 0.113f, 0.172f, .75f);
 	static ImVec4 armor_blue_bg    = ImVec4(0.36f, 0.71f, 0.89f, .75f);

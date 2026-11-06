@@ -2,7 +2,7 @@
 #include "game/hooks/Hooks.hpp"
 #include "game/backend/ScriptMgr.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Script::RunScriptThreads(void* threads, int unk)
 	{

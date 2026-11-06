@@ -4,7 +4,7 @@
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static constexpr NativeInputs controls[] = {NativeInputs::INPUT_SPRINT, NativeInputs::INPUT_MOVE_UP_ONLY, NativeInputs::INPUT_MOVE_DOWN_ONLY, NativeInputs::INPUT_MOVE_LEFT_ONLY, NativeInputs::INPUT_MOVE_RIGHT_ONLY, NativeInputs::INPUT_DUCK, NativeInputs::INPUT_HORSE_STOP};
 	static FloatCommand _NoclipSpeed{"noclipspeed", "Noclip Speed", "Features", 0.1f, 15.0f, 0.5f};
