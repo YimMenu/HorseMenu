@@ -169,7 +169,7 @@ namespace Terminus
 		const auto r2  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(player, handle);
 		const auto rel = std::max(r1, r2);
 
-		return rel >= 3 && rel <= 6; // 6 is for enemies that are not yet aggro (guards, revenue agents, etc.)
+		return rel >= 3 && rel <= 5;
 	}
 
 	bool Ped::IsFriendly()

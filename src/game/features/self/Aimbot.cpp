@@ -120,10 +120,13 @@ namespace Terminus::Features
 			{
 				const int handle = ped.GetHandle();
 
+				if (handle == 0 || handle == playerHandle || handle == mountHandle || handle == lastMountHandle)
+					continue;
+
 				if (ped.IsDead() || !ENTITY::_GET_ENTITY_CAN_BE_DAMAGED(handle))
 					continue;
 
-				if (handle == 0 || handle == playerHandle || handle == mountHandle || handle == lastMountHandle)
+				if (_AimbotIgnoreFriendlies.GetState() && IsFriendly(ped))
 					continue;
 
 				const Vector3 pos = ped.GetPosition();
@@ -138,9 +141,6 @@ namespace Terminus::Features
 
 				bool found = false;
 
-				if (isAnimal && _AimbotAnimals.GetState())
-					found = _AimbotWildAnimals.GetState() ? isWildAnimal : true;
-
 				if (isPlayer && _AimbotPlayers.GetState())
 					found = true;
 
@@ -150,13 +150,10 @@ namespace Terminus::Features
 				if (isNPC && _AimbotNPC.GetState())
 					found = true;
 
-				if (isNPC && _AimbotNPC.GetState())
-					found = true;
+				if (isAnimal && _AimbotAnimals.GetState())
+					found = _AimbotWildAnimals.GetState() ? isWildAnimal : true;
 
 				if (!found)
-					continue;
-
-				if (_AimbotIgnoreFriendlies.GetState() && IsFriendly(ped))
 					continue;
 
 				if (!ENTITY::HAS_ENTITY_CLEAR_LOS_TO_ENTITY(playerHandle, handle, 17))
@@ -192,10 +189,13 @@ namespace Terminus::Features
 
 		virtual void OnTick() override
 		{
-			if (PED::IS_PED_RELOADING(PLAYER::PLAYER_PED_ID()))
+			const int playerHandle = Self::GetPed().GetHandle();
+			const int playerIndex  = Self::GetPlayer().GetId();
+
+			if (PED::IS_PED_RELOADING(playerHandle))
 				return;
 
-			if (!PLAYER::IS_PLAYER_FREE_AIMING(Self::GetPlayer().GetId()))
+			if (!PLAYER::IS_PLAYER_FREE_AIMING(playerIndex))
 			{
 				Reset();
 				return;
@@ -262,7 +262,6 @@ namespace Terminus::Features
 				camTarget = targetDir;
 			}
 
-			int playerHandle      = Self::GetPed().GetHandle();
 			constexpr float RADPI = 180.0f / std::numbers::pi;
 			float camMagnitude    = std::hypot(camTarget.x, camTarget.y, camTarget.z);
 			float camHeading      = atan2f(camTarget.x, camTarget.y) * RADPI;

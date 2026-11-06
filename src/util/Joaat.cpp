@@ -4,6 +4,9 @@ namespace Terminus
 {
 	constexpr joaat_t Joaat(const std::string_view str)
 	{
+		if (str.empty())
+			return 0;
+
 		joaat_t hash = 0;
 		for (auto c : str)
 		{
