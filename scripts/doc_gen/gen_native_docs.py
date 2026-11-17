@@ -51,6 +51,7 @@ lua_types = {
 	"sol::stack_object": "any",
 	"std::string": "string",
 	"uintptr_t": "integer",
+	"Vector3": "Vector3",
 	"Volume": "integer",
 }
 
