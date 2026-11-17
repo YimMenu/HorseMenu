@@ -154,11 +154,11 @@ function ANIMSCENE.BLOCK_ANIM_SCENE_FADING_NEXT_FRAME(p0, p1) end
 function ANIMSCENE.SET_ANIM_SCENE_ORIGIN(animScene, posX, posY, posZ, rotX, rotY, rotZ, order) end
 
 ---@param animScene integer
----@param position any
----@param rotation any
+---@param position Vector3
+---@param rotation Vector3
 ---@param order integer
----@return any
----@return any
+---@return Vector3
+---@return Vector3
 function ANIMSCENE.GET_ANIM_SCENE_ORIGIN(animScene, position, rotation, order) end
 
 ---@param animScene integer
@@ -276,12 +276,12 @@ function ANIMSCENE.GET_ANIM_SCENE_INT(animScene, name) end
 
 ---@param animScene integer
 ---@param entityName any
----@param matrix any
+---@param matrix Vector3
 ---@param p3 boolean
 ---@param playbackListName any
 ---@param p5 integer
 ---@return boolean
----@return any
+---@return Vector3
 function ANIMSCENE.GET_ANIM_SCENE_ENTITY_LOCATION_DATA(animScene, entityName, matrix, p3, playbackListName, p5) end
 
 ---@param entity integer

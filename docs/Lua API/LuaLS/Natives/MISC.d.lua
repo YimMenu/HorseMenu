@@ -185,7 +185,7 @@ function MISC.GET_WIND_SPEED() end
 ---@param WindDir number
 function MISC.SET_WIND_DIRECTION(WindDir) end
 
----@return any
+---@return Vector3
 function MISC.GET_WIND_DIRECTION() end
 
 ---@param RainVal number
@@ -271,10 +271,10 @@ function MISC.GET_GROUND_Z_FOR_3D_COORD(VecCoorsX, VecCoorsY, VecCoorsZ, ReturnZ
 ---@param VecCoorsY number
 ---@param VecCoorsZ number
 ---@param ReturnZ number
----@param ReturnNormal any
+---@param ReturnNormal Vector3
 ---@return boolean
 ---@return number
----@return any
+---@return Vector3
 function MISC.GET_GROUND_Z_AND_NORMAL_FOR_3D_COORD(VecCoorsX, VecCoorsY, VecCoorsZ, ReturnZ, ReturnNormal) end
 
 ---@param p0 any
@@ -340,7 +340,7 @@ function MISC.GET_HEADING_FROM_VECTOR_2D(VecX, VecY) end
 ---@param vEndY number
 ---@param vEndZ number
 ---@param bClampToLine boolean
----@return any
+---@return Vector3
 function MISC.GET_CLOSEST_POINT_ON_LINE(rPointToTestX, rPointToTestY, rPointToTestZ, vStartX, vStartY, vStartZ, vEndX, vEndY, vEndZ, bClampToLine) end
 
 ---@param vscrPntAX number
@@ -463,10 +463,10 @@ function MISC.SET_FADE_IN_AFTER_LOAD(bFadeIn) end
 ---@param vecCoordsZ number
 ---@param fHeading number
 ---@param bIsAnAutosave boolean
----@param vecReturnCoords any
+---@param vecReturnCoords Vector3
 ---@param fReturnHeading number
 ---@return boolean
----@return any
+---@return Vector3
 ---@return number
 function MISC.OVERRIDE_SAVE_HOUSE(bOverride, vecCoordsX, vecCoordsY, vecCoordsZ, fHeading, bIsAnAutosave, vecReturnCoords, fReturnHeading) end
 
@@ -490,10 +490,10 @@ function MISC.SHOOT_SINGLE_BULLET_BETWEEN_COORDS(VecStartCoorsX, VecStartCoorsY,
 function MISC.FIRE_SINGLE_BULLET(args) end
 
 ---@param ModelHashKey integer
----@param returnMin any
----@param returnMax any
----@return any
----@return any
+---@param returnMin Vector3
+---@param returnMax Vector3
+---@return Vector3
+---@return Vector3
 function MISC.GET_MODEL_DIMENSIONS(ModelHashKey, returnMin, returnMax) end
 
 ---@param address integer
@@ -582,22 +582,22 @@ function MISC.IS_PROJECTILE_TYPE_WITHIN_DISTANCE(vecCoorsX, vecCoorsY, vecCoorsZ
 ---@param ped integer
 ---@param WeaponType integer
 ---@param distance number
----@param positionOut any
+---@param positionOut Vector3
 ---@param needsToBeStationary boolean
 ---@param mustBeOwnedByThisPed boolean
 ---@return boolean
----@return any
+---@return Vector3
 function MISC.GET_COORDS_OF_PROJECTILE_TYPE_WITHIN_DISTANCE(ped, WeaponType, distance, positionOut, needsToBeStationary, mustBeOwnedByThisPed) end
 
 ---@param ped integer
 ---@param WeaponType integer
 ---@param distance number
----@param positionOut any
+---@param positionOut Vector3
 ---@param EntityIndex integer
 ---@param needsToBeStationary boolean
 ---@param mustBeOwnedByThisPed boolean
 ---@return boolean
----@return any
+---@return Vector3
 ---@return integer
 function MISC.GET_PROJECTILE_OF_PROJECTILE_TYPE_WITHIN_DISTANCE(ped, WeaponType, distance, positionOut, EntityIndex, needsToBeStationary, mustBeOwnedByThisPed) end
 

@@ -102,7 +102,7 @@ function OBJECT.HAS_CLOSEST_OBJECT_OF_TYPE_BEEN_BROKEN(scrVecCoorsX, scrVecCoors
 ---@param vOffsetX number
 ---@param vOffsetY number
 ---@param vOffsetZ number
----@return any
+---@return Vector3
 function OBJECT.GET_OFFSET_FROM_COORD_AND_HEADING_IN_WORLD_COORDS(vPosX, vPosY, vPosZ, fHeading, vOffsetX, vOffsetY, vOffsetZ) end
 
 ---@param doorHash integer
@@ -488,11 +488,11 @@ function OBJECT.SET_LOCAL_PLAYER_CAN_COLLECT_PORTABLE_PICKUPS(CanCollect) end
 ---@param minDist number
 ---@param maxDist number
 ---@param p5 any
----@return any
+---@return Vector3
 function OBJECT.GET_SAFE_PICKUP_COORDS(VecInCoorsX, VecInCoorsY, VecInCoorsZ, minDist, maxDist, p5) end
 
 ---@param PickupID integer
----@return any
+---@return Vector3
 function OBJECT.GET_PICKUP_COORDS(PickupID) end
 
 ---@param Type integer

@@ -153,7 +153,7 @@ function FLOCK._0x9E13ACC38BA8F9C3(p0, p1) end
 function FLOCK._0x34B9C4D86DF2C2F3(p0) end
 
 ---@param p0 any
----@return any
+---@return Vector3
 function FLOCK._0x1DA6CB02071055D5(p0) end
 
 ---@param p0 any

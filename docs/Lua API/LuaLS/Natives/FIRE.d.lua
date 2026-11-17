@@ -59,12 +59,12 @@ function FIRE.STOP_FIRE_IN_RANGE(VecPosX, VecPosY, VecPosZ, fRadius) end
 ---@param scaleZ number
 function FIRE._STOP_FIRE_IN_BOX(posX, posY, posZ, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) end
 
----@param VecClosestFirePos any
+---@param VecClosestFirePos Vector3
 ---@param VecTestPosX number
 ---@param VecTestPosY number
 ---@param VecTestPosZ number
 ---@return boolean
----@return any
+---@return Vector3
 function FIRE.GET_CLOSEST_FIRE_POS(VecClosestFirePos, VecTestPosX, VecTestPosY, VecTestPosZ) end
 
 ---@param p0 any

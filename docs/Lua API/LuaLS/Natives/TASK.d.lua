@@ -1583,11 +1583,11 @@ function TASK.REMOVE_COVER_POINT(index) end
 function TASK.DOES_SCRIPTED_COVER_POINT_EXIST_AT_COORDS(VecCoorsX, VecCoorsY, VecCoorsZ, p3) end
 
 ---@param index integer
----@return any
+---@return Vector3
 function TASK.GET_SCRIPTED_COVER_POINT_COORDS(index) end
 
 ---@param p0 any
----@return any
+---@return Vector3
 function TASK._0xE116F6F2DA2D777E(p0) end
 
 ---@param p0 any
@@ -1894,11 +1894,11 @@ function TASK._GET_PED_USING_SCENARIO_POINT(scenario) end
 
 ---@param scenario integer
 ---@param p1 boolean
----@return any
+---@return Vector3
 function TASK._GET_SCENARIO_POINT_COORDS(scenario, p1) end
 
 ---@param p0 any
----@return any
+---@return Vector3
 function TASK._0x91CB5E431F579BA1(p0) end
 
 ---@param p0 any
@@ -2369,7 +2369,7 @@ function TASK._0x2B8AF29A78024BD3(p0) end
 function TASK._0x0365000D8BF86531(p0) end
 
 ---@param p0 any
----@return any
+---@return Vector3
 function TASK._0x865732725536EE39(p0) end
 
 function TASK._0x0E184495B27BB57D() end
@@ -2821,9 +2821,9 @@ function TASK.WAYPOINT_RECORDING_GET_NUM_POINTS(RecordingName, iOutNumPoints) en
 
 ---@param RecordingName any
 ---@param iWaypoint integer
----@param vOutCoord any
+---@param vOutCoord Vector3
 ---@return boolean
----@return any
+---@return Vector3
 function TASK.WAYPOINT_RECORDING_GET_COORD(RecordingName, iWaypoint, vOutCoord) end
 
 ---@param RecordingName any

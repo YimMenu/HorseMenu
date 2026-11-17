@@ -82,12 +82,12 @@ function CAM.IS_CAM_RENDERING(CamIndex) end
 function CAM.GET_RENDERING_CAM() end
 
 ---@param CameraIndex integer
----@return any
+---@return Vector3
 function CAM.GET_CAM_COORD(CameraIndex) end
 
 ---@param CameraIndex integer
 ---@param RotOrder integer
----@return any
+---@return Vector3
 function CAM.GET_CAM_ROT(CameraIndex, RotOrder) end
 
 ---@param CameraIndex integer
@@ -324,11 +324,11 @@ function CAM._0x450769C833D58844() end
 ---@param Duration integer
 function CAM.SET_WIDESCREEN_BORDERS(bSet, Duration) end
 
----@return any
+---@return Vector3
 function CAM.GET_GAMEPLAY_CAM_COORD() end
 
 ---@param RotOrder integer
----@return any
+---@return Vector3
 function CAM.GET_GAMEPLAY_CAM_ROT(RotOrder) end
 
 ---@return number
@@ -532,11 +532,11 @@ function CAM.SET_FIRST_PERSON_AIM_CAM_RELATIVE_PITCH_LIMITS_THIS_UPDATE(MinRelat
 ---@param p0 any
 function CAM._0xC205B3C54C6A4E37(p0) end
 
----@return any
+---@return Vector3
 function CAM.GET_FINAL_RENDERED_CAM_COORD() end
 
 ---@param RotOrder integer
----@return any
+---@return Vector3
 function CAM.GET_FINAL_RENDERED_CAM_ROT(RotOrder) end
 
 ---@return number

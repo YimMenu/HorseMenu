@@ -61,7 +61,7 @@ function PERSCHAR._IS_PERSISTENT_CHARACTER_VALID(persChar) end
 function PERSCHAR._DELETE_PERSCHAR(persChar) end
 
 ---@param p0 any
----@return any
+---@return Vector3
 function PERSCHAR._0x5EE6FCCC9C832CA2(p0) end
 
 ---@param p0 any
@@ -74,7 +74,7 @@ function PERSCHAR._0x59C7AD6FEA2AC449(p0, p1, p2, p3) end
 function PERSCHAR._0xBB68908CD11AEBDC(persChar) end
 
 ---@param p0 any
----@return any
+---@return Vector3
 function PERSCHAR._0x94995829ED15A598(p0) end
 
 ---@param persChar integer

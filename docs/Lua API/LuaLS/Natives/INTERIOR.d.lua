@@ -8,9 +8,9 @@ INTERIOR = {}
 function INTERIOR.IS_VALID_INTERIOR(InteriorInstanceIndex) end
 
 ---@param interior integer
----@param position any
+---@param position Vector3
 ---@param nameHash integer
----@return any
+---@return Vector3
 ---@return integer
 function INTERIOR.GET_INTERIOR_LOCATION_AND_NAMEHASH(interior, position, nameHash) end
 
@@ -19,7 +19,7 @@ function INTERIOR.GET_INTERIOR_LOCATION_AND_NAMEHASH(interior, position, nameHas
 function INTERIOR._GET_INTERIOR_MINIMAP_HASH(interior) end
 
 ---@param interior integer
----@return any
+---@return Vector3
 function INTERIOR._GET_INTERIOR_POSITION(interior) end
 
 ---@return boolean

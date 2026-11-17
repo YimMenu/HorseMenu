@@ -286,12 +286,12 @@ function PHYSICS._0x1D97DA8ACB5D2582(ropeId, p1) end
 function PHYSICS._CREATE_ROPE_WINDING_ABILITY(ropeId, p1, ropeModelType, length, p4) end
 
 ---@param ropeID integer
----@return any
+---@return Vector3
 function PHYSICS.GET_ROPE_LAST_VERTEX_COORD(ropeID) end
 
 ---@param ropeID integer
 ---@param vtxIndex integer
----@return any
+---@return Vector3
 function PHYSICS.GET_ROPE_VERTEX_COORD(ropeID, vtxIndex) end
 
 ---@param ropeID integer
