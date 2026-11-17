@@ -2,7 +2,6 @@
 #include <sol/sol.hpp>
 
 #include "core/filemgr/FileMgr.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "util/Singleton.hpp"
 #include "LuaModule.hpp"
 #include "LuaLibrary.hpp"
@@ -33,6 +32,7 @@ namespace Terminus::LuaJIT
 		void RegisterLibraryImpl(LuaLibrary* library);
 		void RegisterLibrariesImpl(sol::state& L);
 		void UpdateImpl();
+		void TickScriptsImpl();
 
 	public:
 		struct DisabledModule
@@ -54,6 +54,11 @@ namespace Terminus::LuaJIT
 		static void Update()
 		{
 			GetInstance().UpdateImpl();
+		}
+
+		static void TickScripts()
+		{
+			GetInstance().TickScriptsImpl();
 		}
 
 		static void RegisterLibrary(LuaLibrary* library)

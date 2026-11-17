@@ -3,6 +3,7 @@
 #include "../LuaLibrary.hpp"
 #include "../LuaMenuEvent.hpp"
 #include "../LuaModule.hpp"
+#include "game/backend/Players.hpp"
 
 
 namespace Terminus::LuaJIT
@@ -74,9 +75,9 @@ namespace Terminus::LuaJIT
 			* param event<eMenuEvent.ChatMessageReceived> The event to handle.
 			* param callback<fun(playerId: integer, chatMsg: string)> The function to execute.		
 			@*/
-			menu["RegisterEventHandler"] = [&](int evnt, sol::protected_function fun) {
+			menu["RegisterEventHandler"] = [&](int evnt, sol::protected_function func) {
 				if (auto mod = GetModuleFromLuaState(L))
-					mod->m_MenuEventCallbacks[static_cast<eMenuEvent>(evnt)].push_back(fun);
+					mod->m_MenuEventCallbacks[static_cast<eMenuEvent>(evnt)].push_back(std::move(func));
 			};
 
 			/*@terminus.function Menu.RegisterImGui Registers an ImGui function to be drawn in the menu.~~NOTE: This is currently a work in progress and each script is only allowed one callback registration.
@@ -94,6 +95,13 @@ namespace Terminus::LuaJIT
 				}
 
 				mod->m_GuiCallback = std::move(func);
+			};
+
+			/*@terminus.function Menu.GetSelectedPlayer
+			* return Player player The currently selected player in the menu's player list.
+			@*/
+			menu["GetSelectedPlayer"] = []() {
+				return Players::GetSelected();
 			};
 
 			/*@terminus.function Menu.UnloadThisModule Unloads the caller script.

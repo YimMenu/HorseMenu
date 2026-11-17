@@ -11,16 +11,6 @@ namespace Terminus::LuaJIT
 	{
 		using LuaLibrary::LuaLibrary;
 
-	private:
-		static inline void RegisterTask(sol::protected_function fn, sol::optional<int> delay, sol::this_state s)
-		{
-			if (auto mod = GetModuleFromLuaState(s.lua_state(), "Failed to run script! Module pointer is null."))
-			{
-				int millis = std::max(0, delay.value_or(0));
-				mod->RegisterTask(fn, static_cast<std::chrono::milliseconds>(millis));
-			}
-		}
-
 	public:
 		void Register(sol::state& L) override
 		{
@@ -28,10 +18,6 @@ namespace Terminus::LuaJIT
 
 			* function RunInFiber Executes a callback in a fiber context
 			* param callback<function> The callback to execute
-
-			* function RunInFiberAfterDelay Executes a callback in a fiber context after a delay
-			* param callback<function> The callback to execute
-			* param delay<integer> Delay in milliseconds.
 			
 			* function Sleep
 			* param ms<integer> Sleep time in milliseconds
@@ -49,13 +35,9 @@ namespace Terminus::LuaJIT
 			@*/
 			auto scrTable = L["Script"].get_or_create<sol::table>();
 
-			// TODO: give each task a fiber slice
-			scrTable["RunInFiber"] = [](sol::protected_function fn, sol::this_state state) {
-				RegisterTask(fn, 0, state);
-			};
-
-			scrTable["RunInFiberAfterDelay"] = [](sol::protected_function fn, int delayMs, sol::this_state state) {
-				RegisterTask(fn, delayMs, state);
+			scrTable["RunInFiber"] = [&](sol::protected_function fn, sol::this_state s) {
+				if (auto mod = GetModuleFromLuaState(L, "Failed to run script! Module pointer is null."))
+					mod->RegisterTask(std::move(fn), s);
 			};
 
 			scrTable["Sleep"] = sol::yielding([](int millis) {

@@ -2,6 +2,7 @@
 
 #include "../LuaLibrary.hpp"
 #include "../LuaModule.hpp"
+#include "game/rdr/Natives.hpp"
 #include "game/rdr/Pools.hpp"
 
 
@@ -10,6 +11,43 @@ namespace Terminus::LuaJIT
 	class LuaEntitiesLib : public LuaLibrary
 	{
 		using LuaLibrary::LuaLibrary;
+
+	private:
+		template<auto GetPool>
+		static int GetEntityFromBlip(int blipIndex)
+		{
+			if (!MAP::DOES_BLIP_EXIST(blipIndex) || !MAP::_IS_BLIP_ATTACHED_TO_ANY_ENTITY(blipIndex))
+				return 0;
+
+			for (auto ent : GetPool())
+			{
+				const int handle = ent.GetHandle();
+
+				if (!ENTITY::DOES_ENTITY_EXIST(handle))
+					continue;
+
+				if (!MAP::_DOES_ENTITY_HAVE_BLIP(handle))
+					continue;
+
+				if (MAP::GET_BLIP_FROM_ENTITY(handle) == blipIndex)
+					return handle;
+			}
+
+			return 0;
+		}
+
+		template<auto GetPool>
+		static std::vector<int> GetEntitiesAsHandles()
+		{
+			auto entities = GetPool();
+			std::vector<int> out{};
+			out.reserve(entities.size());
+
+			for (auto e : entities)
+				out.push_back(e.GetHandle());
+
+			return out;
+		}
 
 	public:
 		void Register(sol::state& L) override
@@ -27,51 +65,47 @@ namespace Terminus::LuaJIT
 			
 			* function GetAllPickupsAsHandles
 			* return table<integer,integer> pickups Array of handles
+			
+			* function GetPedFromBlip
+			* param blipIndex<integer>
+			* return integer ped entity handle or 0
+			
+			* function GetVehicleFromBlip
+			* param blipIndex<integer>
+			* return integer vehicle entity handle or 0
+			
+			* function GetObjectFromBlip
+			* param blipIndex<integer>
+			* return integer object entity handle or 0
 			@*/
 			auto entities = L["Entities"].get_or_create<sol::table>();
 
 			entities["GetAllPedsAsHandles"] = []() {
-				auto peds = Pools::GetPeds();
-				std::vector<int> outPeds{};
-				outPeds.reserve(peds.size());
-
-				for (auto ped : peds)
-					outPeds.push_back(ped.GetHandle());
-
-				return outPeds;
+				return GetEntitiesAsHandles<Pools::GetPeds>();
 			};
 
 			entities["GetAllVehiclesAsHandles"] = []() {
-				auto vehicles = Pools::GetVehicles();
-				std::vector<int> outVehs{};
-				outVehs.reserve(vehicles.size());
-
-				for (auto veh : vehicles)
-					outVehs.push_back(veh.GetHandle());
-
-				return outVehs;
+				return GetEntitiesAsHandles<Pools::GetVehicles>();
 			};
 
 			entities["GetAllObjectsAsHandles"] = []() {
-				auto objects = Pools::GetObjects();
-				std::vector<int> outObjects{};
-				outObjects.reserve(objects.size());
-
-				for (auto obj : objects)
-					outObjects.push_back(obj.GetHandle());
-
-				return outObjects;
+				return GetEntitiesAsHandles<Pools::GetObjects>();
 			};
 
 			entities["GetAllPickupsAsHandles"] = []() {
-				auto pickups = Pools::GetPickups();
-				std::vector<int> outPickups{};
-				outPickups.reserve(pickups.size());
+				return GetEntitiesAsHandles<Pools::GetPickups>();
+			};
 
-				for (auto p : pickups)
-					outPickups.push_back(p.GetHandle());
+			entities["GetPedFromBlip"] = [](int blipIndex) {
+				return GetEntityFromBlip<Pools::GetPeds>(blipIndex);
+			};
 
-				return outPickups;
+			entities["GetVehicleFromBlip"] = [](int blipIndex) {
+				return GetEntityFromBlip<Pools::GetVehicles>(blipIndex);
+			};
+
+			entities["GetObjectFromBlip"] = [](int blipIndex) {
+				return GetEntityFromBlip<Pools::GetObjects>(blipIndex);
 			};
 		}
 	};

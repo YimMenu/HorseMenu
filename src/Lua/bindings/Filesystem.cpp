@@ -12,7 +12,7 @@ namespace Terminus::LuaJIT
 		using LuaLibrary::LuaLibrary;
 
 	private:
-		fs::path GetModuleRoot(sol::state& L)
+		static inline fs::path GetModuleRoot(sol::state_view L)
 		{
 			if (auto mod = GetModuleFromLuaState(L))
 				return mod->GetRoot();
@@ -20,26 +20,48 @@ namespace Terminus::LuaJIT
 			return {};
 		}
 
-		inline auto Iterator(sol::state& L, const LuaPath& path)
+		static std::tuple<bool, std::string> RemovePath(const sol::state_view& s, const LuaPath& path, bool emptyOnly = false)
+		{
+			if (!path.Exists())
+				return std::make_tuple(false, "File not found");
+
+			auto modRoot  = GetModuleRoot(s);
+			auto modEntry = modRoot / "main.lua";
+			auto& pathFs  = path.Get();
+
+			if (pathFs == modRoot || pathFs == modEntry)
+				return std::make_tuple(false, "Can not remove module's root path or entry point!");
+
+			std::error_code ec{};
+			bool success;
+			if (emptyOnly)
+				success = fs::remove(path.Get(), ec);
+			else
+				success = fs::remove_all(path.Get(), ec) > 0;
+
+			return std::make_tuple(success, success ? "" : "An error has occured.");
+		}
+
+		static inline auto Iterator(const sol::state_view& s, const LuaPath& path)
 		{
 			auto iterator = std::make_shared<std::filesystem::recursive_directory_iterator>(path.Get(), fs::directory_options::skip_permission_denied);
 			auto end      = std::filesystem::recursive_directory_iterator{};
-			auto modRoot  = GetModuleRoot(L);
+			auto modRoot  = GetModuleRoot(s);
 
-			sol::state_view lua(L);
-			return [iterator, end, modRoot, lua]() mutable -> sol::object {
+			return [iterator, end, modRoot, s]() mutable -> sol::object {
 				if (*iterator == end)
-					return sol::make_object(lua, sol::nil);
+					return sol::make_object(s, sol::nil);
 
 				try
 				{
 					LuaPath result(modRoot, (*iterator)->path());
 					++(*iterator);
-					return sol::make_object(lua, result);
+					return sol::make_object(s, result);
 				}
 				catch (const LuaPathError& e)
 				{
-					throw sol::error(e.what()); // this is dumb. LuaPath should throw a sol::error so we don't have to try/catch here
+					luaL_error(s.lua_state(), e.what());
+					return sol::make_object(s, sol::nil);
 				}
 			};
 		};
@@ -72,23 +94,26 @@ namespace Terminus::LuaJIT
 			@*/
 			auto luaFs = L["Filesystem"].get_or_create<sol::table>();
 
-			luaFs["MyRoot"] = [&]()
+			luaFs["MyRoot"] = [](sol::this_state s)
 			{
-				auto modRoot = GetModuleRoot(L);
+				sol::state_view lua(s);
+				auto modRoot = GetModuleRoot(lua);
 				return LuaPath(modRoot, modRoot);
 			};
 
-			luaFs["IterDir"] = [&](const LuaPath& path)
+			luaFs["IterDir"] = [](const LuaPath& path, sol::this_state s)
 			{
-				return Iterator(L, path);
+				sol::state_view lua(s);
+				return Iterator(lua, path);
 			};
 
-			luaFs["Rename"] = [&](const LuaPath& oldPath, const LuaPath& newPath)
+			luaFs["Rename"] = [](const LuaPath& oldPath, const LuaPath& newPath, sol::this_state s)
 			{
 				if (!oldPath.Exists())
 					return std::make_tuple(false, "File not found");
 
-				auto modRoot  = GetModuleRoot(L);
+				sol::state_view lua(s);
+				auto modRoot  = GetModuleRoot(lua);
 				auto modEntry = modRoot / "main.lua";
 				auto& oldFs   = oldPath.Get();
 				auto& newFs   = newPath.Get();
@@ -107,27 +132,15 @@ namespace Terminus::LuaJIT
 				}
 			};
 
-			luaFs["Remove"] = [&](const LuaPath& path, sol::optional<bool> emptyOnly)
-			{
-				if (!path.Exists())
-					return std::make_tuple(false, "File not found");
-
-				auto modRoot  = GetModuleRoot(L);
-				auto modEntry = modRoot / "main.lua";
-				auto& pathFs  = path.Get();
-
-				if (pathFs == modRoot || pathFs == modEntry)
-					return std::make_tuple(false, "Can not remove module's root path or entry point!");
-
-				std::error_code ec{};
-				bool success;
-				if (emptyOnly.value_or(true))
-					success = fs::remove(path.Get(), ec);
-				else
-					success = fs::remove_all(path.Get(), ec) > 0;
-
-				return std::make_tuple(success, success ? "" : "An error has occured.");
-			};
+			luaFs["Remove"] = sol::overload(
+			    [](const LuaPath& path, sol::this_state s) {
+				    sol::state_view lua(s);
+				    return RemovePath(lua, path, false);
+			    },
+			    [](const LuaPath& path, bool emptyOnly, sol::this_state s) {
+				    sol::state_view lua(s);
+				    return RemovePath(lua, path, emptyOnly);
+			    });
 
 			/*@terminus.class Path
 			* description
@@ -186,11 +199,11 @@ namespace Terminus::LuaJIT
 			* return fun(): Path
 			@*/
 			auto pathCls = L.new_usertype<LuaPath>("Path",
-			    sol::call_constructor, sol::factories([&](const std::string& path)
-				{
+			    sol::call_constructor, sol::factories([](const std::string& path, sol::this_state s) {
+				sol::state_view Lua(s);
 				    try
 				    {
-					    return LuaPath(GetModuleRoot(L), path);
+					    return LuaPath(GetModuleRoot(Lua), path);
 				    }
 				    catch (const LuaPathError& e)
 				    {
@@ -211,8 +224,8 @@ namespace Terminus::LuaJIT
 			pathCls["MakeDirs"]     = &LuaPath::MakeDirs;
 			pathCls["Join"]         = &LuaPath::Join;
 
-			pathCls["Open"] = [&](const LuaPath& self, std::string_view mode) {
-				sol::state_view Lua(L);
+			pathCls["Open"] = [](const LuaPath& self, std::string_view mode, sol::this_state s) {
+				sol::state_view Lua(s);
 				auto io                        = Lua["io"];
 				sol::protected_function ioOpen = io["open"];
 				return ioOpen(self.Get().filename().u8string().c_str(), mode);
@@ -222,8 +235,9 @@ namespace Terminus::LuaJIT
 				return self.Get().string();
 			};
 
-			pathCls["IterDir"] = [&](const LuaPath& self) {
-				return Iterator(L, self);
+			pathCls["IterDir"] = [](const LuaPath& self, sol::this_state s) {
+				sol::state_view Lua(s);
+				return Iterator(Lua, self);
 			};
 
 			pathCls["__tostring"] = [](const LuaPath& self) {

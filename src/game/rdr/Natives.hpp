@@ -1974,8 +1974,8 @@ enum class NativeIndex
 	_INVENTORY_FITS_SLOT_ID = 1967,
 	_GET_DEFAULT_ITEM_SLOT_INFO = 1968,
 	_INVENTORY_GET_INVENTORY_ITEM_FIT_SLOT = 1969,
-	_0x9AC53CB6907B4428 = 1970,
-	_0x9D21B185ABC2DBC4 = 1971,
+	_INVENTORY_GET_INVENTORY_ITEM_COMPATIBLE_SLOTS = 1970,
+	_INVENTORY_CREATE_CATALOG_ITEM_INSPECTION_EFFECTS_ENTRY = 1971,
 	_0x75CFAC49301E134F = 1972,
 	_0x9D21B185ABC2DBC5 = 1973,
 	_0x75CFAC49301E134E = 1974,
@@ -9240,8 +9240,8 @@ namespace INVENTORY
 	FORCEINLINE constexpr BOOL _INVENTORY_FITS_SLOT_ID(Hash item, Hash slotId) { return Terminus::NativeInvoker::Invoke<1967, BOOL, false>(item, slotId); }
 	FORCEINLINE constexpr Hash _GET_DEFAULT_ITEM_SLOT_INFO(Hash item, Hash p1) { return Terminus::NativeInvoker::Invoke<1968, Hash, false>(item, p1); }
 	FORCEINLINE constexpr BOOL _INVENTORY_GET_INVENTORY_ITEM_FIT_SLOT(Hash p0, void* p1, int p2) { return Terminus::NativeInvoker::Invoke<1969, BOOL, false>(p0, p1, p2); }
-	FORCEINLINE constexpr BOOL _0x9AC53CB6907B4428(Hash item, void* p1, void* p2) { return Terminus::NativeInvoker::Invoke<1970, BOOL, false>(item, p1, p2); }
-	FORCEINLINE constexpr Hash _0x9D21B185ABC2DBC4(Any data, const char* effects, BOOL p2, BOOL p3) { return Terminus::NativeInvoker::Invoke<1971, Hash, false>(data, effects, p2, p3); }
+	FORCEINLINE constexpr BOOL _INVENTORY_GET_INVENTORY_ITEM_COMPATIBLE_SLOTS(Hash item, int* outSlotIds, int maxResults) { return Terminus::NativeInvoker::Invoke<1970, BOOL, false>(item, outSlotIds, maxResults); }
+	FORCEINLINE constexpr Hash _INVENTORY_CREATE_CATALOG_ITEM_INSPECTION_EFFECTS_ENTRY(Any data, const char* effects, BOOL p2, BOOL p3) { return Terminus::NativeInvoker::Invoke<1971, Hash, false>(data, effects, p2, p3); }
 	FORCEINLINE constexpr void _0x75CFAC49301E134F(Hash databindingEntryId, BOOL p1, BOOL p2) { return Terminus::NativeInvoker::Invoke<1972, void, false>(databindingEntryId, p1, p2); }
 	FORCEINLINE constexpr Hash _0x9D21B185ABC2DBC5(Any data, const char* stats, int p2, int p3) { return Terminus::NativeInvoker::Invoke<1973, Hash, false>(data, stats, p2, p3); }
 	FORCEINLINE constexpr void _0x75CFAC49301E134E(Any data, BOOL p1, Ped ped) { return Terminus::NativeInvoker::Invoke<1974, void, false>(data, p1, ped); }

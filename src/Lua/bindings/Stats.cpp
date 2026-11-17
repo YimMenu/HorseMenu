@@ -1,10 +1,9 @@
 #pragma once
 
-#include "game/rdr/Stats.hpp"
-
 #include "../LuaLibrary.hpp"
 #include "../LuaModule.hpp"
 #include "util/Joaat.hpp"
+#include "game/rdr/Stats.hpp"
 
 
 namespace Terminus::LuaJIT

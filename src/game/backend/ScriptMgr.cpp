@@ -1,5 +1,6 @@
 #include "ScriptMgr.hpp"
 #include "game/rdr/Scripts.hpp"
+#include "Lua/LuaMgr.hpp"
 
 namespace Terminus
 {
@@ -70,6 +71,8 @@ namespace Terminus
 			Scripts::RunAsScript(startup, [this]() {
 				std::lock_guard lock(m_Mutex);
 				static bool ensure_main_fiber = (ConvertThreadToFiber(nullptr), true);
+
+				LuaJIT::LuaManager::TickScripts();
 
 				for (const auto& script : m_Scripts)
 					script->Tick();

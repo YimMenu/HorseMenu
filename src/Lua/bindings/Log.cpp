@@ -11,7 +11,7 @@ namespace Terminus::LuaJIT
 		using LuaLibrary::LuaLibrary;
 
 	private:
-		static inline std::string LuaTostr(sol::state& L, sol::variadic_args args)
+		static inline std::string LuaTostr(const sol::state_view& L, sol::variadic_args args)
 		{
 			auto moduleName = L["whodis"].get<std::string>();
 			std::string output;
@@ -27,7 +27,7 @@ namespace Terminus::LuaJIT
 			return "[" + moduleName + "/main.lua]: " + output;
 		}
 
-		static inline std::string LuaFmt(sol::state& L, const std::string& fmt, sol::variadic_args args)
+		static inline std::string LuaFmt(const sol::state_view& L, const std::string& fmt, sol::variadic_args args)
 		{
 			auto moduleName = L["whodis"].get<std::string>();
 			return "[" + moduleName + "/main.lua]: " + LuaStringFormat(L, fmt, args);
@@ -36,16 +36,18 @@ namespace Terminus::LuaJIT
 	public:
 		void Register(sol::state& L) override
 		{
-			L["print"] = [&](sol::variadic_args args) {
-				LOG(INFO) << LuaTostr(L, args);
+			L["print"] = [](sol::this_state s, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaTostr(lua, args);
 			};
 
 			/*@terminus.function printf Prints a formatted message. Formatting works the same as [string.format](lua://string.format)
 			* param msg<string> Message.
 			* param ...<any> Optional format arguments.
 			@*/
-			L["printf"] = [&](const std::string& fmt, sol::variadic_args args) {
-				LOG(INFO) << LuaFmt(L, fmt, args);
+			L["printf"] = [](sol::this_state s, const std::string& fmt, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaFmt(lua, fmt, args);
 			};
 
 			/*@terminus.table log
@@ -82,36 +84,43 @@ namespace Terminus::LuaJIT
 			@*/
 			auto log = L["log"].get_or_create<sol::table>();
 
-			log["info"] = [&](sol::variadic_args args) {
-				LOG(INFO) << LuaTostr(L, args);
+			log["info"] = [](sol::this_state s, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaTostr(lua, args);
 			};
 
 			log["warning"] = [&](sol::variadic_args args) {
 				LOG(WARNING) << LuaTostr(L, args);
 			};
 
-			log["debug"] = [&](sol::variadic_args args) {
-				LOG(VERBOSE) << LuaTostr(L, args);
+			log["debug"] = [](sol::this_state s, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaTostr(lua, args);
 			};
 
-			log["error"] = [&](sol::variadic_args args) {
-				LOG(FATAL) << LuaTostr(L, args);
+			log["error"] = [](sol::this_state s, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaTostr(lua, args);
 			};
 
-			log["finfo"] = [&](const std::string& fmt, sol::variadic_args args) {
-				LOG(INFO) << LuaFmt(L, fmt, args);
+			log["finfo"] = [](sol::this_state s, const std::string& fmt, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaFmt(lua, fmt, args);
 			};
 
-			log["fwarning"] = [&](const std::string& fmt, sol::variadic_args args) {
-				LOG(WARNING) << LuaFmt(L, fmt, args);
+			log["fwarning"] = [](sol::this_state s, const std::string& fmt, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaFmt(lua, fmt, args);
 			};
 
-			log["fdebug"] = [&](const std::string& fmt, sol::variadic_args args) {
-				LOG(VERBOSE) << LuaFmt(L, fmt, args);
+			log["fdebug"] = [](sol::this_state s, const std::string& fmt, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaFmt(lua, fmt, args);
 			};
 
-			log["ferror"] = [&](const std::string& fmt, sol::variadic_args args) {
-				LOG(FATAL) << LuaFmt(L, fmt, args);
+			log["ferror"] = [](sol::this_state s, const std::string& fmt, sol::variadic_args args) {
+				sol::state_view lua(s);
+				LOG(INFO) << LuaFmt(lua, fmt, args);
 			};
 		}
 	};

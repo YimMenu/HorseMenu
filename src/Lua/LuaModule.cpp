@@ -351,12 +351,32 @@ namespace Terminus::LuaJIT
 		return m_IsRunningTasks;
 	}
 
-	void LuaModule::RegisterTask(sol::protected_function func, std::chrono::milliseconds delayMs)
+	void LuaModule::RegisterTask(sol::protected_function func, sol::this_state s)
 	{
-		std::unique_lock lock(m_TaskMutex);
-		auto thread = sol::thread::create(m_LuaState);
-		auto co     = sol::coroutine(m_LuaState, func);
-		m_Tasks.push_back({std::move(thread), std::move(co), std::chrono::steady_clock::now() + delayMs});
+		std::unique_ptr<Script> scr = std::make_unique<Script>([this, func, s]() {
+			sol::thread thread = sol::thread::create(s);
+			sol::coroutine co  = sol::coroutine(thread.state(), func);
+			while (g_Running && m_LoadState == RUNNING)
+			{
+				auto result = co();
+				if (!result.valid())
+				{
+					sol::error e = result;
+					Suspend(e.what());
+					break;
+				}
+
+				if (!co.runnable())
+					break;
+
+				ScriptMgr::Yield(std::chrono::milliseconds(result.return_count() ? result[0] : 0));
+			}
+		});
+
+		if (m_IsRunningTasks)
+			m_QueuedTasks.push_back(std::move(scr));
+		else
+			m_Tasks.push_back(std::move(scr));
 	}
 
 	void LuaModule::Tick()
@@ -368,44 +388,28 @@ namespace Terminus::LuaJIT
 			return;
 		}
 
-		if (!m_Tasks.empty() && m_LoadState == RUNNING)
-		{
-			const auto now = std::chrono::steady_clock::now();
+		OnFileEdit();
 
+		if (m_LoadState == RUNNING)
+		{
 			m_IsRunningTasks.store(true);
 			std::scoped_lock lock(m_TaskMutex);
 
-			for (auto it = m_Tasks.begin(); it != m_Tasks.end();)
-			{
-				if (!g_Running)
-					break;
-
-				if (now < it->m_NextRun)
-				{
-					++it;
-					continue;
-				}
-
-				auto result = it->m_Coroutine();
-				if (!result.valid())
-				{
-					sol::error e = result;
-					Suspend(e.what());
-					break;
-				}
-
-				if (!it->m_Coroutine.runnable())
-				{
-					it = m_Tasks.erase(it);
-					continue;
-				}
-
-				const auto delay = result.return_count() > 0 ? result[0] : 0;
-				it->m_NextRun = now + std::chrono::milliseconds(delay);
-				++it;
-			}
+			for (auto& task : m_Tasks)
+				task->Tick();
 
 			m_IsRunningTasks.store(false);
 		}
+	}
+
+	void LuaModule::PostTick()
+	{
+		std::scoped_lock lock(m_TaskMutex);
+		std::erase_if(m_Tasks, [](auto& scr) {
+			return scr->m_Done;
+		});
+
+		std::ranges::move(m_QueuedTasks, std::back_inserter(m_Tasks));
+		m_QueuedTasks.clear();
 	}
 }

@@ -77,17 +77,17 @@ namespace Terminus
 
 	void Settings::LoadComponentImpl(IStateSerializer* serializer)
 	{
-		LOG(VERBOSE) << "Loading component: " << serializer->GetSerializerComponentName();
+		const std::string& name = serializer->GetSerializerComponentName();
+		LOG(VERBOSE) << "Loading component: " << name;
 
-		if (!m_Json.contains(serializer->GetSerializerComponentName()) || !m_Json[serializer->GetSerializerComponentName()].is_object())
-			m_Json[serializer->GetSerializerComponentName()] = nlohmann::json::object();
+		if (!m_Json.contains(name) || !m_Json[name].is_object())
+			m_Json[name] = nlohmann::json::object();
 
-		serializer->LoadState(m_Json[serializer->GetSerializerComponentName()]);
+		serializer->LoadState(m_Json[name]);
 	}
 
 	void Settings::SaveComponentImpl(IStateSerializer* serializer)
 	{
-		//LOG(VERBOSE) << "Saving component: " << serializer->GetSerializerComponentName();
 		if (!m_Json.is_object())
 		{
 			LOG(FATAL) << "Json object is corrupted. Unable to save settings.";

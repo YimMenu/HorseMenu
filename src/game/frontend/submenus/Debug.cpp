@@ -10,6 +10,7 @@
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Object.hpp"
+#include "game/rdr/Inventory.hpp"
 #include "game/backend/Self.hpp"
 
 namespace Terminus::Features
@@ -19,6 +20,30 @@ namespace Terminus::Features
 
 namespace Terminus::Submenus
 {
+	struct
+	{
+		CInventoryItem* pItem;
+		int maxStack;
+		std::string_view name;
+	} selectedIventoryItem;
+
+	static int inventoryArg1 = 2; // "CHARACTER"
+	static int inventoryItemHashBuff;
+
+	static CInventoryItem* GetInventoryItem(CInventoryItemList* list, uint32_t hash)
+	{
+		if (!list)
+			return nullptr;
+
+		for (auto* item : list->m_items)
+		{
+			if (item && item->m_info && item->m_info->m_hash == hash)
+				return item;
+		}
+
+		return nullptr;
+	};
+
 	Debug::Debug() :
 	    Submenu::Submenu("Debug")
 	{
@@ -94,6 +119,73 @@ namespace Terminus::Submenus
 					Self::GetPed().SetMotivation(static_cast<MotivationState>(mflag), 0.0f);
 					PED::_SET_PED_MOTIVATION_STATE_OVERRIDE(Self::GetPed().GetHandle(), mflag, false);
 				});
+			}
+
+			ImGui::SeparatorText("Inventory Stuff");
+			ImGui::InputInt("p1", &inventoryArg1);
+
+			if (ImGui::Button("Dump"))
+			{
+				FiberPool::Push([]() {
+					if (!(Pointers.InventoryPool && Pointers.GetInventoryList))
+					{
+						LOG(FATAL) << "null inventory data!";
+						return;
+					}
+
+					auto list = Pointers.GetInventoryList(*reinterpret_cast<uint64_t*>(Pointers.InventoryPool), inventoryArg1 /*inventory type?*/);
+					if (!list)
+					{
+						LOG(FATAL) << "GetInventoryList returned garbage data!";
+						return;
+					}
+
+					LOG(VERBOSE) << "Inventory: " << inventoryArg1 << " | Item count : " << list->m_items.count();
+
+					for (auto& item : list->m_items)
+						LOG(VERBOSE) << "Hash: " << item->m_info->m_hash << " | Amount: " << item->m_amount;
+				});
+			}
+			
+			ImGui::Spacing();
+			ImGui::InputInt("Item Hash", &inventoryItemHashBuff);
+			if (inventoryItemHashBuff)
+			{
+				ImGui::SameLine();
+				if (ImGui::Button("Get"))
+				{
+					FiberPool::Push([]() {
+						auto list = Pointers.GetInventoryList(*reinterpret_cast<uint64_t*>(Pointers.InventoryPool), inventoryArg1);
+						if (!list)
+						{
+							LOG(FATAL) << "GetInventoryList returned garbage data!";
+							return;
+						}
+
+						selectedIventoryItem.pItem = GetInventoryItem(list, inventoryItemHashBuff);
+						if (!selectedIventoryItem.pItem)
+						{
+							LOG(WARNING) << "Inventory item not found!";
+							return;
+						}
+
+						int slotID            = INVENTORY::_GET_DEFAULT_ITEM_SLOT_INFO(inventoryItemHashBuff, "CHARACTER"_J /*TODO*/);
+						int maxCount          = INVENTORY::_GET_ITEM_SLOT_MAX_COUNT(inventoryItemHashBuff, slotID);
+						uint32_t currentCount = selectedIventoryItem.pItem->m_amount;
+
+						selectedIventoryItem.maxStack = maxCount > currentCount ? maxCount : currentCount;
+						selectedIventoryItem.name     = HUD::GET_STRING_FROM_HASH_KEY(inventoryItemHashBuff);
+					});
+				}
+			}
+
+			if (selectedIventoryItem.pItem)
+			{
+				ImGui::Text("Selected Item: %s", selectedIventoryItem.name.data());
+
+				int amt = static_cast<int>(selectedIventoryItem.pItem->m_amount);
+				if (ImGui::SliderInt("Amount", &amt, 0, selectedIventoryItem.maxStack))
+					selectedIventoryItem.pItem->m_amount = static_cast<uint32_t>(amt);
 			}
 		}));
 		AddCategory(std::move(debug));

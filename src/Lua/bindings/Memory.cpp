@@ -17,25 +17,25 @@ namespace Terminus::LuaJIT
 		using LuaLibrary::LuaLibrary;
 
 	private:
-		bool isnullptr(const PointerCalculator& ptr) const
+		static inline bool isnullptr(const PointerCalculator& ptr)
 		{
 			return !static_cast<bool>(ptr);
 		}
 
-		void nullguard(sol::state& L, const PointerCalculator& ptr)
+		static inline void nullguard(const sol::state_view& s, const PointerCalculator& ptr)
 		{
 			if (isnullptr(ptr))
-				throw sol::error("Attempt to access a null pointer!");
+				luaL_error(s.lua_state(), "Attempt to access a null pointer!");
 		}
 
-		PointerCalculator retnull()
+		static inline PointerCalculator retnull()
 		{
 			return PointerCalculator(uintptr_t());
 		}
 
-		PointerCalculator deref(sol::state& L, const PointerCalculator& ptr)
+		static inline PointerCalculator deref(const sol::state_view& s, const PointerCalculator& ptr)
 		{
-			nullguard(L, ptr);
+			nullguard(s, ptr);
 			return PointerCalculator(*ptr.As<uintptr_t*>());
 		}
 
@@ -261,85 +261,85 @@ namespace Terminus::LuaJIT
 				return self.Add(offset);
 			};
 
-			ptrUt["Sub"] = [&](const PointerCalculator& self, int offset) {
-				nullguard(L, self);
+			ptrUt["Sub"] = [](const PointerCalculator& self, int offset, sol::this_state s) {
+				nullguard(s, self);
 				return self.Sub(offset);
 			};
 
-			ptrUt["Rip"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["Rip"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return self.Rip();
 			};
 
-			ptrUt["Deref"] = [&](const PointerCalculator& self) {
-				return deref(L, self);
+			ptrUt["Deref"] = [](const PointerCalculator& self, sol::this_state s) {
+				return deref(s, self);
 			};
 
-			ptrUt["ReadInt"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadInt"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<int*>();
 			};
 
-			ptrUt["ReadBytes"] = [&](const PointerCalculator& self, size_t count) {
-				nullguard(L, self);
+			ptrUt["ReadBytes"] = [](const PointerCalculator& self, size_t count, sol::this_state s) {
+				nullguard(s, self);
 
 				std::vector<uint8_t> out(count);
 				memcpy(out.data(), self.As<const void*>(), count);
 				return out;
 			};
 
-			ptrUt["ReadInt8"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadInt8"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<int8_t*>();
 			};
 
-			ptrUt["ReadUint8"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadUint8"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<uint8_t*>();
 			};
 
-			ptrUt["ReadInt16"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadInt16"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<int16_t*>();
 			};
 
-			ptrUt["ReadUint16"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadUint16"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<uint16_t*>();
 			};
 
-			ptrUt["ReadInt32"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadInt32"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<int32_t*>();
 			};
 
-			ptrUt["ReadUint32"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadUint32"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<uint32_t*>();
 			};
 
-			ptrUt["ReadInt64"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadInt64"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<int64_t*>();
 			};
 
-			ptrUt["ReadUint64"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadUint64"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<uint64_t*>();
 			};
 
-			ptrUt["ReadFloat"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadFloat"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return *self.As<float*>();
 			};
 
-			ptrUt["ReadString"] = [&](const PointerCalculator& self) {
-				nullguard(L, self);
+			ptrUt["ReadString"] = [](const PointerCalculator& self, sol::this_state s) {
+				nullguard(s, self);
 				return std::string(self.As<char*>());
 			};
 
-			ptrUt["WriteBytes"] = [&](const PointerCalculator& self, sol::table t) {
-				nullguard(L, self);
+			ptrUt["WriteBytes"] = [](const PointerCalculator& self, sol::table t, sol::this_state s) {
+				nullguard(s, self);
 
 				std::vector<uint8_t> bytes;
 				for (auto&& [_, v] : t)
@@ -358,70 +358,72 @@ namespace Terminus::LuaJIT
 					memcpy(self.As<void*>(), bytes.data(), bytes.size());
 			};
 
-			ptrUt["WriteInt"] = [&](const PointerCalculator& self, int arg) {
-				nullguard(L, self);
+			ptrUt["WriteInt"] = [](const PointerCalculator& self, int arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<int*>() = arg;
 			};
 
-			ptrUt["WriteInt8"] = [&](const PointerCalculator& self, int8_t arg) {
-				nullguard(L, self);
+			ptrUt["WriteInt8"] = [](const PointerCalculator& self, int8_t arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<int8_t*>() = arg;
 			};
 
-			ptrUt["WriteUint8"] = [&](const PointerCalculator& self, uint8_t arg) {
-				nullguard(L, self);
+			ptrUt["WriteUint8"] = [](const PointerCalculator& self, uint8_t arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<uint8_t*>() = arg;
 			};
 
-			ptrUt["WriteInt16"] = [&](const PointerCalculator& self, int16_t arg) {
-				nullguard(L, self);
+			ptrUt["WriteInt16"] = [](const PointerCalculator& self, int16_t arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<int16_t*>() = arg;
 			};
 
-			ptrUt["WriteUint16"] = [&](const PointerCalculator& self, uint16_t arg) {
-				nullguard(L, self);
+			ptrUt["WriteUint16"] = [](const PointerCalculator& self, uint16_t arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<uint16_t*>() = arg;
 			};
 
-			ptrUt["WriteInt32"] = [&](const PointerCalculator& self, int32_t arg) {
-				nullguard(L, self);
+			ptrUt["WriteInt32"] = [](const PointerCalculator& self, int32_t arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<int32_t*>() = arg;
 			};
 
-			ptrUt["WriteUint32"] = [&](const PointerCalculator& self, uint32_t arg) {
-				nullguard(L, self);
+			ptrUt["WriteUint32"] = [](const PointerCalculator& self, uint32_t arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<uint32_t*>() = arg;
 			};
 
-			ptrUt["WriteInt64"] = [&](const PointerCalculator& self, int64_t arg) {
-				nullguard(L, self);
+			ptrUt["WriteInt64"] = [](const PointerCalculator& self, int64_t arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<int64_t*>() = arg;
 			};
 
-			ptrUt["WriteUint64"] = [&](const PointerCalculator& self, uint64_t arg) {
-				nullguard(L, self);
+			ptrUt["WriteUint64"] = [](const PointerCalculator& self, uint64_t arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<uint64_t*>() = arg;
 			};
 
-			ptrUt["WriteFloat"] = [&](const PointerCalculator& self, float arg) {
-				nullguard(L, self);
+			ptrUt["WriteFloat"] = [](const PointerCalculator& self, float arg, sol::this_state s) {
+				nullguard(s, self);
 				*self.As<float*>() = arg;
 			};
 
-			ptrUt["WriteString"] = [&](const PointerCalculator& self, std::string_view arg) {
-				nullguard(L, self);
+			ptrUt["WriteString"] = [](const PointerCalculator& self, std::string_view arg, sol::this_state s) {
+				nullguard(s, self);
 				size_t len = std::strlen(arg.data());
 				std::memcpy(self.As<char*>(), arg.data(), len);
 				self.As<char*>()[len] = '\0';
 			};
 
-			ptrUt["AddBytePatch"] = [&](const PointerCalculator& self, sol::table values) {
-				nullguard(L, self);
-				auto module = GetModuleFromLuaState(L);
+			ptrUt["AddBytePatch"] = [](const PointerCalculator& self, sol::table values, sol::this_state s) {
+				nullguard(s, self);
+
+				sol::state_view Lua(s);
+				auto module = GetModuleFromLuaState(s.lua_state());
 				if (!module)
 				{
 					LOG(FATAL) << "Failed to add patch! Owner module is null";
-					return sol::make_object(L, sol::nil);
+					return sol::make_object(Lua, sol::nil);
 				}
 
 				std::vector<uint8_t> bytes;
@@ -439,7 +441,7 @@ namespace Terminus::LuaJIT
 
 				auto patch = std::make_shared<BytePatch>(self.As<void*>(), std::span<uint8_t>(bytes));
 				module->m_BytePatches.push_back(patch);
-				return sol::make_object(L, patch);
+				return sol::make_object(Lua, patch);
 			};
 
 			/*@terminus.table Memory
@@ -467,7 +469,7 @@ namespace Terminus::LuaJIT
 			* param ptr<Pointer>
 			@*/
 			auto memlib = L["Memory"].get_or_create<sol::table>();
-			memlib["ScanPattern"] = [&](const std::string& sig, std::optional<std::string> name) {
+			memlib["ScanPattern"] = [](const std::string& sig, std::optional<std::string> name) {
 				const auto rdr2 = ModuleMgr.Get(Joaat("RDR2.exe"));
 				if (!rdr2)
 				{
@@ -479,7 +481,7 @@ namespace Terminus::LuaJIT
 				std::optional<PointerCalculator> found;
 				PatternScanner scanner(rdr2);
 
-				scanner.Add(pattern, [&](PointerCalculator pc) {
+				scanner.Add(pattern, [&found](PointerCalculator pc) {
 					found.emplace(pc);
 				});
 				scanner.Scan();
@@ -499,11 +501,14 @@ namespace Terminus::LuaJIT
 				return Pointers.PtrToHandle ? Pointers.PtrToHandle(ptr.As<void*>()) : 0;
 			};
 
-			memlib["Allocate"] = [&](int size) {
+			memlib["Allocate"] = [](int size, sol::this_state s) {
 				if (size <= 0)
-					throw sol::error("Invalid argument into Memory.Allocate! size must be greater than zero.");
+				{
+					luaL_error(s.lua_state(), "Invalid argument into Memory.Allocate! size must be greater than zero.");
+					return retnull();
+				}
 
-				auto mod = GetModuleFromLuaState(L, "Failed to allocate memory! Owner module is null");
+				auto mod = GetModuleFromLuaState(s.lua_state(), "Failed to allocate memory! Owner module is null");
 				if (!mod)
 					return retnull();
 
@@ -512,15 +517,18 @@ namespace Terminus::LuaJIT
 				return PointerCalculator(mem);
 			};
 
-			memlib["Free"] = [&](const PointerCalculator& ptr) {
-				auto mod = GetModuleFromLuaState(L, "Failed to free memory! Owner module is null");
+			memlib["Free"] = [](const PointerCalculator& ptr, sol::this_state s) {
+				auto mod = GetModuleFromLuaState(s, "Failed to free memory! Owner module is null");
 				if (!mod)
 					return;
 
 				void* mem = ptr.As<void*>();
 				auto it   = std::find(mod->m_MemAllocs.begin(), mod->m_MemAllocs.end(), mem);
 				if (it == mod->m_MemAllocs.end())
-					throw sol::error("An attempt to release memory not owned by this Lua module was rejected.");
+				{
+					luaL_error(s.lua_state(), "An attempt to release memory not owned by this Lua module was rejected.");
+					return;
+				}
 
 				delete[] static_cast<uint8_t*>(*it);
 				mod->m_MemAllocs.erase(it);

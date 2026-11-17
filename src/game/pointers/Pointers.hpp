@@ -1,6 +1,7 @@
 #pragma once
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
+#include "game/rdr/Inventory.hpp"
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -82,6 +83,7 @@ namespace Terminus
 		using SendConnectResponse = void (*)(rage::rlScSessionMultiplayer* sess, int message_id, void* data, int flags);
 		using GetPeerAddressByMessageId = rage::netPeerAddress* (*)(rage::netConnectionManager* cxn_mgr, int msg_id);
 		using OpenIceTunnel = bool (*)(rage::rlGamerInfoBase* peer_addr, rage::netPeerAddress* direct_addr, rage::netPeerAddress* relay_addr, bool a4, std::uint64_t session_token, std::uint64_t session_id, rage::rlTaskStatus* status);
+		using GetInventoryList = CInventoryItemList* (*)(uint64_t inventoryPool, int p1);
 	};
 
 	struct PointerData
@@ -133,10 +135,12 @@ namespace Terminus
 		PVOID UpdateEndpointAddress;
 		CTrainConfigs* TrainConfigs;
 		Functions::OpenIceTunnel OpenIceTunnel;
+		Functions::GetInventoryList GetInventoryList;
 		PVOID SerializeIceSessionOfferRequest;
 		PVOID CanCreateNetworkObject;
 		int* MaxNetworkPeds;
 		PVOID GetPoolSize;
+		CInventoryPool* InventoryPool;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;

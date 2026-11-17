@@ -2,6 +2,8 @@
 
 #include <sol/sol.hpp>
 #include "core/memory/BytePatch.hpp"
+#include "game/backend/FiberPool.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "LuaMenuEvent.hpp"
 
 
@@ -24,13 +26,6 @@ namespace Terminus::LuaJIT
 		};
 
 	private:
-		struct LuaTask
-		{
-			sol::thread m_Thread{};
-			sol::coroutine m_Coroutine{};
-			std::chrono::steady_clock::time_point m_NextRun{};
-		};
-
 		struct LuaModuleMetadata
 		{
 			std::string m_Name{};
@@ -48,8 +43,9 @@ namespace Terminus::LuaJIT
 		void Disable();
 		void Suspend(std::optional<std::string> errorMsg = std::nullopt);
 		void Tick();
+		void PostTick();
 		void OnFileEdit();
-		void RegisterTask(sol::protected_function func, std::chrono::milliseconds delayMs = 0ms);
+		void RegisterTask(sol::protected_function func, sol::this_state s);
 		void SandboxAPI(const fs::path& pluginsPath);
 
 		std::string LuaFormatString(const std::string& fmt, sol::variadic_args args);
@@ -75,6 +71,7 @@ namespace Terminus::LuaJIT
 
 		std::vector<std::shared_ptr<BytePatch>> m_BytePatches{};
 		std::vector<void*> m_MemAllocs;
+
 		std::unordered_map<eMenuEvent, std::vector<sol::protected_function>> m_MenuEventCallbacks{};
 
 	private:
@@ -90,7 +87,8 @@ namespace Terminus::LuaJIT
 
 		std::mutex m_TaskMutex{};
 
-		std::vector<LuaTask> m_Tasks{};
+		std::vector<std::unique_ptr<Script>> m_Tasks{};
+		std::vector<std::unique_ptr<Script>> m_QueuedTasks{};
 
 		std::atomic_bool m_IsRunningTasks{false};
 

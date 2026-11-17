@@ -160,15 +160,17 @@ namespace Terminus::LuaJIT
 		}
 	}
 
-	// enabled modules only
 	void LuaManager::ReloadAllModulesImpl()
 	{
+		DispatchMenuEvent<eMenuEvent::ScriptsReloaded>();
+
 		{
 			std::scoped_lock loadedLock(m_LoadedModulesMutex);
 			std::scoped_lock disabledLock(m_DisabledModulesMutex);
 			m_Modules.clear();
 			m_DisabledModules.clear();
 		}
+
 		LoadModulesImpl();
 	}
 
@@ -212,14 +214,6 @@ namespace Terminus::LuaJIT
 
 					return false;
 				});
-
-				for (auto& m : m_Modules)
-				{
-					if (m->GetLoadState() == LuaModule::RUNNING)
-						m->Tick();
-
-					m->OnFileEdit();
-				}
 			}
 
 			auto now = std::chrono::steady_clock::now();
@@ -231,6 +225,17 @@ namespace Terminus::LuaJIT
 			}
 
 			ScriptMgr::Yield();
+		}
+	}
+
+	void LuaManager::TickScriptsImpl()
+	{
+		for (auto& m : m_Modules)
+		{
+			if (m->GetLoadState() == LuaModule::RUNNING)
+				m->Tick();
+
+			m->PostTick();
 		}
 	}
 }

@@ -19,7 +19,9 @@ class Native:
 ROOT = Path(__file__).parent.parent.parent.resolve()
 DOCS = ROOT / "docs" / "Lua API" / "LuaLS" / "Natives"
 
-decl_re = re.compile(r"^static\s+(?P<ret>.*)\s+LUA_NATIVE_(?P<name>.*)\((?P<args>.*)\)$")
+decl_re = re.compile(
+	r"^static\s+(?P<ret>.*)\s+LUA_NATIVE_(?P<name>.*)\((?P<args>.*)\)$"
+)
 tuple_re = re.compile(r"std\:\:tuple\<(.*)\>")
 lua_types = {
 	"AnimScene": "integer",
@@ -55,13 +57,13 @@ lua_types = {
 
 def normalize_type(_type: str) -> str:
 	_type = _type.replace("const", "").replace("*", "").replace("&", "").strip()
-	return lua_types.get(_type, _type)
+	return lua_types.get(_type, "any")
 
 
 def parse_params(params: str, native: Native):
 	if not params:
 		return
-	
+
 	params = params.split(sep=",")
 	for p in params:
 		type, _, name = p.strip().partition(" ")
@@ -71,7 +73,7 @@ def parse_params(params: str, native: Native):
 def parse_returns(rets: str, native: Native):
 	if not rets or rets == "void":
 		return
-	
+
 	if rets.startswith("std::tuple"):
 		re_match = tuple_re.match(rets)
 		if not re_match:
@@ -113,10 +115,10 @@ def parse_data() -> dict[str, list[Native]]:
 				if not name:
 					continue
 
-				name   = name.removeprefix(filename + "_")	
+				name = name.removeprefix(filename + "_")
 				native = Native(name)
-				args   = re_match.group("args")
-				rets   = re_match.group("ret")
+				args = re_match.group("args")
+				rets = re_match.group("ret")
 
 				parse_params(args, native)
 				parse_returns(rets, native)
@@ -138,7 +140,7 @@ def generate_native_docs():
 
 			for native in natives:
 				f.write("\n\n")
-				
+
 				if native.args:
 					for arg in native.args:
 						f.write(f"---@param {arg.name} {arg.type}\n")
@@ -147,8 +149,10 @@ def generate_native_docs():
 					for ret in native.returns:
 						f.write(f"---@return {ret}\n")
 
-				f.write(f"function {ns}.{native.name}({", ".join(arg.name for arg in native.args)}) end")
-			f.write("\n")	
+				f.write(
+					f"function {ns}.{native.name}({", ".join(arg.name for arg in native.args)}) end"
+				)
+			f.write("\n")
 
 
 generate_native_docs()

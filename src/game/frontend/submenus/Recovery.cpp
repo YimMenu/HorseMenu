@@ -18,9 +18,9 @@
 namespace Terminus::Submenus
 {
 
+	static int loutTableRewardsAmount = 1;
 	static std::unique_ptr<BytePatch> infiniteItemsPatch{nullptr};
 	static bool infiniteItems;
-	static bool loopReward;
 	static Rewards::eRewardType selectedReward{Rewards::eRewardType::HEIRLOOMS};
 	static std::string selectedHerb{"HERB_LOOT_ALASKAN_GINSENG"};
 
@@ -127,26 +127,8 @@ namespace Terminus::Submenus
 				ImGui::EndCombo();
 			}
 
-			ImGui::BeginDisabled(loopReward);
 			if (ImGui::Button("Add Selected"))
 			{
-				FiberPool::Push([] {
-					Rewards::GiveRequestedRewards({selectedReward});
-				});
-			}
-			ImGui::EndDisabled();
-
-			ImGui::SameLine();
-
-			static float rewardTimer          = 0.0f;
-			static const float rewardInterval = 0.2f;
-
-			ImGui::Checkbox("Loop Selected", &loopReward);
-
-			rewardTimer += ImGui::GetIO().DeltaTime;
-			if (loopReward && rewardTimer >= rewardInterval)
-			{
-				rewardTimer = 0.0f;
 				FiberPool::Push([] {
 					Rewards::GiveRequestedRewards({selectedReward});
 				});
@@ -167,7 +149,6 @@ namespace Terminus::Submenus
 				ImGui::EndCombo();
 			}
 
-			static int amount = 1;
 			ImGui::SliderInt("Amount", &amount, 1, 10);
 
 			if (ImGui::Button("Give Selected"))
@@ -185,7 +166,6 @@ namespace Terminus::Submenus
 			}
 		}));
 
-		// recoveryOptions->AddItem(std::make_shared<BoolCommandItem>("unlimiteditems"_J)); // TODO
 		recoveryOptions->AddItem(std::make_shared<ImGuiItem>([] {
 			if (ImGui::Toggle("Infinite Items", &infiniteItems))
 			{
@@ -209,7 +189,7 @@ namespace Terminus::Submenus
 					infiniteItemsPatch->Restore();
 			}
 			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Items in your satchel become infinite, including treasure maps.\n\n[Note]:This toggle will not be saved because it can break missions.");
+				ImGui::SetTooltip("Items in your inventory become infinite, including treasure maps and trader goods.\n\n[Note]:This toggle will not be saved because it can break missions.");
 		}));
 
 		storyRecoveryOptions->AddItem(std::make_shared<CommandItem>("givestorycash"_J));
