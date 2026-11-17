@@ -7,7 +7,7 @@
 // state machines, and databinds. Most of the raw draw primitives are stripped and the ones that remain are riddled with bugs requiring
 // raw pointers and cursed HTML code to fix. Heed this warning lest demons fly out of your mod menu's nose
 
-namespace YimMenu
+namespace Terminus
 {
 	// A basic menu draw class that draws menu items
 	// Loosely based on the YimScript renderer

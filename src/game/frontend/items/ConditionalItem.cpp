@@ -4,7 +4,7 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/frontend/widgets/toggle/imgui_toggle.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	ConditionalItem::ConditionalItem(joaat_t bool_cmd_id, std::shared_ptr<UIItem> to_draw) :
 	    m_Condition(Commands::GetCommand<BoolCommand>(bool_cmd_id)),

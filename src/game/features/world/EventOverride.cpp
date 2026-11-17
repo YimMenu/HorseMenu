@@ -7,7 +7,7 @@
 #include "game/rdr/ScriptGlobal.hpp"
 
 
-namespace YimMenu
+namespace Terminus
 {
 	static std::vector<std::pair<int, const char*>> g_EventOverrides = {
 	    {0, "None"},

@@ -1,7 +1,7 @@
 #pragma once
 #include "Command.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class IntCommand : public Command
 	{

@@ -10,7 +10,7 @@
 
 #include <unordered_set>
 
-namespace YimMenu
+namespace Terminus
 {
 	class MapEditor
 	{

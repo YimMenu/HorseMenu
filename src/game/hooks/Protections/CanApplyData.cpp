@@ -7,7 +7,7 @@
 
 #include <network/netObject.hpp>
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Protections::CanApplyData(rage::netSyncTree* tree, rage::netObject* object)
 	{

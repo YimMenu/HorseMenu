@@ -3,7 +3,7 @@
 #include "game/rdr/Natives.hpp"
 #include "util/teleport.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class TpPlayerToWaypoint : public PlayerCommand
 	{

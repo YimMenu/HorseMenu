@@ -4,7 +4,7 @@
 #include "core/commands/Commands.hpp"
 #include "core/frontend/widgets/toggle/imgui_toggle.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	ColorCommandItem::ColorCommandItem(joaat_t id, std::optional<std::string> labelOverride) :
 	    m_Command(Commands::GetCommand<ColorCommand>(id)),

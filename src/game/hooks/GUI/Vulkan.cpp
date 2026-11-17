@@ -3,7 +3,7 @@
 #include "core/renderer/Renderer.hpp"
 #include "game/hooks/Hooks.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	VkResult VKAPI_CALL Vulkan::QueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
 	{

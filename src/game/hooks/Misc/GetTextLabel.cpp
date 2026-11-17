@@ -1,7 +1,7 @@
 #include "core/hooking/DetourHook.hpp"
 #include "game/hooks/Hooks.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	const char* Misc::GetTextLabel(void* _this, const char* label)
 	{

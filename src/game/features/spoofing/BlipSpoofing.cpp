@@ -6,7 +6,7 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include "util/Joaat.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static std::vector<std::pair<int, const char*>> g_BlipSprites = {
 	    {-861219276, "Ambient Bounty Hunter"},

@@ -7,7 +7,7 @@
 #include <network/CNetGamePlayer.hpp>
 #include <player/CPlayerInfo.hpp>
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	int Protections::HandleCloneRemove(void* mgr, CNetGamePlayer* sender, CNetGamePlayer* target, uint16_t objectId, int ownershipToken, bool unk)
 	{

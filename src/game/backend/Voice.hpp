@@ -3,7 +3,7 @@
 #include "core/settings/IStateSerializer.hpp"
 #include "core/filemgr/FileMgr.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class Voice : IStateSerializer
 	{

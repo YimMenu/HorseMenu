@@ -4,7 +4,7 @@
 #include "../MapInfo.hpp"
 #include "NativeMenu.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class MapEditorMenu : protected NativeMenu
 	{

@@ -13,7 +13,7 @@
 
 #include <network/CNetObjectMgr.hpp>
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	enum class ActorOverrideType
 	{

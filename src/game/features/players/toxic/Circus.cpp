@@ -3,7 +3,7 @@
 #include "game/rdr/Vehicle.hpp"
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class Circus : public PlayerCommand
 	{

@@ -4,7 +4,7 @@
 #include "core/commands/LoopedCommand.hpp"
 #include "core/frontend/widgets/toggle/imgui_toggle.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	BoolCommandItem::BoolCommandItem(joaat_t id, std::optional<std::string> label_override) :
 	    m_Command(Commands::GetCommand<BoolCommand>(id)),

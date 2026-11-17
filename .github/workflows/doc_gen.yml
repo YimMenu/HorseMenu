@@ -1,0 +1,41 @@
+name: Generate Lua Docs
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "src/Lua/bindings/**"
+  workflow_dispatch:
+
+concurrency:
+  group: docgen-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+
+    - name: Checkout Repo
+      uses: actions/checkout@v7
+
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12.x"
+
+    - name: Run Generators
+      run: |
+        cd ./scripts/doc_gen
+        python gen_api_docs.py && python gen_native_docs.py
+
+    - name: Commit Changes
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add docs/
+        git diff --cached --quiet || git commit -m "[noci] docs(Lua API): update Lua docs"
+        git push

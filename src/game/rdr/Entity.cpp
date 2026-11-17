@@ -13,7 +13,7 @@
 
 
 
-namespace YimMenu
+namespace Terminus
 {
 	void Entity::PopulatePointer()
 	{

@@ -1,7 +1,7 @@
 #include "core/commands/Command.hpp"
 #include "game/rdr/Pools.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class DeleteAllObjects : public Command
 	{

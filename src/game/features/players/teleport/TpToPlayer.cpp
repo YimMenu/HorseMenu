@@ -5,7 +5,7 @@
 #include "game/features/Features.hpp"
 #include "util/teleport.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class TpToPlayer : public PlayerCommand
 	{

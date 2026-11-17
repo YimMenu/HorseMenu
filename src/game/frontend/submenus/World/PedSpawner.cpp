@@ -12,8 +12,15 @@
 #include "game/rdr/data/PedModels.hpp"
 
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
+	static rage::fvector3 GetForwardOffset(float headingDegrees, float distance)
+	{
+		float heading = headingDegrees * 3.14159265f / 180.0f;
+
+		return rage::fvector3(-std::sin(heading) * distance, std::cos(heading) * distance, 0.0f);
+	}
+
 	void GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH(rage::scrNativeCallContext* ctx)
 	{
 		if (ctx->GetArg<int>(0) == "mp_intro"_J)
@@ -78,7 +85,7 @@ namespace YimMenu::Submenus
 		static float scale = 1;
 		static bool dead, invis, godmode, freeze, companion, sedated;
 		static int formation;
-		static std::vector<YimMenu::Ped> spawnedPeds;
+		static std::vector<Terminus::Ped> spawnedPeds;
 		InputTextWithHint("##pedmodel", "Ped Model", &pedModelBuffer, ImGuiInputTextFlags_CallbackCompletion, nullptr, PedSpawnerInputCallback)
 		    .Draw();
 		if (ImGui::IsItemHovered())
@@ -134,7 +141,14 @@ namespace YimMenu::Submenus
 		if (ImGui::Button("Spawn"))
 		{
 			FiberPool::Push([] {
-				auto ped = Ped::Create(Joaat(pedModelBuffer), Self::GetPed().GetPosition());
+				auto selfPed = Self::GetPed();
+				auto coords = selfPed.GetPosition();
+				float heading = selfPed.GetRotation().z;
+
+				auto forward = GetForwardOffset(heading, 2.0f); // closer than vehicles
+				auto spawnPos = coords + forward;
+
+				auto ped = Ped::Create(Joaat(pedModelBuffer), spawnPos);
 
 				if (!ped)
 					return;
@@ -161,18 +175,18 @@ namespace YimMenu::Submenus
 
 				if (companion)
 				{
-					int group = PED::GET_PED_GROUP_INDEX(YimMenu::Self::GetPed().GetHandle());
+					int group = PED::GET_PED_GROUP_INDEX(Terminus::Self::GetPed().GetHandle());
 					if (!PED::DOES_GROUP_EXIST(group))
 					{
 						group = PED::CREATE_GROUP(0);
-						PED::SET_PED_AS_GROUP_LEADER(YimMenu::Self::GetPed().GetHandle(), group, true);
+						PED::SET_PED_AS_GROUP_LEADER(Terminus::Self::GetPed().GetHandle(), group, true);
 					}
 
 					ENTITY::SET_ENTITY_AS_MISSION_ENTITY(ped.GetHandle(), false, false);
 					PED::SET_PED_AS_GROUP_MEMBER(ped.GetHandle(), group);
-					PED::SET_PED_CAN_BE_TARGETTED_BY_PLAYER(ped.GetHandle(), YimMenu::Self::GetPlayer().GetId(), false);
+					PED::SET_PED_CAN_BE_TARGETTED_BY_PLAYER(ped.GetHandle(), Terminus::Self::GetPlayer().GetId(), false);
 					PED::SET_PED_RELATIONSHIP_GROUP_HASH(
-					    ped.GetHandle(), PED::GET_PED_RELATIONSHIP_GROUP_HASH(YimMenu::Self::GetPed().GetHandle()));
+					    ped.GetHandle(), PED::GET_PED_RELATIONSHIP_GROUP_HASH(Terminus::Self::GetPed().GetHandle()));
 
 					PED::SET_GROUP_FORMATION(PED::GET_PED_GROUP_INDEX(ped.GetHandle()), formation);
 
@@ -208,6 +222,7 @@ namespace YimMenu::Submenus
 
 					auto blip = MAP::BLIP_ADD_FOR_ENTITY("BLIP_STYLE_COMPANION"_J, ped.GetHandle());
 					MAP::BLIP_ADD_MODIFIER(blip, "BLIP_MODIFIER_COMPANION_DOG"_J);
+					ENTITY::PLACE_ENTITY_ON_GROUND_PROPERLY(ped.GetHandle(), false);
 				}
 			});
 		}

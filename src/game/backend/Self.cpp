@@ -2,7 +2,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/pointers/Pointers.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	Self::Self() :
 	    m_SelfPed(nullptr),

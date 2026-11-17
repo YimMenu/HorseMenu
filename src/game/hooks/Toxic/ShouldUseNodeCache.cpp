@@ -4,7 +4,7 @@
 #include "game/rdr/Ped.hpp"
 #include "util/Joaat.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Hooks::Toxic::ShouldUseNodeCache(void* node, int flags)
 	{

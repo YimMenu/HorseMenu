@@ -6,15 +6,17 @@
 #include "game/frontend/ChatDisplay.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "network/CNetGamePlayer.hpp"
+#include "Lua/LuaMgr.hpp"
+#include "Lua/LuaMenuEvent.hpp"
 
 #include <player/CPlayerInfo.hpp>
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _DetectSpoofedNames{"detectspoofednames", "Detect Spoofed Names", "Detects If a Player is Possibly Spoofing Their Name"};
 }
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	void Info::PlayerHasJoined(CNetGamePlayer* player)
 	{
@@ -32,6 +34,8 @@ namespace YimMenu::Hooks
 			    (int)player->m_PlayerIndex,
 			    (int)rid,
 			    ip_str);
+
+			LuaJIT::LuaManager::DispatchMenuEvent<eMenuEvent::PlayerJoin>(std::string(player->GetName()), static_cast<int>(player->m_PlayerIndex));
 		}
 	}
 
@@ -53,6 +57,8 @@ namespace YimMenu::Hooks
 
 			LOG(INFO)
 			    << std::format("{} left the session. Freeing slot #{}. RID: {} | IP: {}", player->GetName(), (int)player->m_PlayerIndex, (int)rid, ip_str);
+
+			LuaJIT::LuaManager::DispatchMenuEvent<eMenuEvent::PlayerJoin>(std::string(player->GetName()));
 		}
 	}
 }

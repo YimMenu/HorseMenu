@@ -1,6 +1,6 @@
 #include "StringCommand.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	void StringCommand::OnCall()
 	{

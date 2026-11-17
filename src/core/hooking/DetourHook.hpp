@@ -5,7 +5,7 @@
 #include <MinHook.h>
 #include <string_view>
 
-namespace YimMenu
+namespace Terminus
 {
 	template<typename T = int*>
 	class DetourHook : public BaseHook
@@ -49,7 +49,8 @@ namespace YimMenu
 	template<typename T>
 	inline DetourHook<T>::~DetourHook()
 	{
-		DisableNow();
+		if (m_OriginalFunc && m_TargetFunc)
+			MH_RemoveHook(m_TargetFunc);
 	}
 
 	template<typename T>

@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include <chrono>
 
-namespace YimMenu
+namespace Terminus
 {
 	class PlayerData
 	{

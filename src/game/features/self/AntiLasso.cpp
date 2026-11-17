@@ -3,7 +3,7 @@
 #include "game/rdr/Enums.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class AntiLasso : public LoopedCommand
 	{

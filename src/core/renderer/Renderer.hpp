@@ -1,7 +1,11 @@
 #pragma once
+#pragma comment(lib, "dxgi.lib")
+
 #include "util/Joaat.hpp"
 
 #include <backends/imgui_impl_vulkan.h>
+#include <backends/imgui_impl_dx12.h>
+#include <backends/imgui_impl_win32.h>
 #include <comdef.h>
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -19,7 +23,54 @@
 		o = nullptr; \
 	}
 
-namespace YimMenu
+
+constexpr UINT SRV_HEAP_SIZE = 128;
+
+// https://github.com/YimMenu/YimMenuV2/blob/enhanced/src/core/renderer/Renderer.cpp
+struct SrvHeapAllocator
+{
+	void Init(ID3D12Device* device, ID3D12DescriptorHeap* heap)
+	{
+		DescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		HeapStartCpu   = heap->GetCPUDescriptorHandleForHeapStart();
+		HeapStartGpu   = heap->GetGPUDescriptorHandleForHeapStart();
+
+		FreeIndices.clear();
+		FreeIndices.reserve(64);
+		for (int i = 64 - 1; i >= 0; --i)
+			FreeIndices.push_back(i);
+	}
+
+	void Alloc(D3D12_CPU_DESCRIPTOR_HANDLE* outCpu, D3D12_GPU_DESCRIPTOR_HANDLE* outGpu)
+	{
+		if (FreeIndices.empty())
+		{
+			LOG(FATAL) << "SRV heap exhausted!";
+			*outCpu = HeapStartCpu;
+			*outGpu = HeapStartGpu;
+			return;
+		}
+
+		int index = FreeIndices.back();
+		FreeIndices.pop_back();
+
+		outCpu->ptr = HeapStartCpu.ptr + static_cast<SIZE_T>(index) * DescriptorSize;
+		outGpu->ptr = HeapStartGpu.ptr + static_cast<UINT64>(index) * DescriptorSize;
+	}
+
+	void Free(D3D12_CPU_DESCRIPTOR_HANDLE cpu, D3D12_GPU_DESCRIPTOR_HANDLE gpu)
+	{
+		int index = static_cast<int>((cpu.ptr - HeapStartCpu.ptr) / DescriptorSize);
+		FreeIndices.push_back(index);
+	}
+
+	UINT DescriptorSize                      = 0;
+	D3D12_CPU_DESCRIPTOR_HANDLE HeapStartCpu = {};
+	D3D12_GPU_DESCRIPTOR_HANDLE HeapStartGpu = {};
+	std::vector<int> FreeIndices             = {};
+};
+
+namespace Terminus
 {
 	using namespace Microsoft::WRL;
 	using RendererCallBack        = std::function<void()>;
@@ -50,6 +101,7 @@ namespace YimMenu
 		{
 			GetInstance().DestroyImpl();
 		}
+
 		static bool Init()
 		{
 			return GetInstance().InitImpl();
@@ -145,16 +197,21 @@ namespace YimMenu
 			GetInstance().m_VkImageExtent = extent;
 		}
 
-	private:
-		static void DX12NewFrame();
-		static void DX12EndFrame();
+		static void SetFontsUpdated()
+		{
+			GetInstance().m_FontsUpdated = true;
+		}
 
 	private:
+		void DX12NewFrame();
+		void DX12EndFrame();
+
 		void DestroyImpl();
 		bool InitImpl();
 
-		bool InitDX12();
 		bool InitVulkan();
+		bool InitDX12();
+		void DX12Destroy();
 
 		void ResizeImpl(float scale);
 
@@ -179,9 +236,7 @@ namespace YimMenu
 
 	private:
 		bool m_Resizing;
-
-		// Shared
-		ImFontAtlas m_FontAtlas;
+		bool m_FontsUpdated;
 
 		//DX12
 		std::vector<FrameContext> m_FrameContext;
@@ -201,6 +256,8 @@ namespace YimMenu
 		UINT64 m_FenceLastSignaledValue;
 		HANDLE m_SwapchainWaitableObject;
 		UINT64 m_FrameIndex;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_MainRenderTargetDescriptor[2]{};
+		SrvHeapAllocator m_SrvHeapAllocator;
 
 		//Vulkan
 		VkPhysicalDevice m_VkPhysicalDevice;
@@ -222,6 +279,7 @@ namespace YimMenu
 		//Other
 		std::map<joaat_t, RendererCallBack> m_RendererCallBacks;
 		std::vector<WindowProcedureCallback> m_WindowProcedureCallbacks;
+		bool m_Initialized;
 	};
 }
 

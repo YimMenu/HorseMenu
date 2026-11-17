@@ -3,7 +3,7 @@
 #include "game/rdr/ScriptGlobal.hpp"
 #include "util/teleport.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class TpToNazar : public Command
 	{
@@ -13,7 +13,7 @@ namespace YimMenu::Features
 		virtual void OnCall() override
 		{
 			if (NazarLocation.CanAccess(true))
-				YimMenu::Teleport::TeleportEntity(Self::GetPed().GetHandle(), *NazarLocation.As<Vector3*>(), true);
+				Terminus::Teleport::TeleportEntity(Self::GetPed().GetHandle(), *NazarLocation.As<Vector3*>(), true);
 		}
 	};
 

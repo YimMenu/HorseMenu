@@ -5,7 +5,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Vehicle.hpp"
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	std::shared_ptr<Category> BuildHelpfulMenu() 
 	{ 

@@ -2,7 +2,7 @@
 #include <string>
 
 
-namespace YimMenu::Data
+namespace Terminus::Data
 {
 	struct VehicleModelInfo
 	{

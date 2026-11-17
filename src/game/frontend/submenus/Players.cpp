@@ -13,7 +13,7 @@
 #include "Player/Toxic.hpp"
 #include "Player/Trolling.hpp"
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	struct Tag
 	{
@@ -21,7 +21,7 @@ namespace YimMenu::Submenus
 		ImVec4 Color;
 	};
 
-	static std::vector<Tag> GetPlayerTags(YimMenu::Player player)
+	static std::vector<Tag> GetPlayerTags(Terminus::Player player)
 	{
 		std::vector<Tag> tags;
 
@@ -44,7 +44,7 @@ namespace YimMenu::Submenus
 	{
 		struct ComparePlayerNames
 		{
-			bool operator()(YimMenu::Player a, YimMenu::Player b) const
+			bool operator()(Terminus::Player a, Terminus::Player b) const
 			{
 				std::string nameA = a.GetName();
 				std::string nameB = b.GetName();
@@ -52,8 +52,8 @@ namespace YimMenu::Submenus
 			}
 		};
 
-		std::multimap<uint8_t, Player, ComparePlayerNames> sortedPlayers(YimMenu::Players::GetPlayers().begin(),
-		    YimMenu::Players::GetPlayers().end());
+		std::multimap<uint8_t, Player, ComparePlayerNames> sortedPlayers(Terminus::Players::GetPlayers().begin(),
+		    Terminus::Players::GetPlayers().end());
 
 		if (external)
 		{
@@ -62,15 +62,15 @@ namespace YimMenu::Submenus
 			ImGui::SetNextWindowSize(ImVec2(215, ImGui::GetWindowSize().y));
 			ImGui::Begin("Player List", nullptr, ImGuiWindowFlags_NoDecoration);
 
-			ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
+			ImGui::Checkbox("Spectate", &Terminus::g_Spectating);
 			for (auto& [id, player] : sortedPlayers)
 			{
 				std::string display_name = player.GetName();
 
 				ImGui::PushID(id);
-				if (ImGui::Selectable(display_name.c_str(), (YimMenu::Players::GetSelected() == player)))
+				if (ImGui::Selectable(display_name.c_str(), (Terminus::Players::GetSelected() == player)))
 				{
-					YimMenu::Players::SetSelected(id);
+					Terminus::Players::SetSelected(id);
 				}
 				ImGui::PopID();
 
@@ -101,13 +101,13 @@ namespace YimMenu::Submenus
 		}
 		else
 		{
-			if (ImGui::BeginCombo("Players", YimMenu::Players::GetSelected().GetName()))
+			if (ImGui::BeginCombo("Players", Terminus::Players::GetSelected().GetName()))
 			{
 				for (auto& [id, player] : sortedPlayers)
 				{
-					if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
+					if (ImGui::Selectable(player.GetName(), (Terminus::Players::GetSelected() == player)))
 					{
-						YimMenu::Players::SetSelected(id);
+						Terminus::Players::SetSelected(id);
 					}
 				}
 				ImGui::EndCombo();

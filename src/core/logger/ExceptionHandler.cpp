@@ -6,7 +6,7 @@
 #include <unordered_set>
 
 
-namespace YimMenu
+namespace Terminus
 {
 	inline auto HashStackTrace(std::vector<uint64_t> stack_trace)
 	{
@@ -121,4 +121,4 @@ namespace YimMenu
 	}
 }
 
-static YimMenu::ExceptionHandler _ExceptionHandler{};
+static Terminus::ExceptionHandler _ExceptionHandler{};

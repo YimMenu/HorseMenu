@@ -5,7 +5,7 @@
 #include "game/hooks/Hooks.hpp"
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	BoolCommand _SpoofDiscriminator("spoofdiscriminator", "Spoof Discriminator", "Spoofs the session discriminator used for matchmaking");
 	IntCommand _Discriminator("discriminator", "Discriminator", "The discriminator value to spoof to");
@@ -23,7 +23,7 @@ namespace YimMenu::Features
 	static CopyCurrentDiscriminator _CopyCurrentDiscriminator{"copydiscriminator", "Copy Current Discriminator", "Copies the active game discriminator into the spoof discrimantor field"};
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	int Spoofing::GetDiscriminator()
 	{

@@ -4,6 +4,7 @@
 #include "World/Shows.hpp"
 #include "World/Train.hpp"
 #include "World/VehicleSpawner.hpp"
+#include "World/ObjectSpawner.hpp"
 #include "World/Weather.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/commands/HotkeySystem.hpp"
@@ -14,13 +15,12 @@
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Pools.hpp"
-
-#include <game/rdr/Natives.hpp>
+#include "core/commands/BoolCommand.hpp"
 #include <rage/fwBasePool.hpp>
 #include <rage/pools.hpp>
 
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	void DisplayCurrentDate()
 	{
@@ -52,7 +52,7 @@ namespace YimMenu::Submenus
 		auto weather = std::make_shared<Category>("Weather");
 		auto shows   = std::make_shared<Category>("Shows");
 		auto time    = std::make_shared<Category>("Time");
-
+		auto map = std::make_shared<Category>("Map");
 
 		time->AddItem(std::make_shared<ImGuiItem>([] {
 			static int hour, minute, second;
@@ -110,6 +110,7 @@ namespace YimMenu::Submenus
 		auto spawners            = std::make_shared<Category>("Spawners");
 		auto pedSpawnerGroup     = std::make_shared<Group>("Ped Spawner");
 		auto vehicleSpawnerGroup = std::make_shared<Group>("Vehicle Spawner");
+		auto objectSpawnerGroup = std::make_shared<Group>("Object Spawner");
 		auto trainSpawnerGroup   = std::make_shared<Group>("Train Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
@@ -120,12 +121,17 @@ namespace YimMenu::Submenus
 			RenderVehicleSpawnerMenu();
 		}));
 
+		objectSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			RenderObjectSpawnerMenu();
+		}));
+
 		trainSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderTrainsMenu();
 		}));
 
 		spawners->AddItem(pedSpawnerGroup);
 		spawners->AddItem(vehicleSpawnerGroup);
+		spawners->AddItem(objectSpawnerGroup);
 		spawners->AddItem(trainSpawnerGroup);
 
 		auto poolCounter = std::make_shared<ImGuiItem>([] {
@@ -176,18 +182,26 @@ namespace YimMenu::Submenus
 		main->AddItem(std::move(bringOpts));
 		main->AddItem(std::move(minigames));
 		main->AddItem(std::move(misc));
-
+		main->AddItem(std::make_shared<BoolCommandItem>("fasttrain"_J));
+		main->AddItem(std::make_shared<BoolCommandItem>("pedsriot"_J));
+		main->AddItem(std::make_shared<ConditionalItem>("pedsriot"_J, std::make_shared<BoolCommandItem>("pedsriotfriendly"_J)));
+		main->AddItem(std::make_shared<ConditionalItem>("pedsriot"_J, std::make_shared<BoolCommandItem>("pedsriotweapons"_J)));
+		main->AddItem(std::make_shared<ConditionalItem>("pedsriot"_J, std::make_shared<BoolCommandItem>("pedsriotgodmode"_J)));
+		main->AddItem(std::make_shared<ConditionalItem>("pedsriot"_J, std::make_shared<BoolCommandItem>("pedsriotonlyanimals"_J)));
+		main->AddItem(std::make_shared<ConditionalItem>("pedsriot"_J, std::make_shared<BoolCommandItem>("pedsriotonlypeds"_J)));
 
 		shows->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderShowsMenu();
 		}));
 
+		map->AddItem(std::make_shared<BoolCommandItem>("removefow"_J));
 
 		AddCategory(std::move(main));
 		AddCategory(std::move(weather));
 		AddCategory(std::move(spawners));
 		AddCategory(std::move(shows));
 		AddCategory(std::move(time));
+		AddCategory(std::move(map));
 	}
 
 }

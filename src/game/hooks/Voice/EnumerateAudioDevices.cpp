@@ -20,7 +20,7 @@ public:
 };
 static_assert(sizeof(CFoundDevice) == 0x98);
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	int Voice::EnumerateAudioDevices(CFoundDevice* devices, int count, int flags)
 	{

@@ -8,7 +8,7 @@
 
 #include <script/globals/NetCampHostData.hpp>
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	static bool IsPlayerUsingCamp(NET_HOST_CAMP& camp, int id)
 	{
@@ -39,7 +39,7 @@ namespace YimMenu::Features
 					Vector3 CampCoords = netCampHostData.As<NetCampHostData*>()->Camps[i].Position;
 					if (CampCoords != Vector3(0.f, 0.f, 0.f))
 					{
-						YimMenu::Teleport::TeleportEntity(Self::GetPed().GetHandle(), CampCoords + Vector3(1, 0, 0), true);
+						Terminus::Teleport::TeleportEntity(Self::GetPed().GetHandle(), CampCoords + Vector3(1, 0, 0), true);
 					}
 					else
 					{

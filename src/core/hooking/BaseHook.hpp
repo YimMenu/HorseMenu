@@ -1,7 +1,7 @@
 #pragma once
 #include <string_view>
 
-namespace YimMenu
+namespace Terminus
 {
 	class BaseHook
 	{

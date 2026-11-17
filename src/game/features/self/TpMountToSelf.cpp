@@ -2,7 +2,7 @@
 #include "game/backend/Self.hpp"
 #include "core/frontend/Notifications.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class TpToMountToSelf : public Command
 	{

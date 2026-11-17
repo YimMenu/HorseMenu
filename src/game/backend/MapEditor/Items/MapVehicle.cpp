@@ -2,7 +2,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Vehicle.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	bool MapVehicle::CreateGameObjectImpl()
 	{

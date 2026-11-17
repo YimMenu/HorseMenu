@@ -3,7 +3,7 @@
 #include "game/rdr/Ped.hpp"
 #include "game/rdr/Natives.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class HorseSuperRun : public LoopedCommand
 	{

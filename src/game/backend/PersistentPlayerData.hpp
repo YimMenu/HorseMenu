@@ -2,7 +2,7 @@
 #include "util/Joaat.hpp"
 #include <unordered_set>
 
-namespace YimMenu
+namespace Terminus
 {
 	enum class DetectionType : std::uint32_t
 	{

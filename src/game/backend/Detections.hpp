@@ -1,7 +1,7 @@
 #pragma once
 #include "util/Joaat.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	enum class Detection : std::uint32_t
 	{

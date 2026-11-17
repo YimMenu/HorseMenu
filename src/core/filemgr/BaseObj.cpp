@@ -1,11 +1,10 @@
 #include "BaseObj.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
     BaseObj::BaseObj(const std::filesystem::path& path) :
         m_Path(path)
     {
-
     }
 
     [[nodiscard]] bool BaseObj::Exists() const

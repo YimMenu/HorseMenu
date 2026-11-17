@@ -10,7 +10,7 @@
 #include "util/Joaat.hpp"
 
 
-namespace YimMenu
+namespace Terminus
 {
 	bool Pointers::Init()
 	{
@@ -577,10 +577,31 @@ namespace YimMenu
 			RegisterCompappNatives = ptr.Sub(0x27).As<int*>();
 		});
 
+		constexpr auto infiniteItems = Pattern<"48 8B 07 49 2B D4 4D 8B C6 48 8B CF">("Infinite Items");
+		scanner.Add(infiniteItems, [this](PointerCalculator ptr) {
+			InfiniteItems = ptr.Add(0x3).As<void*>();
+		});
+
+		/*	
+		RDR2.exe+10503F9 - E8 AEA773FF           - call RDR2.exe+78ABAC
+		RDR2.exe+10503FE - 48 8B F8              - mov rdi,rax
+		RDR2.exe+1050401 - 48 85 C0              - test rax,rax
+		RDR2.exe+1050404 - 74 71                 - je RDR2.exe+1050477
+		RDR2.exe+1050406 - 33 D2                 - xor edx,edx
+		*/
+		constexpr auto getInventoryPtrn = Pattern<"E8 ? ? ? ? 48 8B F8 48 85 C0 74 71 33 D2">("GetInventoryList");
+		scanner.Add(getInventoryPtrn, [this](PointerCalculator ptr) {
+			GetInventoryList = ptr.Add(0x1).Rip().As<Functions::GetInventoryList>();
+		});
+
+		constexpr auto inventoryPoolPtrn = Pattern<"48 8B 0D ? ? ? ? E8 ? ? ? ? 48 8B F8 48 85 C0 74 71">("InventoryPool");
+		scanner.Add(inventoryPoolPtrn, [this](PointerCalculator ptr) {
+			InventoryPool = ptr.Add(0x3).Rip().As<CInventoryPool*>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some game patterns could not be found, unloading.";
-
 			return false;
 		}
 		else

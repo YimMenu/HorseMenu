@@ -1,7 +1,7 @@
 #include "game/hooks/Hooks.hpp"
 #include "core/hooking/DetourHook.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	void* Protections::CreatePoolItem(rage::fwBasePool* pool, int size)
 	{

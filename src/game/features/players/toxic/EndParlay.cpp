@@ -4,7 +4,7 @@
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Scripts.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	void ParlayEnd(Player player)
 	{

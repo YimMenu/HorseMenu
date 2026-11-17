@@ -1,6 +1,6 @@
 #include "Protections.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 
 }

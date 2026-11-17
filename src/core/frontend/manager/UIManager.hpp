@@ -2,12 +2,12 @@
 #include "Category.hpp"
 #include "Submenu.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class UIManager
 	{
 	public:
-		static void AddSubmenu(const std::shared_ptr<Submenu>&& submenu)
+		static void AddSubmenu(std::shared_ptr<Submenu>&& submenu)
 		{
 			GetInstance().AddSubmenuImpl(std::move(submenu));
 		}
@@ -44,7 +44,7 @@ namespace YimMenu
 			return instance;
 		}
 
-		void AddSubmenuImpl(const std::shared_ptr<Submenu>&& submenu);
+		void AddSubmenuImpl(std::shared_ptr<Submenu>&& submenu);
 		void SetActiveSubmenuImpl(const std::shared_ptr<Submenu> submenu);
 		void DrawImpl();
 		std::shared_ptr<Submenu> GetActiveSubmenuImpl();

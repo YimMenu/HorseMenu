@@ -8,10 +8,18 @@
 #include "game/rdr/data/VehicleModels.hpp"
 #include "game/backend/Self.hpp"
 #include "game/rdr/Vehicle.hpp"
+#include "game/rdr/Natives.hpp"
 
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
+	static rage::fvector3 GetForwardOffset(float headingDegrees, float distance)
+	{
+		float heading = headingDegrees * 3.14159265f / 180.0f;
+
+		return rage::fvector3(-std::sin(heading) * distance, std::cos(heading) * distance, 0.0f);
+	}
+
 	static bool IsVehModelInList(std::string model)
 	{
 		for (const auto& vehModel : Data::g_VehicleModels)
@@ -81,9 +89,14 @@ namespace YimMenu::Submenus
 		if (ImGui::Button("Spawn"))
 		{
 			FiberPool::Push([=] {
-				auto coords    = Self::GetPed().GetPosition();
-				auto newCoords = coords + rage::fvector3(10, 10, 0);
-				Vehicle::Create(Joaat(vehModelBuffer), newCoords, Self::GetPed().GetRotation().z);
+				auto ped = Self::GetPed();
+				auto coords = ped.GetPosition();
+				float heading = ped.GetRotation().z;
+
+				auto forward = GetForwardOffset(heading, 6.0f); // spawn 6 units in front
+				auto newPos = coords + forward;
+
+				Vehicle::Create(Joaat(vehModelBuffer), newPos, heading);
 			});
 		}
 		ImGui::PopID();

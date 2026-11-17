@@ -2,7 +2,7 @@
 #include "game/backend/FiberPool.hpp" // TODO: game import in core
 #include "Commands.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	BoolCommand::BoolCommand(std::string name, std::string label, std::string description, bool def_value) :
 	    Command(name, label, description, 0),

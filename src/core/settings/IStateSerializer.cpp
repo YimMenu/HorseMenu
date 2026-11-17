@@ -1,7 +1,7 @@
 #include "IStateSerializer.hpp"
 #include "Settings.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	IStateSerializer::IStateSerializer(const std::string& name) :
 	    m_SerComponentName(name),

@@ -1,8 +1,11 @@
 #pragma once
 #include <cstddef>
 #include <type_traits>
+#include "script/scrThread.hpp"
+#include "Scripts.hpp"
 
-namespace YimMenu
+
+namespace Terminus
 {
 	class ScriptLocal
 	{
@@ -20,6 +23,21 @@ namespace YimMenu
 		constexpr ScriptLocal(void* stackPtr, std::size_t index) :
 		    m_Index(index),
 		    m_StackPtr(stackPtr)
+		{
+		}
+
+		constexpr ScriptLocal(rage::scrThread* thread, std::size_t index) :
+		    ScriptLocal(thread->m_Stack, index)
+		{
+		}
+
+		constexpr ScriptLocal(joaat_t script, std::size_t index) :
+		    ScriptLocal(Scripts::FindScriptThread(script)->m_Stack, index)
+		{
+		}
+
+		constexpr ScriptLocal(std::string_view script, std::size_t index) :
+		    ScriptLocal(Scripts::FindScriptThread(Joaat(script))->m_Stack, index)
 		{
 		}
 
@@ -54,6 +72,11 @@ namespace YimMenu
 		std::enable_if_t<std::is_lvalue_reference_v<T>, T> As()
 		{
 			return *static_cast<std::add_pointer_t<std::remove_reference_t<T>>>(Get());
+		}
+
+		size_t GetIndex() const
+		{
+			return m_Index;
 		}
 
 	private:

@@ -32,7 +32,7 @@ class IDirectSoundCaptureBuffer
 			*capture = 0;
 
 		if (read)
-			*read = YimMenu::Voice::GetReadPosition();
+			*read = Terminus::Voice::GetReadPosition();
 
 		return (HRESULT)0L; // DS_OK
 	}
@@ -55,19 +55,19 @@ class IDirectSoundCaptureBuffer
 
 	virtual HRESULT Lock(DWORD dwOffset, DWORD dwBytes, char** ppvAudioPtr1, LPDWORD pdwAudioBytes1, char** ppvAudioPtr2, LPDWORD pdwAudioBytes2, DWORD dwFlags) // 0x40
 	{
-		YimMenu::Voice::OnLock(dwOffset, dwBytes, ppvAudioPtr1, reinterpret_cast<uint32_t*>(pdwAudioBytes1), ppvAudioPtr2, reinterpret_cast<uint32_t*>(pdwAudioBytes2));
+		Terminus::Voice::OnLock(dwOffset, dwBytes, ppvAudioPtr1, reinterpret_cast<uint32_t*>(pdwAudioBytes1), ppvAudioPtr2, reinterpret_cast<uint32_t*>(pdwAudioBytes2));
 		return (HRESULT)0L; // DS_OK
 	}
 
 	virtual HRESULT Start(int flags) // 0x48
 	{
-		YimMenu::Voice::OnStart();
+		Terminus::Voice::OnStart();
 		return (HRESULT)0L; // DS_OK
 	}
 
 	virtual HRESULT Stop() // 0x50
 	{
-		YimMenu::Voice::OnStop();
+		Terminus::Voice::OnStop();
 		return (HRESULT)0L; // DS_OK
 	}
 
@@ -104,7 +104,7 @@ class IDirectSoundCapture
 };
 inline IDirectSoundCapture g_DirectSoundCapture{};
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	HRESULT Voice::DirectSoundCaptureCreate(GUID* guid, IDirectSoundCapture** sound, void* unknown)
 	{

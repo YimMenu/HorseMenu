@@ -5,7 +5,7 @@
 #include <MinHook.h>
 #include <string_view>
 
-namespace YimMenu
+namespace Terminus
 {
 	class CallHookMemory
 	{

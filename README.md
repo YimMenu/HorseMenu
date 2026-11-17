@@ -1,11 +1,15 @@
-# Terminus (formerly HorseMenu)
+# Terminus
 
-A mod menu for Red Dead Redemption 2 and Red Dead Online published by Rockstar Games. Strictly for educational purposes.
+A beta-stage mod menu for Red Dead Redemption 2 and Red Dead Online based on [TemplateHellBase](https://github.com/Yimura/TemplateHellBase).
 
-## How to use
-Use a popular injector (Xenos/Extreme Injector/Etc.) and inject into rdr2.exe
+> [!Warning]
+> This project is strictly for educational purposes. Use at your own risk.
 
-(INSERT) Open/Close the menu
+## Usage
+
+1. Launch RDR2 or Red Dead Online.
+2. Inject `Terminus.dll` using your preferred injector.
+3. Press **INSERT** to open/close the menu.
 
 ## Structure
 
@@ -13,8 +17,15 @@ Use a popular injector (Xenos/Extreme Injector/Etc.) and inject into rdr2.exe
 - `game/` : Game specific implemented things
 - `util/` : Loose functions that aren't game specific
 
-## Screenshots / UI Design
+## Compile It Yourself
 
-![image](https://github.com/YimMenu/HorseMenu/assets/24372625/e1395e75-7feb-4c4a-9286-bd774e2aaeca)
+Read the [SETUP](https://github.com/YimMenu/YimMenu/wiki/Setup-your-PC-for-YimMenu-Development) guide.
 
+## Contributing
 
+Refer to the [Contribution Guidelines](./CONTRIBUTING.md) document.
+
+## TODO
+
+- [ ] Refactor and fix Renderer.
+- [ ] Add Lua tab bindings.

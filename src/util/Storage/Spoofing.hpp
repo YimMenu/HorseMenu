@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <network/rlGamerHandle.hpp>
 
-namespace YimMenu
+namespace Terminus
 {
 	struct Spoofing
 	{
@@ -26,5 +26,5 @@ namespace YimMenu
 
 		std::unordered_map<uint16_t, RemotePlayerTeleport> m_RemotePlayerTeleports;
 	};
-	inline YimMenu::Spoofing g_SpoofingStorage;
+	inline Terminus::Spoofing g_SpoofingStorage;
 }

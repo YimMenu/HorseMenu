@@ -1,0 +1,6 @@
+---@meta
+
+---@class RECORDING
+RECORDING = {}
+
+function RECORDING.REPLAY_PREVENT_RECORDING_THIS_FRAME() end

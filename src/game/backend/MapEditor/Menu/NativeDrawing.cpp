@@ -13,7 +13,7 @@ namespace
 	constexpr auto g_FontNames = std::to_array({"util", "catalog5", "body1", "body", "Debug_REG", "catalog4", "chalk", "catalog1", "ledger", "title", "wantedPostersGeneric", "gtaCash", "gamername", "handwritten"});
 }
 
-namespace YimMenu::NativeUI
+namespace Terminus::NativeUI
 {
 	void DrawTextAt(std::string_view text, float x, float y, ImColor color, int size, Font font, Alignment align)
 	{

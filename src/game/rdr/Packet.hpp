@@ -4,7 +4,7 @@
 #include <rage/datBitBuffer.hpp>
 
 
-namespace YimMenu
+namespace Terminus
 {
 	class Packet
 	{

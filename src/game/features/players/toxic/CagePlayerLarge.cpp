@@ -4,7 +4,7 @@
 #include "game/rdr/Object.hpp"
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class CagePlayerLarge : public PlayerCommand
 	{

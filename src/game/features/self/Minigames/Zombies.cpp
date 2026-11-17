@@ -10,7 +10,7 @@
 #include <random>
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 
 	static BoolCommand _ZombiesLogging{"zombieslogging", "Zombies Logging", "Zombies Logging"};

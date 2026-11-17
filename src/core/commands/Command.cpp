@@ -2,7 +2,7 @@
 #include "Command.hpp"
 #include "Commands.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	Command::Command(std::string name, std::string label, std::string description, int num_args) :
 	    m_Name(name),

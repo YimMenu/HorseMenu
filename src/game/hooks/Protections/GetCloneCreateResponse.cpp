@@ -24,7 +24,7 @@ namespace
 	}
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	int Protections::GetCloneCreateResponse(void* mgr, CNetGamePlayer* sender, CNetGamePlayer* reciever, uint16_t objectId, int flags, uint16_t objectType, rage::datBitBuffer* buffer, int a8, void* guid, bool isQueued)
 	{

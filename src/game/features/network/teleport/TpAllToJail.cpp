@@ -5,7 +5,7 @@
 #include "util/teleport.hpp"
 #include "game/rdr/data/JailTeleports.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class TpAllToJail : public Command
 	{

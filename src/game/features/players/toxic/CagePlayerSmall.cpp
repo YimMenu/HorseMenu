@@ -3,7 +3,7 @@
 #include "game/rdr/Object.hpp"
 
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class CagePlayerSmall : public PlayerCommand
 	{

@@ -1,4 +1,3 @@
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include "Renderer.hpp"
 
 #include "core/memory/ModuleMgr.hpp"
@@ -6,15 +5,15 @@
 #include "game/frontend/GUI.hpp"
 #include "game/frontend/Menu.hpp"
 #include "game/pointers/Pointers.hpp"
-
-#include <backends/imgui_impl_dx12.h>
-#include <backends/imgui_impl_win32.h>
-#include <imgui.h>
+#include "Lua/LuaMgr.hpp"
+#include "Lua/LuaMenuEvent.hpp"
 
 
-namespace YimMenu
+namespace Terminus
 {
-	Renderer::Renderer()
+	Renderer::Renderer() :
+	    m_Resizing(false),
+	    m_FontsUpdated(false)
 	{
 	}
 
@@ -24,7 +23,8 @@ namespace YimMenu
 
 	void Renderer::DestroyImpl()
 	{
-		ImGui_ImplWin32_Shutdown();
+		if (!m_Initialized)
+			return;
 
 		if (Pointers.IsVulkan)
 		{
@@ -37,10 +37,13 @@ namespace YimMenu
 		else if (!Pointers.IsVulkan)
 		{
 			WaitForLastFrame();
+			DX12Destroy();
 			ImGui_ImplDX12_Shutdown();
 		}
 
+		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
+		m_Initialized = false;
 	}
 
 	bool Renderer::InitDX12()
@@ -48,14 +51,12 @@ namespace YimMenu
 		if (!Pointers.SwapChain)
 		{
 			LOG(WARNING) << "SwapChain pointer is invalid!";
-
 			return false;
 		}
 
 		if (!Pointers.CommandQueue)
 		{
 			LOG(WARNING) << "CommandQueue pointer is invalid!";
-
 			return false;
 		}
 
@@ -63,129 +64,140 @@ namespace YimMenu
 		if (m_GameSwapChain = ComPtr<IDXGISwapChain1>(*Pointers.SwapChain); !m_GameSwapChain.Get())
 		{
 			LOG(WARNING) << "Dereferenced SwapChain pointer is invalid!";
-
 			return false;
 		}
 
 		if (m_CommandQueue = ComPtr<ID3D12CommandQueue>(*Pointers.CommandQueue); !m_CommandQueue.Get())
 		{
 			LOG(WARNING) << "Dereferenced CommandQueue pointer is invalid!";
-
 			return false;
 		}
 
-		m_GameSwapChain.As(&m_SwapChain); //We need GetCurrentBackBufferIndex from IDXGISwapChain3
+		m_GameSwapChain->QueryInterface<IDXGISwapChain3>(&m_SwapChain); //We need GetCurrentBackBufferIndex from IDXGISwapChain3
 
-		if (const auto result = m_SwapChain->GetDevice(__uuidof(ID3D12Device), reinterpret_cast<void**>(m_Device.GetAddressOf())); result < 0)
+		if (const auto hr = m_SwapChain->GetDevice(__uuidof(ID3D12Device), reinterpret_cast<void**>(m_Device.GetAddressOf())); FAILED(hr))
 		{
-			LOG(WARNING) << "Failed to get D3D Device with result: [" << result << "]";
-
+			LOG(WARNING) << "Failed to get D3D Device with result: [" << hr << "]";
 			return false;
 		}
 
-		if (const auto result = m_SwapChain->GetDesc(&m_SwapChainDesc); result < 0)
+		if (const auto hr = m_SwapChain->GetDesc(&m_SwapChainDesc); FAILED(hr))
 		{
-			LOG(WARNING) << "Failed to get SwapChain Description with result: [" << result << "]";
-
+			LOG(WARNING) << "Failed to get SwapChain Description with result: [" << hr << "]";
 			return false;
 		}
 
-		if (const auto result = m_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void**)m_Fence.GetAddressOf()); result < 0)
+		if (const auto hr = m_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_Fence.GetAddressOf())); FAILED(hr))
 		{
-			LOG(WARNING) << "Failed to create Fence with result: [" << result << "]";
-
+			LOG(WARNING) << "Failed to create Fence with result: [" << hr << "]";
 			return false;
 		}
 
 		if (const auto result = m_FenceEvent = CreateEventA(nullptr, FALSE, FALSE, nullptr); !result)
 		{
 			LOG(WARNING) << "Failed to create Fence Event!";
-
 			return false;
 		}
 
 		m_FrameContext.resize(m_SwapChainDesc.BufferCount);
 
-		D3D12_DESCRIPTOR_HEAP_DESC DescriptorDesc{D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE};
-		if (const auto result =
-		        m_Device->CreateDescriptorHeap(&DescriptorDesc, __uuidof(ID3D12DescriptorHeap), (void**)m_DescriptorHeap.GetAddressOf());
-		    result < 0)
-		{
-			LOG(WARNING) << "Failed to create Descriptor Heap with result: [" << result << "]";
+		D3D12_DESCRIPTOR_HEAP_DESC DescriptorDesc{
+			D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+			m_SwapChainDesc.BufferCount,
+			D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE
+		};
 
+		if (const auto hr = m_Device->CreateDescriptorHeap(&DescriptorDesc, IID_PPV_ARGS(m_DescriptorHeap.GetAddressOf())); FAILED(hr))
+		{
+			LOG(WARNING) << "Failed to create Descriptor Heap with result: [" << hr << "]";
 			return false;
 		}
 
-		if (const auto result = m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-		        __uuidof(ID3D12CommandAllocator),
-		        (void**)m_CommandAllocator.GetAddressOf());
-		    result < 0)
+		if (const auto hr = m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_CommandAllocator.GetAddressOf())); FAILED(hr))
 		{
-			LOG(WARNING) << "Failed to create Command Allocator with result: [" << result << "]";
-
+			LOG(WARNING) << "Failed to create primary Command Allocator: " << hr;
 			return false;
 		}
 
-		for (size_t i{}; i < m_SwapChainDesc.BufferCount; ++i)
+		m_FrameContext[0].CommandAllocator = m_CommandAllocator.Get();
+
+		for (size_t i = 1; i < m_SwapChainDesc.BufferCount; ++i)
 		{
-			m_FrameContext[i].CommandAllocator = m_CommandAllocator.Get();
+			if (const auto hr = m_Device->CreateCommandAllocator(
+			        D3D12_COMMAND_LIST_TYPE_DIRECT, 
+				__uuidof(ID3D12CommandAllocator), 
+				(void**)&m_FrameContext[i].CommandAllocator); FAILED(hr))
+			{
+				LOG(WARNING) << "Failed to create secondary Command Allocator with result: [" << hr << "]";
+				return false;
+			}
 		}
 
-		if (const auto result = m_Device->CreateCommandList(0,
-		        D3D12_COMMAND_LIST_TYPE_DIRECT,
-		        m_CommandAllocator.Get(),
-		        NULL,
-		        __uuidof(ID3D12GraphicsCommandList),
-		        (void**)m_CommandList.GetAddressOf());
-		    result < 0)
+		if (const auto hr = m_Device->CreateCommandList(0, 
+			D3D12_COMMAND_LIST_TYPE_DIRECT, 
+			m_CommandAllocator.Get(), 
+			nullptr, 
+			IID_PPV_ARGS(m_CommandList.GetAddressOf())); FAILED(hr))
 		{
-			LOG(WARNING) << "Failed to create Command List with result: [" << result << "]";
-
+			LOG(WARNING) << "Failed to create Command List: " << hr;
 			return false;
 		}
 
-		if (const auto result = m_CommandList->Close(); result < 0)
+		if (const auto hr = m_CommandList->Close(); FAILED(hr))
 		{
-			LOG(WARNING) << "Failed to finalize the creation of Command List with result: [" << result << "]";
-
+			LOG(WARNING) << "Failed to finalize the creation of Command List with result: [" << hr << "]";
 			return false;
 		}
 
-		D3D12_DESCRIPTOR_HEAP_DESC DescriptorBackbufferDesc{D3D12_DESCRIPTOR_HEAP_TYPE_RTV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_NONE, 1};
-		if (const auto result = m_Device->CreateDescriptorHeap(&DescriptorBackbufferDesc,
-		        __uuidof(ID3D12DescriptorHeap),
-		        (void**)m_BackbufferDescriptorHeap.GetAddressOf());
-		    result < 0)
-		{
-			LOG(WARNING) << "Failed to create Backbuffer Descriptor Heap with result: [" << result << "]";
+		D3D12_DESCRIPTOR_HEAP_DESC DescriptorBackbufferDesc{
+			D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 
+			m_SwapChainDesc.BufferCount, 
+			D3D12_DESCRIPTOR_HEAP_FLAG_NONE, 
+			1
+		};
 
+		if (const auto hr = m_Device->CreateDescriptorHeap(&DescriptorBackbufferDesc, IID_PPV_ARGS(m_BackbufferDescriptorHeap.GetAddressOf())); FAILED(hr))
+		{
+			LOG(WARNING) << "Failed to create Backbuffer Descriptor Heap with result: [" << hr << "]";
 			return false;
 		}
 
 		const auto RTVDescriptorSize{m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV)};
 		D3D12_CPU_DESCRIPTOR_HANDLE RTVHandle{m_BackbufferDescriptorHeap->GetCPUDescriptorHandleForHeapStart()};
-		for (size_t i{}; i != m_SwapChainDesc.BufferCount; ++i)
+		for (size_t i = 0; i < m_SwapChainDesc.BufferCount; ++i)
 		{
 			ComPtr<ID3D12Resource> BackBuffer{};
 			m_FrameContext[i].Descriptor = RTVHandle;
-			m_SwapChain->GetBuffer(i, __uuidof(ID3D12Resource), (void**)BackBuffer.GetAddressOf());
+			m_SwapChain->GetBuffer(i, IID_PPV_ARGS(BackBuffer.GetAddressOf()));
 			m_Device->CreateRenderTargetView(BackBuffer.Get(), nullptr, RTVHandle);
 			m_FrameContext[i].Resource = BackBuffer.Get();
 			RTVHandle.ptr += RTVDescriptorSize;
 		}
 
-		// never returns false, useless to check return
-		ImGui::CreateContext(&GetInstance().m_FontAtlas);
+		m_SrvHeapAllocator.Init(m_Device.Get(), m_DescriptorHeap.Get());
+
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
 		ImGui_ImplWin32_Init(*Pointers.Hwnd);
-		ImGui_ImplDX12_Init(m_Device.Get(),
-		    m_SwapChainDesc.BufferCount,
-		    DXGI_FORMAT_R8G8B8A8_UNORM,
-		    m_DescriptorHeap.Get(),
-		    m_DescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-		    m_DescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
-		ImGui::StyleColorsDark();
+		ImGui_ImplDX12_InitInfo initInfo = {};
+		initInfo.Device                   = m_Device.Get();
+		initInfo.CommandQueue             = m_CommandQueue.Get();
+		initInfo.NumFramesInFlight        = m_SwapChainDesc.BufferCount;
+		initInfo.RTVFormat                = DXGI_FORMAT_R8G8B8A8_UNORM;
+		initInfo.DSVFormat                = DXGI_FORMAT_UNKNOWN;
+		initInfo.SrvDescriptorHeap        = m_DescriptorHeap.Get();
+		initInfo.UserData                 = &m_SrvHeapAllocator;
 
+		initInfo.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo* info, D3D12_CPU_DESCRIPTOR_HANDLE* outCpu, D3D12_GPU_DESCRIPTOR_HANDLE* outGpu) {
+			static_cast<SrvHeapAllocator*>(info->UserData)->Alloc(outCpu, outGpu);
+		};
+
+		initInfo.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo* info, D3D12_CPU_DESCRIPTOR_HANDLE cpu, D3D12_GPU_DESCRIPTOR_HANDLE gpu) {
+			static_cast<SrvHeapAllocator*>(info->UserData)->Free(cpu, gpu);
+		};
+
+		ImGui_ImplDX12_Init(&initInfo);
 		LOG(INFO) << "DirectX 12 renderer has finished initializing.";
 		return true;
 	}
@@ -212,7 +224,6 @@ namespace YimMenu
 			return false;
 		}
 
-		;
 		uint32_t GpuCount;
 		if (const VkResult result = vkEnumeratePhysicalDevices(m_VkInstance, &GpuCount, NULL); result != VK_SUCCESS)
 		{
@@ -298,9 +309,9 @@ namespace YimMenu
 		vkDestroyDevice(m_VkFakeDevice, m_VkAllocator);
 		m_VkFakeDevice = NULL;
 
-		ImGui::CreateContext(&GetInstance().m_FontAtlas);
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
 		ImGui_ImplWin32_Init(*Pointers.Hwnd);
-
 
 		LOG(INFO) << "Vulkan renderer has finished initializing.";
 
@@ -313,6 +324,7 @@ namespace YimMenu
 
 		if (scale != 1.0f)
 			ImGui::GetStyle().ScaleAllSizes(scale);
+
 		ImGui::GetStyle().MouseCursorScale = 1.0f;
 		ImGui::GetIO().FontGlobalScale     = scale;
 		DX12PostResize();
@@ -450,13 +462,14 @@ namespace YimMenu
 			}
 		}
 		{
-			VkImageView attachment[1];
-			VkFramebufferCreateInfo info = {};
-			info.sType                   = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			info.renderPass              = m_VkRenderPass;
-			info.attachmentCount         = 1;
-			info.pAttachments            = attachment;
-			info.layers                  = 1;
+			VkImageView attachment[1]{};
+			VkFramebufferCreateInfo info{
+				.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+				.renderPass      = m_VkRenderPass,
+				.attachmentCount = 1,
+				.pAttachments    = attachment,
+				.layers          = 1,
+			};
 
 			for (uint32_t i = 0; i < uImageCount; ++i)
 			{
@@ -475,12 +488,13 @@ namespace YimMenu
 		{
 			constexpr VkDescriptorPoolSize pool_sizes[] = {{VK_DESCRIPTOR_TYPE_SAMPLER, 1000}, {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000}, {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000}, {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}};
 
-			VkDescriptorPoolCreateInfo pool_info = {};
-			pool_info.sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-			pool_info.flags                      = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-			pool_info.maxSets                    = 1000 * IM_ARRAYSIZE(pool_sizes);
-			pool_info.poolSizeCount              = (uint32_t)IM_ARRAYSIZE(pool_sizes);
-			pool_info.pPoolSizes                 = pool_sizes;
+			VkDescriptorPoolCreateInfo pool_info{
+				.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+				.flags                               = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+				.maxSets                             = 1000 * IM_ARRAYSIZE(pool_sizes),
+				.poolSizeCount                       = (uint32_t)IM_ARRAYSIZE(pool_sizes),
+				.pPoolSizes                          = pool_sizes,
+			};
 
 			if (const VkResult result = vkCreateDescriptorPool(device, &pool_info, m_VkAllocator, &m_VkDescriptorPool))
 			{
@@ -546,10 +560,9 @@ namespace YimMenu
 		{
 			ImGui_ImplWin32_Shutdown();
 			ImGui::DestroyContext();
-			ImGui::CreateContext(&GetInstance().m_FontAtlas);
+			ImGui::CreateContext();
 			ImGui_ImplWin32_Init(*Pointers.Hwnd);
 			Menu::SetupStyle();
-
 			SetResizing(false);
 		}
 	}
@@ -592,7 +605,7 @@ namespace YimMenu
 
 		if (!ImGui::GetCurrentContext())
 		{
-			ImGui::CreateContext(&GetInstance().m_FontAtlas);
+			ImGui::CreateContext();
 			ImGui_ImplWin32_Init(*Pointers.Hwnd);
 		}
 
@@ -659,23 +672,22 @@ namespace YimMenu
 
 			if (!ImGui::GetIO().BackendRendererUserData)
 			{
-				ImGui_ImplVulkan_InitInfo init_info = {};
-				init_info.Instance                  = m_VkInstance;
-				init_info.PhysicalDevice            = m_VkPhysicalDevice;
-				init_info.Device                    = m_VkDevice;
-				init_info.QueueFamily               = m_VkQueueFamily;
-				init_info.Queue                     = GraphicQueue;
-				init_info.PipelineCache             = m_VkPipelineCache;
-				init_info.DescriptorPool            = m_VkDescriptorPool;
-				init_info.Subpass                   = 0;
-				init_info.MinImageCount             = m_VkMinImageCount;
-				init_info.ImageCount                = m_VkMinImageCount;
-				init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
-				init_info.Allocator                 = m_VkAllocator;
+				ImGui_ImplVulkan_InitInfo initInfo{};
+				ImGui_ImplVulkan_PipelineInfo infoMain{.Subpass = 0, .MSAASamples = VK_SAMPLE_COUNT_1_BIT};
 
-				ImGui_ImplVulkan_Init(&init_info);
+				initInfo.Instance         = m_VkInstance;
+				initInfo.PhysicalDevice   = m_VkPhysicalDevice;
+				initInfo.Device           = m_VkDevice;
+				initInfo.QueueFamily      = m_VkQueueFamily;
+				initInfo.Queue            = GraphicQueue;
+				initInfo.PipelineCache    = m_VkPipelineCache;
+				initInfo.DescriptorPool   = m_VkDescriptorPool;
+				initInfo.MinImageCount    = m_VkMinImageCount;
+				initInfo.ImageCount       = m_VkMinImageCount;
+				initInfo.PipelineInfoMain = infoMain;
+				initInfo.Allocator        = m_VkAllocator;
 
-				ImGui_ImplVulkan_CreateFontsTexture();
+				ImGui_ImplVulkan_Init(&initInfo);
 			}
 
 			ImGui_ImplVulkan_NewFrame();
@@ -756,9 +768,11 @@ namespace YimMenu
 		}
 	}
 
-
 	bool Renderer::InitImpl()
 	{
+		if (m_Initialized)
+			return true;
+
 		while (!*Pointers.Hwnd || !*Pointers.ScreenResX)
 		{
 			std::this_thread::sleep_for(1s);
@@ -789,17 +803,20 @@ namespace YimMenu
 		if (Pointers.IsVulkan)
 		{
 			LOG(INFO) << "Using Vulkan";
-			return InitVulkan();
+			m_Initialized = InitVulkan();
 		}
 		else if (!Pointers.IsVulkan)
 		{
 			LOG(INFO) << "Using DX12, clear shader cache if you're having issues.";
 			LOG(INFO) << "Waiting...";
 			std::this_thread::sleep_for(5s); //Early injection could result in errors.
-			return InitDX12();
+			m_Initialized = InitDX12();
 		}
 
-		return false;
+		if (m_Initialized)
+			Menu::Init();
+
+		return m_Initialized;
 	}
 
 	bool Renderer::AddRendererCallBackImpl(RendererCallBack&& callback, std::uint32_t priority)
@@ -825,29 +842,24 @@ namespace YimMenu
 		for (const auto& callback : m_WindowProcedureCallbacks)
 			callback(hwnd, msg, wparam, lparam);
 
+		LuaJIT::LuaManager::DispatchMenuEvent<eMenuEvent::HwndProc>(hwnd, msg, wparam, lparam);
+
 		return ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam);
 	}
 
 	void Renderer::WaitForLastFrame()
 	{
-		FrameContext FrameCtx = GetInstance().m_FrameContext[GetInstance().m_FrameIndex % GetInstance().m_SwapChainDesc.BufferCount];
-
+		FrameContext& FrameCtx = GetInstance().m_FrameContext[GetInstance().m_FrameIndex % GetInstance().m_SwapChainDesc.BufferCount];
 		UINT64 FenceValue = FrameCtx.FenceValue;
-
 		if (FenceValue == 0)
-		{
 			return;
-		}
 
 		FrameCtx.FenceValue = 0;
 
 		if (GetInstance().m_Fence->GetCompletedValue() >= FenceValue)
-		{
 			return;
-		}
 
 		GetInstance().m_Fence->SetEventOnCompletion(FenceValue, GetInstance().m_FenceEvent);
-
 		WaitForSingleObject(GetInstance().m_FenceEvent, INFINITE);
 	}
 
@@ -875,9 +887,7 @@ namespace YimMenu
 	void Renderer::DX12PreResize()
 	{
 		SetResizing(true);
-
 		WaitForLastFrame();
-
 		ImGui_ImplDX12_InvalidateDeviceObjects();
 
 		for (size_t i{}; i != GetInstance().m_SwapChainDesc.BufferCount; ++i)
@@ -914,33 +924,86 @@ namespace YimMenu
 
 	void Renderer::DX12EndFrame()
 	{
+		if (m_FontsUpdated)
+		{
+			DX12PreResize();
+			DX12PostResize();
+			m_FontsUpdated = false;
+		}
+
 		WaitForNextFrame();
 
-		FrameContext& CurrentFrameContext{GetInstance().m_FrameContext[GetInstance().m_SwapChain->GetCurrentBackBufferIndex()]};
+		FrameContext& CurrentFrameContext{m_FrameContext[m_SwapChain->GetCurrentBackBufferIndex()]};
 		CurrentFrameContext.CommandAllocator->Reset();
 
 		D3D12_RESOURCE_BARRIER Barrier{D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 		    D3D12_RESOURCE_BARRIER_FLAG_NONE,
 		    {{CurrentFrameContext.Resource, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET}}};
-		GetInstance().m_CommandList->Reset(CurrentFrameContext.CommandAllocator, nullptr);
-		GetInstance().m_CommandList->ResourceBarrier(1, &Barrier);
-		GetInstance().m_CommandList->OMSetRenderTargets(1, &CurrentFrameContext.Descriptor, FALSE, nullptr);
-		GetInstance().m_CommandList->SetDescriptorHeaps(1, GetInstance().m_DescriptorHeap.GetAddressOf());
+		m_CommandList->Reset(CurrentFrameContext.CommandAllocator, nullptr);
+		m_CommandList->ResourceBarrier(1, &Barrier);
+		m_CommandList->OMSetRenderTargets(1, &CurrentFrameContext.Descriptor, FALSE, nullptr);
+		m_CommandList->SetDescriptorHeaps(1, m_DescriptorHeap.GetAddressOf());
 
 		ImGui::Render();
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), GetInstance().m_CommandList.Get());
+		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_CommandList.Get());
 
 		Barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		Barrier.Transition.StateAfter  = D3D12_RESOURCE_STATE_PRESENT;
-		GetInstance().m_CommandList->ResourceBarrier(1, &Barrier);
-		GetInstance().m_CommandList->Close();
+		m_CommandList->ResourceBarrier(1, &Barrier);
+		m_CommandList->Close();
 
-		ID3D12CommandList* CommandLists[]{GetInstance().m_CommandList.Get()};
-		GetInstance().m_CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
+		ID3D12CommandList* CommandLists[]{m_CommandList.Get()};
+		m_CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
 
-		UINT64 FenceValue = GetInstance().m_FenceLastSignaledValue + 1;
-		GetInstance().m_CommandQueue->Signal(GetInstance().m_Fence.Get(), FenceValue);
-		GetInstance().m_FenceLastSignaledValue = FenceValue;
-		CurrentFrameContext.FenceValue         = FenceValue;
+		UINT64 FenceValue = m_FenceLastSignaledValue + 1;
+		m_CommandQueue->Signal(m_Fence.Get(), FenceValue);
+		m_FenceLastSignaledValue       = FenceValue;
+		CurrentFrameContext.FenceValue = FenceValue;
+	}
+
+	void Renderer::DX12Destroy()
+	{
+		if (m_SwapChain)
+		{
+			m_SwapChain->SetFullscreenState(false, nullptr);
+			m_SwapChain->Release();
+			m_SwapChain = nullptr;
+		}
+
+		if (m_SwapchainWaitableObject != nullptr)
+			CloseHandle(m_SwapchainWaitableObject);
+
+		for (size_t i = 1; i < m_SwapChainDesc.BufferCount; ++i)
+		{
+			if (m_FrameContext[i].CommandAllocator)
+			{
+				m_FrameContext[i].CommandAllocator->Release();
+				m_FrameContext[i].CommandAllocator = nullptr;
+			}
+		}
+
+		if (m_CommandQueue)
+			m_CommandQueue = nullptr;
+
+		if (m_CommandList)
+			m_CommandList = nullptr;
+
+		if (m_DescriptorHeap)
+			m_DescriptorHeap = nullptr;
+
+		if (m_BackbufferDescriptorHeap)
+			m_BackbufferDescriptorHeap = nullptr;
+
+		if (m_Fence)
+			m_Fence = nullptr;
+
+		if (m_FenceEvent)
+		{
+			CloseHandle(m_FenceEvent);
+			m_FenceEvent = nullptr;
+		}
+
+		if (m_Device)
+			m_Device = nullptr;
 	}
 }

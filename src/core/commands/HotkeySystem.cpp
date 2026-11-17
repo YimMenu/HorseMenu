@@ -7,7 +7,7 @@
 
 // TODO: serialization isn't stable
 
-namespace YimMenu
+namespace Terminus
 {
 	HotkeySystem::HotkeySystem() : 
 		IStateSerializer("hotkeys")
@@ -43,7 +43,6 @@ namespace YimMenu
 			if ((GetKeyState(i) & 0x8000) && i != 1 && !IsKeyBlacklisted(i))
 			{
 				Hotkey = i;
-
 				return true;
 			}
 		}
@@ -75,9 +74,7 @@ namespace YimMenu
 		};
 
 		int pressed_key = 0;
-		ListenAndApply(pressed_key, chain);
-
-		if (pressed_key > 1)
+		if (ListenAndApply(pressed_key, chain))
 		{
 			if (is_key_unique(pressed_key, chain))
 			{
@@ -127,12 +124,13 @@ namespace YimMenu
 
 	void HotkeySystem::SaveStateImpl(nlohmann::json& state)
 	{
-		for (auto& hotkey : m_CommandHotkeys)
+		for (const auto& hotkey : m_CommandHotkeys)
 		{
+			std::string key = std::to_string(hotkey.first);
 			if (!hotkey.second.m_Chain.empty())
-			{
-				state[std::to_string(hotkey.first).data()] = hotkey.second.m_Chain;
-			}
+				state[key] = hotkey.second.m_Chain;
+			else if (state.contains(key))
+				state.erase(key);
 		}
 	}
 
@@ -140,8 +138,9 @@ namespace YimMenu
 	{
 		for (auto& [key, value] : state.items())
 		{
-			if (m_CommandHotkeys.contains(std::atoi(key.data())))
-				m_CommandHotkeys[std::atoi(key.data())].m_Chain = value.get<std::vector<int>>(); 
+			const uint32_t hash = static_cast<uint32_t>(std::stoul(key.data()));
+			if (m_CommandHotkeys.contains(hash))
+				m_CommandHotkeys[hash].m_Chain = value.get<std::vector<int>>();
 		}
 	}
 }

@@ -3,7 +3,7 @@
 #include "util/teleport.hpp"
 #include "core/frontend/Notifications.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 
 	class TpToWaypoint : public Command
@@ -15,8 +15,8 @@ namespace YimMenu::Features
 			if (MAP::IS_WAYPOINT_ACTIVE())
 			{
 				// TODO!!!
-				auto waypointCoords = YimMenu::Teleport::GetWaypointCoords();
-				YimMenu::Teleport::TeleportEntity(Self::GetPed().GetHandle(), {waypointCoords.x, waypointCoords.y, 0.0f}, true);
+				auto waypointCoords = Terminus::Teleport::GetWaypointCoords();
+				Terminus::Teleport::TeleportEntity(Self::GetPed().GetHandle(), {waypointCoords.x, waypointCoords.y, 0.0f}, true);
 			}
 			else
 			{

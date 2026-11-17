@@ -11,7 +11,7 @@
 #include <script/globals/ACEHostData.hpp>
 #include <script/globals/PlayerPersonaData.hpp>
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	unsigned int Toxic::BroadcastNetArray(void* array, CNetGamePlayer* target, rage::datBitBuffer* buffer, std::uint16_t counter, std::uint32_t* elem_start)
 	{

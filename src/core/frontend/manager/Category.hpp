@@ -1,7 +1,7 @@
 #pragma once
 #include "UIItem.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class Category
 	{

@@ -6,7 +6,7 @@
 
 #include <network/netObject.hpp>
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Hooks::Toxic::IsNodeInScope(void* node, void* a2, std::uint8_t playerId, int flags)
 	{

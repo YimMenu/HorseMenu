@@ -1,6 +1,6 @@
 #pragma once
 
-namespace YimMenu::Data
+namespace Terminus::Data
 {
 	const inline std::unordered_map<int, std::string> g_MessageTypes = {
 	    {0x61, "JOIN_RESPONSE"},

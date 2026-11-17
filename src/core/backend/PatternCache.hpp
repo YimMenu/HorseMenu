@@ -1,7 +1,7 @@
 #pragma once
 #include "core/memory/PatternHash.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class PatternCache
 	{

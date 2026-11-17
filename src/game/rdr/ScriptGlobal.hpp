@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <type_traits>
 
-namespace YimMenu
+namespace Terminus
 {
     class ScriptGlobal
     {
@@ -36,7 +36,12 @@ namespace YimMenu
 			return *static_cast<std::add_pointer_t<std::remove_reference_t<T>>>(Get());
 		}
 
-		bool CanAccess(bool is_mp) const; // SP otherwise
+		bool CanAccess(bool is_mp = true) const; // SP otherwise
+
+        inline size_t GetIndex() const noexcept
+        {
+			return m_Index;
+        }
 
     private:
         void* Get() const;

@@ -2,7 +2,7 @@
 #include "game/hooks/Hooks.hpp"
 #include "game/backend/MapEditor/MapEditor.hpp"
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	bool Misc::CheckConditionIsMale(__int64 a1, __int64 a2)
 	{

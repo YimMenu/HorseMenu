@@ -2,7 +2,7 @@
 #include "game/backend/Self.hpp"
 #include "game/rdr/Natives.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class KeepGunsClean : public LoopedCommand
 	{

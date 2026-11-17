@@ -2,7 +2,7 @@
 #include "game/rdr/Player.hpp"
 #include "PlayerData.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class Players
 	{

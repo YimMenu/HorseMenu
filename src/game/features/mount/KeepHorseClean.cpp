@@ -3,7 +3,7 @@
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Natives.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class KeepHorseClean : public LoopedCommand
 	{

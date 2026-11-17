@@ -2,7 +2,7 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "Natives.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	Vehicle Vehicle::Create(std::uint32_t model, rage::fvector3 coords, float heading)
 	{
@@ -30,7 +30,7 @@ namespace YimMenu
 		}
 
 		auto veh = Vehicle(VEHICLE::CREATE_VEHICLE(model, coords.x, coords.y, coords.z, heading, true, false, false, 0));
-
+		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh.GetHandle(), 0);
 		if (!veh)
 		{
 #ifdef ENTITY_DEBUG

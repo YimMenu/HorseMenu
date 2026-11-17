@@ -5,7 +5,7 @@
 #include <rage/pools.hpp>
 
 
-namespace YimMenu
+namespace Terminus
 {
 	rage::fwBasePool* GetPedPool()
 	{

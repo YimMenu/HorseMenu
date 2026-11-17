@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-namespace YimMenu
+namespace Terminus
 {
 	extern int SpawnVehicle(std::string modelName, Vector3 coords, float rotation, bool notNeeded = true);
 }

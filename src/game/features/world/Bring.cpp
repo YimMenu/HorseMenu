@@ -2,7 +2,7 @@
 #include "game/backend/Self.hpp"
 #include "game/rdr/Pools.hpp"
 
-namespace YimMenu::Features
+namespace Terminus::Features
 {
 	class BringAllObjs : public Command
 	{

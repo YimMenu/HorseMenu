@@ -7,7 +7,7 @@
 #include <network/netObject.hpp>
 #include <network/CNetObjectMgr.hpp>
 
-namespace YimMenu::Network
+namespace Terminus::Network
 {
 	static int GetNextTokenValue(int prev_token)
 	{

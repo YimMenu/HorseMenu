@@ -13,7 +13,7 @@
 #include "game/rdr/Natives.hpp"
 #include "game/backend/Self.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	void SpectateTick()
 	{
@@ -83,6 +83,8 @@ namespace YimMenu
 		{
 			if (GUI::IsOpen())
 			{
+				PLAYER::DISABLE_PLAYER_FIRING(PLAYER::PLAYER_ID(), TRUE);
+
 				if (GUI::IsUsingKeyboard())
 				{
 					PAD::DISABLE_ALL_CONTROL_ACTIONS(0);

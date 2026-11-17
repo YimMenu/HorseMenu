@@ -1,6 +1,7 @@
 #pragma once
 #include "game/rdr/GraphicsOptions.hpp"
 #include "game/rdr/RenderingInfo.hpp"
+#include "game/rdr/Inventory.hpp"
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -49,29 +50,29 @@ class CNetworkScSession;
 class CNetworkScSessionMultiplayerImpl;
 class CTrainConfigs;
 
-namespace YimMenu
+namespace Terminus
 {
 	namespace Functions
 	{
-		using GetRendererInfo  = RenderingInfo* (*)();
+		using GetRendererInfo = RenderingInfo* (*)();
 		using GetNativeHandler = rage::scrNativeHandler (*)(rage::scrNativeHash hash);
-		using FixVectors       = void (*)(rage::scrNativeCallContext* call_ctx);
+		using FixVectors = void (*)(rage::scrNativeCallContext* call_ctx);
 		using SendEventAck = void (*)(rage::netEventMgr* eventMgr, void* event, CNetGamePlayer* sourcePlayer, CNetGamePlayer* targetPlayer, int eventIndex, int handledBitset);
-		using HandleToPtr               = void* (*)(int handle);
-		using PtrToHandle               = int (*)(void* pointer);
-		using GetLocalPed               = CPed* (*)();
-		using GetSyncTreeForType        = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
-		using GetNetworkPlayerFromPid   = CNetGamePlayer* (*)(uint8_t player);
-		using WorldToScreen             = bool (*)(float* world_coords, float* out_x, float* out_y);
-		using GetNetObjectById          = rage::netObject* (*)(uint16_t id);
+		using HandleToPtr = void* (*)(int handle);
+		using PtrToHandle = int (*)(void* pointer);
+		using GetLocalPed = CPed* (*)();
+		using GetSyncTreeForType = rage::netSyncTree* (*)(void* netObjMgr, uint16_t type);
+		using GetNetworkPlayerFromPid = CNetGamePlayer* (*)(uint8_t player);
+		using WorldToScreen = bool (*)(float* world_coords, float* out_x, float* out_y);
+		using GetNetObjectById = rage::netObject* (*)(uint16_t id);
 		using RequestControlOfNetObject = bool (*)(rage::netObject** netId, bool unk);
 		using SendPacket = bool (*)(rage::netConnectionManager* mgr, rage::netPeerAddress* adde, int connection_id, void* data, int size, int flags);
 		using QueuePacket = bool (*)(rage::netConnectionManager* mgr, int msg_id, int connection_id, void* data, int size, int flags, void* unk);
 		using PostPresenceMessage = bool (*)(int localGamerIndex, rage::rlGamerInfo* recipients, int numRecipients, const char* msg, unsigned int ttlSeconds);
-		using SendNetInfoToLobby     = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
-		using ReadBitBufferArray     = bool (*)(rage::datBitBuffer* buffer, PVOID read, int bits, int unk);
-		using WriteBitBufferArray    = bool (*)(rage::datBitBuffer* buffer, void* val, int bits, int unk);
-		using ReadBitBufferString    = bool (*)(rage::datBitBuffer* buffer, char* read, int bits);
+		using SendNetInfoToLobby = bool (*)(rage::rlGamerInfo* player, int64_t a2, int64_t a3, DWORD* a4);
+		using ReadBitBufferArray = bool (*)(rage::datBitBuffer* buffer, PVOID read, int bits, int unk);
+		using WriteBitBufferArray = bool (*)(rage::datBitBuffer* buffer, void* val, int bits, int unk);
+		using ReadBitBufferString = bool (*)(rage::datBitBuffer* buffer, char* read, int bits);
 		using GetAnimSceneFromHandle = CAnimScene** (*)(CAnimScene** scene, int handle);
 		using InventoryEventConstructor = CEventInventoryItemPickedUp* (*)(CEventInventoryItemPickedUp*, std::uint32_t reward_hash, std::uint32_t model_hash, bool a4, bool a5, void* a6);
 		using TriggerWeaponDamageEvent = void (*)(rage::netObject* source, rage::netObject* target, rage::netObject* unk, rage::fvector3* position, void* a5, void* a6, bool override_dmg, std::uint32_t* weapon_hash, float damage, float f10, int tire_index, int suspension_index, std::uint64_t flags, void* action_result, bool hit_entity_weapon, bool hit_ammo_attachment, bool silenced, bool a18, bool a19, int a20, int a21, int a22, int a23, int a24, int a25);
@@ -82,6 +83,7 @@ namespace YimMenu
 		using SendConnectResponse = void (*)(rage::rlScSessionMultiplayer* sess, int message_id, void* data, int flags);
 		using GetPeerAddressByMessageId = rage::netPeerAddress* (*)(rage::netConnectionManager* cxn_mgr, int msg_id);
 		using OpenIceTunnel = bool (*)(rage::rlGamerInfoBase* peer_addr, rage::netPeerAddress* direct_addr, rage::netPeerAddress* relay_addr, bool a4, std::uint64_t session_token, std::uint64_t session_id, rage::rlTaskStatus* status);
+		using GetInventoryList = CInventoryItemList* (*)(uint64_t inventoryPool, int p1);
 	};
 
 	struct PointerData
@@ -133,10 +135,12 @@ namespace YimMenu
 		PVOID UpdateEndpointAddress;
 		CTrainConfigs* TrainConfigs;
 		Functions::OpenIceTunnel OpenIceTunnel;
+		Functions::GetInventoryList GetInventoryList;
 		PVOID SerializeIceSessionOfferRequest;
 		PVOID CanCreateNetworkObject;
 		int* MaxNetworkPeds;
 		PVOID GetPoolSize;
+		CInventoryPool* InventoryPool;
 
 		PoolEncryption* PedPool;
 		PoolEncryption* ObjectPool;
@@ -229,7 +233,7 @@ namespace YimMenu
 
 		PVOID WritePlayerHealthData;
 		PVOID WriteVPMData;
-		
+
 		PVOID GetTextLabel;
 
 		PVOID CheckConditionIsMale;
@@ -240,6 +244,7 @@ namespace YimMenu
 
 		//Patches
 		bool* ExplosionBypass;
+		void* InfiniteItems;
 	};
 
 	struct Pointers : PointerData
@@ -249,5 +254,5 @@ namespace YimMenu
 		void Restore();
 	};
 
-	inline YimMenu::Pointers Pointers;
+	inline Terminus::Pointers Pointers;
 }

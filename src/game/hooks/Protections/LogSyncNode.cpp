@@ -52,7 +52,7 @@
 #define LOG_FIELD_UNDOCUM_C(num, type) \
 	LOG(INFO) << "\tFIELD_" << #num << ": " << (int)*(type*)((&node->GetData<char>()) + num);
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	void Protections::LogSyncNode(CProjectBaseSyncDataNode* node, SyncNodeId& id, NetObjType type, rage::netObject* object, Player& player)
 	{

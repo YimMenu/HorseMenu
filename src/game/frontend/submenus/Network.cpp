@@ -1,4 +1,4 @@
-﻿#include "Network.hpp"
+#include "Network.hpp"
 
 #include "Network/Voice.hpp"
 #include "core/commands/Commands.hpp"
@@ -53,7 +53,7 @@ namespace rage
 	};
 }
 
-namespace YimMenu::Submenus
+namespace Terminus::Submenus
 {
 	std::shared_ptr<persistent_player> current_player;
 	static char search[64];
@@ -102,11 +102,13 @@ namespace YimMenu::Submenus
 
 		sessionSwitcherGroup->AddItem(std::make_shared<Vector3CommandItem>("newsessionpos"_J));
 		sessionSwitcherGroup->AddItem(std::make_shared<BoolCommandItem>("newsessionposse"_J));
+		sessionSwitcherGroup->AddItem(std::make_shared<BoolCommandItem>("newsessionprivate"_J));
 		sessionSwitcherGroup->AddItem(std::make_shared<CommandItem>("newsession"_J));
 
 		teleportGroup->AddItem(std::make_shared<CommandItem>("bringall"_J, "Bring All"));
 		teleportGroup->AddItem(std::make_shared<CommandItem>("tpalltowaypoint"_J));
 		teleportGroup->AddItem(std::make_shared<CommandItem>("tpalltojail"_J));
+		teleportGroup->AddItem(std::make_shared<CommandItem>("tpalltoocean"_J));
 
 		toxicGroup->AddItem(std::make_shared<CommandItem>("explodeall"_J));
 		toxicGroup->AddItem(std::make_shared<CommandItem>("maxhonorall"_J));
@@ -119,6 +121,10 @@ namespace YimMenu::Submenus
 
 		miscGroup->AddItem(std::make_shared<BoolCommandItem>("blockalltelemetry"_J)); // move this to protections->misc
 		miscGroup->AddItem(std::make_shared<BoolCommandItem>("locklobby"_J));
+
+		miscGroup->AddItem(std::make_shared<CommandItem>("playmusic"_J));
+		miscGroup->AddItem(std::make_shared<CommandItem>("stopmusic"_J));
+		miscGroup->AddItem(std::make_shared<CommandItem>("flyballoon"_J));
 
 		session->AddItem(sessionSwitcherGroup);
 		session->AddItem(teleportGroup);

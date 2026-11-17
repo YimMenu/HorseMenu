@@ -3,7 +3,7 @@
 #include "game/rdr/Natives.hpp"
 #include "PedScenarios.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	bool MapPed::CreateGameObjectImpl()
 	{

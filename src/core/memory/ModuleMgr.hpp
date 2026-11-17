@@ -2,7 +2,7 @@
 #include "Module.hpp"
 #include "common.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	using joaat_t = std::uint32_t;
 
@@ -31,5 +31,5 @@ namespace YimMenu
 		std::unordered_map<std::uint32_t, std::unique_ptr<Module>> m_CachedModules;
 	};
 
-	inline YimMenu::ModuleMgr ModuleMgr;
+	inline Terminus::ModuleMgr ModuleMgr;
 }

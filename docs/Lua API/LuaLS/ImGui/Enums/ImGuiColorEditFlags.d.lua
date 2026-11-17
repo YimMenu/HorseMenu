@@ -1,0 +1,35 @@
+---@meta
+
+---@class ImGuiColorEditFlags : integer
+---@field None integer 
+---@field NoAlpha integer ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
+---@field NoPicker integer ColorEdit: disable picker when clicking on color square.
+---@field NoOptions integer ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
+---@field NoSmallPreview integer ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
+---@field NoInputs integer ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
+---@field NoTooltip integer ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
+---@field NoLabel integer ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
+---@field NoSidePreview integer ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
+---@field NoDragDrop integer ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
+---@field NoBorder integer ColorButton: disable border (which is enforced by default)
+---@field AlphaOpaque integer ColorEdit, ColorPicker, ColorButton: disable alpha in the preview,. Contrary to _NoAlpha it may still be edited when calling ColorEdit4()/ColorPicker4(). For ColorButton() this does the same as _NoAlpha.
+---@field AlphaNoBg integer ColorEdit, ColorPicker, ColorButton: disable rendering a checkerboard background behind transparent color.
+---@field AlphaPreviewHalf integer ColorEdit, ColorPicker, ColorButton: display half opaque / half transparent preview.
+---@field AlphaBar integer ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
+---@field HDR integer (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
+---@field DisplayRGB integer ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
+---@field DisplayHSV integer "
+---@field DisplayHex integer "
+---@field Uint8 integer ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
+---@field Float integer ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
+---@field PickerHueBar integer ColorPicker: bar for Hue, rectangle for Sat/Value.
+---@field PickerHueWheel integer ColorPicker: wheel for Hue, triangle for Sat/Value.
+---@field InputRGB integer ColorEdit, ColorPicker: input and output data in RGB format.
+---@field InputHSV integer ColorEdit, ColorPicker: input and output data in HSV format.
+---@field DefaultOptions_ integer 
+---@field AlphaMask_ integer 
+---@field DisplayMask_ integer 
+---@field DataTypeMask_ integer 
+---@field PickerMask_ integer 
+---@field InputMask_ integer 
+ImGuiColorEditFlags = {}

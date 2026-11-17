@@ -3,7 +3,7 @@
 #include "Camera/MapEditorCamera.hpp"
 #include "MapControls.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	// please do not use anything here directly, use the interfaces provided by MapEditor instead
 	class MapEditorSelection

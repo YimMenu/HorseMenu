@@ -1,6 +1,6 @@
 #pragma once
 
-namespace YimMenu
+namespace Terminus
 {
 	struct ModelDefinition
 	{
@@ -9,7 +9,7 @@ namespace YimMenu
 	};
 }
 
-namespace YimMenu::CategoryUtils
+namespace Terminus::CategoryUtils
 {
 	// TODO: this can probably be improved
 

@@ -41,13 +41,13 @@ class CNetworkScServerConnection;
 class CProjectBaseSyncDataNode;
 class CSyncDataWriter;
 
-namespace YimMenu
+namespace Terminus
 {
 	class Player;
 	class SyncNodeId;
 }
 
-namespace YimMenu::Hooks
+namespace Terminus::Hooks
 {
 	class HttpRequest;
 

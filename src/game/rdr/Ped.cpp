@@ -4,7 +4,7 @@
 #include "game/backend/ScriptMgr.hpp"
 
 
-namespace YimMenu
+namespace Terminus
 {
 	Ped Ped::Create(uint32_t model, rage::fvector3 coords, float heading)
 	{
@@ -156,15 +156,33 @@ namespace YimMenu
 
 	bool Ped::IsEnemy()
 	{
-		ENTITY_ASSERT_VALID();
-
 		// TODO: maybe use a class member?
-		auto r1  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(GetHandle(), PLAYER::PLAYER_PED_ID());
-		auto r2  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(PLAYER::PLAYER_PED_ID(), GetHandle());
-		auto r3  = PED::IS_PED_IN_COMBAT(GetHandle(), PLAYER::PLAYER_PED_ID()) ? 5 : 0;
-		auto rel = std::max({r1, r2, r3});
 
-		return rel == 3 || rel == 4 || rel == 5;
+		ENTITY_ASSERT_VALID();
+		const int handle = GetHandle();
+		const int player = PLAYER::PLAYER_PED_ID();
+
+		if (PED::IS_PED_IN_COMBAT(handle, player)) // we shpould always early exit here because it's a much better indication than relationshit groups/hashes
+			return true;
+
+		const auto r1  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(handle, player);
+		const auto r2  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(player, handle);
+		const auto rel = std::max(r1, r2);
+
+		return rel >= 3 && rel <= 5;
+	}
+
+	bool Ped::IsFriendly()
+	{
+		ENTITY_ASSERT_VALID();
+		const int handle = GetHandle();
+		const int player = PLAYER::PLAYER_PED_ID();
+
+		auto r1  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(handle, player);
+		auto r2  = PED::GET_RELATIONSHIP_BETWEEN_PEDS(player, handle);
+		auto rel = std::max(r1, r2);
+
+		return rel >= 0 && rel <= 2;
 	}
 
 	void Ped::SetScale(float scale)
@@ -173,6 +191,13 @@ namespace YimMenu
 		ENTITY_ASSERT_CONTROL();
 		PED::_SET_PED_SCALE(GetHandle(), scale);
 		PED::_UPDATE_PED_VARIATION(GetHandle(), 0, 1, 1, 1, 0);
+	}
+
+	void Ped::SetPedMoney(int amount)
+	{
+		ENTITY_ASSERT_VALID();
+		ENTITY_ASSERT_CONTROL();
+		PED::SET_PED_MONEY(GetHandle(), amount);
 	}
 
 	void Ped::SetQuality(int quality)

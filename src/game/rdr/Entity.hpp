@@ -19,7 +19,7 @@ namespace rage
 	class netObject;
 }
 
-namespace YimMenu
+namespace Terminus
 {
 	class Player;
 	class Entity

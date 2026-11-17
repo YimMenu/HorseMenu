@@ -3,7 +3,7 @@
 #include "util/Joaat.hpp"
 #include "game/frontend/GUI.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
 	class BoolCommand;
 	class PlayerCommand;

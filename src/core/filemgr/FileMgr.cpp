@@ -2,7 +2,7 @@
 #include "File.hpp"
 #include "Folder.hpp"
 
-namespace YimMenu
+namespace Terminus
 {
     void FileMgr::Init(const std::filesystem::path& rootFolder)
     {
@@ -53,5 +53,17 @@ namespace YimMenu
             throw std::invalid_argument("FileMgr::GetProjectFolder expects a relative path.");
 
         return { m_RootFolder / folder };
-    }
+	}
+
+	std::optional<std::filesystem::path> FileMgr::MakeAbsPathImpl(const fs::path& root, const fs::path& other)
+	{
+		auto canon = std::filesystem::weakly_canonical(root);
+		auto final = std::filesystem::weakly_canonical(canon / other);
+		auto [rootEnd, _] = std::mismatch(canon.begin(), canon.end(), final.begin());
+
+		if (rootEnd != canon.end())
+			return std::nullopt;
+
+		return final;
+	}
 }
