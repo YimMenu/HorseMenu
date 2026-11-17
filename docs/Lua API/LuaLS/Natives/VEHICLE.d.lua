@@ -411,7 +411,7 @@ function VEHICLE._0x427C919E9809E370(trackIndex, p1) end
 function VEHICLE._DOES_TRAIN_EXIST_ON_TRACK(trackIndex) end
 
 ---@param trackIndex integer
----@return Vector3
+---@return any
 function VEHICLE._GET_TRAIN_POSITION_ON_TRACK(trackIndex) end
 
 ---@param trackIndex integer
@@ -495,7 +495,7 @@ function VEHICLE._GET_TRACK_INDEX_FROM_COORDS(x, y, z) end
 ---@param x number
 ---@param y number
 ---@param z number
----@return Vector3
+---@return any
 function VEHICLE._GET_NEAREST_TRAIN_TRACK_POSITION(x, y, z) end
 
 function VEHICLE.DELETE_ALL_TRAINS() end
@@ -583,13 +583,13 @@ function VEHICLE.REMOVE_VEHICLE_RECORDING(FileNumber, pRecordingName) end
 ---@param iRecordingNumber integer
 ---@param fTime number
 ---@param pRecordingName any
----@return Vector3
+---@return any
 function VEHICLE.GET_POSITION_OF_VEHICLE_RECORDING_AT_TIME(iRecordingNumber, fTime, pRecordingName) end
 
 ---@param iRecordingNumber integer
 ---@param fTime number
 ---@param pRecordingName any
----@return Vector3
+---@return any
 function VEHICLE.GET_ROTATION_OF_VEHICLE_RECORDING_AT_TIME(iRecordingNumber, fTime, pRecordingName) end
 
 ---@param VehicleIndex integer
@@ -810,7 +810,7 @@ function VEHICLE._0xD9BF3ED8EFB67EA3(p0, p1, p2, p3, p4) end
 
 ---@param p0 any
 ---@param p1 any
----@return Vector3
+---@return any
 function VEHICLE._0x785639D89F8451AB(p0, p1) end
 
 ---@param trainTrack integer
@@ -891,7 +891,7 @@ function VEHICLE._GET_CURRENT_TRACK_FOR_TRAIN(train) end
 
 ---@param trackIndex integer
 ---@param stationIndex integer
----@return Vector3
+---@return any
 function VEHICLE._GET_STATION_COORDS_FROM_TRAIN_STATION_DATA(trackIndex, stationIndex) end
 
 ---@param train integer
@@ -1390,7 +1390,7 @@ function VEHICLE._GET_NUM_DRAFT_VEHICLE_HARNESS_PED(modelHash) end
 ---@param z number
 ---@param distance number
 ---@param direction boolean
----@return Vector3
+---@return any
 function VEHICLE._GET_CHECKPOINT_TRAIN_SPAWN_LOCATION(trackIndex, x, y, z, distance, direction) end
 
 ---@param vehicle integer

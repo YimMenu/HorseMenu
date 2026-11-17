@@ -147,10 +147,10 @@ function STREAMING._0xA0AE7653E8181725(p0) end
 function STREAMING._0x66BC28E50E85270E(p0) end
 
 ---@param iplHash integer
----@param position Vector3
+---@param position any
 ---@param radius number
 ---@return boolean
----@return Vector3
+---@return any
 ---@return number
 function STREAMING._GET_IPL_BOUNDING_SPHERE(iplHash, position, radius) end
 

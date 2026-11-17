@@ -102,6 +102,18 @@ NOTE: This is currently a work in progress and each script is only allowed one c
 | --- | --- | --- |
 | `callback` | `function` |  |
 
+## `GetSelectedPlayer`
+
+```lua
+function Menu.GetSelectedPlayer() end
+```
+
+### Returns
+
+| Type | Description |
+| --- | --- |
+| `Player` | player The currently selected player in the menu's player list. |
+
 ## `UnloadThisModule`
 
 ```lua

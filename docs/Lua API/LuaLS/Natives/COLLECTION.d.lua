@@ -16,7 +16,7 @@ function COLLECTION._COLLECTABLE_GET_SUBCATEGORY(collectableItem) end
 function COLLECTION._COLLECTABLE_GET_IPL(collectableItem) end
 
 ---@param collectableItem integer
----@return Vector3
+---@return any
 function COLLECTION._COLLECTABLE_GET_PLACEMENT_LOCATION(collectableItem) end
 
 ---@param collectableItem integer

@@ -111,7 +111,7 @@ function MAP.ALLOW_SONAR_BLIPS(bSet) end
 function MAP.SET_BLIP_COORDS(BlipIndex, VecCoorsX, VecCoorsY, VecCoorsZ) end
 
 ---@param BlipIndex integer
----@return Vector3
+---@return any
 function MAP.GET_BLIP_COORDS(BlipIndex) end
 
 ---@param blip integer
@@ -219,7 +219,7 @@ function MAP.SET_WAYPOINT_OFF() end
 ---@return boolean
 function MAP.IS_WAYPOINT_ACTIVE() end
 
----@return Vector3
+---@return any
 function MAP._GET_WAYPOINT_COORDS() end
 
 ---@param p0 any
@@ -237,9 +237,9 @@ function MAP._0xF47A1EB2A538A3A3() end
 ---@param x number
 ---@param y number
 ---@param z number
----@param outPosition Vector3
+---@param outPosition any
 ---@return boolean
----@return Vector3
+---@return any
 function MAP._FIND_CLOSEST_GPS_POSITION(x, y, z, outPosition) end
 
 ---@param bDisplayRadarFlag boolean

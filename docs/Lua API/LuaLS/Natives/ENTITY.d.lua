@@ -95,11 +95,11 @@ function ENTITY.GET_ENTITY_ATTACHED_TO(EntityIndex) end
 ---@param EntityIndex integer
 ---@param DoDeadCheck boolean
 ---@param realCoords boolean
----@return Vector3
+---@return any
 function ENTITY.GET_ENTITY_COORDS(EntityIndex, DoDeadCheck, realCoords) end
 
 ---@param EntityIndex integer
----@return Vector3
+---@return any
 function ENTITY.GET_ENTITY_FORWARD_VECTOR(EntityIndex) end
 
 ---@param EntityIndex integer
@@ -111,7 +111,7 @@ function ENTITY.GET_ENTITY_FORWARD_X(EntityIndex) end
 function ENTITY.GET_ENTITY_FORWARD_Y(EntityIndex) end
 
 ---@param entity integer
----@return Vector3
+---@return any
 function ENTITY._GET_ENTITY_FORWARD_VECTOR_YX(entity) end
 
 ---@param EntityIndex integer
@@ -156,21 +156,21 @@ function ENTITY.GET_ENTITY_HEIGHT(EntityIndex, PositionX, PositionY, PositionZ, 
 function ENTITY.GET_ENTITY_HEIGHT_ABOVE_GROUND(EntityIndex) end
 
 ---@param entity integer
----@param minimum Vector3
----@param maximum Vector3
----@return Vector3
----@return Vector3
+---@param minimum any
+---@param maximum any
+---@return any
+---@return any
 function ENTITY._GET_ENTITY_WORLD_POSITION_OF_DIMENSIONS(entity, minimum, maximum) end
 
 ---@param EntityIndex integer
----@param vFront Vector3
----@param vSide Vector3
----@param vUp Vector3
----@param vPos Vector3
----@return Vector3
----@return Vector3
----@return Vector3
----@return Vector3
+---@param vFront any
+---@param vSide any
+---@param vUp any
+---@param vPos any
+---@return any
+---@return any
+---@return any
+---@return any
 function ENTITY.GET_ENTITY_MATRIX(EntityIndex, vFront, vSide, vUp, vPos) end
 
 ---@param EntityIndex integer
@@ -197,14 +197,14 @@ function ENTITY._GET_IS_PREDATOR(entity) end
 ---@param VecWorldCoorsX number
 ---@param VecWorldCoorsY number
 ---@param VecWorldCoorsZ number
----@return Vector3
+---@return any
 function ENTITY.GET_OFFSET_FROM_ENTITY_GIVEN_WORLD_COORDS(EntityIndex, VecWorldCoorsX, VecWorldCoorsY, VecWorldCoorsZ) end
 
 ---@param EntityIndex integer
 ---@param VecNewCoorsX number
 ---@param VecNewCoorsY number
 ---@param VecNewCoorsZ number
----@return Vector3
+---@return any
 function ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(EntityIndex, VecNewCoorsX, VecNewCoorsY, VecNewCoorsZ) end
 
 ---@param EntityIndex integer
@@ -217,7 +217,7 @@ function ENTITY.GET_ENTITY_ROLL(EntityIndex) end
 
 ---@param EntityIndex integer
 ---@param RotOrder integer
----@return Vector3
+---@return any
 function ENTITY.GET_ENTITY_ROTATION(EntityIndex, RotOrder) end
 
 ---@param entity integer
@@ -231,7 +231,7 @@ function ENTITY.GET_ENTITY_SPEED(EntityIndex) end
 
 ---@param EntityIndex integer
 ---@param bLocalResult boolean
----@return Vector3
+---@return any
 function ENTITY.GET_ENTITY_SPEED_VECTOR(EntityIndex, bLocalResult) end
 
 ---@param EntityIndex integer
@@ -240,7 +240,7 @@ function ENTITY.GET_ENTITY_UPRIGHT_VALUE(EntityIndex) end
 
 ---@param EntityIndex integer
 ---@param p1 integer
----@return Vector3
+---@return any
 function ENTITY.GET_ENTITY_VELOCITY(EntityIndex, p1) end
 
 ---@param EntityIndex integer
@@ -257,19 +257,19 @@ function ENTITY.GET_VEHICLE_INDEX_FROM_ENTITY_INDEX(EntityIndex) end
 
 ---@param EntityIndex integer
 ---@param iBoneIdx integer
----@return Vector3
+---@return any
 function ENTITY.GET_WORLD_POSITION_OF_ENTITY_BONE(EntityIndex, iBoneIdx) end
 
 ---@param entity integer
 ---@param boneIndex integer
----@return Vector3
+---@return any
 function ENTITY._0x5E214112806591EA(entity, boneIndex) end
 
 ---@param p0 any
 ---@param p1 any
 ---@param p2 any
 ---@param p3 any
----@return Vector3
+---@return any
 function ENTITY._0x3AB3A77672F6473F(p0, p1, p2, p3) end
 
 ---@param entityIndex integer

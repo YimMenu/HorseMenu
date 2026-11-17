@@ -103,12 +103,12 @@ function PATHFIND._0x5A4E1A41E3A02AD0(p0, p1, p2) end
 ---@param VecCoorsX number
 ---@param VecCoorsY number
 ---@param VecCoorsZ number
----@param VecReturnNearestNodeCoors Vector3
+---@param VecReturnNearestNodeCoors any
 ---@param nodeFlags integer
 ---@param zMeasureMult number
 ---@param zTolerance number
 ---@return boolean
----@return Vector3
+---@return any
 function PATHFIND.GET_CLOSEST_VEHICLE_NODE(VecCoorsX, VecCoorsY, VecCoorsZ, VecReturnNearestNodeCoors, nodeFlags, zMeasureMult, zTolerance) end
 
 ---@param p0 any
@@ -124,13 +124,13 @@ function PATHFIND._0xCA27A86CAA4E98ED(p0, p1, p2, p3, p4, p5, p6) end
 ---@param VecCoorsX number
 ---@param VecCoorsY number
 ---@param VecCoorsZ number
----@param VecReturnNearestNodeCoors Vector3
+---@param VecReturnNearestNodeCoors any
 ---@param ReturnHeading number
 ---@param nodeFlags integer
 ---@param zMeasureMult number
 ---@param zTolerance number
 ---@return boolean
----@return Vector3
+---@return any
 ---@return number
 function PATHFIND.GET_CLOSEST_VEHICLE_NODE_WITH_HEADING(VecCoorsX, VecCoorsY, VecCoorsZ, VecReturnNearestNodeCoors, ReturnHeading, nodeFlags, zMeasureMult, zTolerance) end
 
@@ -138,12 +138,12 @@ function PATHFIND.GET_CLOSEST_VEHICLE_NODE_WITH_HEADING(VecCoorsX, VecCoorsY, Ve
 ---@param VecCoorsY number
 ---@param VecCoorsZ number
 ---@param NodeNumber integer
----@param VecReturnNearestNodeCoors Vector3
+---@param VecReturnNearestNodeCoors any
 ---@param nodeFlags integer
 ---@param zMeasureMult number
 ---@param zTolerance number
 ---@return boolean
----@return Vector3
+---@return any
 function PATHFIND.GET_NTH_CLOSEST_VEHICLE_NODE(VecCoorsX, VecCoorsY, VecCoorsZ, NodeNumber, VecReturnNearestNodeCoors, nodeFlags, zMeasureMult, zTolerance) end
 
 ---@param VecCoorsX number
@@ -160,14 +160,14 @@ function PATHFIND.GET_NTH_CLOSEST_VEHICLE_NODE_ID(VecCoorsX, VecCoorsY, VecCoors
 ---@param VecCoorsY number
 ---@param VecCoorsZ number
 ---@param NodeNumber integer
----@param VecReturnNearestNodeCoors Vector3
+---@param VecReturnNearestNodeCoors any
 ---@param ReturnHeading number
 ---@param ReturnNumLanes integer
 ---@param nodeFlags integer
 ---@param zMeasureMult number
 ---@param zTolerance number
 ---@return boolean
----@return Vector3
+---@return any
 ---@return number
 ---@return integer
 function PATHFIND.GET_NTH_CLOSEST_VEHICLE_NODE_WITH_HEADING(VecCoorsX, VecCoorsY, VecCoorsZ, NodeNumber, VecReturnNearestNodeCoors, ReturnHeading, ReturnNumLanes, nodeFlags, zMeasureMult, zTolerance) end
@@ -193,13 +193,13 @@ function PATHFIND.GET_NTH_CLOSEST_VEHICLE_NODE_ID_WITH_HEADING(VecCoorsX, VecCoo
 ---@param FaceCoorsY number
 ---@param FaceCoorsZ number
 ---@param NodeNumber integer
----@param VecReturnNearestNodeCoors Vector3
+---@param VecReturnNearestNodeCoors any
 ---@param ReturnHeading number
 ---@param nodeFlags integer
 ---@param zMeasureMult number
 ---@param zTolerance number
 ---@return boolean
----@return Vector3
+---@return any
 ---@return number
 function PATHFIND.GET_NTH_CLOSEST_VEHICLE_NODE_FAVOUR_DIRECTION(VecCoorsX, VecCoorsY, VecCoorsZ, FaceCoorsX, FaceCoorsY, FaceCoorsZ, NodeNumber, VecReturnNearestNodeCoors, ReturnHeading, nodeFlags, zMeasureMult, zTolerance) end
 
@@ -208,8 +208,8 @@ function PATHFIND.GET_NTH_CLOSEST_VEHICLE_NODE_FAVOUR_DIRECTION(VecCoorsX, VecCo
 function PATHFIND.IS_VEHICLE_NODE_ID_VALID(NodeId) end
 
 ---@param nodeId integer
----@param VecNodePosition Vector3
----@return Vector3
+---@param VecNodePosition any
+---@return any
 function PATHFIND.GET_VEHICLE_NODE_POSITION(nodeId, VecNodePosition) end
 
 ---@param nodeId integer
@@ -221,15 +221,15 @@ function PATHFIND.GET_VEHICLE_NODE_IS_SWITCHED_OFF(nodeId) end
 ---@param TestCoorsZ number
 ---@param MinLength number
 ---@param MinLanes integer
----@param SouthEndNode Vector3
----@param NorthEndNode Vector3
+---@param SouthEndNode any
+---@param NorthEndNode any
 ---@param LanesGoingSouth integer
 ---@param LanesGoingNorth integer
 ---@param CentralReservationWidth number
 ---@param bIgnoreSwitchedOffNodes boolean
 ---@return boolean
----@return Vector3
----@return Vector3
+---@return any
+---@return any
 ---@return integer
 ---@return integer
 ---@return number
@@ -256,10 +256,10 @@ function PATHFIND.REQUEST_PATH_NODES_IN_AREA_THIS_FRAME(MinX, MinY, MaxX, MaxY) 
 ---@param MinLanes integer
 ---@param bAvoidDeadEnds boolean
 ---@param bAvoidHighways boolean
----@param vecReturn Vector3
+---@param vecReturn any
 ---@param NodeAddress integer
 ---@return boolean
----@return Vector3
+---@return any
 ---@return integer
 function PATHFIND.GET_RANDOM_VEHICLE_NODE(centrePointX, centrePointY, centrePointZ, radius, MinLanes, bAvoidDeadEnds, bAvoidHighways, vecReturn, NodeAddress) end
 
@@ -267,9 +267,9 @@ function PATHFIND.GET_RANDOM_VEHICLE_NODE(centrePointX, centrePointY, centrePoin
 ---@param x number
 ---@param y number
 ---@param z number
----@param outCoords Vector3
+---@param outCoords any
 ---@param heading number
----@return Vector3
+---@return any
 ---@return number
 function PATHFIND._GET_SPAWN_DATA_FOR_ROAD_NODE(nodeId, x, y, z, outCoords, heading) end
 
@@ -299,10 +299,10 @@ function PATHFIND._0xE5EF9DE716FF737E(p0, p1, p2) end
 ---@param VecCoorsY number
 ---@param VecCoorsZ number
 ---@param bOnlyOnPavement boolean
----@param VecReturnSafeCoors Vector3
+---@param VecReturnSafeCoors any
 ---@param iFlags integer
 ---@return boolean
----@return Vector3
+---@return any
 function PATHFIND.GET_SAFE_COORD_FOR_PED(VecCoorsX, VecCoorsY, VecCoorsZ, bOnlyOnPavement, VecReturnSafeCoors, iFlags) end
 
 ---@param VecCoorsMinX number
@@ -440,7 +440,7 @@ function PATHFIND._NAVMESH_REQUESTED_PATH_NUM_WAYPOINTS(path) end
 
 ---@param path integer
 ---@param waypointIndex integer
----@return Vector3
+---@return any
 function PATHFIND._NAVMESH_REQUESTED_PATH_WAYPOINT_BY_INDEX(path, waypointIndex) end
 
 ---@param x number

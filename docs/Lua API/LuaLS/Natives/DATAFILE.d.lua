@@ -81,7 +81,7 @@ function DATAFILE.DATADICT_GET_STRING(dict, name) end
 
 ---@param dict integer
 ---@param name any
----@return Vector3
+---@return any
 function DATAFILE.DATADICT_GET_VECTOR(dict, name) end
 
 ---@param parent integer
@@ -148,7 +148,7 @@ function DATAFILE.DATAARRAY_GET_STRING(arr, index) end
 
 ---@param arr integer
 ---@param index integer
----@return Vector3
+---@return any
 function DATAFILE.DATAARRAY_GET_VECTOR(arr, index) end
 
 ---@param parent integer
@@ -234,10 +234,10 @@ function DATAFILE._PARSEDDATA_RQ_FILLOUT_STRING_63(p0, p1) end
 ---@return string
 function DATAFILE.PARSEDDATA_RQ_FILLOUT_STRING_127(p0, p1) end
 
----@param p0 Vector3
+---@param p0 any
 ---@param p1 integer
 ---@return boolean
----@return Vector3
+---@return any
 function DATAFILE._PARSEDDATA_RQ_FILLOUT_VECTOR(p0, p1) end
 
 ---@param p0 number

@@ -36,5 +36,8 @@ function Menu.RegisterEventHandler(event, callback) end
 ---@param callback function 
 function Menu.RegisterImGui(callback) end
 
+---@return Player player The currently selected player in the menu's player list.
+function Menu.GetSelectedPlayer() end
+
 -- Unloads the caller script.
 function Menu.UnloadThisModule() end

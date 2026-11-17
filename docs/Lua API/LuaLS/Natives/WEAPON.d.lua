@@ -447,9 +447,9 @@ function WEAPON._0xF08D8FEB455F2C8C(ped, toggle) end
 function WEAPON._0x16D9841A85FA627E(ped, toggle) end
 
 ---@param PedIndex integer
----@param ImpactCoord Vector3
+---@param ImpactCoord any
 ---@return boolean
----@return Vector3
+---@return any
 function WEAPON.GET_PED_LAST_WEAPON_IMPACT_COORD(PedIndex, ImpactCoord) end
 
 ---@param ped integer

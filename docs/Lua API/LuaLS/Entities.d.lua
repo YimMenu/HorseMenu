@@ -14,3 +14,15 @@ function Entities.GetAllObjectsAsHandles() end
 
 ---@return table<integer,integer> pickups Array of handles
 function Entities.GetAllPickupsAsHandles() end
+
+---@param blipIndex integer 
+---@return integer ped entity handle or 0
+function Entities.GetPedFromBlip(blipIndex) end
+
+---@param blipIndex integer 
+---@return integer vehicle entity handle or 0
+function Entities.GetVehicleFromBlip(blipIndex) end
+
+---@param blipIndex integer 
+---@return integer object entity handle or 0
+function Entities.GetObjectFromBlip(blipIndex) end

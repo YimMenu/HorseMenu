@@ -339,14 +339,14 @@ function INVENTORY._INVENTORY_GET_INVENTORY_ITEM_FIT_SLOT(p0, p1, p2) end
 ---@param p1 integer
 ---@param p2 integer
 ---@return boolean
-function INVENTORY._0x9AC53CB6907B4428(item, p1, p2) end
+function INVENTORY._INVENTORY_GET_INVENTORY_ITEM_COMPATIBLE_SLOTS(item, p1, p2) end
 
 ---@param data any
 ---@param effects any
 ---@param p2 boolean
 ---@param p3 boolean
 ---@return integer
-function INVENTORY._0x9D21B185ABC2DBC4(data, effects, p2, p3) end
+function INVENTORY._INVENTORY_CREATE_CATALOG_ITEM_INSPECTION_EFFECTS_ENTRY(data, effects, p2, p3) end
 
 ---@param databindingEntryId integer
 ---@param p1 boolean

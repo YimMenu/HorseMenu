@@ -223,8 +223,8 @@ function LAW._0xE9EB79CBF9C0F58A(player) end
 
 ---@param player integer
 ---@param ped integer
----@param outCoords Vector3
----@return Vector3
+---@param outCoords any
+---@return any
 function LAW._0x21213B833EF4DAE7(player, ped, outCoords) end
 
 ---@param player integer

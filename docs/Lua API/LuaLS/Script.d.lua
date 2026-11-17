@@ -7,11 +7,6 @@ Script = {}
 ---@param callback function The callback to execute
 function Script.RunInFiber(callback) end
 
--- Executes a callback in a fiber context after a delay
----@param callback function The callback to execute
----@param delay integer Delay in milliseconds.
-function Script.RunInFiberAfterDelay(callback, delay) end
-
 ---@param ms integer Sleep time in milliseconds
 function Script.Sleep(ms) end
 

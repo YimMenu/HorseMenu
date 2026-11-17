@@ -74,24 +74,24 @@ function SHAPETEST.START_SHAPE_TEST_CAPSULE(scrVecPosX, scrVecPosY, scrVecPosZ, 
 ---@return integer
 function SHAPETEST.START_SHAPE_TEST_SWEPT_SPHERE(scrVecPosX, scrVecPosY, scrVecPosZ, scrVecEndPosX, scrVecEndPosY, scrVecEndPosZ, fRadius, LOSFlags, ExcludeEntityIndex, Options) end
 
----@param vProbeStartPosOut Vector3
----@param vProbeEndPosOut Vector3
+---@param vProbeStartPosOut any
+---@param vProbeEndPosOut any
 ---@param LOSFlags integer
 ---@param ExcludeEntityIndex integer
 ---@param Options integer
 ---@return integer
----@return Vector3
----@return Vector3
+---@return any
+---@return any
 function SHAPETEST.START_SHAPE_TEST_MOUSE_CURSOR_LOS_PROBE(vProbeStartPosOut, vProbeEndPosOut, LOSFlags, ExcludeEntityIndex, Options) end
 
 ---@param shapeTestGuid integer
 ---@param bHitSomething integer
----@param vPos Vector3
----@param vNormal Vector3
+---@param vPos any
+---@param vNormal any
 ---@param EntityIndex integer
 ---@return integer
 ---@return integer
----@return Vector3
----@return Vector3
+---@return any
+---@return any
 ---@return integer
 function SHAPETEST.GET_SHAPE_TEST_RESULT(shapeTestGuid, bHitSomething, vPos, vNormal, EntityIndex) end

@@ -239,7 +239,7 @@ function VOLUME.DOES_VOLUME_EXIST(volume) end
 function VOLUME.IS_POINT_IN_VOLUME(volume, x, y, z) end
 
 ---@param volume integer
----@return Vector3
+---@return any
 function VOLUME.GET_VOLUME_COORDS(volume) end
 
 ---@param volume integer
@@ -250,7 +250,7 @@ function VOLUME.GET_VOLUME_COORDS(volume) end
 function VOLUME.SET_VOLUME_COORDS(volume, posX, posY, posZ) end
 
 ---@param volume integer
----@return Vector3
+---@return any
 function VOLUME.GET_VOLUME_ROTATION(volume) end
 
 ---@param volume integer
@@ -261,7 +261,7 @@ function VOLUME.GET_VOLUME_ROTATION(volume) end
 function VOLUME.SET_VOLUME_ROTATION(volume, rotX, rotY, rotZ) end
 
 ---@param volume integer
----@return Vector3
+---@return any
 function VOLUME.GET_VOLUME_SCALE(volume) end
 
 ---@param volume integer
@@ -272,10 +272,10 @@ function VOLUME.GET_VOLUME_SCALE(volume) end
 function VOLUME.SET_VOLUME_SCALE(volume, scaleX, scaleY, scaleZ) end
 
 ---@param volume integer
----@param min Vector3
----@param max Vector3
----@return Vector3
----@return Vector3
+---@param min any
+---@param max any
+---@return any
+---@return any
 function VOLUME._GET_VOLUME_BOUNDS(volume, min, max) end
 
 ---@param p0 boolean
@@ -299,7 +299,7 @@ function VOLUME._0x40F769D31A00D5A0(p0, p1) end
 ---@param p2 any
 ---@param p3 any
 ---@param p4 any
----@return Vector3
+---@return any
 function VOLUME._0xD882C5B3991575B7(p0, p1, p2, p3, p4) end
 
 ---@param p0 any
@@ -383,7 +383,7 @@ function VOLUME._CREATE_VOLUME_LOCK_ATTACHED_TO_ENTITY(entity, radius, flag, p3)
 function VOLUME._IS_VOLUME_LOCK_REQUEST_VALID_2(volLockRequestId) end
 
 ---@param volLockRequestId integer
----@return Vector3
+---@return any
 function VOLUME._0xC4019CF9AE8E931A(volLockRequestId) end
 
 ---@param p0 any

@@ -18,21 +18,6 @@ Executes a callback in a fiber context
 | --- | --- | --- |
 | `callback` | `function` | The callback to execute |
 
-## `RunInFiberAfterDelay`
-
-```lua
-function Script.RunInFiberAfterDelay(callback, delay) end
-```
-
-Executes a callback in a fiber context after a delay
-
-### Parameters
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `callback` | `function` | The callback to execute |
-| `delay` | `integer` | Delay in milliseconds. |
-
 ## `Sleep`
 
 ```lua

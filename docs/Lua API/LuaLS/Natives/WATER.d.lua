@@ -30,9 +30,9 @@ function WATER.GET_WATER_HEIGHT_NO_WAVES(PosX, PosY, PosZ, Height) end
 ---@param EndPosY number
 ---@param EndPosZ number
 ---@param BlockingFlags integer
----@param IntersectionPos Vector3
+---@param IntersectionPos any
 ---@return integer
----@return Vector3
+---@return any
 function WATER.TEST_PROBE_AGAINST_ALL_WATER(StartPosX, StartPosY, StartPosZ, EndPosX, EndPosY, EndPosZ, BlockingFlags, IntersectionPos) end
 
 ---@param StartPosX number

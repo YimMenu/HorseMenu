@@ -504,7 +504,7 @@ function PED.IS_PED_PLANTING_BOMB(PedIndex) end
 ---@param PedIndex integer
 ---@param minDist number
 ---@param maxDist number
----@return Vector3
+---@return any
 function PED.GET_DEAD_PED_PICKUP_COORDS(PedIndex, minDist, maxDist) end
 
 ---@param PedIndex integer
@@ -1200,9 +1200,9 @@ function PED._0xE76687023D8C8505(perscharModel, p1) end
 
 ---@param ped integer
 ---@param eventType integer
----@param coords Vector3
+---@param coords any
 ---@return boolean
----@return Vector3
+---@return any
 function PED._0xCB8F4C9343EBE240(ped, eventType, coords) end
 
 ---@param PedIndex integer
@@ -1785,7 +1785,7 @@ function PED._GET_PED_DRUNKNESS(ped) end
 ---@param sceneOrientationZ number
 ---@param phase number
 ---@param RotOrder integer
----@return Vector3
+---@return any
 function PED.GET_ANIM_INITIAL_OFFSET_POSITION(pAnimDictName, pAnimName, scenePositionX, scenePositionY, scenePositionZ, sceneOrientationX, sceneOrientationY, sceneOrientationZ, phase, RotOrder) end
 
 ---@param pAnimDictName any
@@ -1798,7 +1798,7 @@ function PED.GET_ANIM_INITIAL_OFFSET_POSITION(pAnimDictName, pAnimName, scenePos
 ---@param sceneOrientationZ number
 ---@param phase number
 ---@param RotOrder integer
----@return Vector3
+---@return any
 function PED.GET_ANIM_INITIAL_OFFSET_ROTATION(pAnimDictName, pAnimName, scenePositionX, scenePositionY, scenePositionZ, sceneOrientationX, sceneOrientationY, sceneOrientationZ, phase, RotOrder) end
 
 ---@param PedIndex integer
@@ -2030,7 +2030,7 @@ function PED.REMOVE_PED_DEFENSIVE_AREA(PedIndex, bRemoveSecondaryDefensiveArea) 
 
 ---@param PedIndex integer
 ---@param bApplyToSecondaryDefensiveArea boolean
----@return Vector3
+---@return any
 function PED.GET_PED_DEFENSIVE_AREA_POSITION(PedIndex, bApplyToSecondaryDefensiveArea) end
 
 ---@param PedIndex integer
@@ -2250,7 +2250,7 @@ function PED.WAS_PED_SKELETON_UPDATED(PedIndex) end
 ---@param vecOffsetX number
 ---@param vecOffsetY number
 ---@param vecOffsetZ number
----@return Vector3
+---@return any
 function PED.GET_PED_BONE_COORDS(PedIndex, bone, vecOffsetX, vecOffsetY, vecOffsetZ) end
 
 ---@param vMinX number

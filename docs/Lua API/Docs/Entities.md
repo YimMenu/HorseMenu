@@ -51,3 +51,57 @@ function Entities.GetAllPickupsAsHandles() end
 | Type | Description |
 | --- | --- |
 | `table<integer,integer>` | pickups Array of handles |
+
+## `GetPedFromBlip`
+
+```lua
+function Entities.GetPedFromBlip(blipIndex) end
+```
+
+### Parameters
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `blipIndex` | `integer` |  |
+
+### Returns
+
+| Type | Description |
+| --- | --- |
+| `integer` | ped entity handle or 0 |
+
+## `GetVehicleFromBlip`
+
+```lua
+function Entities.GetVehicleFromBlip(blipIndex) end
+```
+
+### Parameters
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `blipIndex` | `integer` |  |
+
+### Returns
+
+| Type | Description |
+| --- | --- |
+| `integer` | vehicle entity handle or 0 |
+
+## `GetObjectFromBlip`
+
+```lua
+function Entities.GetObjectFromBlip(blipIndex) end
+```
+
+### Parameters
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `blipIndex` | `integer` |  |
+
+### Returns
+
+| Type | Description |
+| --- | --- |
+| `integer` | object entity handle or 0 |
